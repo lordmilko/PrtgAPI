@@ -10,7 +10,7 @@ namespace PrtgAPI
         {
             var str = response.StringValue;
 
-            var basicMatchRegex = "<input.+?name=\".*?_.+?\".+?value=\".*?\".+?>";
+            var basicMatchRegex = "<input.+?name=\".*?_.+?\".+?value=\".*?\".*?>";
             var nameRegex = "(.+?name=\")(.+?)(\".+)";
 
             Func<string, string> nameTransformer = n => n.Replace($"_{channelId}", "");

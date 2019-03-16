@@ -394,6 +394,10 @@ namespace PrtgAPI.Parameters
                 InternalParameters[index] = parameter;
         }
 
+        ICollection<CustomParameter> ICustomParameterContainer.GetParameters() => InternalParameters;
+
+        bool ICustomParameterContainer.AllowDuplicateParameters => true;
+
         PropertyCache IPropertyCacheResolver.GetPropertyCache(Enum property)
         {
             return ObjectPropertyParser.GetPropertyInfoViaTypeLookup(property);

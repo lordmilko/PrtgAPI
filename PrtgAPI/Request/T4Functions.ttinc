@@ -53,21 +53,6 @@
         return $"async {returnType} {name}Async<{genericArgs}>({parameters})";
     }
 
-    public string GetAsyncTokenSpecificSignature(string name, string returnType, string syncParameters, string asyncParameters, int i)
-    {
-        if(i == 0)
-            return $"{returnType} {name}({syncParameters})";
-        else
-        {
-            if(returnType == "void")
-                returnType = "Task";
-            else
-                returnType = $"Task<{returnType}>";
-
-            return $"async {returnType} {name}Async({asyncParameters})";
-        }
-    }
-
     /*********************************************************************************
      * Call Function                                                                 *
      *********************************************************************************/
@@ -84,6 +69,17 @@
     {
         if(i == 0)
             return $"{name}({parameters})";
+        else
+        {
+            parameters += ", " + tokenParameter;
+        }
+            return $"await {name}Async({parameters}).ConfigureAwait(false)";
+    }
+
+	public string CallMandatoryAsyncTokenFunction(string name, string parameters, string tokenParameter, int i)
+    {
+        if(i == 0)
+            return $"{name}({parameters}, CancellationToken.None)";
         else
         {
             parameters += ", " + tokenParameter;

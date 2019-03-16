@@ -1,11 +1,16 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
+using PrtgAPI.Attributes;
 using PrtgAPI.Parameters.Helpers;
 using PrtgAPI.Reflection.Cache;
+using PrtgAPI.Request;
+using PrtgAPI.Utilities;
 
 namespace PrtgAPI.Parameters
 {
-    sealed class SetChannelPropertyParameters : BaseSetObjectPropertyParameters<ChannelProperty>
+    sealed class SetChannelPropertyParameters : BaseSetObjectPropertyParameters<ChannelProperty>, IShallowCloneable<SetChannelPropertyParameters>
     {
         private int channelId;
 
@@ -23,7 +28,9 @@ namespace PrtgAPI.Parameters
             set { SensorIds = value; }
         }
 
-        public SetChannelPropertyParameters(int[] sensorIds, int channelId, ChannelParameter[] parameters, Tuple<ChannelProperty, object> versionSpecific = null) : base(ValidateIds(sensorIds))
+        public List<Tuple<Enum, FactorAttribute>> FactorParameters { get; private set; }
+
+        public SetChannelPropertyParameters(int[] sensorIds, int channelId, ChannelParameter[] parameters) : this(sensorIds, channelId)
         {
             if (parameters == null)
                 throw new ArgumentNullException(nameof(parameters));
@@ -31,17 +38,19 @@ namespace PrtgAPI.Parameters
             if (parameters.Length == 0)
                 throw new ArgumentException("At least one parameter must be specified.", nameof(parameters));
 
-            this.channelId = channelId;
-
             foreach (var prop in parameters)
             {
                 AddTypeSafeValue(prop.Property, prop.Value, true);
             }
 
-            if (versionSpecific != null)
-                parser.AddDependentProperty(versionSpecific.Item2, versionSpecific.Item1);
-
             RemoveDuplicateParameters();
+
+            FactorParameters = parser.Properties.Select(p => Tuple.Create(p, p.GetEnumAttribute<FactorAttribute>())).Where(v => v.Item2 != null).ToList();
+        }
+
+        private SetChannelPropertyParameters(int[] sensorIds, int channelId) : base(ValidateIds(sensorIds))
+        {
+            this.channelId = channelId;
         }
 
         private static int[] ValidateIds(int[] sensorIds)
@@ -66,6 +75,33 @@ namespace PrtgAPI.Parameters
             var str = ObjectPropertyParser.GetObjectPropertyNameViaCache(property, cache);
 
             return $"{str}{channelId}";            
+        }
+
+        public string GetFactorParameterName(Enum property, PropertyCache cache)
+        {
+            var str = ObjectPropertyParser.GetObjectPropertyNameViaCache(property, cache);
+
+            str = str.Replace("_factor", $"_{channelId}_factor");
+
+            return str;
+        }
+
+        object IShallowCloneable.ShallowClone() => ShallowClone();
+
+        public SetChannelPropertyParameters ShallowClone()
+        {
+            var newParameters = new SetChannelPropertyParameters(SensorIds, channelId);
+
+            foreach (var parameter in GetParameters().Where(p => p.Key != Parameter.Custom))
+                newParameters[parameter.Key] = parameter.Value;
+
+            newParameters[Parameter.Custom] = ((List<CustomParameter>) this[Parameter.Custom]).ToList();
+
+            newParameters.FactorParameters = FactorParameters;
+            newParameters.Cookie = Cookie;
+            newParameters.parser = parser;
+
+            return newParameters;
         }
     }
 }

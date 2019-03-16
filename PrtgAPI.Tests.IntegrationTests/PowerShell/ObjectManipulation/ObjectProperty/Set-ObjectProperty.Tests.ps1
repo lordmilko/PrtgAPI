@@ -322,4 +322,20 @@ Describe "Set-ObjectProperty_IT" -Tag @("PowerShell", "IntegrationTest") {
         SetDirect "InheritTriggers" $false
         SetDirect "Comments" "test comment!"
     }
+
+    It "overrides a dependent property" {
+        $object = Get-Sensor -Id (Settings UpSensor)
+
+        $object | Set-ObjectProperty Interval 00:01:00
+
+        $properties = $object | Get-ObjectProperty
+        $properties.InheritInterval | Should Be $false
+        $properties.Interval | Should Be "00:01:00"
+
+        $object | Set-ObjectProperty -Interval 00:00:30 -InheritInterval $true
+
+        $newProperties = $object | Get-ObjectProperty
+        $newProperties.InheritInterval | Should Be $true
+        $newProperties.Interval | Should Be "00:00:30"
+    }
 }

@@ -24,6 +24,9 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
             {
                 case nameof(HtmlFunction.EditSettings):
                     return new BasicResponse(GetSetObjectPropertyResponse(address));
+                case nameof(XmlFunction.TableData):
+                case nameof(HtmlFunction.ChannelEdit):
+                    return base.GetResponse(ref address, function);
                 case nameof(JsonFunction.GetStatus):
                     return new ServerStatusResponse(new ServerStatusItem());
                 case nameof(JsonFunction.GeoLocator):

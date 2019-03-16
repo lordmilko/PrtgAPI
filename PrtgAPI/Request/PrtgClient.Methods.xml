@@ -1166,9 +1166,58 @@
                         </Body>
                     </InlineMethodDef>
                 </Region>
-                <Region name="Channel" groupOverloads="true">
-                    <InlineMethodDef name="SetObjectProperty" returns="void">
-                        <Summary>Modifies channel properties for a PRTG Sensor.</Summary>
+                 <Region name="Channel" groupOverloads="true">
+                    <InlineMethodDef name="SetChannelProperty" returns="void" tokenMode="AutomaticAll">
+                        <Summary>Modifies a property of a PRTG Channel.</Summary>
+
+                        <Parameter name="channel" type="Channel" description="The channel to modify."/>
+                        <Parameter name="property" type="ChannelProperty" description="The property whose value should be modified."/>
+                        <Parameter name="value" type="object" description="The value to set the property to."/>
+
+                        <Body expression="true">
+                            <Call name="SetChannelProperty" args="new[] {AssertHasValue(channel, nameof(channel))}, property, value"/>
+                        </Body>
+                    </InlineMethodDef>
+                    <InlineMethodDef name="SetChannelProperty" returns="void" tokenMode="AutomaticAll">
+                        <Summary>Modifies a property of one or more PRTG Channels.</Summary>
+
+                        <Parameter name="channels" type="IEnumerable&lt;Channel&gt;" description="The channels to modify."/>
+                        <Parameter name="property" type="ChannelProperty" description="The property of each channel to modify."/>
+                        <Parameter name="value" type="object" description="The value to set each channel's property to."/>
+
+                        <Body expression="true">
+                            <Call name="SetChannelProperty" args="AssertHasValue(channels, nameof(channels)), new ChannelParameter(property, value)"/>
+                        </Body>
+                        <TokenBody expression="true">
+                            <Call name="SetChannelProperty" args="AssertHasValue(channels, nameof(channels)), new[]{new ChannelParameter(property, value)}"/>
+                        </TokenBody>
+                    </InlineMethodDef>
+                </Region> 
+                <Region name="Channel (Multiple)" groupOverloads="true">
+                    <InlineMethodDef name="SetChannelProperty" returns="void" tokenMode="AutomaticAll">
+                        <Summary>Modifies one or more properties of a PRTG Channel.</Summary>
+
+                        <Parameter name="channel" type="Channel" description="The channel to modify."/>
+                        <Parameter name="parameters" type="params ChannelParameter[]" description="A set of parameters describing the properties and their values to process."/>
+
+                        <Body expression="true">
+                            <Call name="SetChannelProperty" args="new[] {AssertHasValue(channel, nameof(channel))}, parameters"/>
+                        </Body>
+                    </InlineMethodDef>
+                    <InlineMethodDef name="SetChannelProperty" returns="void" tokenMode="AutomaticAll">
+                        <Summary>Modifies multiple properties of one or more PRTG Channels.</Summary>
+
+                        <Parameter name="channels" type="IEnumerable&lt;Channel&gt;" description="The channels to modify."/>
+                        <Parameter name="parameters" type="params ChannelParameter[]" description="A set of parameters describing the properties and their values to process."/>
+
+                        <Body expression="true">
+                            <Call name="SetChannelProperty" args="AssertHasValue(channels, nameof(channels)), null, null, parameters"/>
+                        </Body>
+                    </InlineMethodDef>
+                </Region>
+                <Region name="Channel (Manual)" groupOverloads="true">
+                    <InlineMethodDef name="SetChannelProperty" returns="void" tokenMode="AutomaticAll">
+                        <Summary>Modifies a property of a PRTG Channel based on its Sensor ID and Channel ID.</Summary>
 
                         <Parameter name="sensorId" type="int" description="The ID of the sensor whose channels should be modified."/>
                         <Parameter name="channelId" type="int" description="The ID of the channel to modify."/>
@@ -1179,8 +1228,8 @@
                             <Call name="SetChannelProperty" args="new[] {sensorId}, channelId, property, value"/>
                         </Body>
                     </InlineMethodDef>
-                    <InlineMethodDef name="SetObjectProperty" returns="void">
-                        <Summary>Modifies channel properties for one or more PRTG Sensors.</Summary>
+                    <InlineMethodDef name="SetChannelProperty" returns="void" tokenMode="AutomaticAll">
+                        <Summary>Modifies a property of PRTG Channels with a given Channel ID across one or more PRTG Sensors.</Summary>
 
                         <Parameter name="sensorIds" type="int[]" description="The IDs of the sensors whose channels should be modified."/>
                         <Parameter name="channelId" type="int" description="The ID of the channel of each sensor to modify."/>
@@ -1195,9 +1244,9 @@
                         </TokenBody>
                     </InlineMethodDef>
                 </Region>
-                <Region name="Channel (Multiple)" groupOverloads="true">
-                    <InlineMethodDef name="SetObjectProperty" returns="void">
-                        <Summary>Modifies multiple channel properties for a PRTG Sensor.</Summary>
+                <Region name="Channel (Manual: Multiple)" groupOverloads="true">
+                    <InlineMethodDef name="SetChannelProperty" returns="void" tokenMode="AutomaticAll">
+                        <Summary>Modifies one or more properties of a PRTG Channel based on its Sensor ID and Channel ID.</Summary>
 
                         <Parameter name="sensorId" type="int" description="The ID of the sensor whose channels should be modified."/>
                         <Parameter name="channelId" type="int" description="The ID of the channel to modify."/>
@@ -1207,15 +1256,15 @@
                             <Call name="SetChannelProperty" args="new[] { sensorId }, channelId, parameters"/>
                         </Body>
                     </InlineMethodDef>
-                    <InlineMethodDef name="SetObjectProperty" returns="void">
-                        <Summary>Modifies multiple channel properties for one or more PRTG Sensors.</Summary>
+                    <InlineMethodDef name="SetChannelProperty" returns="void" tokenMode="AutomaticAll">
+                        <Summary>Modifies multiple properties of PRTG Channels with a given Channel ID across one or more PRTG Sensors.</Summary>
 
                         <Parameter name="sensorIds" type="int[]" description="The IDs of the sensors whose channels should be modified."/>
                         <Parameter name="channelId" type="int" description="The ID of the channel of each sensor to modify."/>
                         <Parameter name="parameters" type="params ChannelParameter[]" description="A set of parameters describing the properties and their values to process."/>
 
                         <Body expression="true">
-                            <Call name="GetVersionClient&lt;ChannelParameter, ChannelProperty&gt;(parameters.ToList()).SetChannelProperty" args="sensorIds, channelId, null, parameters"/>
+                            <Call name="SetChannelProperty" args="null, sensorIds, channelId, parameters"/>
                         </Body>
                     </InlineMethodDef>
                 </Region>

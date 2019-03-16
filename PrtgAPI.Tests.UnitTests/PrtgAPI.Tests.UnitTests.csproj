@@ -321,6 +321,7 @@
     <Compile Include="CSharp\Infrastructure\SearchFilterTests.cs" />
     <Compile Include="Support\TestResponses\PassHashResponse.cs" />
     <Compile Include="Support\TestItems\SensorItem.cs" />
+    <Compile Include="Support\WellKnownObjectId.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\PrtgAPI.PowerShell\PrtgAPI.PowerShell.csproj">

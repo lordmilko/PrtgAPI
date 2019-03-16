@@ -3,7 +3,7 @@
 Describe "Set-ChannelProperty_IT" -Tag @("PowerShell", "IntegrationTest") {
     
     $channel = $null
-
+    
     function SetValue($property, $value)
     {
         LogTestDetail "Processing property $property"
@@ -57,7 +57,7 @@ Describe "Set-ChannelProperty_IT" -Tag @("PowerShell", "IntegrationTest") {
 
         $c1.UpperErrorLimit | Assert-Equal $null -Message "Initial channel UpperErrorLimit was not null"
 
-        Invoke-WebRequest "$($client.Server)/editsettings?id=$($c1.SensorId)&limitmaxerror_$($c1.Id)=1&username=$($client.UserName)&passhash=$($client.PassHash)"
+        Invoke-WebRequest "$($client.Server)/editsettings?id=$($c1.SensorId)&limitmaxerror_$($c1.Id)=1&limitmaxerror_$($c1.Id)_factor=$($c1.Factor)&username=$($client.UserName)&passhash=$($client.PassHash)"
 
         $c2 = & $channel
 
@@ -164,7 +164,12 @@ Describe "Set-ChannelProperty_IT" -Tag @("PowerShell", "IntegrationTest") {
     }
 
     It "Data" {
-        $channel = { Get-Sensor -Id (Settings WarningSensor) | Get-Channel Total }
+        $channel = { Get-Sensor -Id (Settings DownSensor) | Get-Channel "Available Memory" }
+
+        $temp = & $channel
+
+        $temp.Factor | Assert-NotNull -Message "Channel factor must not be null"
+        $temp.Factor | Assert-NotEqual 1 -Message "Channel factor must not be 1"
 
         SetChild "PercentValue" "30" "PercentMode" "PercentOfMax"
         
@@ -187,12 +192,16 @@ Describe "Set-ChannelProperty_IT" -Tag @("PowerShell", "IntegrationTest") {
     It "Decimal Places" {
         $channel = DefaultChannel
 
+        $temp = & $channel
+
         SetValue "DecimalPlaces" 3 "DecimalMode" "Custom"
         { SetValue "DecimalMode" "Custom" } | Should Throw "Required field, not defined"
 
         (& $channel) | Set-ChannelProperty DecimalPlaces 4
 
         ClearDependents "DecimalMode" "All" @("DecimalPlaces")
+
+        $temp | Set-ChannelProperty DecimalPlaces $temp.DecimalPlaces
     }
 
     It "Spike Filter" {
@@ -224,7 +233,13 @@ Describe "Set-ChannelProperty_IT" -Tag @("PowerShell", "IntegrationTest") {
     }#>
     
     It "Limits" {
-        $channel = DefaultChannel
+        $channel = { Get-Sensor -Id (Settings DownSensor) | Get-Channel -Id 1 }
+
+        $temp = & $channel
+        $temp | Set-ChannelProperty -UpperErrorLimit 100 -LowerErrorLimit 25 -UpperWarningLimit 75 -LowerWarningLimit 50 -ErrorLimitMessage "error" -WarningLimitMessage "warning"
+
+        $temp.Factor | Assert-NotNull -Message "Channel factor must not be null"
+        $temp.Factor | Assert-NotEqual 1 -Message "Channel factor must not be 1"
 
         ClearDependents "LimitsEnabled" $false @("UpperErrorLimit", "UpperWarningLimit",
             "LowerErrorLimit", "LowerWarningLimit", "ErrorLimitMessage", "WarningLimitMessage")
@@ -247,6 +262,8 @@ Describe "Set-ChannelProperty_IT" -Tag @("PowerShell", "IntegrationTest") {
         $sensor = Get-Sensor -Id (Settings ChannelSensor)
 
         $ids = 2,3
+
+        $ids | foreach { Set-ChannelProperty -SensorId $sensor.id -ChannelId $_ LimitsEnabled $false }
 
         $channels = $sensor | Get-Channel -Id $ids
 
@@ -280,5 +297,159 @@ Describe "Set-ChannelProperty_IT" -Tag @("PowerShell", "IntegrationTest") {
         $newChannel.LimitsEnabled | Should Be $true
         $newChannel.UpperErrorLimit | Should Be 100
         $newChannel.LowerErrorLimit | Should Be 50
+    }
+    
+    function WithoutLimits($sensorId, $channelId, $scriptBlock)
+    {
+        $channel = Get-Channel -SensorId $sensorId -Id $channelId
+
+        try
+        {
+            $channel | Set-ChannelProperty LimitsEnabled $false
+
+            $newChannel = Get-Channel -SensorId $sensorId -Id $channelId
+
+            $newChannel.LimitsEnabled | Assert-False -Message "LimitsEnabled was not false"
+            $newChannel.UpperErrorLimit | Assert-Null -Message "UpperErrorLimit was not null"
+            $newChannel.LowerErrorLimit | Assert-Null -Message "LowerErrorLimit was not null"
+            $newChannel.UpperWarningLimit | Assert-Null -Message "UpperWarningLimit was not null"
+            $newChannel.LowerWarningLimit | Assert-Null -Message "LowerWarningLimit was not null"
+            $newChannel.ErrorLimitMessage | Assert-Null -Message "ErrorLimitMessage was not null"
+            $newChannel.WarningLimitMessage | Assert-Null -Message "WarningLimitMessage was not null"
+
+            & $scriptBlock $newChannel
+        }
+        finally
+        {
+            $channelParams = @{
+                LimitsEnabled = $channel.LimitsEnabled
+                UpperErrorLimit = $channel.UpperErrorLimit
+                LowerErrorLimit = $channel.LowerErrorLimit
+                UpperWarningLimit = $channel.UpperWarningLimit
+                LowerWarningLimit = $channel.LowerWarningLimit
+                ErrorLimitMessage = $channel.ErrorLimitMessage
+                WarningLimitMessage = $channel.WarningLimitMessage
+            }
+
+            $channel | Set-ChannelProperty @channelParams
+        }
+    }
+
+    It "overrides a dependent property" {
+        $getChannel = DefaultChannel
+        $channel = & $getChannel
+
+        $channel | Set-ChannelProperty -DecimalPlaces 5
+
+        $newChannel = & $getChannel
+        $newChannel.DecimalMode | Should Be "Custom"
+        $newChannel.DecimalPlaces | Should Be 5
+
+        $newChannel | Set-ChannelProperty -DecimalPlaces 6 -DecimalMode All
+
+        $finalChannel = & $getChannel
+        $finalChannel.DecimalMode | Should Be "All"
+        $finalChannel.DecimalPlaces | Should Be 6
+    }
+
+    Context "Limits" {
+        It "clears the last limit when limits are already enabled" {
+
+            WithoutLimits (Settings ChannelSensor) (Settings Channel) {
+                param($channel)
+
+                $channel | Set-ChannelProperty UpperErrorLimit 25
+
+                $newChannel = Get-Channel -SensorId $channel.SensorId -Id $channel.Id
+                $newChannel.UpperErrorLimit | Assert-Equal 25 -Message "Expected UpperErrorLimit to be <expected> however instead was <actual>"
+                $newChannel.LimitsEnabled | Assert-Equal $true -Message "Expected LimitsEnabled to be <expected> however instead was <actual>"
+
+                $newChannel | Set-ChannelProperty UpperErrorLimit $null
+
+                $finalChannel = Get-Channel -SensorId $channel.SensorId -Id $channel.Id
+
+                $finalChannel.UpperErrorLimit | Assert-Null -Message "Expected UpperErrorLimit to be null but it wasn't"
+                $finalChannel.LimitsEnabled | Assert-Equal $true -Message "After clearing UpperErrorLimit, expected LimitsEnabled to be <expected> however instead was <actual>"
+            }
+        }
+
+        It "clears the last limit when limits are already disabled" {
+
+
+            WithoutLimits (Settings ChannelSensor) (Settings Channel) {
+                param($channel)
+
+                $channel | Set-ChannelProperty -UpperErrorLimit 25 -LimitsEnabled $false
+
+                $newChannel = Get-Channel -SensorId $channel.SensorId -Id $channel.Id
+                $newChannel.UpperErrorLimit | Assert-Equal 25 -Message "Expected UpperErrorLimit to be <expected> however instead was <actual>"
+                $newChannel.LimitsEnabled | Assert-Equal $false -Message "Expected LimitsEnabled to be <expected> however instead was <actual>"
+            }
+        }
+
+        It "clears a limit that is already null when limits are enabled" {
+            WithoutLimits (Settings ChannelSensor) (Settings Channel) {
+                param($channel)
+
+                $channel | Set-ChannelProperty UpperErrorLimit 25
+
+                $newChannel = Get-Channel -SensorId $channel.SensorId -Id $channel.Id
+                $newChannel.UpperErrorLimit | Assert-Equal 25 -Message "Expected UpperErrorLimit to be <expected> however instead was <actual>"
+                $newChannel.LimitsEnabled | Assert-Equal $true -Message "Expected LimitsEnabled to be <expected> however instead was <actual>"
+
+                $newChannel | Set-ChannelProperty UpperErrorLimit $null
+
+                $finalChannel = Get-Channel -SensorId $channel.SensorId -Id $channel.Id
+
+                $finalChannel.UpperErrorLimit | Assert-Null -Message "Expected UpperErrorLimit to be null but it wasn't"
+                $finalChannel.LimitsEnabled | Assert-Equal $true -Message "After clearing UpperErrorLimit, expected LimitsEnabled to be <expected> however instead was <actual>"
+
+                { $finalChannel | Set-ChannelProperty UpperErrorLimit $null } | Should Throw "You have set Alerting to limit-based, but have entered no limit value"
+            }
+        }
+
+        It "clears a limit that is already null when limits are disabled" {
+            WithoutLimits (Settings ChannelSensor) (Settings Channel) {
+                param($channel)
+
+                $channel | Set-ChannelProperty -UpperErrorLimit $null -LimitsEnabled $false
+            }
+        }
+
+        It "clears a limit that already has a value while disabling limits" {
+            WithoutLimits (Settings ChannelSensor) (Settings Channel) {
+                param($channel)
+
+                $channel | Set-ChannelProperty UpperErrorLimit 25
+
+                $newChannel = Get-Channel -SensorId $channel.SensorId -Id $channel.Id
+                $newChannel.UpperErrorLimit | Assert-Equal 25 -Message "Expected UpperErrorLimit to be <expected> however instead was <actual>"
+                $newChannel.LimitsEnabled | Assert-Equal $true -Message "Expected LimitsEnabled to be <expected> however instead was <actual>"
+
+                $newChannel | Set-ChannelProperty -UpperErrorLimit $null -LimitsEnabled $false
+
+                $finalChannel = Get-Channel -SensorId $channel.SensorId -Id $channel.Id
+                $finalChannel.UpperErrorLimit | Assert-Null -Message "Expected UpperErrorLimit to be null but it wasn't"
+                $finalChannel.LimitsEnabled | Assert-Equal $false -Message "After clearing UpperErrorLimit, expected LimitsEnabled to be <expected> however instead was <actual>"
+            }            
+        }
+
+        It "clears a limit that already has a value while enabling limits" {
+            WithoutLimits (Settings ChannelSensor) (Settings Channel) {
+                param($channel)
+
+                $channel | Set-ChannelProperty UpperErrorLimit 25
+
+                $newChannel = Get-Channel -SensorId $channel.SensorId -Id $channel.Id
+                $newChannel.UpperErrorLimit | Assert-Equal 25 -Message "Expected UpperErrorLimit to be <expected> however instead was <actual>"
+                $newChannel.LimitsEnabled | Assert-Equal $true -Message "Expected LimitsEnabled to be <expected> however instead was <actual>"
+
+                $newChannel | Set-ChannelProperty -UpperErrorLimit $null -LimitsEnabled $true
+
+                $finalChannel = Get-Channel -SensorId $channel.SensorId -Id $channel.Id
+                $finalChannel.UpperErrorLimit | Assert-Null -Message "Expected UpperErrorLimit to be null but it wasn't"
+                $finalChannel.LimitsEnabled | Assert-Equal $true -Message "After clearing UpperErrorLimit, expected LimitsEnabled to be <expected> however instead was <actual>"
+            }
+        }
     }
 }

@@ -126,6 +126,17 @@ namespace PrtgAPI
         [PropertyParameter(ChannelProperty.PercentValue)]
         public double? PercentValue { get; set; }
 
+        [Undocumented]
+        [XmlElement("injected_ref100percent_factor")]
+        [PropertyParameter(ChannelPropertyInternal.PercentValueFactor)]
+        internal double? PercentFactor { get; set; }
+        
+        /// <summary>
+        /// Value multiplication factor for this object's <see cref="Unit"/>. Used when modifying certain properties.<para/>
+        /// For internal use only.
+        /// </summary>
+        public double? Factor => PercentFactor; //Every internal factor should be the same
+
         /// <summary>
         /// The width of this channel's graph line, in pixels.
         /// </summary>
@@ -212,6 +223,11 @@ namespace PrtgAPI
         [PropertyParameter(ChannelProperty.SpikeFilterMax)]
         public double? SpikeFilterMax { get; set; }
 
+        [Undocumented]
+        [XmlElement("injected_spikemax_factor")]
+        [PropertyParameter(ChannelPropertyInternal.SpikeFilterMaxFactor)]
+        internal double? SpikeFilterMaxFactor { get; set; }
+
         /// <summary>
         /// The lower limit for spike filtering. Values below this value will be ignored.
         /// </summary>
@@ -219,6 +235,11 @@ namespace PrtgAPI
         [XmlElement("injected_spikemin")]
         [PropertyParameter(ChannelProperty.SpikeFilterMin)]
         public double? SpikeFilterMin { get; set; }
+
+        [Undocumented]
+        [XmlElement("injected_spikemin_factor")]
+        [PropertyParameter(ChannelPropertyInternal.SpikeFilterMinFactor)]
+        internal double? SpikeFilterMinFactor { get; set; }
 
         /// <summary>
         /// Indicates how to scale this channel in graphs.
@@ -236,6 +257,11 @@ namespace PrtgAPI
         //[PropertyParameter(ChannelProperty.VerticalAxisMax)]
         public double? VerticalAxisMax { get; set; }
 
+        [Undocumented]
+        [XmlElement("injected_axismax_factor")]
+        [PropertyParameter(ChannelPropertyInternal.VerticalAxisMaxFactor)]
+        internal double? VerticalAxisMaxFactor { get; set; }
+
         /// <summary>
         /// Minimum value to display on the graphs vertical axis. If <see cref="VerticalAxisScaling"/> is <see cref="AutoMode.Automatic"/> this value has no effect.
         /// </summary>
@@ -243,6 +269,11 @@ namespace PrtgAPI
         [XmlElement("injected_axismin")]
         //[PropertyParameter(ChannelProperty.VerticalAxisMin)]
         public double? VerticalAxisMin { get; set; }
+
+        [Undocumented]
+        [XmlElement("injected_axismin_factor")]
+        [PropertyParameter(ChannelPropertyInternal.VerticalAxisMinFactor)]
+        internal double? VerticalAxisMinFactor { get; set; }
 
         /// <summary>
         /// Whether warning or error limits are enabled for this channel. When this channel's value crosses these limits, the channel's sensor will transition into an error or warning state.
@@ -260,6 +291,11 @@ namespace PrtgAPI
         [PropertyParameter(ChannelProperty.UpperErrorLimit)]
         public double? UpperErrorLimit { get; set; }
 
+        [Undocumented]
+        [XmlElement("injected_limitmaxerror_factor")]
+        [PropertyParameter(ChannelPropertyInternal.UpperErrorLimitFactor)]
+        internal double? UpperErrorLimitFactor { get; set; }
+
         /// <summary>
         /// The upper warning limit of this channel. If the <see cref="LastValue"/> of this channel goes above this limit, the channel will immediately transition into a warning state.
         /// </summary>
@@ -267,6 +303,11 @@ namespace PrtgAPI
         [XmlElement("injected_limitmaxwarning")]
         [PropertyParameter(ChannelProperty.UpperWarningLimit)]
         public double? UpperWarningLimit { get; set; }
+
+        [Undocumented]
+        [XmlElement("injected_limitmaxwarning_factor")]
+        [PropertyParameter(ChannelPropertyInternal.UpperWarningLimitFactor)]
+        internal double? UpperWarningLimitFactor { get; set; }
 
         /// <summary>
         /// The lower error for this channel. If the <see cref="LastValue"/> of this channel goes below this limit, the channel will begin transitioning into an error state.
@@ -276,6 +317,11 @@ namespace PrtgAPI
         [PropertyParameter(ChannelProperty.LowerErrorLimit)]
         public double? LowerErrorLimit { get; set; }
 
+        [Undocumented]
+        [XmlElement("injected_limitminerror_factor")]
+        [PropertyParameter(ChannelPropertyInternal.LowerErrorLimitFactor)]
+        internal double? LowerErrorLimitFactor { get; set; }
+
         /// <summary>
         /// The lower warning limit of this channel. If the <see cref="LastValue"/> of this channel goes below this limit, the channel will immediately transition into a warning state.
         /// </summary>
@@ -283,6 +329,11 @@ namespace PrtgAPI
         [XmlElement("injected_limitminwarning")]
         [PropertyParameter(ChannelProperty.LowerWarningLimit)]
         public double? LowerWarningLimit { get; set; }
+
+        [Undocumented]
+        [XmlElement("injected_limitminwarning_factor")]
+        [PropertyParameter(ChannelPropertyInternal.LowerWarningLimitFactor)]
+        internal double? LowerWarningLimitFactor { get; set; }
 
         /// <summary>
         /// The message to display when the <see cref="LastValue"/> of this channel goes above or below the <see cref="UpperErrorLimit"/> or <see cref="LowerErrorLimit"/> respectively.

@@ -23,6 +23,8 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
         {
             if (function == nameof(JsonFunction.GetStatus))
                 return new ServerStatusResponse(new ServerStatusItem());
+            if (function == nameof(XmlFunction.TableData) || function == nameof(HtmlFunction.ChannelEdit))
+                return base.GetResponse(ref address, function);
 
             var queries = UrlUtilities.CrackUrl(address);
             queries.Remove("id");
@@ -49,7 +51,11 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
             }
             else if (property == ChannelProperty.UpperErrorLimit)
             {
-                AssertCollectionLength(address, queries, 2);
+                //If no value was specified, we didn't need to include a factor
+                var limitMaxErrorCount = string.IsNullOrEmpty(queries["limitmaxerror_1"]) ? 2 : 3;
+
+                AssertCollectionLength(address, queries, limitMaxErrorCount);
+
                 KeyExistsWithCorrectValue(queries, "limitmode", "1");
                 KeyExistsWithCorrectValue(queries, "limitmaxerror", value);
             }

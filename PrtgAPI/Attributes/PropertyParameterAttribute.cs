@@ -30,6 +30,11 @@ namespace PrtgAPI.Attributes
             Property = property;
         }
 
+        public PropertyParameterAttribute(ChannelPropertyInternal property)
+        {
+            Property = property;
+        }
+
         public PropertyParameterAttribute(TriggerProperty property)
         {
             Property = property;

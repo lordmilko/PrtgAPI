@@ -13,14 +13,11 @@
     -when we're asked whether we want to do things, the default option should be no. fix all modification cmdlets that have shouldprocess
      maybe we should make priority a fancy class? then we can say tostring is numeric <- dont know what that means, but if we're a class we can set priority using numbers instead of words
      todo: pretty much ALL PrtgClient methods need to validate their inputs arent null or empty
-    -once nuget is working, publish appveyor.yml to github
     -make schedule an enum class that lists common schedules and lets you specify custom ones
 
     Project
     -Maybe remove ObjectId properties for all objects but prtgtablecmdlet. and maybe channel. you can do anything by ID by getting a root level type (e.g. sensor) and piping it
         -maybe not, its good to be able to specify an id. maybe we should add MORE places you can specify ids!
-
-    -if i make a request to prtg, cancel it, reopen powershell and make another request does it run fast or slow. this will tell us if its prtgs fault or ours it takes ages to load
 
     -test httpclient failure
      we can use remove-object on the root prtg object to test this
@@ -30,15 +27,12 @@
     -upload our empty settings file then say dont track it
      git update-index --assume-unchanged <file> and --no-assume-unchanged
 
-    -should setchannelproperty be smart enough to figure out the value to specify when the unit youre using is gigabytes (e.g. multiply the value specified by a billion, etc)
-
     README
     -add powershell example for getting deprecated sensors
 
     Async
     -can we run a task for x seconds before we demand it switches the context back to us so we can do something then resume it. we could use this to get the sensor totals
         and if its taking too long THEN display a progress bar
-    -is there some way we can specify a cancellation token or something for a web request download?
     -for getsensorsasync, add support for getrawobject totals taking a params filter so we can get the totals when we have a filter. update prtgtablecmdlet accordingly
     -have our new streaming methods specify a Count where we want to, and then make streamobjects check if count is null and if so set it to 500
 
@@ -63,9 +57,6 @@
      may need to rename id to objectid for that one
     -TODO - we need to do a TONNE more testing setting fields to null and checking they react the way theyre meant to for edit and add mode
      need to write unit tests to automate this testing
-    
-    NotificationAction
-    -add additional columns
 
     NotificationTriggers
     -test we can successfully create triggers of all types with all parameters specified
@@ -78,11 +69,6 @@
 
     SearchFilter
     -my documentation in my readme.md file says equals is case sensitive, but it actually doesnt appear to be. whats up with that?
-
-    SensorSettings
-    -not complete
-    -most properties internal for now
-    -the schedule class is also internal
 
     */
 }

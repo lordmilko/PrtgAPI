@@ -905,7 +905,7 @@ for(int i = 0; i < 2; i++)
 }
 #>
         //#######################################
-        // CreateSetObjectPropertyParametersAsync
+        // CreateSetObjectPropertyParameters
         //#######################################
 
 <#
@@ -946,6 +946,43 @@ for(int i = 0; i < 2; i++)
             var @params = new SetObjectPropertyParameters(objectIds, parameters);
 
             return @params;
+        }
+
+<#
+}
+#>
+        //#######################################
+        // SetChannelProperty
+        //#######################################
+
+<#
+for(int i = 0; i < 2; i++)
+{
+#>
+        internal <#= GetSignature("SetChannelProperty", "void", i)#>(IEnumerable<Channel> channels, int[] sensorIds, int? channelId, ChannelParameter[] parameters, CancellationToken token)
+        {
+            if (parameters == null)
+                throw new ArgumentNullException(nameof(parameters), "Parameters cannot be null.");
+
+            if (parameters.Any(p => p == null))
+                throw new ArgumentException("Cannot process a null parameter.", nameof(parameters));
+
+            if (parameters.Length == 0)
+                throw new ArgumentException("At least one parameter must be specified.", nameof(parameters));
+
+            var versionClient = GetVersionClient<ChannelParameter, ChannelProperty>(parameters.ToList());
+
+            if (channels != null)
+            {
+                var channelsList = channels.AsCollection();
+
+                if (channelsList.Any(c => c == null))
+                    throw new ArgumentException("Cannot process a null channel.", nameof(channels));
+
+                <#= CallFunction("versionClient.SetChannelProperty", "channelsList, parameters, token", i) #>;
+            }
+            else
+                <#= CallFunction("versionClient.SetChannelProperty", "sensorIds, channelId.Value, parameters, token", i) #>;
         }
 <#
 if(i == 0)

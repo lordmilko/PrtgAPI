@@ -130,6 +130,8 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
                     totalRequestCount--;
                     requestCount--;
                     return new ScheduleResponse(new ScheduleItem());
+                case Content.Channels:
+                    return base.GetResponse(ref address, function);
                 default:
                     throw new NotImplementedException($"Unknown content '{content}' requested from {nameof(DiffBasedResolveResponse)}");
             }

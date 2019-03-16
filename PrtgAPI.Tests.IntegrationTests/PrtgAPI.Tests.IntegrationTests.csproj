@@ -94,7 +94,7 @@
     <Compile Include="Support\Impersonator.cs" />
     <Compile Include="Support\Logger.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="CSharp\ObjectManipulation\ChannelTests.cs" />
+    <Compile Include="CSharp\ObjectManipulation\SetChannelPropertyTests.cs" />
     <Compile Include="CSharp\Infrastructure\PrtgClientConnectionTests.cs" />
     <Compile Include="CSharp\ObjectData\DeviceTests.cs" />
     <Compile Include="CSharp\ObjectData\GroupTests.cs" />

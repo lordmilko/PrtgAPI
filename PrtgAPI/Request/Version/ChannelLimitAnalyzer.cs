@@ -13,16 +13,19 @@ namespace PrtgAPI.Request
             Channels = channels;
         }
 
-        public Tuple<double?, List<Channel>, ChannelProperty> UpperErrorLimit => GetHighest(c => c.UpperErrorLimit, ChannelProperty.UpperErrorLimit);
-        public Tuple<double?, List<Channel>, ChannelProperty> LowerErrorLimit => GetHighest(c => c.LowerErrorLimit, ChannelProperty.LowerErrorLimit);
-        public Tuple<double?, List<Channel>, ChannelProperty> UpperWarningLimit => GetHighest(c => c.UpperWarningLimit, ChannelProperty.UpperWarningLimit);
-        public Tuple<double?, List<Channel>, ChannelProperty> LowerWarningLimit => GetHighest(c => c.LowerWarningLimit, ChannelProperty.LowerWarningLimit);
+        public ChannelLimitAnalysis UpperErrorLimit => GetHighest(c => c.UpperErrorLimit, ChannelProperty.UpperErrorLimit);
+        public ChannelLimitAnalysis LowerErrorLimit => GetHighest(c => c.LowerErrorLimit, ChannelProperty.LowerErrorLimit);
+        public ChannelLimitAnalysis UpperWarningLimit => GetHighest(c => c.UpperWarningLimit, ChannelProperty.UpperWarningLimit);
+        public ChannelLimitAnalysis LowerWarningLimit => GetHighest(c => c.LowerWarningLimit, ChannelProperty.LowerWarningLimit);
 
-        public Tuple<double?, List<Channel>, ChannelProperty> GetProperty()
+        public ChannelLimitAnalysis GetProperty()
         {
+            //Identify the limit property that has the highest incidence of channels sharing its value. e.g. There could be
+            //two channels that share the same UpperErrorLimit, but there could be three that share the same LowerErrorLimit!
+
             var highest = UpperErrorLimit;
 
-            Func<Tuple<double?, List<Channel>, ChannelProperty>, bool> isHigher = p => p.Item2 != null && (highest.Item2 == null || p.Item2.Count > highest.Item2.Count);
+            Func<ChannelLimitAnalysis, bool> isHigher = p => p.Channels != null && (highest.Channels == null || p.Channels.Count > highest.Channels.Count);
 
             if (isHigher(LowerErrorLimit))
                 highest = LowerErrorLimit;
@@ -36,11 +39,16 @@ namespace PrtgAPI.Request
             return highest;
         }
 
-        private Tuple<double?, List<Channel>, ChannelProperty> GetHighest(Func<Channel, double?> selector, ChannelProperty property)
+        private ChannelLimitAnalysis GetHighest(Func<Channel, double?> selector, ChannelProperty property)
         {
-            var group = Channels.GroupBy(selector).Where(g => g.Key != null).OrderByDescending(g => g.Count()).FirstOrDefault();
+            var group = Channels
+                .GroupBy(selector)                 //e.g. group by UpperErrorLimit
+                .Where(g => g.Key != null)         //excluding those that don't have an UpperErrorLimit
+                .OrderByDescending(g => g.Count()) //select the group of sensors that have the highest number of sensors with any particular UpperErrorLimit
+                .FirstOrDefault();
 
-            return Tuple.Create(group?.Key, group?.ToList(), property);
+            //Associate ChannelProperty.UpperErrorLimit with the group of channels that have the highest incidence of any particular UpperErrorLimit
+            return new ChannelLimitAnalysis(group?.Key, group?.ToList(), property);
         }
     }
 }

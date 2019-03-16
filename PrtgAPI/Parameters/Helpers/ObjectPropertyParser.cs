@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Xml.Serialization;
@@ -16,6 +17,8 @@ namespace PrtgAPI.Parameters.Helpers
         ICustomParameterContainer container;
         IPropertyCacheResolver cacheResolver;
         Func<Enum, PropertyCache, string> nameResolver;
+
+        public List<Enum> Properties { get; } = new List<Enum>();
 
         internal ObjectPropertyParser(
             ICustomParameterContainer container,
@@ -62,11 +65,26 @@ namespace PrtgAPI.Parameters.Helpers
 
             var dependencyParser = new DynamicPropertyTypeParser(parent, cache, val);
             var parameter = dependencyParser.GetParameter(nameResolver);
-            container.AddParameter(parameter);
+
+            //If there is already an existing value (i.e. from the parameter being specified explicitly) don't set the dependency
+            if(!ParameterExists(parameter))
+                container.AddParameter(parameter);
+        }
+
+        private bool ParameterExists(CustomParameter parameter)
+        {
+            if (container.AllowDuplicateParameters)
+                return false;
+
+            var existingParameters = container.GetParameters();
+
+            return existingParameters.Any(p => p.Name == parameter.Name);
         }
 
         private void AddDependentPropertyRecursiveUp<T>(Enum property)
         {
+            Properties.Add(property);
+
             //Given a property, get that objects parent, and then that objects parent, and so on
 
             var parentOfChild = property.GetEnumAttributes<DependentPropertyAttribute>();
@@ -113,7 +131,7 @@ namespace PrtgAPI.Parameters.Helpers
                     //Then we should include those children, where they will be set to empty causing PRTG to throw an exception
                     if (attrib.ReverseDependency)
                     {
-                        AddParameter(child, cacheResolver.GetPropertyCache(child), string.Empty);
+                        AddParameterIfNotSet(child, cacheResolver.GetPropertyCache(child), string.Empty);
                         var newChildren = child.GetDependentProperties();
                         TryDisableDependentProperties(null, disableDependentsOnNotReqiuiredValue, newChildren);
                     }
@@ -123,7 +141,7 @@ namespace PrtgAPI.Parameters.Helpers
                     //If we wish to disable dependents when their parent value does not match their required value, add and assign them an empty value
                     if (disableDependentsOnNotReqiuiredValue)
                     {
-                        AddParameter(child, cacheResolver.GetPropertyCache(child), string.Empty);
+                        AddParameterIfNotSet(child, cacheResolver.GetPropertyCache(child), string.Empty);
                         var newChildren = child.GetDependentProperties();
                         TryDisableDependentProperties(null, disableDependentsOnNotReqiuiredValue, newChildren);
                     }
@@ -139,7 +157,7 @@ namespace PrtgAPI.Parameters.Helpers
 
                 if (attrib.ReverseDependency)
                 {
-                    AddParameter(child, cacheResolver.GetPropertyCache(child), string.Empty);
+                    AddParameterIfNotSet(child, cacheResolver.GetPropertyCache(child), string.Empty);
                 }
             }
         }
@@ -162,9 +180,12 @@ namespace PrtgAPI.Parameters.Helpers
             }
         }
 
-        void AddParameter(Enum property, PropertyCache cache, object value)
+        void AddParameterIfNotSet(Enum property, PropertyCache cache, object value)
         {
-            container.AddParameter(new CustomParameter(GetParameterName(property, cache), value?.ToString()));
+            var parameter = new CustomParameter(GetParameterName(property, cache), value?.ToString());
+
+            if (!ParameterExists(parameter))
+                container.AddParameter(parameter);
         }
 
         #region Name Resolution

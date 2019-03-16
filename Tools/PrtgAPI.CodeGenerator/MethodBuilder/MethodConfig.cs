@@ -18,7 +18,7 @@ namespace PrtgAPI.CodeGenerator.MethodBuilder
         public bool IsTokenInterface { get; private set; }
 
         /// <summary>
-        /// Indicates whether this method (which does not accept a <see cref="CancellationToken"/> has an overload that does.
+        /// Indicates whether this method (which does not accept a <see cref="CancellationToken"/>) has an overload that does.
         /// </summary>
         public bool HasTokenInterfaceOverload { get; private set; }
 
@@ -47,8 +47,7 @@ namespace PrtgAPI.CodeGenerator.MethodBuilder
             TokenMode.MandatoryDefault, TokenMode.MandatoryNamedDefault
         );
 
-        public bool RequiresTokenSummary => IsAnyToken(TokenMode.Automatic,
-            TokenMode.AutomaticNamed, TokenMode.MandatoryCall, TokenMode.MandatoryNamedCall);
+        public bool RequiresTokenSummary => IsAnyToken(TokenMode.Automatic, TokenMode.AutomaticAll, TokenMode.AutomaticNamed, TokenMode.MandatoryCall, TokenMode.MandatoryNamedCall);
 
         /// <summary>
         /// Indicates that a cancellation token should be passed as a named parameter to a method expression.
@@ -58,7 +57,7 @@ namespace PrtgAPI.CodeGenerator.MethodBuilder
         /// <summary>
         /// Indicates that a cancellation token should be passed as a positional parameter to a method expression.
         /// </summary>
-        public bool RequiresPositionalTokenArgument => IsAnyToken(TokenMode.Automatic, TokenMode.AutomaticDefault, TokenMode.MandatoryDefault, TokenMode.MandatoryCall);
+        public bool RequiresPositionalTokenArgument => IsAnyToken(TokenMode.Automatic, TokenMode.AutomaticAll, TokenMode.AutomaticDefault, TokenMode.MandatoryDefault, TokenMode.MandatoryCall);
 
         public IMethodImpl Method { get; }
 
@@ -158,7 +157,7 @@ namespace PrtgAPI.CodeGenerator.MethodBuilder
             {
                 if(region.IsTokenRegion)
                 {
-                    //This is THE "Parameters (Cancellation Token)" region taht corresponds to the previous "Parameters" region
+                    //This is THE "Parameters (Cancellation Token)" region that corresponds to the previous "Parameters" region
                     IsTokenInterface = true;
                 }
                 else
@@ -181,19 +180,27 @@ namespace PrtgAPI.CodeGenerator.MethodBuilder
                 {
                     if (MethodType == MethodType.Asynchronous)
                     {
+                        //All Asynchronous methods support specifying a CancellationToken. The question however is whether
+                        //the token is built in to the original method or whether a specialized overload is required that
+                        //implements the optional token
                         if (IsAnyMethodToken(TokenMode.AutomaticDefault, TokenMode.AutomaticNamedDefault,
                             TokenMode.MandatoryDefault, TokenMode.MandatoryNamedDefault,
                             TokenMode.Manual))
-                            IsTokenInterface = true;
+                            IsTokenInterface = true; //One method with CancellationToken token = default(CancellationToken)
                         else
-                            HasTokenInterfaceOverload = true;
+                            HasTokenInterfaceOverload = true; //Two methods: one with a token, one without
                     }
                     else
                     {
                         if(MethodType == MethodType.Synchronous)
                         {
-                            if (MethodDef.TokenMode == TokenMode.MandatoryDefault || MethodDef.TokenMode == TokenMode.MandatoryNamedDefault)
-                                IsTokenInterface = true;
+                            if (MethodDef.TokenMode == TokenMode.AutomaticAll)
+                                HasTokenInterfaceOverload = true;
+                            else
+                            {
+                                if (MethodDef.TokenMode == TokenMode.MandatoryDefault || MethodDef.TokenMode == TokenMode.MandatoryNamedDefault)
+                                    IsTokenInterface = true;
+                            }
                         }
                     }
                 }

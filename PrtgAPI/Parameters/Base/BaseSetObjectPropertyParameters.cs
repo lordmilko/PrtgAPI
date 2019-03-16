@@ -1,16 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using PrtgAPI.Reflection.Cache;
 using PrtgAPI.Parameters.Helpers;
 
 namespace PrtgAPI.Parameters
 {
+    [DebuggerDisplay("{DebuggerDisplay,nq}")]
     internal abstract class BaseSetObjectPropertyParameters<TObjectProperty> :
         BaseParameters,
         IMultiTargetParameters, IHtmlParameters, ICustomParameterContainer, IPropertyCacheResolver
     {
         HtmlFunction IHtmlParameters.Function => HtmlFunction.EditSettings;
+
+        private string DebuggerDisplay => string.Join(", ", CustomParameters);
 
         public List<CustomParameter> CustomParameters
         {
@@ -23,7 +27,7 @@ namespace PrtgAPI.Parameters
         protected BaseSetObjectPropertyParameters(int[] ids)
         {
             if(ids != null && ids.Length > 0)
-                ObjectIdsInternal = ids;
+                ObjectIdsInternal = ids.Distinct().ToArray();
 
             CustomParameters = new List<CustomParameter>();
             parser = new ObjectPropertyParser(this, this, GetParameterName);
@@ -45,6 +49,10 @@ namespace PrtgAPI.Parameters
         {
             CustomParameters.Add(parameter);
         }
+
+        ICollection<CustomParameter> ICustomParameterContainer.GetParameters() => CustomParameters;
+
+        bool ICustomParameterContainer.AllowDuplicateParameters => false;
 
         /// <summary>
         /// Searches this object's <see cref="CustomParameters"/> for any objects with a duplicate <see cref="CustomParameter.Name"/> and removes all but the last one.

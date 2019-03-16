@@ -34,6 +34,7 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
         public Dictionary<Content, Action<BaseItem>> PropertyManipulator { get; set; }
         public Dictionary<Content, BaseItem[]> ItemOverride { get; set; }
         private Dictionary<string, int> hitCount = new Dictionary<string, int>();
+        public Func<string, string, string> ResponseTextManipulator { get; set; }
 
         public int[] HasSchedule { get; set; }
 
@@ -48,7 +49,12 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
             else
                 hitCount.Add(function, 1);
 
-            return GetResponse(ref address, function).GetResponseText(ref address);
+            var text = GetResponse(ref address, function).GetResponseText(ref address);
+
+            if (ResponseTextManipulator != null)
+                return ResponseTextManipulator(text, address);
+
+            return text;
         }
 
         public async Task<string> GetResponseTextStream(string address)
@@ -60,7 +66,12 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
             else
                 hitCount.Add(function, 1);
 
-            return await GetResponseStream(address, function).GetResponseTextStream(address);
+            var text = await GetResponseStream(address, function).GetResponseTextStream(address);
+
+            if (ResponseTextManipulator != null)
+                return ResponseTextManipulator(address, text);
+
+            return text;
         }
 
         protected virtual IWebResponse GetResponse(ref string address, string function)

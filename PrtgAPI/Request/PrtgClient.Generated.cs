@@ -1395,7 +1395,7 @@ namespace PrtgAPI
         }
 
         //#######################################
-        // CreateSetObjectPropertyParametersAsync
+        // CreateSetObjectPropertyParameters
         //#######################################
 
         private SetObjectPropertyParameters CreateSetObjectPropertyParameters(int[] objectIds, PropertyParameter[] parameters, CancellationToken token)
@@ -1468,6 +1468,62 @@ namespace PrtgAPI
             var @params = new SetObjectPropertyParameters(objectIds, parameters);
 
             return @params;
+        }
+
+        //#######################################
+        // SetChannelProperty
+        //#######################################
+
+        internal void SetChannelProperty(IEnumerable<Channel> channels, int[] sensorIds, int? channelId, ChannelParameter[] parameters, CancellationToken token)
+        {
+            if (parameters == null)
+                throw new ArgumentNullException(nameof(parameters), "Parameters cannot be null.");
+
+            if (parameters.Any(p => p == null))
+                throw new ArgumentException("Cannot process a null parameter.", nameof(parameters));
+
+            if (parameters.Length == 0)
+                throw new ArgumentException("At least one parameter must be specified.", nameof(parameters));
+
+            var versionClient = GetVersionClient<ChannelParameter, ChannelProperty>(parameters.ToList());
+
+            if (channels != null)
+            {
+                var channelsList = channels.AsCollection();
+
+                if (channelsList.Any(c => c == null))
+                    throw new ArgumentException("Cannot process a null channel.", nameof(channels));
+
+                versionClient.SetChannelProperty(channelsList, parameters, token);
+            }
+            else
+                versionClient.SetChannelProperty(sensorIds, channelId.Value, parameters, token);
+        }
+
+        internal async Task SetChannelPropertyAsync(IEnumerable<Channel> channels, int[] sensorIds, int? channelId, ChannelParameter[] parameters, CancellationToken token)
+        {
+            if (parameters == null)
+                throw new ArgumentNullException(nameof(parameters), "Parameters cannot be null.");
+
+            if (parameters.Any(p => p == null))
+                throw new ArgumentException("Cannot process a null parameter.", nameof(parameters));
+
+            if (parameters.Length == 0)
+                throw new ArgumentException("At least one parameter must be specified.", nameof(parameters));
+
+            var versionClient = GetVersionClient<ChannelParameter, ChannelProperty>(parameters.ToList());
+
+            if (channels != null)
+            {
+                var channelsList = channels.AsCollection();
+
+                if (channelsList.Any(c => c == null))
+                    throw new ArgumentException("Cannot process a null channel.", nameof(channels));
+
+                await versionClient.SetChannelPropertyAsync(channelsList, parameters, token).ConfigureAwait(false);
+            }
+            else
+                await versionClient.SetChannelPropertyAsync(sensorIds, channelId.Value, parameters, token).ConfigureAwait(false);
         }
     }
 }

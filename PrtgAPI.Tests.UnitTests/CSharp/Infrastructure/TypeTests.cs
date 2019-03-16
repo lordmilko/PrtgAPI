@@ -728,6 +728,25 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             });
         }
 
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void IShallowCloneable_SetChannelPropertyParameters_CloneFully()
+        {
+            var ids = new[] {1001, 1002, 1003};
+            var @params = new[]
+            {
+                new ChannelParameter(ChannelProperty.UpperErrorLimit, 100),
+                new ChannelParameter(ChannelProperty.SpikeFilterEnabled, true)
+            };
+
+            var parameters = new SetChannelPropertyParameters(ids, 1, @params)
+            {
+                Cookie = true
+            };
+
+            Clone(parameters);
+        }
+
         private void CloneTable<TObject, TParam>(TParam parameters, Func<MemberInfo, bool> customHandler = null)
             where TObject : ITableObject, IObject
             where TParam : TableParameters<TObject>, IShallowCloneable<TParam>

@@ -1,13 +1,18 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PrtgAPI.Parameters;
+using PrtgAPI.Request;
 using PrtgAPI.Tests.UnitTests.Support;
 using PrtgAPI.Tests.UnitTests.Support.TestResponses;
+using PrtgAPI.Utilities;
 
 namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
 {
@@ -896,7 +901,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
                     new PropertyParameter(ObjectProperty.WindowsUserName, "username"),
                     new PropertyParameter(ObjectProperty.WindowsPassword, "password")
                 ),
-                "id=1001&windowsloginusername_=username&windowsloginpassword_=password&windowsconnection=0"
+                "id=1001&windowsloginusername_=username&windowsconnection=0&windowsloginpassword_=password"
             );
         }
 
@@ -910,7 +915,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
                     new PropertyParameter(ObjectProperty.WindowsUserName, "username"),
                     new PropertyParameter(ObjectProperty.WindowsPassword, "password")
                 ),
-                "id=1001&windowsloginusername_=username&windowsloginpassword_=password&windowsconnection=0"
+                "id=1001&windowsloginusername_=username&windowsconnection=0&windowsloginpassword_=password"
             );
         }
 
@@ -920,9 +925,9 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         {
             var urls = new[]
             {
-                TestHelpers.RequestChannel(1001),
-                TestHelpers.RequestChannelProperties(1001, 1),
-                TestHelpers.SetChannelProperty("id=1001&limitmaxerror_1=100&limitminerror_1=20&limitmode_1=1&limitmaxerror_1_factor=1&limitminerror_1_factor=1")
+                UnitRequest.Channels(1001),
+                UnitRequest.ChannelProperties(1001, 1),
+                UnitRequest.SetChannelProperty("id=1001&limitmaxerror_1=100&limitmode_1=1&limitminerror_1=20&limitmaxerror_1_factor=1&limitminerror_1_factor=1")
             };
 
             Execute(c => c.SetChannelProperty(
@@ -939,9 +944,9 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         {
             var urls = new[]
             {
-                TestHelpers.RequestChannel(1001),
-                TestHelpers.RequestChannelProperties(1001, 1),
-                TestHelpers.SetChannelProperty("id=1001&limitmaxerror_1=100&limitminerror_1=20&limitmode_1=1&limitmaxerror_1_factor=1&limitminerror_1_factor=1")
+                UnitRequest.Channels(1001),
+                UnitRequest.ChannelProperties(1001, 1),
+                UnitRequest.SetChannelProperty("id=1001&limitmaxerror_1=100&limitmode_1=1&limitminerror_1=20&limitmaxerror_1_factor=1&limitminerror_1_factor=1")
             };
 
             await ExecuteAsync(
@@ -986,15 +991,17 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         #endregion
-        #region Version Specific
+        #region Version Differences
             #region Single
 
         [TestMethod]
         [TestCategory("UnitTest")]
         public void SetChannelProperty_SingleValue_OnlyUpperErrorLimit()
         {
+            //When we specify an ErrorLimitMessage, we also include our UpperErrorLimit
             var matrix = new[]
             {
+                //UpperError/LowerError/UpperWarning/LowerWarning
                 new int?[] {1, null, null, null},
                 new int?[] {1, null, null, null}
             };
@@ -1005,14 +1012,19 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
                 matrix
             );
 
-            SetChannelProperty(config, RequestVersion.v14_4, new[] { "id=1001,2001&limiterrormsg_2=test&limitmode_2=1" });
-            SetChannelProperty(config, RequestVersion.v18_1, new[] { "id=1001,2001&limiterrormsg_2=test&limitmode_2=1&limitmaxerror_2=1" });
+            SetChannelProperty(config, RequestVersion.v14_4,
+                UnitRequest.SetChannelProperty("id=1001,2001&limiterrormsg_1=test&limitmode_1=1")
+            );
+            SetChannelProperty(config, RequestVersion.v18_1,
+                UnitRequest.SetChannelProperty("id=1001,2001&limiterrormsg_1=test&limitmode_1=1&limitmaxerror_1=1&limitmaxerror_1_factor=0.1")
+            );
         }
 
         [TestMethod]
         [TestCategory("UnitTest")]
         public void SetChannelProperty_SingleValue_OnlyLowerErrorLimit()
         {
+            //When we specify an ErrorLimitMessage, we also include our LowerErrorLimit
             var matrix = new[]
             {
                 new int?[] {null, 1, null, null},
@@ -1025,14 +1037,19 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
                 matrix
             );
 
-            SetChannelProperty(config, RequestVersion.v14_4, new[] { "id=1001,2001&limiterrormsg_2=test&limitmode_2=1" });
-            SetChannelProperty(config, RequestVersion.v18_1, new[] { "id=1001,2001&limiterrormsg_2=test&limitmode_2=1&limitminerror_2=1" });
+            SetChannelProperty(config, RequestVersion.v14_4,
+                UnitRequest.SetChannelProperty("id=1001,2001&limiterrormsg_1=test&limitmode_1=1")
+            );
+            SetChannelProperty(config, RequestVersion.v18_1,
+                UnitRequest.SetChannelProperty("id=1001,2001&limiterrormsg_1=test&limitmode_1=1&limitminerror_1=1&limitminerror_1_factor=0.1")
+            );
         }
 
         [TestMethod]
         [TestCategory("UnitTest")]
         public void SetChannelProperty_SingleValue_OnlyUpperWarningLimit()
         {
+            //When we specify an ErrorLimitMessage, we also include our UpperWarningLimit
             var matrix = new[]
             {
                 new int?[] {null, null, 1, null},
@@ -1045,14 +1062,19 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
                 matrix
             );
 
-            SetChannelProperty(config, RequestVersion.v14_4, new[] { "id=1001,2001&limiterrormsg_2=test&limitmode_2=1" });
-            SetChannelProperty(config, RequestVersion.v18_1, new[] { "id=1001,2001&limiterrormsg_2=test&limitmode_2=1&limitmaxwarning_2=1" });
+            SetChannelProperty(config, RequestVersion.v14_4,
+                UnitRequest.SetChannelProperty("id=1001,2001&limiterrormsg_1=test&limitmode_1=1")
+            );
+            SetChannelProperty(config, RequestVersion.v18_1,
+                UnitRequest.SetChannelProperty("id=1001,2001&limiterrormsg_1=test&limitmode_1=1&limitmaxwarning_1=1&limitmaxwarning_1_factor=0.1")
+            );
         }
 
         [TestMethod]
         [TestCategory("UnitTest")]
         public void SetChannelProperty_SingleValue_OnlyLowerWarningLimit()
         {
+            //When we specify an ErrorLimitMessage, we also include our LowerWarningLimit
             var matrix = new[]
             {
                 new int?[] {null, null, null, 1},
@@ -1065,8 +1087,12 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
                 matrix
             );
 
-            SetChannelProperty(config, RequestVersion.v14_4, new[] { "id=1001,2001&limiterrormsg_2=test&limitmode_2=1" });
-            SetChannelProperty(config, RequestVersion.v18_1, new[] { "id=1001,2001&limiterrormsg_2=test&limitmode_2=1&limitminwarning_2=1" });
+            SetChannelProperty(config, RequestVersion.v14_4,
+                UnitRequest.SetChannelProperty("id=1001,2001&limiterrormsg_1=test&limitmode_1=1")
+            );
+            SetChannelProperty(config, RequestVersion.v18_1,
+                UnitRequest.SetChannelProperty("id=1001,2001&limiterrormsg_1=test&limitmode_1=1&limitminwarning_1=1&limitminwarning_1_factor=0.1")
+            );
         }
 
             #endregion
@@ -1076,6 +1102,10 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         [TestCategory("UnitTest")]
         public void SetChannelProperty_MultipleValues_OnlyUpperErrorLimit()
         {
+            //When we specify our ErrorLimitMessage, we split the request in two:
+            //All of the channels with an UpperErrorLimit of 1 are grouped together,
+            //while all of the channels with an UpperErrorLimit of 2 are grouped together
+
             var matrix = new[]
             {
                 new int?[] {1, null, null, null},
@@ -1089,11 +1119,13 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
                 matrix
             );
 
-            SetChannelProperty(config, RequestVersion.v14_4, new[] { "id=1001,2001,3001&limiterrormsg_2=test&limitmode_2=1" });
+            SetChannelProperty(config, RequestVersion.v14_4,
+                UnitRequest.SetChannelProperty("id=1001,2001,3001&limiterrormsg_1=test&limitmode_1=1")
+            );
             SetChannelProperty(config, RequestVersion.v18_1, new[]
             {
-                "id=2001,3001&limiterrormsg_2=test&limitmode_2=1&limitmaxerror_2=2",
-                "id=1001&limiterrormsg_2=test&limitmode_2=1&limitmaxerror_2=1"
+                UnitRequest.SetChannelProperty("id=2001,3001&limiterrormsg_1=test&limitmode_1=1&limitmaxerror_1=2&limitmaxerror_1_factor=0.1"),
+                UnitRequest.SetChannelProperty("id=1001&limiterrormsg_1=test&limitmode_1=1&limitmaxerror_1=1&limitmaxerror_1_factor=0.1")
             });
         }
 
@@ -1101,6 +1133,10 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         [TestCategory("UnitTest")]
         public void SetChannelProperty_MultipleValues_OnlyLowerErrorLimit()
         {
+            //When we specify our ErrorLimitMessage, we split the request in two:
+            //All of the channels with an LowerErrorLimit of 1 are grouped together,
+            //while all of the channels with an LowerErrorLimit of 2 are grouped together
+
             var matrix = new[]
             {
                 new int?[] {null, 1, null, null},
@@ -1116,11 +1152,13 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
 
             //todo: does this actually group together the sensor IDs to execute against for the request?
 
-            SetChannelProperty(config, RequestVersion.v14_4, new[] { "id=1001,2001,3001&limiterrormsg_2=test&limitmode_2=1" });
+            SetChannelProperty(config, RequestVersion.v14_4,
+                UnitRequest.SetChannelProperty("id=1001,2001,3001&limiterrormsg_1=test&limitmode_1=1")
+            );
             SetChannelProperty(config, RequestVersion.v18_1, new[]
             {
-                "id=2001,3001&limiterrormsg_2=test&limitmode_2=1&limitminerror_2=2",
-                "id=1001&limiterrormsg_2=test&limitmode_2=1&limitminerror_2=1"
+                UnitRequest.SetChannelProperty("id=2001,3001&limiterrormsg_1=test&limitmode_1=1&limitminerror_1=2&limitminerror_1_factor=0.1"),
+                UnitRequest.SetChannelProperty("id=1001&limiterrormsg_1=test&limitmode_1=1&limitminerror_1=1&limitminerror_1_factor=0.1")
             });
         }
 
@@ -1128,6 +1166,10 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         [TestCategory("UnitTest")]
         public void SetChannelProperty_MultipleValues_OnlyUpperWarningLimit()
         {
+            //When we specify our ErrorLimitMessage, we split the request in two:
+            //All of the channels with an UpperWarningLimit of 1 are grouped together,
+            //while all of the channels with an UpperWarningLimit of 2 are grouped together
+
             var matrix = new[]
             {
                 new int?[] {null, null, 1, null},
@@ -1141,11 +1183,13 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
                 matrix
             );
 
-            SetChannelProperty(config, RequestVersion.v14_4, new[] { "id=1001,2001,3001&limiterrormsg_2=test&limitmode_2=1" });
+            SetChannelProperty(config, RequestVersion.v14_4,
+                UnitRequest.SetChannelProperty("id=1001,2001,3001&limiterrormsg_1=test&limitmode_1=1")
+            );
             SetChannelProperty(config, RequestVersion.v18_1, new[]
             {
-                "id=2001,3001&limiterrormsg_2=test&limitmode_2=1&limitmaxwarning_2=2",
-                "id=1001&limiterrormsg_2=test&limitmode_2=1&limitmaxwarning_2=1"
+                UnitRequest.SetChannelProperty("id=2001,3001&limiterrormsg_1=test&limitmode_1=1&limitmaxwarning_1=2&limitmaxwarning_1_factor=0.1"),
+                UnitRequest.SetChannelProperty("id=1001&limiterrormsg_1=test&limitmode_1=1&limitmaxwarning_1=1&limitmaxwarning_1_factor=0.1")
             });
         }
 
@@ -1153,6 +1197,10 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         [TestCategory("UnitTest")]
         public void SetChannelProperty_MultipleValues_OnlyLowerWarningLimit()
         {
+            //When we specify our ErrorLimitMessage, we split the request in two:
+            //All of the channels with an LowerWarningLimit of 1 are grouped together,
+            //while all of the channels with an LowerWarningLimit of 2 are grouped together
+
             var matrix = new[]
             {
                 new int?[] {null, null, null, 1},
@@ -1166,11 +1214,13 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
                 matrix
             );
 
-            SetChannelProperty(config, RequestVersion.v14_4, new[] { "id=1001,2001,3001&limiterrormsg_2=test&limitmode_2=1" });
+            SetChannelProperty(config, RequestVersion.v14_4,
+                UnitRequest.SetChannelProperty("id=1001,2001,3001&limiterrormsg_1=test&limitmode_1=1")
+            );
             SetChannelProperty(config, RequestVersion.v18_1, new[]
             {
-                "id=2001,3001&limiterrormsg_2=test&limitmode_2=1&limitminwarning_2=2",
-                "id=1001&limiterrormsg_2=test&limitmode_2=1&limitminwarning_2=1"
+                UnitRequest.SetChannelProperty("id=2001,3001&limiterrormsg_1=test&limitmode_1=1&limitminwarning_1=2&limitminwarning_1_factor=0.1"),
+                UnitRequest.SetChannelProperty("id=1001&limiterrormsg_1=test&limitmode_1=1&limitminwarning_1=1&limitminwarning_1_factor=0.1")
                 
             });
         }
@@ -1182,6 +1232,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         [TestCategory("UnitTest")]
         public void SetChannelProperty_VersionProperty_ErrorLimitMessage()
         {
+            //Basically the same test as SetChannelProperty_SingleValue_OnlyUpperErrorLimit
+
             var matrix = new[]
             {
                 new int?[] {1, null, null, null},
@@ -1194,8 +1246,12 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
                 matrix
             );
 
-            SetChannelProperty(config, RequestVersion.v14_4, new[] { "id=1001,2001&limiterrormsg_2=test&limitmode_2=1" });
-            SetChannelProperty(config, RequestVersion.v18_1, new[] { "id=1001,2001&limiterrormsg_2=test&limitmode_2=1&limitmaxerror_2=1" });
+            SetChannelProperty(config, RequestVersion.v14_4,
+                UnitRequest.SetChannelProperty("id=1001,2001&limiterrormsg_1=test&limitmode_1=1")
+            );
+            SetChannelProperty(config, RequestVersion.v18_1,
+                UnitRequest.SetChannelProperty("id=1001,2001&limiterrormsg_1=test&limitmode_1=1&limitmaxerror_1=1&limitmaxerror_1_factor=0.1")
+            );
         }
 
         [TestMethod]
@@ -1214,8 +1270,12 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
                 matrix
             );
 
-            SetChannelProperty(config, RequestVersion.v14_4, new[] { "id=1001,2001&limitwarningmsg_2=test&limitmode_2=1" });
-            SetChannelProperty(config, RequestVersion.v18_1, new[] { "id=1001,2001&limitwarningmsg_2=test&limitmode_2=1&limitmaxerror_2=1" });
+            SetChannelProperty(config, RequestVersion.v14_4,
+                UnitRequest.SetChannelProperty("id=1001,2001&limitwarningmsg_1=test&limitmode_1=1")
+            );
+            SetChannelProperty(config, RequestVersion.v18_1,
+                UnitRequest.SetChannelProperty("id=1001,2001&limitwarningmsg_1=test&limitmode_1=1&limitmaxerror_1=1&limitmaxerror_1_factor=0.1")
+            );
         }
 
         [TestMethod]
@@ -1234,8 +1294,12 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
                 matrix
             );
 
-            SetChannelProperty(config, RequestVersion.v14_4, new[] { "id=1001,2001&limitmode_2=1" });
-            SetChannelProperty(config, RequestVersion.v18_1, new[] { "id=1001,2001&limitmode_2=1&limitmaxerror_2=1" });
+            SetChannelProperty(config, RequestVersion.v14_4,
+                UnitRequest.SetChannelProperty("id=1001,2001&limitmode_1=1")
+            );
+            SetChannelProperty(config, RequestVersion.v18_1,
+                UnitRequest.SetChannelProperty("id=1001,2001&limitmode_1=1&limitmaxerror_1=1&limitmaxerror_1_factor=0.1")
+            );
         }
 
         [TestMethod]
@@ -1254,8 +1318,13 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
                 matrix
             );
 
-            SetChannelProperty(config, RequestVersion.v14_4, new[] { "id=1001,2001&limitmode_2=0&limitmaxerror_2=&limitmaxwarning_2=&limitminerror_2=&limitminwarning_2=&limiterrormsg_2=&limitwarningmsg_2=" });
-            SetChannelProperty(config, RequestVersion.v18_1, new[] { "id=1001,2001&limitmode_2=0&limitmaxerror_2=&limitmaxwarning_2=&limitminerror_2=&limitminwarning_2=&limiterrormsg_2=&limitwarningmsg_2=" });
+            SetChannelProperty(config, RequestVersion.v14_4,
+                UnitRequest.SetChannelProperty("id=1001,2001&limitmode_1=0&limitmaxerror_1=&limitmaxwarning_1=&limitminerror_1=&limitminwarning_1=&limiterrormsg_1=&limitwarningmsg_1=")
+            );
+            SetChannelProperty(config, RequestVersion.v18_1,
+                new[] {UnitRequest.SetChannelProperty("id=1001,2001&limitmode_1=0&limitmaxerror_1=&limitmaxwarning_1=&limitminerror_1=&limitminwarning_1=&limiterrormsg_1=&limitwarningmsg_1=")},
+                true
+            );
         }
 
         [TestMethod]
@@ -1274,16 +1343,39 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
                 matrix
             );
 
-            SetChannelProperty(config, RequestVersion.v14_4, new[] { "id=1001,2001&spikemax_2=100&spikemode_2=1" });
-            SetChannelProperty(config, RequestVersion.v18_1, new[] { "id=1001,2001&spikemax_2=100&spikemode_2=1" });
+            SetChannelProperty(config, RequestVersion.v14_4,
+                UnitRequest.SetChannelProperty("id=1001,2001&spikemax_1=100&spikemode_1=1")
+            );
+            SetChannelProperty(config, RequestVersion.v18_1,
+                new[] {UnitRequest.SetChannelProperty("id=1001,2001&spikemax_1=100&spikemode_1=1")},
+                true
+            );
         }
 
             #endregion
+            #region Miscellaneous
 
         [TestMethod]
         [TestCategory("UnitTest")]
         public void SetChannelProperty_ThreeValues()
         {
+            /* We have a collection of 6 channels, with a variety of different limit property/value combinations.
+             * From these channels, we can see the following:
+             * 2 have the same UpperErrorLimit ("2") - 1001,2001
+             * 3 have the same LowerErrorLimit ("3") - 4001,5001,6001
+             * 1 has the same UpperWarningLimit ("2") - 1001 (defaults to first channel)
+             * 1 has the same LowerWarningLimit ("1") - 1001 (defaults to first channel)
+             *
+             * We then iterate over our analysis, removing channels until all channels have been processed,
+             * or the highest limit property analysis found contains no channels (in which case channels must exist
+             * that have NO limit property)
+             *
+             * For example, since LowerErrorLimit has 3 channels, we set those as the first request and remove them from consideration.
+             * Next is upperErrorLimit with 2 channels, leaving one channel, which defaults to using its UpperErrorLimit.
+             *
+             * As a result, we get three requests
+             */
+
             var matrix = new[]
             {
                 new int?[] {1,    null, 2,    1}, //1001 - 2
@@ -1300,12 +1392,14 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
                 matrix
             );
 
-            SetChannelProperty(config, RequestVersion.v14_4, new[] { "id=1001,2001,3001,4001,5001,6001&limiterrormsg_2=test&limitmode_2=1" });
+            SetChannelProperty(config, RequestVersion.v14_4,
+                UnitRequest.SetChannelProperty("id=1001,2001,3001,4001,5001,6001&limiterrormsg_1=test&limitmode_1=1")
+            );
             SetChannelProperty(config, RequestVersion.v18_1, new[]
             {
-                "id=4001,5001,6001&limiterrormsg_2=test&limitmode_2=1&limitminerror_2=3",
-                "id=1001,2001&limiterrormsg_2=test&limitmode_2=1&limitmaxerror_2=1",
-                "id=3001&limiterrormsg_2=test&limitmode_2=1&limitmaxerror_2=5"
+                UnitRequest.SetChannelProperty("id=4001,5001,6001&limiterrormsg_1=test&limitmode_1=1&limitminerror_1=3&limitminerror_1_factor=0.1"),
+                UnitRequest.SetChannelProperty("id=1001,2001&limiterrormsg_1=test&limitmode_1=1&limitmaxerror_1=1&limitmaxerror_1_factor=0.1"),
+                UnitRequest.SetChannelProperty("id=3001&limiterrormsg_1=test&limitmode_1=1&limitmaxerror_1=5&limitmaxerror_1_factor=0.1")
             });
         }
 
@@ -1325,12 +1419,15 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
                 matrix
             );
 
-            Action<RequestVersion> action = version => SetChannelProperty(config, version, new[] { "id=1001,2001&limiterrormsg_2=test&limitmode_2=1" });
+            Action<RequestVersion> action = version =>
+                SetChannelProperty(config, version,
+                    UnitRequest.SetChannelProperty("id=1001,2001&limiterrormsg_1=test&limitmode_1=1")
+                );
 
             action(RequestVersion.v14_4);
 
             var builder = new StringBuilder();
-            builder.Append("Cannot set property 'ErrorLimitMessage' to value 'test' for Channel ID 2: ");
+            builder.Append("Cannot set property 'ErrorLimitMessage' to value 'test' for Channel ID 1: ");
             builder.Append("Sensor ID 2001 does not have a limit value defined on it. ");
             builder.Append("Please set one of 'UpperErrorLimit', 'LowerErrorLimit', 'UpperWarningLimit' or 'LowerWarningLimit' first and then try again");
 
@@ -1353,12 +1450,15 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
                 matrix
             );
 
-            Action<RequestVersion> action = version => SetChannelProperty(config, version, new[] { "id=1001,2001&limiterrormsg_2=test&limitmode_2=1" });
+            Action<RequestVersion> action = version =>
+                SetChannelProperty(config, version,
+                    UnitRequest.SetChannelProperty("id=1001,2001&limiterrormsg_1=test&limitmode_1=1")
+                );
 
             action(RequestVersion.v14_4);
 
             var builder = new StringBuilder();
-            builder.Append("Cannot set property 'ErrorLimitMessage' to value 'test' for Channel ID 2: ");
+            builder.Append("Cannot set property 'ErrorLimitMessage' to value 'test' for Channel ID 1: ");
             builder.Append("Sensor IDs 1001 and 2001 do not have a limit value defined on them. ");
             builder.Append("Please set one of 'UpperErrorLimit', 'LowerErrorLimit', 'UpperWarningLimit' or 'LowerWarningLimit' first and then try again");
 
@@ -1373,7 +1473,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             {
                 "api/table.xml?content=channels&columns=objid,name,lastvalue&count=*&id=1001",
                 "controls/channeledit.htm?id=1001&channel=1",
-                "editsettings?id=1001&limiterrormsg_1=hello&limitmode_1=1&limitmaxerror_1=100"
+                "editsettings?id=1001&limiterrormsg_1=hello&limitmode_1=1&limitmaxerror_1=100&limitmaxerror_1_factor=1"
             };
 
             var property = ChannelProperty.ErrorLimitMessage;
@@ -1385,45 +1485,142 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
 
             var client = Initialize_Client(response, RequestVersion.v18_1);
 
-            client.GetVersionClient(new object[] {property}).SetChannelProperty(new[] { 1001 }, 1, null, new[] { new ChannelParameter(property, val) });
+            var versionClient = client.GetVersionClient(new object[] { property });
+
+            versionClient.SetChannelProperty(new[] { 1001 }, 1, new[] { new ChannelParameter(property, val) }, CancellationToken.None);
 
             response.AssertFinished();
         }
 
-        private void SetChannelProperty(Tuple<ChannelProperty, object, int?[][]> config, RequestVersion version, string[] addresses)
+        #endregion
+        #region Helpers
+
+        private void SetChannelProperty(Tuple<ChannelProperty, object, int?[][]> config, RequestVersion version, params string[] addresses) =>
+            SetChannelProperty(config, version, addresses, false);
+
+        private void SetChannelProperty(Tuple<ChannelProperty, object, int?[][]> config, RequestVersion version, string[] addresses, bool noChannels)
         {
             var property = config.Item1;
             var val = config.Item2;
             var matrix = config.Item3;
 
-            var channels = matrix.Select(CreateChannel).ToList();
+            var channels = matrix.Select(CreateChannel).ToArray();
 
+            var parameters = new[] { new ChannelParameter(property, val) };
+
+            try
+            {
+                SetChannelPropertyInternal(
+                    channels,
+                    property,
+                    version,
+                    addresses,
+                    c => c.SetChannelProperty(channels, parameters, CancellationToken.None)
+                );
+            }
+            catch (AssertFailedException ex)
+            {
+                throw new AssertFailedException($"Channel {version} test failed: {ex.Message}", ex);
+            }
+
+            addresses = GetSetChannelPropertyManualUrls(channels, version, addresses, noChannels);
+
+            try
+            {
+                SetChannelPropertyInternal(
+                    channels,
+                    property,
+                    version,
+                    addresses,
+                    c => c.SetChannelProperty(channels.Select(ch => ch.SensorId).ToArray(), 1, parameters, CancellationToken.None)
+                );
+            }
+            catch (AssertFailedException ex)
+            {
+                throw new AssertFailedException($"Manual {version} test failed: {ex.Message}", ex);
+            }
+        }
+
+        private void SetChannelPropertyInternal(Channel[] channels, ChannelProperty property, RequestVersion version, string[] addresses, Action<VersionClient> action)
+        {
 #pragma warning disable 618
-            var response = new AddressValidatorResponse(addresses.Select(a => $"https://prtg.example.com/editsettings?{a}&username=username&passhash=12345678").ToArray(), true);
+            var response = new AddressValidatorResponse(addresses, true);
+            response.ResponseTextManipulator = (r, a) => FixupChannelLimits(r, a, channels);
 #pragma warning restore 618
 
             var client = Initialize_Client(response, version);
 
-            client.GetVersionClient(new object[] { property }).SetChannelProperty(channels.Select(c => c.SensorId).ToArray(), 2, channels, new [] {new ChannelParameter(property, val)});
+            var versionClient = client.GetVersionClient(new object[] { property });
+
+            action(versionClient);
 
             response.AssertFinished();
         }
 
-        private Channel CreateChannel(int?[] limits, int i)
+        #endregion
+
+        private string[] GetSetChannelPropertyManualUrls(Channel[] channels, RequestVersion version, string[] addresses, bool noChannels)
         {
-            return new Channel
+            var addressList = new List<string>();
+
+            if (version == RequestVersion.v18_1 && !noChannels)
             {
-                Id = 1,
-                SensorId = 1001 + i*1000,
-                UpperErrorLimit = limits[0],
-                LowerErrorLimit = limits[1],
-                UpperWarningLimit = limits[2],
-                LowerWarningLimit = limits[3]
-            };
+                addressList.AddRange(channels.SelectMany(c =>
+                {
+                    return new[]
+                    {
+                        UnitRequest.Channels(c.SensorId),
+                        UnitRequest.ChannelProperties(c.SensorId, 1)
+                    };
+                }));
+            }
+
+            addressList.AddRange(addresses);
+
+            return addressList.ToArray();
+        }
+
+        private string FixupChannelLimits(string response, string address, Channel[] channels)
+        {
+            var function = MultiTypeResponse.GetFunction(address);
+
+            if (function != nameof(HtmlFunction.ChannelEdit))
+                return response;
+
+            var components = UrlUtilities.CrackUrl(address);
+
+            var channel = channels.First(c => c.SensorId.ToString() == components["id"]);
+
+            response = FixupChannelLimit("limitmaxerror_1", channel.UpperErrorLimit, response);
+            response = FixupChannelLimit("limitminerror_1", channel.LowerErrorLimit, response);
+            response = FixupChannelLimit("limitmaxwarning_1", channel.UpperWarningLimit, response);
+            response = FixupChannelLimit("limitminwarning_1", channel.LowerWarningLimit, response);
+
+            response = FixupChannelLimit("limitmaxerror_1_factor", channel.UpperErrorLimitFactor, response);
+            response = FixupChannelLimit("limitminerror_1_factor", channel.LowerErrorLimitFactor, response);
+            response = FixupChannelLimit("limitmaxwarning_1_factor", channel.UpperWarningLimitFactor, response);
+            response = FixupChannelLimit("limitminwarning_1_factor", channel.LowerWarningLimitFactor, response);
+
+            response = FixupChannelLimit("ref100percent_1_factor", channel.PercentFactor, response);
+
+            return response;
+        }
+
+        private string FixupChannelLimit(string property, object value, string response)
+        {
+            var pattern = $"(<input.+?name=\".+?\".+?value=\")(.*?)(\".*?>)";
+
+            var match = Regex.Matches(response, pattern).Cast<Match>().First(m => m.Value.Contains($"name=\"{property}\""));
+
+            Assert.IsTrue(match.Success, $"Failed to find property '{property}' in the response");
+
+            var withNewValue = Regex.Replace(match.Value, "value=\".*?\"", $"value=\"{value}\"");
+
+            return response.Replace(match.Value, withNewValue);
         }
 
         #endregion
-        #region Version Specific Async
+        #region Version Differences Async
             #region Single
 
         [TestMethod]
@@ -1442,8 +1639,12 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
                 matrix
             );
 
-            await SetChannelPropertyAsync(config, RequestVersion.v14_4, new[] { "id=1001,2001&limiterrormsg_2=test&limitmode_2=1" });
-            await SetChannelPropertyAsync(config, RequestVersion.v18_1, new[] { "id=1001,2001&limiterrormsg_2=test&limitmode_2=1&limitmaxerror_2=1" });
+            await SetChannelPropertyAsync(config, RequestVersion.v14_4,
+                UnitRequest.SetChannelProperty("id=1001,2001&limiterrormsg_1=test&limitmode_1=1")
+            );
+            await SetChannelPropertyAsync(config, RequestVersion.v18_1,
+                UnitRequest.SetChannelProperty("id=1001,2001&limiterrormsg_1=test&limitmode_1=1&limitmaxerror_1=1&limitmaxerror_1_factor=0.1")
+            );
         }
 
         [TestMethod]
@@ -1462,8 +1663,12 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
                 matrix
             );
 
-            await SetChannelPropertyAsync(config, RequestVersion.v14_4, new[] { "id=1001,2001&limiterrormsg_2=test&limitmode_2=1" });
-            await SetChannelPropertyAsync(config, RequestVersion.v18_1, new[] { "id=1001,2001&limiterrormsg_2=test&limitmode_2=1&limitminerror_2=1" });
+            await SetChannelPropertyAsync(config, RequestVersion.v14_4,
+                UnitRequest.SetChannelProperty("id=1001,2001&limiterrormsg_1=test&limitmode_1=1")
+            );
+            await SetChannelPropertyAsync(config, RequestVersion.v18_1,
+                UnitRequest.SetChannelProperty("id=1001,2001&limiterrormsg_1=test&limitmode_1=1&limitminerror_1=1&limitminerror_1_factor=0.1")
+            );
         }
 
         [TestMethod]
@@ -1482,8 +1687,12 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
                 matrix
             );
 
-            await SetChannelPropertyAsync(config, RequestVersion.v14_4, new[] { "id=1001,2001&limiterrormsg_2=test&limitmode_2=1" });
-            await SetChannelPropertyAsync(config, RequestVersion.v18_1, new[] { "id=1001,2001&limiterrormsg_2=test&limitmode_2=1&limitmaxwarning_2=1" });
+            await SetChannelPropertyAsync(config, RequestVersion.v14_4,
+                UnitRequest.SetChannelProperty("id=1001,2001&limiterrormsg_1=test&limitmode_1=1")
+            );
+            await SetChannelPropertyAsync(config, RequestVersion.v18_1,
+                UnitRequest.SetChannelProperty("id=1001,2001&limiterrormsg_1=test&limitmode_1=1&limitmaxwarning_1=1&limitmaxwarning_1_factor=0.1")
+            );
         }
 
         [TestMethod]
@@ -1502,8 +1711,12 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
                 matrix
             );
 
-            await SetChannelPropertyAsync(config, RequestVersion.v14_4, new[] { "id=1001,2001&limiterrormsg_2=test&limitmode_2=1" });
-            await SetChannelPropertyAsync(config, RequestVersion.v18_1, new[] { "id=1001,2001&limiterrormsg_2=test&limitmode_2=1&limitminwarning_2=1" });
+            await SetChannelPropertyAsync(config, RequestVersion.v14_4,
+                UnitRequest.SetChannelProperty("id=1001,2001&limiterrormsg_1=test&limitmode_1=1")
+            );
+            await SetChannelPropertyAsync(config, RequestVersion.v18_1,
+                UnitRequest.SetChannelProperty("id=1001,2001&limiterrormsg_1=test&limitmode_1=1&limitminwarning_1=1&limitminwarning_1_factor=0.1")
+            );
         }
 
             #endregion
@@ -1526,11 +1739,13 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
                 matrix
             );
 
-            await SetChannelPropertyAsync(config, RequestVersion.v14_4, new[] { "id=1001,2001,3001&limiterrormsg_2=test&limitmode_2=1" });
+            await SetChannelPropertyAsync(config, RequestVersion.v14_4,
+                UnitRequest.SetChannelProperty("id=1001,2001,3001&limiterrormsg_1=test&limitmode_1=1")
+            );
             await SetChannelPropertyAsync(config, RequestVersion.v18_1, new[]
             {
-                "id=2001,3001&limiterrormsg_2=test&limitmode_2=1&limitmaxerror_2=2",
-                "id=1001&limiterrormsg_2=test&limitmode_2=1&limitmaxerror_2=1"
+                UnitRequest.SetChannelProperty("id=2001,3001&limiterrormsg_1=test&limitmode_1=1&limitmaxerror_1=2&limitmaxerror_1_factor=0.1"),
+                UnitRequest.SetChannelProperty("id=1001&limiterrormsg_1=test&limitmode_1=1&limitmaxerror_1=1&limitmaxerror_1_factor=0.1")
             });
         }
 
@@ -1553,11 +1768,13 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
 
             //todo: does this actually group together the sensor IDs to execute against for the request?
 
-            await SetChannelPropertyAsync(config, RequestVersion.v14_4, new[] { "id=1001,2001,3001&limiterrormsg_2=test&limitmode_2=1" });
+            await SetChannelPropertyAsync(config, RequestVersion.v14_4,
+                UnitRequest.SetChannelProperty("id=1001,2001,3001&limiterrormsg_1=test&limitmode_1=1")
+            );
             await SetChannelPropertyAsync(config, RequestVersion.v18_1, new[]
             {
-                "id=2001,3001&limiterrormsg_2=test&limitmode_2=1&limitminerror_2=2",
-                "id=1001&limiterrormsg_2=test&limitmode_2=1&limitminerror_2=1"
+                UnitRequest.SetChannelProperty("id=2001,3001&limiterrormsg_1=test&limitmode_1=1&limitminerror_1=2&limitminerror_1_factor=0.1"),
+                UnitRequest.SetChannelProperty("id=1001&limiterrormsg_1=test&limitmode_1=1&limitminerror_1=1&limitminerror_1_factor=0.1")
             });
         }
 
@@ -1578,11 +1795,13 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
                 matrix
             );
 
-            await SetChannelPropertyAsync(config, RequestVersion.v14_4, new[] { "id=1001,2001,3001&limiterrormsg_2=test&limitmode_2=1" });
+            await SetChannelPropertyAsync(config, RequestVersion.v14_4,
+                UnitRequest.SetChannelProperty("id=1001,2001,3001&limiterrormsg_1=test&limitmode_1=1")
+            );
             await SetChannelPropertyAsync(config, RequestVersion.v18_1, new[]
             {
-                "id=2001,3001&limiterrormsg_2=test&limitmode_2=1&limitmaxwarning_2=2",
-                "id=1001&limiterrormsg_2=test&limitmode_2=1&limitmaxwarning_2=1"
+                UnitRequest.SetChannelProperty("id=2001,3001&limiterrormsg_1=test&limitmode_1=1&limitmaxwarning_1=2&limitmaxwarning_1_factor=0.1"),
+                UnitRequest.SetChannelProperty("id=1001&limiterrormsg_1=test&limitmode_1=1&limitmaxwarning_1=1&limitmaxwarning_1_factor=0.1")
             });
         }
 
@@ -1603,11 +1822,13 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
                 matrix
             );
 
-            await SetChannelPropertyAsync(config, RequestVersion.v14_4, new[] { "id=1001,2001,3001&limiterrormsg_2=test&limitmode_2=1" });
+            await SetChannelPropertyAsync(config, RequestVersion.v14_4,
+                UnitRequest.SetChannelProperty("id=1001,2001,3001&limiterrormsg_1=test&limitmode_1=1")
+            );
             await SetChannelPropertyAsync(config, RequestVersion.v18_1, new[]
             {
-                "id=2001,3001&limiterrormsg_2=test&limitmode_2=1&limitminwarning_2=2",
-                "id=1001&limiterrormsg_2=test&limitmode_2=1&limitminwarning_2=1"
+                UnitRequest.SetChannelProperty("id=2001,3001&limiterrormsg_1=test&limitmode_1=1&limitminwarning_1=2&limitminwarning_1_factor=0.1"),
+                UnitRequest.SetChannelProperty("id=1001&limiterrormsg_1=test&limitmode_1=1&limitminwarning_1=1&limitminwarning_1_factor=0.1")
 
             });
         }
@@ -1631,8 +1852,12 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
                 matrix
             );
 
-            await SetChannelPropertyAsync(config, RequestVersion.v14_4, new[] { "id=1001,2001&limiterrormsg_2=test&limitmode_2=1" });
-            await SetChannelPropertyAsync(config, RequestVersion.v18_1, new[] { "id=1001,2001&limiterrormsg_2=test&limitmode_2=1&limitmaxerror_2=1" });
+            await SetChannelPropertyAsync(config, RequestVersion.v14_4,
+                UnitRequest.SetChannelProperty("id=1001,2001&limiterrormsg_1=test&limitmode_1=1")
+            );
+            await SetChannelPropertyAsync(config, RequestVersion.v18_1,
+                UnitRequest.SetChannelProperty("id=1001,2001&limiterrormsg_1=test&limitmode_1=1&limitmaxerror_1=1&limitmaxerror_1_factor=0.1")
+            );
         }
 
         [TestMethod]
@@ -1651,8 +1876,12 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
                 matrix
             );
 
-            await SetChannelPropertyAsync(config, RequestVersion.v14_4, new[] { "id=1001,2001&limitwarningmsg_2=test&limitmode_2=1" });
-            await SetChannelPropertyAsync(config, RequestVersion.v18_1, new[] { "id=1001,2001&limitwarningmsg_2=test&limitmode_2=1&limitmaxerror_2=1" });
+            await SetChannelPropertyAsync(config, RequestVersion.v14_4,
+                UnitRequest.SetChannelProperty("id=1001,2001&limitwarningmsg_1=test&limitmode_1=1")
+            );
+            await SetChannelPropertyAsync(config, RequestVersion.v18_1,
+                UnitRequest.SetChannelProperty("id=1001,2001&limitwarningmsg_1=test&limitmode_1=1&limitmaxerror_1=1&limitmaxerror_1_factor=0.1")
+            );
         }
 
         [TestMethod]
@@ -1671,8 +1900,12 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
                 matrix
             );
 
-            await SetChannelPropertyAsync(config, RequestVersion.v14_4, new[] { "id=1001,2001&limitmode_2=1" });
-            await SetChannelPropertyAsync(config, RequestVersion.v18_1, new[] { "id=1001,2001&limitmode_2=1&limitmaxerror_2=1" });
+            await SetChannelPropertyAsync(config, RequestVersion.v14_4,
+                UnitRequest.SetChannelProperty("id=1001,2001&limitmode_1=1")
+            );
+            await SetChannelPropertyAsync(config, RequestVersion.v18_1,
+                UnitRequest.SetChannelProperty("id=1001,2001&limitmode_1=1&limitmaxerror_1=1&limitmaxerror_1_factor=0.1")
+            );
         }
 
         [TestMethod]
@@ -1691,8 +1924,13 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
                 matrix
             );
 
-            await SetChannelPropertyAsync(config, RequestVersion.v14_4, new[] { "id=1001,2001&limitmode_2=0&limitmaxerror_2=&limitmaxwarning_2=&limitminerror_2=&limitminwarning_2=&limiterrormsg_2=&limitwarningmsg_2=" });
-            await SetChannelPropertyAsync(config, RequestVersion.v18_1, new[] { "id=1001,2001&limitmode_2=0&limitmaxerror_2=&limitmaxwarning_2=&limitminerror_2=&limitminwarning_2=&limiterrormsg_2=&limitwarningmsg_2=" });
+            await SetChannelPropertyAsync(config, RequestVersion.v14_4,
+                UnitRequest.SetChannelProperty("id=1001,2001&limitmode_1=0&limitmaxerror_1=&limitmaxwarning_1=&limitminerror_1=&limitminwarning_1=&limiterrormsg_1=&limitwarningmsg_1=")
+            );
+            await SetChannelPropertyAsync(config, RequestVersion.v18_1,
+                new[] { UnitRequest.SetChannelProperty("id=1001,2001&limitmode_1=0&limitmaxerror_1=&limitmaxwarning_1=&limitminerror_1=&limitminwarning_1=&limiterrormsg_1=&limitwarningmsg_1=") },
+                true
+            );
         }
 
         [TestMethod]
@@ -1711,11 +1949,17 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
                 matrix
             );
 
-            await SetChannelPropertyAsync(config, RequestVersion.v14_4, new[] { "id=1001,2001&spikemax_2=100&spikemode_2=1" });
-            await SetChannelPropertyAsync(config, RequestVersion.v18_1, new[] { "id=1001,2001&spikemax_2=100&spikemode_2=1" });
+            await SetChannelPropertyAsync(config, RequestVersion.v14_4,
+                UnitRequest.SetChannelProperty("id=1001,2001&spikemax_1=100&spikemode_1=1")
+            );
+            await SetChannelPropertyAsync(config, RequestVersion.v18_1,
+                new[] { UnitRequest.SetChannelProperty("id=1001,2001&spikemax_1=100&spikemode_1=1") },
+                true
+            );
         }
 
             #endregion
+            #region Miscellaneous
 
         [TestMethod]
         [TestCategory("UnitTest")]
@@ -1737,12 +1981,14 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
                 matrix
             );
 
-            await SetChannelPropertyAsync(config, RequestVersion.v14_4, new[] { "id=1001,2001,3001,4001,5001,6001&limiterrormsg_2=test&limitmode_2=1" });
+            await SetChannelPropertyAsync(config, RequestVersion.v14_4,
+                UnitRequest.SetChannelProperty("id=1001,2001,3001,4001,5001,6001&limiterrormsg_1=test&limitmode_1=1")
+            );
             await SetChannelPropertyAsync(config, RequestVersion.v18_1, new[]
             {
-                "id=4001,5001,6001&limiterrormsg_2=test&limitmode_2=1&limitminerror_2=3",
-                "id=1001,2001&limiterrormsg_2=test&limitmode_2=1&limitmaxerror_2=1",
-                "id=3001&limiterrormsg_2=test&limitmode_2=1&limitmaxerror_2=5"
+                UnitRequest.SetChannelProperty("id=4001,5001,6001&limiterrormsg_1=test&limitmode_1=1&limitminerror_1=3&limitminerror_1_factor=0.1"),
+                UnitRequest.SetChannelProperty("id=1001,2001&limiterrormsg_1=test&limitmode_1=1&limitmaxerror_1=1&limitmaxerror_1_factor=0.1"),
+                UnitRequest.SetChannelProperty("id=3001&limiterrormsg_1=test&limitmode_1=1&limitmaxerror_1=5&limitmaxerror_1_factor=0.1")
             });
         }
 
@@ -1762,12 +2008,15 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
                 matrix
             );
 
-            Func<RequestVersion, Task> action = async version => await SetChannelPropertyAsync(config, version, new[] { "id=1001,2001&limiterrormsg_2=test&limitmode_2=1" });
+            Func<RequestVersion, Task> action = async version =>
+                await SetChannelPropertyAsync(config, version,
+                    UnitRequest.SetChannelProperty("id=1001,2001&limiterrormsg_1=test&limitmode_1=1")
+                );
 
             await action(RequestVersion.v14_4);
 
             var builder = new StringBuilder();
-            builder.Append("Cannot set property 'ErrorLimitMessage' to value 'test' for Channel ID 2: ");
+            builder.Append("Cannot set property 'ErrorLimitMessage' to value 'test' for Channel ID 1: ");
             builder.Append("Sensor ID 2001 does not have a limit value defined on it. ");
             builder.Append("Please set one of 'UpperErrorLimit', 'LowerErrorLimit', 'UpperWarningLimit' or 'LowerWarningLimit' first and then try again");
 
@@ -1790,12 +2039,15 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
                 matrix
             );
 
-            Func<RequestVersion, Task> action = async version => await SetChannelPropertyAsync(config, version, new[] { "id=1001,2001&limiterrormsg_2=test&limitmode_2=1" });
+            Func<RequestVersion, Task> action = async version =>
+                await SetChannelPropertyAsync(config, version,
+                    UnitRequest.SetChannelProperty("id=1001,2001&limiterrormsg_1=test&limitmode_1=1")
+                );
 
             await action(RequestVersion.v14_4);
 
             var builder = new StringBuilder();
-            builder.Append("Cannot set property 'ErrorLimitMessage' to value 'test' for Channel ID 2: ");
+            builder.Append("Cannot set property 'ErrorLimitMessage' to value 'test' for Channel ID 1: ");
             builder.Append("Sensor IDs 1001 and 2001 do not have a limit value defined on them. ");
             builder.Append("Please set one of 'UpperErrorLimit', 'LowerErrorLimit', 'UpperWarningLimit' or 'LowerWarningLimit' first and then try again");
 
@@ -1810,7 +2062,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             {
                 "api/table.xml?content=channels&columns=objid,name,lastvalue&count=*&id=1001",
                 "controls/channeledit.htm?id=1001&channel=1",
-                "editsettings?id=1001&limiterrormsg_1=hello&limitmode_1=1&limitmaxerror_1=100"
+                "editsettings?id=1001&limiterrormsg_1=hello&limitmode_1=1&limitmaxerror_1=100&limitmaxerror_1_factor=1"
             };
 
             var property = ChannelProperty.ErrorLimitMessage;
@@ -1822,28 +2074,1264 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
 
             var client = Initialize_Client(response, RequestVersion.v18_1);
 
-            await client.GetVersionClient(new object[] { property }).SetChannelPropertyAsync(new[] { 1001 }, 1, null, new[] { new ChannelParameter(property, val) }, CancellationToken.None);
+            await client.GetVersionClient(new object[] { property }).SetChannelPropertyAsync(new[] { 1001 }, 1, new[] { new ChannelParameter(property, val) }, CancellationToken.None);
 
             response.AssertFinished();
         }
 
-        private async Task SetChannelPropertyAsync(Tuple<ChannelProperty, object, int?[][]> config, RequestVersion version, string[] addresses)
+            #endregion
+            #region Helpers
+
+        private async Task SetChannelPropertyAsync(Tuple<ChannelProperty, object, int?[][]> config, RequestVersion version, params string[] addresses) =>
+            await SetChannelPropertyAsync(config, version, addresses, false);
+
+        private async Task SetChannelPropertyAsync(Tuple<ChannelProperty, object, int?[][]> config, RequestVersion version, string[] addresses, bool noChannels)
         {
             var property = config.Item1;
             var val = config.Item2;
             var matrix = config.Item3;
 
-            var channels = matrix.Select(CreateChannel).ToList();
+            var channels = matrix.Select(CreateChannel).ToArray();
 
+            var parameters = new[] { new ChannelParameter(property, val) };
+
+            try
+            {
+                await SetChannelPropertyInternalAsync(
+                    channels,
+                    property,
+                    version,
+                    addresses,
+                    async c => await c.SetChannelPropertyAsync(channels, parameters, CancellationToken.None)
+                );
+            }
+            catch (AssertFailedException ex)
+            {
+                throw new AssertFailedException($"Channel {version} test failed: {ex.Message}", ex);
+            }
+
+            addresses = GetSetChannelPropertyManualUrls(channels, version, addresses, noChannels);
+
+            try
+            {
+                await SetChannelPropertyInternalAsync(
+                    channels,
+                    property,
+                    version,
+                    addresses,
+                    async c => await c.SetChannelPropertyAsync(channels.Select(ch => ch.SensorId).ToArray(), 1, parameters, CancellationToken.None)
+                );
+            }
+            catch (AssertFailedException ex)
+            {
+                throw new AssertFailedException($"Manual {version} test failed: {ex.Message}", ex);
+            }
+        }
+
+        private async Task SetChannelPropertyInternalAsync(Channel[] channels, ChannelProperty property, RequestVersion version, string[] addresses, Func<VersionClient, Task> action)
+        {
 #pragma warning disable 618
-            var response = new AddressValidatorResponse(addresses.Select(a => $"https://prtg.example.com/editsettings?{a}&username=username&passhash=12345678").ToArray(), true);
+            var response = new AddressValidatorResponse(addresses, true);
+            response.ResponseTextManipulator = (r, a) => FixupChannelLimits(r, a, channels);
 #pragma warning restore 618
 
             var client = Initialize_Client(response, version);
 
-            await client.GetVersionClient(new object[] { property }).SetChannelPropertyAsync(channels.Select(c => c.SensorId).ToArray(), 2, channels, new[] { new ChannelParameter(property, val) }, CancellationToken.None);
+            var versionClient = client.GetVersionClient(new object[] { property });
+
+            await action(versionClient);
+
+            response.AssertFinished();
+        }
+
+            #endregion
+        #endregion
+        #region Factor
+            #region Manual (No Factor)
+                #region Manual: Same Channel/Sensor
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void SetChannelProperty_Manual_SameID_AndSensor_ExecutesSingleRequest()
+        {
+            Execute(
+                c => c.SetChannelProperty(new[] { 1001, 1001 }, 1, ChannelProperty.SpikeFilterEnabled, true),
+                UnitRequest.SetChannelProperty("id=1001&spikemode_1=1")
+            );
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public async Task SetChannelProperty_Manual_SameID_AndSensor_ExecutesSingleRequestAsync()
+        {
+            await ExecuteAsync(
+                async c => await c.SetChannelPropertyAsync(new[] { 1001, 1001 }, 1, ChannelProperty.SpikeFilterEnabled, true),
+                UnitRequest.SetChannelProperty("id=1001&spikemode_1=1")
+            );
+        }
+
+                #endregion
+            #endregion
+            #region Manual (Factor)
+                #region ManualFactor: Same Channel/Sensor
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void SetChannelProperty_ManualFactor_SameID_AndSensor_ExecutesSingleRequest()
+        {
+            Execute(
+                c => c.SetChannelProperty(new[] { 1001, 1001 }, 1, ChannelProperty.UpperErrorLimit, 100),
+                new[]
+                {
+                    UnitRequest.Channels(1001),
+                    UnitRequest.ChannelProperties(1001, 1),
+                    UnitRequest.SetChannelProperty("id=1001&limitmaxerror_1=100&limitmode_1=1&limitmaxerror_1_factor=1")
+                }
+            );
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public async Task SetChannelProperty_ManualFactor_SameID_AndSensor_ExecutesSingleRequestAsync()
+        {
+            await ExecuteAsync(
+                async c => await c.SetChannelPropertyAsync(new[] { 1001, 1001 }, 1, ChannelProperty.UpperErrorLimit, 100),
+                new[]
+                {
+                    UnitRequest.Channels(1001),
+                    UnitRequest.ChannelProperties(1001, 1),
+                    UnitRequest.SetChannelProperty("id=1001&limitmaxerror_1=100&limitmode_1=1&limitmaxerror_1_factor=1")
+                }
+            );
+        }
+
+                #endregion
+                #region ManualFactor: Same Channel, Different Sensors
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void SetChannelProperty_ManualFactor_SameID_DifferentSensors_SingleFactor_ExecutesSingleRequest()
+        {
+            Execute(
+                c => c.SetChannelProperty(new[] { 1001, 1002 }, 1, ChannelProperty.UpperErrorLimit, 100),
+                new[]
+                {
+                    UnitRequest.Channels(1001),
+                    UnitRequest.ChannelProperties(1001, 1),
+                    UnitRequest.Channels(1002),
+                    UnitRequest.ChannelProperties(1002, 1),
+                    UnitRequest.SetChannelProperty("id=1001,1002&limitmaxerror_1=100&limitmode_1=1&limitmaxerror_1_factor=1")
+                }
+            );
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public async Task SetChannelProperty_ManualFactor_SameID_DifferentSensors_SingleFactor_ExecutesSingleRequestAsync()
+        {
+            await ExecuteAsync(
+                async c => await c.SetChannelPropertyAsync(new[] { 1001, 1002 }, 1, ChannelProperty.UpperErrorLimit, 100),
+                new[]
+                {
+                    UnitRequest.Channels(1001),
+                    UnitRequest.ChannelProperties(1001, 1),
+                    UnitRequest.Channels(1002),
+                    UnitRequest.ChannelProperties(1002, 1),
+                    UnitRequest.SetChannelProperty("id=1001,1002&limitmaxerror_1=100&limitmode_1=1&limitmaxerror_1_factor=1")
+                }
+            );
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void SetChannelProperty_ManualFactor_SameID_DifferentSensors_SingleFactor_MultipleFactorProperties_ExecutesSingleRequest()
+        {
+            Execute(
+                c => c.SetChannelProperty(
+                    new[] { 1001, 1002 },
+                    1,
+                    new ChannelParameter(ChannelProperty.UpperErrorLimit, 100),
+                    new ChannelParameter(ChannelProperty.LowerErrorLimit, 50)
+                ),
+                new[]
+                {
+                    UnitRequest.Channels(1001),
+                    UnitRequest.ChannelProperties(1001, 1),
+                    UnitRequest.Channels(1002),
+                    UnitRequest.ChannelProperties(1002, 1),
+                    UnitRequest.SetChannelProperty("id=1001,1002&limitmaxerror_1=100&limitmode_1=1&limitminerror_1=50&limitmaxerror_1_factor=1&limitminerror_1_factor=1")
+                }
+            );
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public async Task SetChannelProperty_ManualFactor_SameID_DifferentSensors_SingleFactor_MultipleFactorProperties_ExecutesSingleRequestAsync()
+        {
+            await ExecuteAsync(
+                async c => await c.SetChannelPropertyAsync(
+                    new[] { 1001, 1002 },
+                    1,
+                    new ChannelParameter(ChannelProperty.UpperErrorLimit, 100),
+                    new ChannelParameter(ChannelProperty.LowerErrorLimit, 50)
+                ),
+                new[]
+                {
+                    UnitRequest.Channels(1001),
+                    UnitRequest.ChannelProperties(1001, 1),
+                    UnitRequest.Channels(1002),
+                    UnitRequest.ChannelProperties(1002, 1),
+                    UnitRequest.SetChannelProperty("id=1001,1002&limitmaxerror_1=100&limitmode_1=1&limitminerror_1=50&limitmaxerror_1_factor=1&limitminerror_1_factor=1")
+                }
+            );
+        }
+
+                #endregion
+            #endregion
+            #region Channel (No Factor)
+                #region Channel: Same Channel/Sensor
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void SetChannelProperty_Channel_SameID_AndSensor_ExecutesSingleRequest_v14() =>
+            SetChannelProperty_Channel_SameID_AndSensor_ExecutesSingleRequest(RequestVersion.v14_4);
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void SetChannelProperty_Channel_SameID_AndSensor_ExecutesSingleRequest_v18() =>
+            SetChannelProperty_Channel_SameID_AndSensor_ExecutesSingleRequest(RequestVersion.v18_1);
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public async Task SetChannelProperty_Channel_SameID_AndSensor_ExecutesSingleRequestAsync_v14() =>
+            await SetChannelProperty_Channel_SameID_AndSensor_ExecutesSingleRequestAsync(RequestVersion.v14_4);
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public async Task SetChannelProperty_Channel_SameID_AndSensor_ExecutesSingleRequestAsync_v18() =>
+            await SetChannelProperty_Channel_SameID_AndSensor_ExecutesSingleRequestAsync(RequestVersion.v18_1);
+
+        private void SetChannelProperty_Channel_SameID_AndSensor_ExecutesSingleRequest(RequestVersion version)
+        {
+            var matrix = new[]
+            {
+                //SensorId, Id, Factor
+                new double?[] {1001,       1,  0.1},
+                new double?[] {1001,       1,  0.1}
+            };
+
+            var channels = GetFactorChannels(matrix);
+
+            Execute(
+                c => c.SetChannelProperty(channels, ChannelProperty.SpikeFilterEnabled, true),
+                UnitRequest.SetChannelProperty("id=1001&spikemode_1=1"),
+                version: version
+            );
+        }
+
+        private async Task SetChannelProperty_Channel_SameID_AndSensor_ExecutesSingleRequestAsync(RequestVersion version)
+        {
+            var matrix = new[]
+            {
+                //SensorId, Id, Factor
+                new double?[] {1001,       1,  0.1},
+                new double?[] {1001,       1,  0.1}
+            };
+
+            var channels = GetFactorChannels(matrix);
+
+            await ExecuteAsync(
+                async c => await c.SetChannelPropertyAsync(channels, ChannelProperty.SpikeFilterEnabled, true),
+                UnitRequest.SetChannelProperty("id=1001&spikemode_1=1"),
+                version: version
+            );
+        }
+
+                #endregion
+                #region Channel: Different Channels, Same Sensor
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void SetChannelProperty_Channel_DifferentIDs_SameSensor_ExecutesSingleRequest_v14() =>
+            SetChannelProperty_Channel_DifferentIDs_SameSensor_ExecutesSingleRequest(RequestVersion.v14_4);
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void SetChannelProperty_Channel_DifferentIDs_SameSensor_ExecutesSingleRequest_v18() =>
+            SetChannelProperty_Channel_DifferentIDs_SameSensor_ExecutesSingleRequest(RequestVersion.v18_1);
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public async Task SetChannelProperty_Channel_DifferentIDs_SameSensor_ExecutesSingleRequestAsync_v14() =>
+            await SetChannelProperty_Channel_DifferentIDs_SameSensor_ExecutesSingleRequestAsync(RequestVersion.v14_4);
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public async Task SetChannelProperty_Channel_DifferentIDs_SameSensor_ExecutesSingleRequestAsync_v18() =>
+            await SetChannelProperty_Channel_DifferentIDs_SameSensor_ExecutesSingleRequestAsync(RequestVersion.v18_1);
+
+        private void SetChannelProperty_Channel_DifferentIDs_SameSensor_ExecutesSingleRequest(RequestVersion version)
+        {
+            var matrix = new[]
+            {
+                //SensorId, Id, Factor
+                new double?[] {1001,       1,  null},
+                new double?[] {1001,       2,  0.1}
+            };
+
+            var channels = GetFactorChannels(matrix);
+
+            Execute(
+                c => c.SetChannelProperty(channels, ChannelProperty.SpikeFilterEnabled, true),
+                UnitRequest.SetChannelProperty("id=1001&spikemode_1=1&spikemode_2=1"),
+                version: version
+            );
+        }
+
+        private async Task SetChannelProperty_Channel_DifferentIDs_SameSensor_ExecutesSingleRequestAsync(RequestVersion version)
+        {
+            var matrix = new[]
+            {
+                //SensorId, Id, Factor
+                new double?[] {1001,       1,  null},
+                new double?[] {1001,       2,  0.1}
+            };
+
+            var channels = GetFactorChannels(matrix);
+
+            await ExecuteAsync(
+                async c => await c.SetChannelPropertyAsync(channels, ChannelProperty.SpikeFilterEnabled, true),
+                UnitRequest.SetChannelProperty("id=1001&spikemode_1=1&spikemode_2=1"),
+                version: version
+            );
+        }
+
+                #endregion
+                #region Channel: Same Channel, Different Sensors
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void SetChannelProperty_Channel_SameID_DifferentSensors_ExecutesSingleRequest_v14() =>
+            SetChannelProperty_Channel_SameID_DifferentSensors_ExecutesSingleRequest(RequestVersion.v14_4);
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void SetChannelProperty_Channel_SameID_DifferentSensors_ExecutesSingleRequest_v18() =>
+            SetChannelProperty_Channel_SameID_DifferentSensors_ExecutesSingleRequest(RequestVersion.v18_1);
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public async Task SetChannelProperty_Channel_SameID_DifferentSensors_ExecutesSingleRequestAsync_v14() =>
+            await SetChannelProperty_Channel_SameID_DifferentSensors_ExecutesSingleRequestAsync(RequestVersion.v14_4);
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public async Task SetChannelProperty_Channel_SameID_DifferentSensors_ExecutesSingleRequestAsync_v18() =>
+            await SetChannelProperty_Channel_SameID_DifferentSensors_ExecutesSingleRequestAsync(RequestVersion.v18_1);
+
+        private void SetChannelProperty_Channel_SameID_DifferentSensors_ExecutesSingleRequest(RequestVersion version)
+        {
+            var matrix = new[]
+            {
+                //SensorId, Id, Factor
+                new double?[] {1001,       1,  0.1},
+                new double?[] {1002,       1,  0.1}
+            };
+
+            var channels = GetFactorChannels(matrix);
+
+            Execute(
+                c => c.SetChannelProperty(channels, ChannelProperty.SpikeFilterEnabled, true),
+                UnitRequest.SetChannelProperty("id=1001,1002&spikemode_1=1"),
+                version: version
+            );
+        }
+
+        private async Task SetChannelProperty_Channel_SameID_DifferentSensors_ExecutesSingleRequestAsync(RequestVersion version)
+        {
+            var matrix = new[]
+            {
+                //SensorId, Id, Factor
+                new double?[] {1001,       1,  0.1},
+                new double?[] {1002,       1,  0.1}
+            };
+
+            var channels = GetFactorChannels(matrix);
+
+            await ExecuteAsync(
+                async c => await c.SetChannelPropertyAsync(channels, ChannelProperty.SpikeFilterEnabled, true),
+                UnitRequest.SetChannelProperty("id=1001,1002&spikemode_1=1"),
+                version: version
+            );
+        }
+
+                #endregion
+                #region Channel: Different Channels, Different Sensors
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void SetChannelProperty_Channel_DifferentIDs_DifferentSensors_ExecutesMultipleRequests_v14() =>
+            SetChannelProperty_Channel_DifferentIDs_DifferentSensors_ExecutesMultipleRequests(RequestVersion.v14_4);
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void SetChannelProperty_Channel_DifferentIDs_DifferentSensors_ExecutesMultipleRequests_v18() =>
+            SetChannelProperty_Channel_DifferentIDs_DifferentSensors_ExecutesMultipleRequests(RequestVersion.v18_1);
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public async Task SetChannelProperty_Channel_DifferentIDs_DifferentSensors_ExecutesMultipleRequestsAsync_v14() =>
+            await SetChannelProperty_Channel_DifferentIDs_DifferentSensors_ExecutesMultipleRequestsAsync(RequestVersion.v14_4);
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public async Task SetChannelProperty_Channel_DifferentIDs_DifferentSensors_ExecutesMultipleRequestsAsync_v18() =>
+            await SetChannelProperty_Channel_DifferentIDs_DifferentSensors_ExecutesMultipleRequestsAsync(RequestVersion.v18_1);
+
+        private void SetChannelProperty_Channel_DifferentIDs_DifferentSensors_ExecutesMultipleRequests(RequestVersion version)
+        {
+            var matrix = new[]
+            {
+                //SensorId, Id, Factor
+                new double?[] {1001,       1,  0.1},
+                new double?[] {1002,       2,  0.1}
+            };
+
+            var channels = GetFactorChannels(matrix);
+
+            Execute(
+                c => c.SetChannelProperty(channels, ChannelProperty.SpikeFilterEnabled, true),
+                new[]
+                {
+                    UnitRequest.SetChannelProperty("id=1001&spikemode_1=1"),
+                    UnitRequest.SetChannelProperty("id=1002&spikemode_2=1")
+                },
+                version: version
+            );
+        }
+
+        private async Task SetChannelProperty_Channel_DifferentIDs_DifferentSensors_ExecutesMultipleRequestsAsync(RequestVersion version)
+        {
+            var matrix = new[]
+            {
+                //SensorId, Id, Factor
+                new double?[] {1001,       1,  0.1},
+                new double?[] {1002,       2,  0.1}
+            };
+
+            var channels = GetFactorChannels(matrix);
+
+            await ExecuteAsync(
+                async c => await c.SetChannelPropertyAsync(channels, ChannelProperty.SpikeFilterEnabled, true),
+                new[]
+                {
+                    UnitRequest.SetChannelProperty("id=1001&spikemode_1=1"),
+                    UnitRequest.SetChannelProperty("id=1002&spikemode_2=1")
+                },
+                version: version
+            );
+        }
+
+                #endregion
+            #endregion
+            #region Channel (Factor)
+                #region ChannelFactor: Same Channel/Sensor
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void SetChannelProperty_ChannelFactor_SameID_AndSensor_ExecutesSingleRequest_v14() =>
+            SetChannelProperty_ChannelFactor_SameID_AndSensor_ExecutesSingleRequest(RequestVersion.v14_4);
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void SetChannelProperty_ChannelFactor_SameID_AndSensor_ExecutesSingleRequest_v18() =>
+            SetChannelProperty_ChannelFactor_SameID_AndSensor_ExecutesSingleRequest(RequestVersion.v18_1);
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public async Task SetChannelProperty_ChannelFactor_SameID_AndSensor_ExecutesSingleRequestAsync_v14() =>
+            await SetChannelProperty_ChannelFactor_SameID_AndSensor_ExecutesSingleRequestAsync(RequestVersion.v14_4);
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public async Task SetChannelProperty_ChannelFactor_SameID_AndSensor_ExecutesSingleRequestAsync_v18() =>
+            await SetChannelProperty_ChannelFactor_SameID_AndSensor_ExecutesSingleRequestAsync(RequestVersion.v18_1);
+
+        private void SetChannelProperty_ChannelFactor_SameID_AndSensor_ExecutesSingleRequest(RequestVersion version)
+        {
+            var matrix = new[]
+            {
+                //SensorId, Id, Factor
+                new double?[] {1001,       1,  0.1},
+                new double?[] {1001,       1,  0.2}
+            };
+
+            var channels = GetFactorChannels(matrix);
+
+            Execute(
+                c => c.SetChannelProperty(channels, ChannelProperty.UpperErrorLimit, 100),
+                UnitRequest.SetChannelProperty("id=1001&limitmaxerror_1=100&limitmode_1=1&limitmaxerror_1_factor=0.1"),
+                version: version
+            );
+        }
+
+        private async Task SetChannelProperty_ChannelFactor_SameID_AndSensor_ExecutesSingleRequestAsync(RequestVersion version)
+        {
+            var matrix = new[]
+            {
+                //SensorId, Id, Factor
+                new double?[] {1001,       1,  0.1},
+                new double?[] {1001,       1,  0.2}
+            };
+
+            var channels = GetFactorChannels(matrix);
+
+            await ExecuteAsync(
+                async c => await c.SetChannelPropertyAsync(channels, ChannelProperty.UpperErrorLimit, 100),
+                UnitRequest.SetChannelProperty("id=1001&limitmaxerror_1=100&limitmode_1=1&limitmaxerror_1_factor=0.1"),
+                version: version
+            );
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void SetChannelProperty_ChannelFactor_SameID_SameSensor_NeedsLimit()
+        {
+            var matrix = new[]
+            {
+                //SensorId, Id, Factor
+                new double?[] {1001,       1,  0.1},
+                new double?[] {1001,       1,  0.2}
+            };
+
+            var channels = GetFactorChannels(matrix);
+
+            channels[0].UpperErrorLimit = 50;
+            channels[1].LowerErrorLimit = 25;
+
+            Execute(
+                c => c.SetChannelProperty(channels, ChannelProperty.ErrorLimitMessage, "test"),
+                UnitRequest.SetChannelProperty("id=1001&limiterrormsg_1=test&limitmode_1=1&limitmaxerror_1=50&limitmaxerror_1_factor=0.1"),
+                version: RequestVersion.v18_1
+            );
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public async Task SetChannelProperty_ChannelFactor_SameID_SameSensor_NeedsLimitAsync()
+        {
+            var matrix = new[]
+            {
+                //SensorId, Id, Factor
+                new double?[] {1001,       1,  0.1},
+                new double?[] {1001,       1,  0.2}
+            };
+
+            var channels = GetFactorChannels(matrix);
+
+            channels[0].UpperErrorLimit = 50;
+            channels[1].LowerErrorLimit = 25;
+
+            await ExecuteAsync(
+                async c => await c.SetChannelPropertyAsync(channels, ChannelProperty.ErrorLimitMessage, "test"),
+                UnitRequest.SetChannelProperty("id=1001&limiterrormsg_1=test&limitmode_1=1&limitmaxerror_1=50&limitmaxerror_1_factor=0.1"),
+                version: RequestVersion.v18_1
+            );
+        }
+
+                #endregion
+                #region ChannelFactor: Different Channels, Same Sensor
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void SetChannelProperty_ChannelFactor_DifferentIDs_SameSensor_ExecutesSingleRequest_v14() =>
+            SetChannelProperty_ChannelFactor_DifferentIDs_SameSensor_ExecutesSingleRequest(RequestVersion.v14_4);
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void SetChannelProperty_ChannelFactor_DifferentIDs_SameSensor_ExecutesSingleRequest_v18() =>
+            SetChannelProperty_ChannelFactor_DifferentIDs_SameSensor_ExecutesSingleRequest(RequestVersion.v18_1);
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public async Task SetChannelProperty_ChannelFactor_DifferentIDs_SameSensor_ExecutesSingleRequestAsync_v14() =>
+            await SetChannelProperty_ChannelFactor_DifferentIDs_SameSensor_ExecutesSingleRequestAsync(RequestVersion.v14_4);
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public async Task SetChannelProperty_ChannelFactor_DifferentIDs_SameSensor_ExecutesSingleRequestAsync_v18() =>
+            await SetChannelProperty_ChannelFactor_DifferentIDs_SameSensor_ExecutesSingleRequestAsync(RequestVersion.v18_1);
+
+        private void SetChannelProperty_ChannelFactor_DifferentIDs_SameSensor_ExecutesSingleRequest(RequestVersion version)
+        {
+            var matrix = new[]
+            {
+                //SensorId, Id, Factor
+                new double?[] {1001,       1,  0.1},
+                new double?[] {1001,       2,  0.2}
+            };
+
+            var channels = GetFactorChannels(matrix);
+
+            Execute(
+                c => c.SetChannelProperty(channels, ChannelProperty.UpperErrorLimit, 100),
+                UnitRequest.SetChannelProperty("id=1001&limitmaxerror_1=100&limitmode_1=1&limitmaxerror_1_factor=0.1&limitmaxerror_2=100&limitmode_2=1&limitmaxerror_2_factor=0.2"),
+                version: version
+            );
+        }
+
+        private async Task SetChannelProperty_ChannelFactor_DifferentIDs_SameSensor_ExecutesSingleRequestAsync(RequestVersion version)
+        {
+            var matrix = new[]
+            {
+                //SensorId, Id, Factor
+                new double?[] {1001,       1,  0.1},
+                new double?[] {1001,       2,  0.2}
+            };
+
+            var channels = GetFactorChannels(matrix);
+
+            await ExecuteAsync(
+                async c => await c.SetChannelPropertyAsync(channels, ChannelProperty.UpperErrorLimit, 100),
+                UnitRequest.SetChannelProperty("id=1001&limitmaxerror_1=100&limitmode_1=1&limitmaxerror_1_factor=0.1&limitmaxerror_2=100&limitmode_2=1&limitmaxerror_2_factor=0.2"),
+                version: version
+            );
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void SetChannelProperty_ChannelFactor_DifferentIDs_SameSensor_NeedsLimit()
+        {
+            var matrix = new[]
+            {
+                //SensorId, Id, Factor
+                new double?[] {1001,       1,  0.1},
+                new double?[] {1001,       2,  0.2}
+            };
+
+            var channels = GetFactorChannels(matrix);
+
+            channels[0].UpperErrorLimit = 50;
+            channels[1].LowerErrorLimit = 25;
+
+            Execute(
+                c => c.SetChannelProperty(channels, ChannelProperty.ErrorLimitMessage, "test"),
+                UnitRequest.SetChannelProperty("id=1001&limiterrormsg_1=test&limitmode_1=1&limitmaxerror_1=50&limitmaxerror_1_factor=0.1&limiterrormsg_2=test&limitmode_2=1&limitminerror_2=25&limitminerror_2_factor=0.2"),
+                version: RequestVersion.v18_1
+            );
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public async Task SetChannelProperty_ChannelFactor_DifferentIDs_SameSensor_NeedsLimitAsync()
+        {
+            var matrix = new[]
+            {
+                //SensorId, Id, Factor
+                new double?[] {1001,       1,  0.1},
+                new double?[] {1001,       2,  0.2}
+            };
+
+            var channels = GetFactorChannels(matrix);
+
+            channels[0].UpperErrorLimit = 50;
+            channels[1].LowerErrorLimit = 25;
+
+            await ExecuteAsync(
+                async c => await c.SetChannelPropertyAsync(channels, ChannelProperty.ErrorLimitMessage, "test"),
+                UnitRequest.SetChannelProperty("id=1001&limiterrormsg_1=test&limitmode_1=1&limitmaxerror_1=50&limitmaxerror_1_factor=0.1&limiterrormsg_2=test&limitmode_2=1&limitminerror_2=25&limitminerror_2_factor=0.2"),
+                version: RequestVersion.v18_1
+            );
+        }
+
+                #endregion
+                #region ChannelFactor: Same Channel, Different Sensors
+                    #region Single Factor / Single Factor Property
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void SetChannelProperty_ChannelFactor_SameID_DifferentSensors_SingleFactor_SingleFactorProperty_ExecutesSingleFactor_v14() =>
+            SetChannelProperty_ChannelFactor_SameID_DifferentSensors_SingleFactor_SingleFactorProperty_ExecutesSingleFactor(RequestVersion.v14_4);
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void SetChannelProperty_ChannelFactor_SameID_DifferentSensors_SingleFactor_SingleFactorProperty_ExecutesSingleFactor_v18() =>
+            SetChannelProperty_ChannelFactor_SameID_DifferentSensors_SingleFactor_SingleFactorProperty_ExecutesSingleFactor(RequestVersion.v18_1);
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public async Task SetChannelProperty_ChannelFactor_SameID_DifferentSensors_SingleFactor_SingleFactorProperty_ExecutesSingleFactorAsync_v14() =>
+            await SetChannelProperty_ChannelFactor_SameID_DifferentSensors_SingleFactor_SingleFactorProperty_ExecutesSingleFactorAsync(RequestVersion.v14_4);
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public async Task SetChannelProperty_ChannelFactor_SameID_DifferentSensors_SingleFactor_SingleFactorProperty_ExecutesSingleFactorAsync_v18() =>
+            await SetChannelProperty_ChannelFactor_SameID_DifferentSensors_SingleFactor_SingleFactorProperty_ExecutesSingleFactorAsync(RequestVersion.v18_1);
+
+        private void SetChannelProperty_ChannelFactor_SameID_DifferentSensors_SingleFactor_SingleFactorProperty_ExecutesSingleFactor(RequestVersion version)
+        {
+            var matrix = new[]
+            {
+                //SensorId, Id, Factor
+                new double?[] {1001,       1,  0.1},
+                new double?[] {1002,       1,  0.1}
+            };
+
+            var channels = GetFactorChannels(matrix);
+
+            Execute(
+                c => c.SetChannelProperty(channels, ChannelProperty.UpperErrorLimit, 100),
+                UnitRequest.SetChannelProperty("id=1001,1002&limitmaxerror_1=100&limitmode_1=1&limitmaxerror_1_factor=0.1"),
+                version: version
+            );
+        }
+
+        private async Task SetChannelProperty_ChannelFactor_SameID_DifferentSensors_SingleFactor_SingleFactorProperty_ExecutesSingleFactorAsync(RequestVersion version)
+        {
+            var matrix = new[]
+            {
+                //SensorId, Id, Factor
+                new double?[] {1001,       1,  0.1},
+                new double?[] {1002,       1,  0.1}
+            };
+
+            var channels = GetFactorChannels(matrix);
+
+            await ExecuteAsync(
+                async c => await c.SetChannelPropertyAsync(channels, ChannelProperty.UpperErrorLimit, 100),
+                UnitRequest.SetChannelProperty("id=1001,1002&limitmaxerror_1=100&limitmode_1=1&limitmaxerror_1_factor=0.1"),
+                version: version
+            );
+        }
+
+                    #endregion
+                    #region Single Factor / Multiple Factor Properties
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void SetChannelProperty_ChannelFactor_SameID_DifferentSensors_SingleFactor_MultipleFactorProperties_ExecutesSingleFactor_v14() =>
+            SetChannelProperty_ChannelFactor_SameID_DifferentSensors_SingleFactor_MultipleFactorProperties_ExecutesSingleFactor(RequestVersion.v14_4);
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void SetChannelProperty_ChannelFactor_SameID_DifferentSensors_SingleFactor_MultipleFactorProperties_ExecutesSingleFactor_v18() =>
+            SetChannelProperty_ChannelFactor_SameID_DifferentSensors_SingleFactor_MultipleFactorProperties_ExecutesSingleFactor(RequestVersion.v18_1);
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public async Task SetChannelProperty_ChannelFactor_SameID_DifferentSensors_SingleFactor_MultipleFactorProperties_ExecutesSingleFactorAsync_v14() =>
+            await SetChannelProperty_ChannelFactor_SameID_DifferentSensors_SingleFactor_MultipleFactorProperties_ExecutesSingleFactorAsync(RequestVersion.v14_4);
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public async Task SetChannelProperty_ChannelFactor_SameID_DifferentSensors_SingleFactor_MultipleFactorProperties_ExecutesSingleFactorAsync_v18() =>
+            await SetChannelProperty_ChannelFactor_SameID_DifferentSensors_SingleFactor_MultipleFactorProperties_ExecutesSingleFactorAsync(RequestVersion.v18_1);
+
+        private void SetChannelProperty_ChannelFactor_SameID_DifferentSensors_SingleFactor_MultipleFactorProperties_ExecutesSingleFactor(RequestVersion version)
+        {
+            var matrix = new[]
+            {
+                //SensorId, Id, Factor
+                new double?[] {1001,       1,  0.1},
+                new double?[] {1002,       1,  0.1}
+            };
+
+            var channels = GetFactorChannels(matrix);
+
+            Execute(
+                c => c.SetChannelProperty(
+                    channels,
+                    new ChannelParameter(ChannelProperty.UpperErrorLimit, 100),
+                    new ChannelParameter(ChannelProperty.LowerErrorLimit, 50)
+                ),
+                UnitRequest.SetChannelProperty("id=1001,1002&limitmaxerror_1=100&limitmode_1=1&limitminerror_1=50&limitmaxerror_1_factor=0.1&limitminerror_1_factor=0.1"),
+                version: version
+            );
+        }
+
+        private async Task SetChannelProperty_ChannelFactor_SameID_DifferentSensors_SingleFactor_MultipleFactorProperties_ExecutesSingleFactorAsync(RequestVersion version)
+        {
+            var matrix = new[]
+            {
+                //SensorId, Id, Factor
+                new double?[] {1001,       1,  0.1},
+                new double?[] {1002,       1,  0.1}
+            };
+
+            var channels = GetFactorChannels(matrix);
+
+            await ExecuteAsync(
+                async c => await c.SetChannelPropertyAsync(
+                    channels,
+                    new ChannelParameter(ChannelProperty.UpperErrorLimit, 100),
+                    new ChannelParameter(ChannelProperty.LowerErrorLimit, 50)
+                ),
+                UnitRequest.SetChannelProperty("id=1001,1002&limitmaxerror_1=100&limitmode_1=1&limitminerror_1=50&limitmaxerror_1_factor=0.1&limitminerror_1_factor=0.1"),
+                version: version
+            );
+        }
+
+                    #endregion
+                    #region Multiple Factors / Single Factor Property
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void SetChannelProperty_ChannelFactor_SameID_DifferentSensors_MultipleFactors_SingleFactorProperty_ExecutesMultipleRequests_v14() =>
+            SetChannelProperty_ChannelFactor_SameID_DifferentSensors_MultipleFactors_SingleFactorProperty_ExecutesMultipleRequests(RequestVersion.v14_4);
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void SetChannelProperty_ChannelFactor_SameID_DifferentSensors_MultipleFactors_SingleFactorProperty_ExecutesMultipleRequests_v18() =>
+            SetChannelProperty_ChannelFactor_SameID_DifferentSensors_MultipleFactors_SingleFactorProperty_ExecutesMultipleRequests(RequestVersion.v18_1);
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public async Task SetChannelProperty_ChannelFactor_SameID_DifferentSensors_MultipleFactors_SingleFactorProperty_ExecutesMultipleRequestsAsync_v14() =>
+            await SetChannelProperty_ChannelFactor_SameID_DifferentSensors_MultipleFactors_SingleFactorProperty_ExecutesMultipleRequestsAsync(RequestVersion.v14_4);
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public async Task SetChannelProperty_ChannelFactor_SameID_DifferentSensors_MultipleFactors_SingleFactorProperty_ExecutesMultipleRequestsAsync_v18() =>
+            await SetChannelProperty_ChannelFactor_SameID_DifferentSensors_MultipleFactors_SingleFactorProperty_ExecutesMultipleRequestsAsync(RequestVersion.v18_1);
+
+        private void SetChannelProperty_ChannelFactor_SameID_DifferentSensors_MultipleFactors_SingleFactorProperty_ExecutesMultipleRequests(RequestVersion version)
+        {
+            var matrix = new[]
+            {
+                //SensorId, Id, Factor
+                new double?[] {1001,       1,  0.1},
+                new double?[] {1002,       1,  0.2}
+            };
+
+            var channels = GetFactorChannels(matrix);
+
+            Execute(
+                c => c.SetChannelProperty(channels, ChannelProperty.UpperErrorLimit, 100),
+                new[]
+                {
+                    UnitRequest.SetChannelProperty("id=1001&limitmaxerror_1=100&limitmode_1=1&limitmaxerror_1_factor=0.1"),
+                    UnitRequest.SetChannelProperty("id=1002&limitmaxerror_1=100&limitmode_1=1&limitmaxerror_1_factor=0.2")
+                },
+                version: version
+            );
+        }
+
+        private async Task SetChannelProperty_ChannelFactor_SameID_DifferentSensors_MultipleFactors_SingleFactorProperty_ExecutesMultipleRequestsAsync(RequestVersion version)
+        {
+            var matrix = new[]
+            {
+                //SensorId, Id, Factor
+                new double?[] {1001,       1,  0.1},
+                new double?[] {1002,       1,  0.2}
+            };
+
+            var channels = GetFactorChannels(matrix);
+
+            await ExecuteAsync(
+                async c => await c.SetChannelPropertyAsync(channels, ChannelProperty.UpperErrorLimit, 100),
+                new[]
+                {
+                    UnitRequest.SetChannelProperty("id=1001&limitmaxerror_1=100&limitmode_1=1&limitmaxerror_1_factor=0.1"),
+                    UnitRequest.SetChannelProperty("id=1002&limitmaxerror_1=100&limitmode_1=1&limitmaxerror_1_factor=0.2")
+                },
+                version: version
+            );
+        }
+
+                    #endregion
+                    #region Multiple Factors / Multiple Factor Properties
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void SetChannelProperty_ChannelFactor_SameID_DifferentSensors_MultipleFactors_MultipleFactorProperties_ExecutesMultipleRequests_v14() =>
+            SetChannelProperty_ChannelFactor_SameID_DifferentSensors_MultipleFactors_MultipleFactorProperties_ExecutesMultipleRequests(RequestVersion.v14_4);
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void SetChannelProperty_ChannelFactor_SameID_DifferentSensors_MultipleFactors_MultipleFactorProperties_ExecutesMultipleRequests_v18() =>
+            SetChannelProperty_ChannelFactor_SameID_DifferentSensors_MultipleFactors_MultipleFactorProperties_ExecutesMultipleRequests(RequestVersion.v18_1);
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public async Task SetChannelProperty_ChannelFactor_SameID_DifferentSensors_MultipleFactors_MultipleFactorProperties_ExecutesMultipleRequestsAsync_v14() =>
+            await SetChannelProperty_ChannelFactor_SameID_DifferentSensors_MultipleFactors_MultipleFactorProperties_ExecutesMultipleRequestsAsync(RequestVersion.v14_4);
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public async Task SetChannelProperty_ChannelFactor_SameID_DifferentSensors_MultipleFactors_MultipleFactorProperties_ExecutesMultipleRequestsAsync_v18() =>
+            await SetChannelProperty_ChannelFactor_SameID_DifferentSensors_MultipleFactors_MultipleFactorProperties_ExecutesMultipleRequestsAsync(RequestVersion.v18_1);
+
+        private void SetChannelProperty_ChannelFactor_SameID_DifferentSensors_MultipleFactors_MultipleFactorProperties_ExecutesMultipleRequests(RequestVersion version)
+        {
+            var matrix = new[]
+            {
+                //SensorId, Id, Factor
+                new double?[] {1001,       1,  0.1},
+                new double?[] {1002,       1,  0.2}
+            };
+
+            var channels = GetFactorChannels(matrix);
+
+            Execute(
+                c => c.SetChannelProperty(
+                    channels,
+                    new ChannelParameter(ChannelProperty.UpperErrorLimit, 100),
+                    new ChannelParameter(ChannelProperty.LowerErrorLimit, 50)
+                ),
+                new[]
+                {
+                    UnitRequest.SetChannelProperty("id=1001&limitmaxerror_1=100&limitmode_1=1&limitminerror_1=50&limitmaxerror_1_factor=0.1&limitminerror_1_factor=0.1"),
+                    UnitRequest.SetChannelProperty("id=1002&limitmaxerror_1=100&limitmode_1=1&limitminerror_1=50&limitmaxerror_1_factor=0.2&limitminerror_1_factor=0.2")
+                },
+                version: version
+            );
+        }
+
+        private async Task SetChannelProperty_ChannelFactor_SameID_DifferentSensors_MultipleFactors_MultipleFactorProperties_ExecutesMultipleRequestsAsync(RequestVersion version)
+        {
+            var matrix = new[]
+            {
+                //SensorId, Id, Factor
+                new double?[] {1001,       1,  0.1},
+                new double?[] {1002,       1,  0.2}
+            };
+
+            var channels = GetFactorChannels(matrix);
+
+            await ExecuteAsync(
+                async c => await c.SetChannelPropertyAsync(
+                    channels,
+                    new ChannelParameter(ChannelProperty.UpperErrorLimit, 100),
+                    new ChannelParameter(ChannelProperty.LowerErrorLimit, 50)
+                ),
+                new[]
+                {
+                    UnitRequest.SetChannelProperty("id=1001&limitmaxerror_1=100&limitmode_1=1&limitminerror_1=50&limitmaxerror_1_factor=0.1&limitminerror_1_factor=0.1"),
+                    UnitRequest.SetChannelProperty("id=1002&limitmaxerror_1=100&limitmode_1=1&limitminerror_1=50&limitmaxerror_1_factor=0.2&limitminerror_1_factor=0.2")
+                },
+                version: version
+            );
+        }
+
+                    #endregion
+                    #region Multiple Factors / ValueNullOrEmpty
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void SetChannelProperty_ChannelFactor_SameID_DifferentSensors_MultipleFactors_ValueNullOrEmpty_ExecutesSingleRequest_v14() =>
+            SetChannelProperty_ChannelFactor_SameID_DifferentSensors_MultipleFactors_ValueNullOrEmpty_ExecutesSingleRequest(RequestVersion.v14_4);
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void SetChannelProperty_ChannelFactor_SameID_DifferentSensors_MultipleFactors_ValueNullOrEmpty_ExecutesSingleRequest_v18() =>
+            SetChannelProperty_ChannelFactor_SameID_DifferentSensors_MultipleFactors_ValueNullOrEmpty_ExecutesSingleRequest(RequestVersion.v18_1);
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public async Task SetChannelProperty_ChannelFactor_SameID_DifferentSensors_MultipleFactors_ValueNullOrEmpty_ExecutesSingleRequestAsync_v14() =>
+            await SetChannelProperty_ChannelFactor_SameID_DifferentSensors_MultipleFactors_ValueNullOrEmpty_ExecutesSingleRequestAsync(RequestVersion.v14_4);
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public async Task SetChannelProperty_ChannelFactor_SameID_DifferentSensors_MultipleFactors_ValueNullOrEmpty_ExecutesSingleRequestAsync_v18() =>
+            await SetChannelProperty_ChannelFactor_SameID_DifferentSensors_MultipleFactors_ValueNullOrEmpty_ExecutesSingleRequestAsync(RequestVersion.v18_1);
+
+        private void SetChannelProperty_ChannelFactor_SameID_DifferentSensors_MultipleFactors_ValueNullOrEmpty_ExecutesSingleRequest(RequestVersion version)
+        {
+            var matrix = new[]
+            {
+                //SensorId, Id, Factor
+                new double?[] {1001,       1,  0.1},
+                new double?[] {1002,       1,  0.2}
+            };
+
+            var channels = GetFactorChannels(matrix);
+
+            Execute(
+                c => c.SetChannelProperty(channels, ChannelProperty.UpperErrorLimit, null),
+                new[]
+                {
+                    UnitRequest.SetChannelProperty("id=1001,1002&limitmaxerror_1=&limitmode_1=1"),
+                },
+                version: version
+            );
+        }
+
+        private async Task SetChannelProperty_ChannelFactor_SameID_DifferentSensors_MultipleFactors_ValueNullOrEmpty_ExecutesSingleRequestAsync(RequestVersion version)
+        {
+            var matrix = new[]
+            {
+                //SensorId, Id, Factor
+                new double?[] {1001,       1,  0.1},
+                new double?[] {1002,       1,  0.2}
+            };
+
+            var channels = GetFactorChannels(matrix);
+
+            await ExecuteAsync(
+                async c => await c.SetChannelPropertyAsync(channels, ChannelProperty.UpperErrorLimit, null),
+                new[]
+                {
+                    UnitRequest.SetChannelProperty("id=1001,1002&limitmaxerror_1=&limitmode_1=1"),
+                },
+                version: version
+            );
+        }
+
+                    #endregion
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void SetChannelProperty_ChannelFactor_SameID_DifferentSensors_NeedsLimit()
+        {
+            var matrix = new[]
+            {
+                //SensorId, Id, Factor
+                new double?[] {1001,       1,  0.1},
+                new double?[] {1002,       1,  0.2}
+            };
+
+            var channels = GetFactorChannels(matrix);
+
+            channels[0].UpperErrorLimit = 50;
+            channels[1].LowerErrorLimit = 25;
+
+            Execute(
+                c => c.SetChannelProperty(channels, ChannelProperty.ErrorLimitMessage, "test"),
+                new[]
+                {
+                    UnitRequest.SetChannelProperty("id=1001&limiterrormsg_1=test&limitmode_1=1&limitmaxerror_1=50&limitmaxerror_1_factor=0.1"),
+                    UnitRequest.SetChannelProperty("id=1002&limiterrormsg_1=test&limitmode_1=1&limitminerror_1=25&limitminerror_1_factor=0.2")
+                },
+                version: RequestVersion.v18_1
+            );
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public async Task SetChannelProperty_ChannelFactor_SameID_DifferentSensors_NeedsLimitAsync()
+        {
+            var matrix = new[]
+            {
+                //SensorId, Id, Factor
+                new double?[] {1001,       1,  0.1},
+                new double?[] {1002,       1,  0.2}
+            };
+
+            var channels = GetFactorChannels(matrix);
+
+            channels[0].UpperErrorLimit = 50;
+            channels[1].LowerErrorLimit = 25;
+
+            await ExecuteAsync(
+                async c => await c.SetChannelPropertyAsync(channels, ChannelProperty.ErrorLimitMessage, "test"),
+                new[]
+                {
+                    UnitRequest.SetChannelProperty("id=1001&limiterrormsg_1=test&limitmode_1=1&limitmaxerror_1=50&limitmaxerror_1_factor=0.1"),
+                    UnitRequest.SetChannelProperty("id=1002&limiterrormsg_1=test&limitmode_1=1&limitminerror_1=25&limitminerror_1_factor=0.2")
+                },
+                version: RequestVersion.v18_1
+            );
+        }
+
+                #endregion
+                #region ChannelFactor: Different Channels, Different Sensors
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void SetChannelProperty_ChannelFactor_DifferentIDs_DifferentSensors_ExecutesMultipleRequests_v14() =>
+            SetChannelProperty_ChannelFactor_DifferentIDs_DifferentSensors_ExecutesMultipleRequests(RequestVersion.v14_4);
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void SetChannelProperty_ChannelFactor_DifferentIDs_DifferentSensors_ExecutesMultipleRequests_v18() =>
+            SetChannelProperty_ChannelFactor_DifferentIDs_DifferentSensors_ExecutesMultipleRequests(RequestVersion.v18_1);
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public async Task SetChannelProperty_ChannelFactor_DifferentIDs_DifferentSensors_ExecutesMultipleRequestsAsync_v14() =>
+            await SetChannelProperty_ChannelFactor_DifferentIDs_DifferentSensors_ExecutesMultipleRequestsAsync(RequestVersion.v14_4);
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public async Task SetChannelProperty_ChannelFactor_DifferentIDs_DifferentSensors_ExecutesMultipleRequestsAsync_v18() =>
+            await SetChannelProperty_ChannelFactor_DifferentIDs_DifferentSensors_ExecutesMultipleRequestsAsync(RequestVersion.v14_4);
+
+        private void SetChannelProperty_ChannelFactor_DifferentIDs_DifferentSensors_ExecutesMultipleRequests(RequestVersion version)
+        {
+            var matrix = new[]
+            {
+                //SensorId, Id, Factor
+                new double?[] {1001,       1,  0.1},
+                new double?[] {1002,       1,  0.1},
+                new double?[] {1003,       2,  0.2}
+            };
+
+            var channels = GetFactorChannels(matrix);
+
+            Execute(
+                c => c.SetChannelProperty(channels, ChannelProperty.UpperErrorLimit, 100),
+                new[]
+                {
+                    UnitRequest.SetChannelProperty("id=1001,1002&limitmaxerror_1=100&limitmode_1=1&limitmaxerror_1_factor=0.1"),
+                    UnitRequest.SetChannelProperty("id=1003&limitmaxerror_2=100&limitmode_2=1&limitmaxerror_2_factor=0.2")
+                },
+                version: version
+            );
+        }
+
+        private async Task SetChannelProperty_ChannelFactor_DifferentIDs_DifferentSensors_ExecutesMultipleRequestsAsync(RequestVersion version)
+        {
+            var matrix = new[]
+            {
+                //SensorId, Id, Factor
+                new double?[] {1001,       1,  0.1},
+                new double?[] {1002,       1,  0.1},
+                new double?[] {1003,       2,  0.2}
+            };
+
+            var channels = GetFactorChannels(matrix);
+
+            await ExecuteAsync(
+                async c => await c.SetChannelPropertyAsync(channels, ChannelProperty.UpperErrorLimit, 100),
+                new[]
+                {
+                    UnitRequest.SetChannelProperty("id=1001,1002&limitmaxerror_1=100&limitmode_1=1&limitmaxerror_1_factor=0.1"),
+                    UnitRequest.SetChannelProperty("id=1003&limitmaxerror_2=100&limitmode_2=1&limitmaxerror_2_factor=0.2")
+                },
+                version: version
+            );
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void SetChannelProperty_ChannelFactor_DifferentIDs_DifferentSensors_NeedsLimit()
+        {
+            var matrix = new[]
+            {
+                //SensorId, Id, Factor
+                new double?[] {1001,       1,  0.1},
+                new double?[] {1002,       2,  0.2}
+            };
+
+            var channels = GetFactorChannels(matrix);
+
+            channels[0].UpperErrorLimit = 50;
+            channels[1].LowerErrorLimit = 25;
+
+            Execute(
+                c => c.SetChannelProperty(channels, ChannelProperty.ErrorLimitMessage, "test"),
+                new[]
+                {
+                    UnitRequest.SetChannelProperty("id=1001&limiterrormsg_1=test&limitmode_1=1&limitmaxerror_1=50&limitmaxerror_1_factor=0.1"),
+                    UnitRequest.SetChannelProperty("id=1002&limiterrormsg_2=test&limitmode_2=1&limitminerror_2=25&limitminerror_2_factor=0.2")
+                },
+                version: RequestVersion.v18_1
+            );
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public async Task SetChannelProperty_ChannelFactor_DifferentIDs_DifferentSensors_NeedsLimitAsync()
+        {
+            var matrix = new[]
+            {
+                //SensorId, Id, Factor
+                new double?[] {1001,       1,  0.1},
+                new double?[] {1002,       2,  0.2}
+            };
+
+            var channels = GetFactorChannels(matrix);
+
+            channels[0].UpperErrorLimit = 50;
+            channels[1].LowerErrorLimit = 25;
+
+            await ExecuteAsync(
+                async c => await c.SetChannelPropertyAsync(channels, ChannelProperty.ErrorLimitMessage, "test"),
+                new[]
+                {
+                    UnitRequest.SetChannelProperty("id=1001&limiterrormsg_1=test&limitmode_1=1&limitmaxerror_1=50&limitmaxerror_1_factor=0.1"),
+                    UnitRequest.SetChannelProperty("id=1002&limiterrormsg_2=test&limitmode_2=1&limitminerror_2=25&limitminerror_2_factor=0.2")
+                },
+                version: RequestVersion.v18_1
+            );
+        }
+
+                #endregion
+            #endregion
+
+        private Channel[] GetFactorChannels(double?[][] matrix)
+        {
+            var list = new List<Channel>();
+
+            foreach (var channel in matrix)
+            {
+                var c = new Channel
+                {
+                    SensorId = (int)channel[0].Value,
+                    Id = (int)channel[1].Value
+                };
+
+                if (channel[2] != null)
+                    SetFactors(c, channel[2]);
+
+                list.Add(c);
+            }
+
+            return list.ToArray();
+        }
+
+        private Channel CreateChannel(int?[] limits, int i)
+        {
+            var channel = new Channel
+            {
+                Id = 1,
+                SensorId = 1001 + i * 1000,
+                UpperErrorLimit = limits[0],
+                LowerErrorLimit = limits[1],
+                UpperWarningLimit = limits[2],
+                LowerWarningLimit = limits[3],
+            };
+
+            SetFactors(channel, 0.1);
+
+            return channel;
+        }
+
+        private void SetFactors(Channel channel, double? value)
+        {
+            var factors = typeof(Channel).GetProperties(BindingFlags.Instance | BindingFlags.NonPublic).Where(p => p.Name.EndsWith("Factor") && p.Name != nameof(Channel.Factor));
+
+            foreach (var property in factors)
+            {
+                property.SetValue(channel, value);
+            }
         }
 
         #endregion
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void SetChannelProperty_Throws_ResolvingNonExistentChannel()
+        {
+            var client = Initialize_Client(new MultiTypeResponse());
+
+            AssertEx.Throws<InvalidOperationException>(
+                () => client.SetChannelProperty(1001, 9, ChannelProperty.UpperErrorLimit, 1),
+                "Channel ID '9' does not exist on sensor ID '1001'."
+            );
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public async Task SetChannelProperty_Throws_ResolvingNonExistentChannelAsync()
+        {
+            var client = Initialize_Client(new MultiTypeResponse());
+
+            await AssertEx.ThrowsAsync<InvalidOperationException>(
+                async () => await client.SetChannelPropertyAsync(1001, 9, ChannelProperty.UpperErrorLimit, 1),
+                "Channel ID '9' does not exist on sensor ID '1001'."
+            );
+        }
     }
 }

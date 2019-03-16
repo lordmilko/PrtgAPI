@@ -41,6 +41,17 @@ namespace PrtgAPI.Tests.UnitTests.Support
         internal static string RequestLog(string url = "", UrlFlag? flags = UrlFlag.Columns | UrlFlag.Count) =>
             RequestObject(url, flags, "messages", DefaultLogProperties);
 
+        internal static string RequestChannel(int sensorId) =>
+            RequestObject($"count=*&id={sensorId}", UrlFlag.Columns, "channels", DefaultChannelProperties);
+
+        internal static string RequestChannelProperties(int sensorId, int channelId) =>
+            Get($"controls/channeledit.htm?id={sensorId}&channel={channelId}");
+
+        internal static string SetChannelProperty(string url) =>
+            Get($"editsettings?{url}");
+
+        internal static string Get(string url) => $"https://prtg.example.com/{url}&username=username&passhash=12345678";
+
         static string RequestObject(string url, UrlFlag? flags, string content, Func<string> defaultProperties)
         {
             Func<string, string> getDelim = f => f != string.Empty ? "&" : "";
@@ -83,6 +94,11 @@ namespace PrtgAPI.Tests.UnitTests.Support
         internal static string DefaultLogProperties()
         {
             return "objid,name,datetime,parent,status,sensor,device,group,probe,message,priority,type,tags,active";
+        }
+
+        internal static string DefaultChannelProperties()
+        {
+            return "objid,name,lastvalue";
         }
 
         public static List<MethodInfo> GetTests(Type type)

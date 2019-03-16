@@ -763,6 +763,10 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             }
             if (t == typeof(DeviceTemplate[]))
                 return new[] { new DeviceTemplate("test|test") };
+            if (t == typeof(Channel))
+                return realClient.GetChannel(4000, 1);
+            if (t == typeof(IEnumerable<Channel>))
+                return realClient.GetChannels(4000).ToArray();
             if (t == typeof(NotificationTrigger))
                 return realClient.GetNotificationTriggers(0).First();
             if (t == typeof(PropertyParameter[]))
@@ -1035,9 +1039,16 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             {
                 if (p == currentParameter)
                 {
-                    var arr = Activator.CreateInstance(p.ParameterType, 1);
+                    if (p.ParameterType.IsInterface)
+                    {
+                        var underlying = p.ParameterType.GetGenericArguments()[0];
 
-                    return arr;
+                        var array = underlying.MakeArrayType();
+
+                        return Activator.CreateInstance(array, 1);
+                    }
+                    else
+                        return Activator.CreateInstance(p.ParameterType, 1);
                 }
 
                 return GetParameterObject(method, p);
@@ -1129,9 +1140,16 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             {
                 if (p == currentParameter)
                 {
-                    var arr = Activator.CreateInstance(p.ParameterType, 0);
+                    if (p.ParameterType.IsInterface)
+                    {
+                        var underlying = p.ParameterType.GetGenericArguments()[0];
 
-                    return arr;
+                        var array = underlying.MakeArrayType();
+
+                        return Activator.CreateInstance(array, 0);
+                    }
+                    else
+                        return Activator.CreateInstance(p.ParameterType, 0);
                 }
 
                 return GetParameterObject(method, p);

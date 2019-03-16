@@ -253,7 +253,7 @@ Describe "Set-ObjectProperty" -Tag @("PowerShell", "UnitTest") {
 
             $devices = Get-Device -Count 2
 
-            SetAddressValidatorResponse "id=3000,3001&esxuser_=root&esxpassword_=topsecret&vmwareconnection=0&username"
+            SetAddressValidatorResponse "id=3000,3001&esxuser_=root&vmwareconnection=0&esxpassword_=topsecret&username"
 
             $devices | Set-ObjectProperty -VMwareUserName root -VMwarePassword topsecret
         }
@@ -264,8 +264,8 @@ Describe "Set-ObjectProperty" -Tag @("PowerShell", "UnitTest") {
             $devices = Get-Device -Count 2
 
             SetAddressValidatorResponse @(
-                "editsettings?id=3000&esxuser_=root&esxpassword_=topsecret&vmwareconnection=0&"
-                "editsettings?id=3001&esxuser_=root&esxpassword_=topsecret&vmwareconnection=0&"
+                "editsettings?id=3000&esxuser_=root&vmwareconnection=0&esxpassword_=topsecret&"
+                "editsettings?id=3001&esxuser_=root&vmwareconnection=0&esxpassword_=topsecret&"
             )
 
             $devices | Set-ObjectProperty -VMwareUserName root -VMwarePassword topsecret -Batch:$false
@@ -291,7 +291,7 @@ Describe "Set-ObjectProperty" -Tag @("PowerShell", "UnitTest") {
 
             $devices = Get-Device -Count 2
 
-            SetAddressValidatorResponse "id=3000,3001&esxuser_=root&esxpassword_=password&vmwareconnection=0"
+            SetAddressValidatorResponse "id=3000,3001&esxuser_=root&vmwareconnection=0&esxpassword_=password"
 
             $splat = @{
                 VMwareUserName = "root"

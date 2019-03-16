@@ -144,6 +144,14 @@
     <Compile Include="Parameters\Interfaces\ICustomParameterContainer.cs" />
     <Compile Include="Parameters\ObjectManipulation\ApproveProbeParameters.cs" />
     <Compile Include="Parameters\ObjectManipulation\NewObjectParameters\Sensors\FactorySensorParameters.cs" />
+    <Compile Include="Request\Version\ChannelLimitAnalysis.cs" />
+    <Compile Include="Request\Version\SetChannelPropertyGrouping.cs" />
+    <Compile Include="Request\Version\SetChannelPropertyTask.cs" />
+    <Compile Include="Request\Version\VersionClient.Generated.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>VersionClient.Generated.tt</DependentUpon>
+    </Compile>
     <Compile Include="Request\Version\VersionClient17_4.cs" />
     <Compile Include="Utilities\DynamicParameterPropertyTypes.cs" />
     <Compile Include="Utilities\FluentExpressions.cs" />
@@ -575,6 +583,10 @@
       <LastGenOutput>PrtgClient.Methods.Generated.cs</LastGenOutput>
     </Content>
     <Content Include="Request\PrtgClient.Methods.xml" />
+    <Content Include="Request\Version\VersionClient.Generated.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>VersionClient.Generated.cs</LastGenOutput>
+    </Content>
     <Content Include="Request\Version\VersionClient18_1.Generated.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>VersionClient18_1.Generated.cs</LastGenOutput>
