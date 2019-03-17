@@ -214,7 +214,7 @@ namespace PrtgAPI
                 case StandardScanningInterval.TwentyFourHours:
                     return TwentyFourHours;
                 default:
-                    throw new NotImplementedException($"Handler missing for interval '{interval}'");
+                    throw new NotImplementedException($"Handler missing for interval '{interval}'.");
             }
         }
 
@@ -321,7 +321,7 @@ namespace PrtgAPI
             else if (time.TotalSeconds == 1)
                 str = $"{time.TotalSeconds} second (Not officially supported)";
             else
-                throw new NotImplementedException($"Not sure how to handle TimeSpan {time}");
+                throw new NotImplementedException($"Not sure how to handle TimeSpan {time}.");
 
             return $"{time.TotalSeconds}|{str}";
         }

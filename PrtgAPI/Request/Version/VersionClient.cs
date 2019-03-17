@@ -380,7 +380,7 @@ namespace PrtgAPI.Request
         {
             if(!string.IsNullOrEmpty(response.ErrorMessage))
             {
-                throw new PrtgRequestException($"Could not resolve '{address}' to an actual address: server responded with '{response.ErrorMessage?.TrimEnd('.')}. {response.Status}'");
+                throw new PrtgRequestException($"Could not resolve '{address}' to an actual address: server responded with '{response.ErrorMessage?.EnsurePeriod()} {response.Status}'.");
             }
         }
 

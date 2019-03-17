@@ -3373,7 +3373,7 @@ namespace PrtgAPI
         /// </summary>
         /// <param name="objectId">The ID of the object whose property should be retrieved.</param>
         /// <param name="subId">The ID of the sub object whose property should be retrieved.</param>
-        /// <param name="subType">The type of sub object to retrieve the property from</param>
+        /// <param name="subType">The type of sub object to retrieve the property from.</param>
         /// <param name="property">The property of the object to retrieve. This can be typically discovered by inspecting the "name" attribute of the properties' &lt;input/&gt; tag on the Settings page of PRTG.<para/>
         /// If the properties name ends in an underscore, this must be included.</param>
         /// <param name="text">If true, displays option properties using their label names instead of their internal numeric values.</param>
@@ -3389,7 +3389,7 @@ namespace PrtgAPI
         /// </summary>
         /// <param name="objectId">The ID of the object whose property should be retrieved.</param>
         /// <param name="subId">The ID of the sub object whose property should be retrieved.</param>
-        /// <param name="subType">The type of sub object to retrieve the property from</param>
+        /// <param name="subType">The type of sub object to retrieve the property from.</param>
         /// <param name="property">The property of the object to retrieve. This can be typically discovered by inspecting the "name" attribute of the properties' &lt;input/&gt; tag on the Settings page of PRTG.<para/>
         /// If the properties name ends in an underscore, this must be included.</param>
         /// <param name="text">If true, displays option properties using their label names instead of their internal numeric values.</param>

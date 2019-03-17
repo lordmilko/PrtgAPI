@@ -57,7 +57,7 @@ namespace PrtgAPI
 
         private static string GetMessage(int objectId, TriggerType type, List<TriggerType> validTypes)
         {
-            return $"Trigger type '{type}' is not a valid trigger type for object ID '{objectId}'. The following types are supported: {string.Join(", ", validTypes)}";
+            return $"Trigger type '{type}' is not a valid trigger type for object ID '{objectId}'. The following types are supported: {string.Join(", ", validTypes)}.";
         }
     }
 }

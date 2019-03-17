@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using PrtgAPI.Attributes;
 using PrtgAPI.Request;
 using PrtgAPI.Utilities;
@@ -12,6 +13,13 @@ namespace PrtgAPI.Parameters
     public abstract class TriggerParameters : BaseParameters, IHtmlParameters
     {
         HtmlFunction IHtmlParameters.Function => HtmlFunction.EditSettings;
+
+        private static TriggerProperty[] notificationActionTypes = new[]
+        {
+            TriggerProperty.OnNotificationAction,
+            TriggerProperty.OffNotificationAction,
+            TriggerProperty.EscalationNotificationAction
+        };
 
         /// <summary>
         /// Gets the ID of the object this trigger applies to.
@@ -66,10 +74,10 @@ namespace PrtgAPI.Parameters
         protected TriggerParameters(TriggerType type, int objectId, int? subId, ModifyAction action)
         {
             if (action == ModifyAction.Add && subId != null)
-                throw new ArgumentException("SubId must be null when ModifyAction is Add", nameof(subId));
+                throw new ArgumentException("SubId must be null when ModifyAction is Add.", nameof(subId));
 
             if (action == ModifyAction.Edit && subId == null)
-                throw new ArgumentException("SubId cannot be null when ModifyAction is Edit", nameof(subId));
+                throw new ArgumentException("SubId cannot be null when ModifyAction is Edit.", nameof(subId));
 
             if(action == ModifyAction.Add)
                 OnNotificationAction = null;
@@ -103,14 +111,14 @@ namespace PrtgAPI.Parameters
                 throw new ArgumentNullException(nameof(sourceTrigger));
 
             if (sourceTrigger.Type != type)
-                throw new ArgumentException($"A NotificationTrigger of type '{sourceTrigger.Type}' cannot be used to initialize trigger parameters of type '{type}'");
+                throw new ArgumentException($"A NotificationTrigger of type '{sourceTrigger.Type}' cannot be used to initialize trigger parameters of type '{type}'.");
 
             if (action == ModifyAction.Add)
                 OnNotificationAction = sourceTrigger.OnNotificationAction;
             else
             {
                 if (sourceTrigger.Inherited)
-                    throw new InvalidOperationException($"Cannot modify NotificationTrigger '{sourceTrigger.OnNotificationAction}' applied to object ID {sourceTrigger.ObjectId} as this trigger is inherited from object ID {sourceTrigger.ParentId}. To modify this trigger, retrieve it from its parent object");
+                    throw new InvalidOperationException($"Cannot modify NotificationTrigger '{sourceTrigger.OnNotificationAction}' applied to object ID {sourceTrigger.ObjectId} as this trigger is inherited from object ID {sourceTrigger.ParentId}. To modify this trigger, retrieve it from its parent object.");
             }
         }
 
@@ -121,8 +129,7 @@ namespace PrtgAPI.Parameters
         /// <returns>If the notification action exists, the notification action. Otherwise, an empty notification action.</returns>
         protected NotificationAction GetNotificationAction(TriggerProperty actionType)
         {
-            if (actionType != TriggerProperty.OnNotificationAction && actionType != TriggerProperty.OffNotificationAction && actionType != TriggerProperty.EscalationNotificationAction)
-                throw new ArgumentException($"{actionType} is not a valid notification action type");
+            ValidateActionType(actionType);
 
             var value = GetCustomParameterValue(actionType);
 
@@ -143,13 +150,18 @@ namespace PrtgAPI.Parameters
         /// <param name="value">The notification action to insert. If this value is null, an empty notification action is inserted.</param>
         protected void SetNotificationAction(TriggerProperty actionType, NotificationAction value)
         {
-            if (actionType != TriggerProperty.OnNotificationAction && actionType != TriggerProperty.OffNotificationAction && actionType != TriggerProperty.EscalationNotificationAction)
-                throw new ArgumentException($"{actionType} is not a valid notification action type");
+            ValidateActionType(actionType);
 
             if (value == null)
                 value = EmptyNotificationAction();
 
             UpdateCustomParameter(actionType, value);
+        }
+
+        private void ValidateActionType(TriggerProperty actionType)
+        {
+            if (!notificationActionTypes.Contains(actionType))
+                throw new ArgumentException($"'{actionType}' is not a valid notification action type. Please specify one of {string.Join(", ", notificationActionTypes)}.", nameof(actionType));
         }
 
         /// <summary>
@@ -183,7 +195,7 @@ namespace PrtgAPI.Parameters
         protected void UpdateCustomParameter(TriggerProperty property, object value, bool requireValue = false)
         {
             if (value == null && requireValue && Action != ModifyAction.Edit)
-                throw new InvalidOperationException($"Trigger property '{property}' cannot be null for trigger type '{Type}'");
+                throw new InvalidOperationException($"Trigger property '{property}' cannot be null for trigger type '{Type}'.");
 
             var name = $"{property.GetDescription()}_{this.subId}";
             var parameter = new CustomParameter(name, value);

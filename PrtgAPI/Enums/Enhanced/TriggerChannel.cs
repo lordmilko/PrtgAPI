@@ -119,7 +119,7 @@ namespace PrtgAPI
                 case StandardTriggerChannel.TrafficOut:
                     return TrafficOut;
                 default:
-                    throw new NotImplementedException($"Handler missing for channel '{channel}'");
+                    throw new NotImplementedException($"Handler missing for channel '{channel}'.");
             }
         }
 

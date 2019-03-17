@@ -170,7 +170,7 @@ namespace PrtgAPI
             var enums = obj.Where(o => o is Enum).ToList();
 
             if (enums.Count == 0)
-                throw new NotImplementedException($"Don't know how to get {nameof(VersionAttribute)} for '{string.Join(",", obj)}'");
+                throw new NotImplementedException($"Don't know how to get {nameof(VersionAttribute)} for '{string.Join(",", obj)}'.");
 
             var result = obj.OfType<Enum>().Select(o => o.GetEnumAttribute<VersionAttribute>()).Where(a => a != null).OrderBy(a => a.Version).ToList();
 
@@ -233,7 +233,7 @@ namespace PrtgAPI
             var response = RequestEngine.ExecuteRequest(new PassHashParameters(password), m => m.Content.ReadAsStringAsync().Result).StringValue;
 
             if(!Regex.Match(response, "^[0-9]+$").Success)
-                throw new PrtgRequestException($"Could not retrieve PassHash from PRTG Server. PRTG responded '{response}'");
+                throw new PrtgRequestException($"Could not retrieve PassHash from PRTG Server. PRTG responded '{response}'.");
 
             return response;
         }
@@ -845,7 +845,7 @@ namespace PrtgAPI
             }
 
             if (result.Count == 0)
-                throw new PrtgRequestException($"Could not resolve '{address}' to an actual address");
+                throw new PrtgRequestException($"Could not resolve '{address}' to an actual address.");
 
             var location = result.First();
 
@@ -889,7 +889,7 @@ namespace PrtgAPI
             }
 
             if (result.Count == 0)
-                throw new PrtgRequestException($"Could not resolve '{address}' to an actual address");
+                throw new PrtgRequestException($"Could not resolve '{address}' to an actual address.");
 
             var location = result.First();
 

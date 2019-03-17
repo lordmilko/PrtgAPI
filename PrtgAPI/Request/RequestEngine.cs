@@ -431,7 +431,7 @@ namespace PrtgAPI.Request
                 var xDoc = XDocument.Load(response.ToXmlReader());
                 var errorMessage = xDoc.Descendants("error").First().Value;
 
-                throw new PrtgRequestException($"PRTG was unable to complete the request. The server responded with the following error: {errorMessage}");
+                throw new PrtgRequestException($"PRTG was unable to complete the request. The server responded with the following error: {errorMessage.EnsurePeriod()}");
             }
             else if (responseMessage.StatusCode == HttpStatusCode.Unauthorized)
             {
@@ -450,7 +450,7 @@ namespace PrtgAPI.Request
 
                 errorMsg = errorMsg.Replace("<br/><ul><li>", " ").Replace("</li></ul><br/>", " ");
 
-                throw new PrtgRequestException($"PRTG was unable to complete the request. The server responded with the following error: {errorMsg}");
+                throw new PrtgRequestException($"PRTG was unable to complete the request. The server responded with the following error: {errorMsg.EnsurePeriod()}");
             }
 
             if(response.Type == PrtgResponseType.String)
@@ -466,7 +466,7 @@ namespace PrtgAPI.Request
                     var regex = new Regex("<.+?>");
                     var newStr = regex.Replace(substr1, "");
 
-                    throw new PrtgRequestException($"PRTG was unable to complete the request. The server responded with the following error: {newStr}");
+                    throw new PrtgRequestException($"PRTG was unable to complete the request. The server responded with the following error: {newStr.EnsurePeriod()}");
                 }
             }
         }

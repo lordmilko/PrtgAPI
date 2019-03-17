@@ -100,10 +100,10 @@ namespace PrtgAPI.Targets
             all.AddRange(validDropdowns);
 
             if (all.Count == 0)
-                throw new ArgumentException("Cannot guess sensor target table. Please specify tableName");
+                throw new ArgumentException("Cannot guess sensor target table. Please specify tableName.");
 
             if(all.Count > 2)
-                throw new ArgumentException($"Cannot guess sensor target table: multiple tables found. Available tables: {string.Join(", ", all)}");
+                throw new ArgumentException($"Cannot guess sensor target table: multiple tables found. Available tables: {string.Join(", ", all)}.");
 
             var tableName = all.First();
 
@@ -117,7 +117,7 @@ namespace PrtgAPI.Targets
             }
             else
             {
-                throw new NotImplementedException("Table type was unhandled");
+                throw new NotImplementedException("Don't know what element type to create sensor targets from.");
             }
         }
 

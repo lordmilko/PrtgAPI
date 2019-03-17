@@ -12,7 +12,7 @@ namespace PrtgAPI.Parameters
         public SensorHistoryParameters(int sensorId, int average, DateTime? startDate, DateTime? endDate, int? count)
         {
             if(average < 0)
-                throw new ArgumentException("Average must be greater than or equal to 0", nameof(average));
+                throw new ArgumentException("Average must be greater than or equal to 0.", nameof(average));
 
             SensorId = sensorId;
 

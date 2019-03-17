@@ -162,7 +162,7 @@ namespace PrtgAPI.Linq.Expressions.Visitors
                     if (strict)
                         throw Error.UnsupportedMethodCall(expr, node.Method.Name);
 
-                    throw new InvalidExpressionException($"{node.Method.Name} is not supported");
+                    throw new InvalidExpressionException($"{node.Method.Name} is not supported.");
             }
 
             Visit(node.Arguments);

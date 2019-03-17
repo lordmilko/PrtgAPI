@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Text;
+using PrtgAPI.Utilities;
 
 namespace PrtgAPI.Request.Serialization
 {
@@ -34,7 +35,7 @@ namespace PrtgAPI.Request.Serialization
                 {
                     var message = Encoding.UTF8.GetString(buffer);
 
-                    throw new PrtgRequestException($"PRTG was unable to complete the request. The server responded with the following error: {message}");
+                    throw new PrtgRequestException($"PRTG was unable to complete the request. The server responded with the following error: {message.EnsurePeriod()}");
                 }
 
                 hasRead = true;

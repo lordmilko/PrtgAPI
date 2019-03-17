@@ -151,7 +151,7 @@ namespace PrtgAPI.Parameters
                 if (matches.All(o => o is GenericSensorTarget))
                     return matches.Cast<GenericSensorTarget>().ToArray();
 
-                throw new NotSupportedException($"Property '{name}' contains an invalid collection of elements");
+                throw new NotSupportedException($"Property '{name}' contains an invalid collection of elements.");
             }
 
             throw new InvalidOperationException($"Parameter with name '{name}' does not exist.");

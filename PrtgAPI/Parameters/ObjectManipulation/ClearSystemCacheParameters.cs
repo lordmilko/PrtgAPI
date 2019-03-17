@@ -13,7 +13,7 @@ namespace PrtgAPI.Parameters
                 if (cacheType == SystemCacheType.GraphData)
                     return CommandFunction.RecalcCache;
 
-                throw new NotImplementedException($"Don't know how to handle cache type '{cacheType}'");
+                throw new NotImplementedException($"Don't know how to handle cache type '{cacheType}'.");
             }
         }
 

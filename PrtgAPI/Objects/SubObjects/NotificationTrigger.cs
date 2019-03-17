@@ -132,7 +132,7 @@ namespace PrtgAPI
                 else if (UnitSize == null && UnitTime == null && Period == null)
                     return null;
                 else
-                    throw new Exception("not sure how to format units"); //todo: fix this up
+                    throw new Exception($"Don't know how to format unit from unit size, time and period '{UnitSize}', '{UnitTime}' and '{Period}'.");
             }
         }
 

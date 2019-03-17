@@ -267,7 +267,7 @@ namespace PrtgAPI.Request
 
             var typeName = val?.GetType().Name ?? "null";
 
-            throw new InvalidCastException($"Cannot convert a value of type '{typeName}' to type '{typeof(T)}'");
+            throw new InvalidCastException($"Cannot convert a value of type '{typeName}' to type '{typeof(T)}'.");
         }
 
         internal static string ValidateRawObjectProperty(XDocument response, GetObjectPropertyRawParameters parameters)
@@ -348,7 +348,7 @@ namespace PrtgAPI.Request
                 var response = responseMessage.Content.ReadAsStringAsync().Result;
 
                 if (!response.Contains("<"))
-                    throw new PrtgRequestException($"PRTG was unable to complete the request. The server responded with the following error: {response}");
+                    throw new PrtgRequestException($"PRTG was unable to complete the request. The server responded with the following error: {response.EnsurePeriod()}");
 
                 return new PrtgResponse(response, isDirty);
             }
@@ -363,7 +363,7 @@ namespace PrtgAPI.Request
                 var response = await responseMessage.Content.ReadAsStringAsync().ConfigureAwait(false);
 
                 if (!response.Contains("<"))
-                    throw new PrtgRequestException($"PRTG was unable to complete the request. The server responded with the following error: {response}");
+                    throw new PrtgRequestException($"PRTG was unable to complete the request. The server responded with the following error: {response.EnsurePeriod()}");
 
                 return new PrtgResponse(response, isDirty);
             }
@@ -449,10 +449,10 @@ namespace PrtgAPI.Request
                     if (message.StartsWith("Incomplete connection settings"))
                         throw new PrtgRequestException("Failed to retrieve data from device; required credentials for sensor type may be missing. See PRTG UI for further details.");
 
-                    throw new PrtgRequestException($"An exception occurred while trying to resolve sensor targets: {message}");
+                    throw new PrtgRequestException($"An exception occurred while trying to resolve sensor targets: {message.EnsurePeriod()}");
                 }
 
-                throw new PrtgRequestException("An unspecified error occurred while trying to resolve sensor targets. Check the Device Host is still valid or try adding targets with the PRTG UI");
+                throw new PrtgRequestException("An unspecified error occurred while trying to resolve sensor targets. Check the Device Host is still valid or try adding targets with the PRTG UI.");
             }
         }
 
@@ -487,7 +487,7 @@ namespace PrtgAPI.Request
         internal static PrtgResponse ResolveParser(HttpResponseMessage message)
         {
             if (message.Content.Headers.ContentType.MediaType == "image/png" || message.StatusCode.ToString() == "530")
-                throw new PrtgRequestException("Could not resolve the specified address; the PRTG map provider is not currently available");
+                throw new PrtgRequestException("Could not resolve the specified address; the PRTG map provider is not currently available.");
 
             return null;
         }

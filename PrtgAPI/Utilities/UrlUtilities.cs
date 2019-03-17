@@ -42,7 +42,7 @@ namespace PrtgAPI.Utilities
                 // find next & while noting first = on the way (and if there are more)
 
                 if (collection.Count > 1000)
-                    throw new InvalidOperationException("Cannot have more than 1000 entries in query string");
+                    throw new InvalidOperationException("Cannot have more than 1000 entries in query string.");
 
                 int si = i;
                 int ti = -1;

@@ -23,7 +23,7 @@ namespace PrtgAPI.Request
             get
             {
                 if (Type != PrtgResponseType.String)
-                    throw new InvalidOperationException($"Attempted to read {nameof(StringValue)} from a response of type '{Type}'");
+                    throw new InvalidOperationException($"Attempted to read {nameof(StringValue)} from a response of type '{Type}'.");
 
                 return stringValue;
             }
@@ -34,7 +34,7 @@ namespace PrtgAPI.Request
         internal Stream GetStreamUnsafe()
         {
             if (Type != PrtgResponseType.Stream)
-                throw new InvalidOperationException($"Attempted to read {nameof(streamValue)} from a response of type '{Type}'");
+                throw new InvalidOperationException($"Attempted to read {nameof(streamValue)} from a response of type '{Type}'.");
 
             return streamValue;
         }
@@ -77,7 +77,7 @@ namespace PrtgAPI.Request
                     return XmlReader.Create(new StringReader(str));
 
                 default:
-                    throw new NotImplementedException($"Don't know how to create XmlReader for response of type '{Type}'");
+                    throw new NotImplementedException($"Don't know how to create {nameof(XmlReader)} for response of type '{Type}'.");
             }
         }
 

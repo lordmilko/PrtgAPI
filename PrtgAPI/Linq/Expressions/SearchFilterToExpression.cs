@@ -158,7 +158,7 @@ namespace PrtgAPI.Linq.Expressions
 
                     return Contains(member, property, value);
                 default:
-                    throw new NotImplementedException($"Don't know how to handle filter operator '{op}'");
+                    throw new NotImplementedException($"Don't know how to handle filter operator '{op}'.");
             }
         }
 
@@ -192,7 +192,7 @@ namespace PrtgAPI.Linq.Expressions
             if (IsDoubleEqual(nodeType, member, property, value, out expr))
                 return expr;
 
-            throw new NotImplementedException($"Either don't know how to handle member of type {member.Type} or object of type {value.GetType()}");
+            throw new NotImplementedException($"Either don't know how to handle member of type {member.Type} or object of type {value.GetType()}.");
         }
 
         private bool IsType(Type type, params Type[] types)
@@ -329,7 +329,7 @@ namespace PrtgAPI.Linq.Expressions
                 return ExpressionHelpers.BoolIfNotNull(member, call);
             }
 
-            throw new NotImplementedException($"Don't know how to handle array of type '{member.Type.GetElementType().Name}'");
+            throw new NotImplementedException($"Don't know how to handle array of type '{member.Type.GetElementType().Name}'.");
         }
 
         private static bool ArrayContainsInternal(string[] arr, string val)

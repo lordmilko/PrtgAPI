@@ -63,7 +63,7 @@ namespace PrtgAPI.Linq.Expressions.Serialization
                 case XmlAttributeType.Attribute:
                     return Serializer_AttributeName;
                 default:
-                    throw new NotImplementedException($"Don't know how to get name for attribute type '{type}'");
+                    throw new NotImplementedException($"Don't know how to get name for attribute type '{type}'.");
             }
         }
 

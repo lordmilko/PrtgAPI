@@ -482,7 +482,7 @@ namespace PrtgAPI.Linq.Expressions.Visitors
                 }
             }
 
-            throw new NotImplementedException($"Don't know how to flip expr '{expr}' with otherExpr '{otherExpr}' with expression tyoe '{type}'");
+            throw new NotImplementedException($"Don't know how to flip expr '{expr}' with otherExpr '{otherExpr}' with expression tyoe '{type}'.");
         }
 
         private bool IsLegalCondition(Expression node)

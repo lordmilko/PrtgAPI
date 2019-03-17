@@ -21,7 +21,7 @@ namespace PrtgAPI.Request.Serialization
         private XmlMapping(Type type, PropertyCache cache, string[] value, XmlAttributeType attributeType)
         {
             if (value.Length == 0)
-                throw new ArgumentException("Array length cannot be null", nameof(value));
+                throw new ArgumentException("Array length cannot be null.", nameof(value));
 
             Type = type;
             PropertyCache = cache;

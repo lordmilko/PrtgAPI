@@ -37,13 +37,18 @@ namespace PrtgAPI.Parameters
 
         internal override void SetSearchFilter(List<SearchFilter> value)
         {
-            if (value.Any(item => item.Property == Property.ParentId && (item.Operator != FilterOperator.Equals || ValueEquals(item, "0", (a, b) => a != b))))
-                throw new InvalidOperationException("Cannot filter for probes based on a ParentId other than 0.");
+            if (value == null)
+                base.SetSearchFilter(value);
+            else
+            {
+                if (value.Any(item => item.Property == Property.ParentId && (item.Operator != FilterOperator.Equals || ValueEquals(item, "0", (a, b) => a != b))))
+                    throw new InvalidOperationException("Cannot filter for probes based on a ParentId other than 0.");
 
-            if (!value.Any(item => item.Property == Property.ParentId && item.Operator == FilterOperator.Equals && ValueEquals(item, "0", (a, b) => a == b)))
-                value = value.Union(DefaultSearchFilter()).ToList();
+                if (!value.Any(item => item.Property == Property.ParentId && item.Operator == FilterOperator.Equals && ValueEquals(item, "0", (a, b) => a == b)))
+                    value = value.Union(DefaultSearchFilter()).ToList();
 
-            base.SetSearchFilter(value);
+                base.SetSearchFilter(value);
+            }
         }
 
         private bool ValueEquals(SearchFilter filter, string value, Func<string, string, bool> func)

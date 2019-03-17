@@ -64,7 +64,7 @@ namespace PrtgAPI.Request
             if (!passFound && !parameters.Cookie)
             {
                 if (connectionDetails.PassHash == null)
-                    throw new ArgumentNullException(nameof(connectionDetails.PassHash), $"A password or passhash must be specified. Please specify a passhash in the {nameof(connectionDetails.PassHash)} parameter, or a password or passhash in the {nameof(parameters)} parameter");
+                    throw new ArgumentNullException(nameof(connectionDetails.PassHash), $"A password or passhash must be specified. Please specify a passhash in the {nameof(connectionDetails.PassHash)} parameter, or a password or passhash in the {nameof(parameters)} parameter.");
 
                 AddParameter(urlBuilder, Parameter.PassHash, connectionDetails.PassHash);
             }
@@ -177,7 +177,7 @@ namespace PrtgAPI.Request
             if (singleParam != null)
                 return GetUrlComponentInternal(singleParam.Name, singleParam.Value, singleParam.ParameterType);
 
-            throw new ArgumentException($"Expected parameter '{Parameter.Custom}' to contain one or more objects of type '{nameof(CustomParameter)}', however value was of type '{value.GetType()}'", nameof(value));
+            throw new ArgumentException($"Expected parameter '{Parameter.Custom}' to contain one or more objects of type '{nameof(CustomParameter)}', however value was of type '{value.GetType()}'.", nameof(value));
         }
 
         private string ProcessIEnumerableParameter(ParameterType parameterType, IEnumerable value, string description)
@@ -192,9 +192,9 @@ namespace PrtgAPI.Request
                 return FormatMultiParameter(value, description);
 
             if (parameterType == ParameterType.SingleValue)
-                throw new ArgumentException($"Parameter '{description}' is of type {ParameterType.SingleValue}, however a list of elements was specified. Please specify a single element");
+                throw new ArgumentException($"Parameter '{description}' is of type {ParameterType.SingleValue}, however a list of elements was specified. Please specify a single element.");
 
-            throw new NotImplementedException($"Implementation missing for handling parameter type '{parameterType}'");
+            throw new NotImplementedException($"Implementation missing for handling parameter type '{parameterType}'.");
         }
 
         /// <summary>

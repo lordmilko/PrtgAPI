@@ -123,7 +123,7 @@ namespace PrtgAPI.Linq.Expressions.Serialization
                 badXml.Append(node);
             }
 
-            throw new XmlDeserializationException($"Could not deserialize value '{s}' as it is not a valid member of type '{type}'. Could not process XML '{badXml}'");
+            throw new XmlDeserializationException($"Could not deserialize value '{s}' as it is not a valid member of type '{type}'. Could not process XML '{badXml}'.");
         }
 
         private void BuildNode(StringBuilder builder, object elementName, object elementValue, bool allowAttribute = true)

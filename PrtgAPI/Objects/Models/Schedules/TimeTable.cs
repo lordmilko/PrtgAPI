@@ -55,13 +55,13 @@ namespace PrtgAPI.Schedules
             Rows = InitializeRows();
         }
 
-        private TimeSlot[] ValidateSlots(TimeSlot[] slots, DayOfWeek day, string arg)
+        private TimeSlot[] ValidateSlots(TimeSlot[] slots, DayOfWeek day, string paramName)
         {
             if (slots == null)
                 slots = TimeSlot.Default(day);
 
             if (slots.Length != 24)
-                throw new ArgumentException($"Must specify 24 records however only {slots.Length} were specified.", arg);
+                throw new ArgumentException($"Must specify 24 records however only {slots.Length} were specified.", paramName);
 
             return slots;
         }

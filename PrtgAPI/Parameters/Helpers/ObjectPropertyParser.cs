@@ -123,7 +123,7 @@ namespace PrtgAPI.Parameters.Helpers
                 var propertyRequiredValue = attrib.RequiredValue;
 
                 if (propertyRequiredValue != null && propertyRequiredValue.GetType() != parentValueAsTypeRequiredByProperty.GetType())
-                    throw new InvalidTypeException($"Dependencies of property '{parser.Property}' should be of type {parser.PropertyType}, however property '{child}' is dependent on type '{propertyRequiredValue.GetType()}'");
+                    throw new InvalidTypeException($"Dependencies of property '{parser.Property}' should be of type {parser.PropertyType}, however property '{child}' is dependent on type '{propertyRequiredValue.GetType()}'.");
 
                 if (parentValueAsTypeRequiredByProperty.Equals(propertyRequiredValue)) // == does not work since we are potentially comparing value types wrapped as type object
                 {
@@ -245,7 +245,7 @@ namespace PrtgAPI.Parameters.Helpers
             var prop = attr.Class.GetTypeCache().Properties.FirstOrDefault(p => p.Property.Name == property.ToString());
 
             if (prop == null)
-                throw new MissingMemberException($"Property {property} cannot be found on type {attr.Class} pointed to by {nameof(TypeLookupAttribute)}");
+                throw new MissingMemberException($"Property {property} cannot be found on type {attr.Class} pointed to by {nameof(TypeLookupAttribute)}.");
 
             return prop;
         }

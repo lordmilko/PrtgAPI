@@ -182,10 +182,10 @@ namespace PrtgAPI.Linq.Expressions.Serialization
             Func<Expression, MethodCallExpression> deserializeFromConverter = null)
         {
             if (deserializeToConverter == null && deserializeFromConverter != null)
-                throw new InvalidOperationException("Cannot specify deserialize from without deserialize to");
+                throw new InvalidOperationException("Cannot specify deserialize from without deserialize to.");
 
             if (deserializeToConverter != null && deserializeFromConverter == null)
-                throw new InvalidOperationException("Cannot specify deserialize to without deserialize from");
+                throw new InvalidOperationException("Cannot specify deserialize to without deserialize from.");
 
             if (nullable)
             {
@@ -402,7 +402,7 @@ namespace PrtgAPI.Linq.Expressions.Serialization
             if (mapping.AttributeType == XmlAttributeType.Text)
                 return XmlExpressionConstants.Serializer_ReadTextString;
 
-            throw new NotImplementedException($"Don't know how to read string for attribute type '{mapping.AttributeType}'");
+            throw new NotImplementedException($"Don't know how to read string for attribute type '{mapping.AttributeType}'.");
         }
     }
 }

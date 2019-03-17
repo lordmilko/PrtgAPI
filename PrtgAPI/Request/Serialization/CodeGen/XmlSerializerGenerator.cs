@@ -525,7 +525,7 @@ namespace PrtgAPI.Linq.Expressions.Serialization
                 {
                     var str = string.Join(", ", textMappings.Select(m => m.PropertyCache.Property.Name));
 
-                    throw new InvalidOperationException($"Canot deserialize type {trueType.Name} as multiple properties contain a {nameof(XmlTextAttribute)} ({str})"); //todo: complain about the name of this type and the properties that have the two xmltextattributes
+                    throw new InvalidOperationException($"Canot deserialize type {trueType.Name} as multiple properties contain a {nameof(XmlTextAttribute)} ({str})."); //todo: complain about the name of this type and the properties that have the two xmltextattributes
                 }
 
                 var isText = nodeType.Equal(Expression.Constant(XmlNodeType.Text));

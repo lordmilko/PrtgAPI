@@ -48,7 +48,7 @@ namespace PrtgAPI
         /// </summary>
         /// <param name="expectedType">The type that was expected.</param>
         /// <param name="actualType">The type that was received.</param>
-        public InvalidTypeException(Type expectedType, Type actualType) : base($"Expected type '{expectedType}' however received type '{actualType}'")
+        public InvalidTypeException(Type expectedType, Type actualType) : base($"Expected type '{expectedType}' however received type '{actualType}'.")
         {
         }
 

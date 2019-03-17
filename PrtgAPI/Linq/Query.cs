@@ -28,7 +28,7 @@ namespace PrtgAPI.Linq
                 throw new ArgumentNullException(nameof(expression));
 
             if (!typeof(IQueryable<T>).IsAssignableFrom(expression.Type))
-                throw new ArgumentException($"Expression of type {expression.Type} is not assignable from {nameof(IQueryable<T>)}", nameof(expression));
+                throw new ArgumentException($"Expression of type {expression.Type} is not assignable from {nameof(IQueryable<T>)}.", nameof(expression));
 
             Provider = provider;
             Expression = expression;

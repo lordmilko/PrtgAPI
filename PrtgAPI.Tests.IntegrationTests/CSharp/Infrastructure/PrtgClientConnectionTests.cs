@@ -121,7 +121,7 @@ namespace PrtgAPI.Tests.IntegrationTests.Infrastructure
             }
             catch (WebException ex)
             {
-                if (ex.Message != "Server rejected HTTPS connection on port 443. Please confirm expected server protocol and port, PRTG Core Service is running and that any SSL certificate is trusted")
+                if (ex.Message != "Server rejected HTTPS connection on port 443. Please confirm expected server protocol and port, PRTG Core Service is running and that any SSL certificate is trusted.")
                 {
                     throw;
                 }
@@ -151,7 +151,7 @@ namespace PrtgAPI.Tests.IntegrationTests.Infrastructure
             }
             catch (WebException ex)
             {
-                if (ex.Message != "Server rejected HTTPS connection on port 443. Please confirm expected server protocol and port, PRTG Core Service is running and that any SSL certificate is trusted")
+                if (ex.Message != "Server rejected HTTPS connection on port 443. Please confirm expected server protocol and port, PRTG Core Service is running and that any SSL certificate is trusted.")
                 {
                     throw;
                 }

@@ -211,7 +211,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
                 "XmlSerializerMembers"
             };
 
-            var invocationNode = (InvocationExpressionSyntax)item.AsNode();
+            var invocationNode = (InvocationExpressionSyntax) item.AsNode();
 
             var methodName = GetMethodName(invocationNode).Text;
 
@@ -350,6 +350,89 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
                     }
                 }
             }, true);
+        }
+
+        [TestMethod]
+        [TestCategory("SlowCoverage")]
+        [TestCategory("UnitTest")]
+        public void AllExceptionMessages_EndInAPeriod()
+        {
+            WithTree((file, tree, model) =>
+            {
+                foreach (var item in tree.GetRoot().DescendantNodes())
+                {
+                    if (item.IsKind(SyntaxKind.ThrowStatement))
+                    {
+                        var child = item.ChildNodes().FirstOrDefault();
+
+                        if (child != null && child.IsKind(SyntaxKind.ObjectCreationExpression))
+                        {
+                            var syntax = child as ObjectCreationExpressionSyntax;
+
+                            var args = syntax.ArgumentList.Arguments.Where(IsNotNameOfParameter).ToList();
+
+                            if (args.Count > 0)
+                            {
+                                var str = args.Select(a => a.ToString().TrimEnd('"').TrimEnd('\\')).ToList();
+
+                                if (str.Count == 1)
+                                {
+                                    if(args[0].ToString() != "str")
+                                        AssertEndsInPeriod(syntax, str.Single(), file);
+                                }
+                                else
+                                {
+                                    if (str[0] == "paramName" && str.Count == 2)
+                                    {
+                                        AssertEndsInPeriod(syntax, str.Last(), file);
+                                    }
+                                    else if ((str[1] == "paramName" || str[1] == "ex") && str.Count == 2)
+                                    {
+                                        AssertEndsInPeriod(syntax, str.First(), file);
+                                    }
+                                    else
+                                    {
+                                        var exceptionType = ((IdentifierNameSyntax) syntax.Type).Identifier.ToString();
+
+                                        var allowedExceptions = new string[]
+                                        {
+                                            nameof(InvalidTypeException),
+                                            nameof(Exceptions.Internal.MissingAttributeException),
+                                            nameof(InvalidTriggerTypeException),
+                                            nameof(XmlDeserializationException),
+                                            nameof(MissingMemberException)
+                                        };
+
+                                        if (!allowedExceptions.Contains(exceptionType))
+                                            throw new NotImplementedException($"Don't know where exception message should be in exception '{syntax}' in file '{file}'");
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        private void AssertEndsInPeriod(ObjectCreationExpressionSyntax syntax, string str, string file)
+        {
+            if (!str.EndsWith(".") && !str.EndsWith("?") && !str.EndsWith("EnsurePeriod()}") && (str.StartsWith("$") || str.StartsWith("\"")))
+                Assert.Fail($"Exception message in exception '{syntax}' in file '{file}' does not end in a period.");
+        }
+
+        private bool IsNotNameOfParameter(ArgumentSyntax syntax)
+        {
+            var invocation = syntax.Expression as InvocationExpressionSyntax;
+
+            if (invocation != null)
+            {
+                var identifier = invocation.Expression as IdentifierNameSyntax;
+
+                if (identifier != null && identifier.Identifier.Value?.ToString() == "nameof")
+                    return false;
+            }
+
+            return true;
         }
 
         [TestMethod]

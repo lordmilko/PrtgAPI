@@ -59,10 +59,10 @@ namespace PrtgAPI.Parameters
             set
             {
                 if (value > 900)
-                    throw new ArgumentException("Timeout must be less than 900");
+                    throw new ArgumentException("Timeout must be less than 900.");
 
                 if (value < 1)
-                    throw new ArgumentException("Timeout must be greater than or equal to 1");
+                    throw new ArgumentException("Timeout must be greater than or equal to 1.");
 
                 SetCustomParameter(ObjectProperty.Timeout, value);
             }

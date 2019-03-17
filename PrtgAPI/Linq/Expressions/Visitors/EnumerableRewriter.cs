@@ -97,7 +97,7 @@ namespace System.Linq
                 case MemberTypes.Field:
                     return ((FieldInfo)member).GetValue(instance);
                 default:
-                    throw new InvalidOperationException();
+                    throw new InvalidOperationException($"Don't know how to get value from member of type '{member.MemberType}'.");
             }
         }
     }
@@ -317,7 +317,7 @@ namespace System.Linq
             using (IEnumerator<MethodInfo> en = type.GetStaticMethods().Where(m => m.Name == name).GetEnumerator())
             {
                 if (!en.MoveNext())
-                    throw new InvalidOperationException($"There is no method '{name}' on type '{type}'");
+                    throw new InvalidOperationException($"There is no method '{name}' on type '{type}'.");
                 do
                 {
                     MethodInfo methodInfo = en.Current;
@@ -326,7 +326,7 @@ namespace System.Linq
                 } while (en.MoveNext());
             }
 
-            throw new InvalidOperationException($"There is no method '{name}' on type '{type}' that matches the specified arguments");
+            throw new InvalidOperationException($"There is no method '{name}' on type '{type}' that matches the specified arguments.");
         }
 
         private static bool ArgsMatch(MethodInfo m, ReadOnlyCollection<Expression> args, Type[] typeArgs)

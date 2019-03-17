@@ -74,7 +74,7 @@ namespace PrtgAPI.Parameters.Helpers
                     return ((ISerializable)Value).GetSerializedFormat();
                 }
 
-                throw new NotSupportedException("Serializng a TypeAttribute type that does not implement IFormattable is not currently supported");
+                throw new NotSupportedException("Serializng a TypeAttribute type that does not implement IFormattable is not currently supported.");
             }
 
             if (PropertyType.IsArray)
@@ -96,7 +96,7 @@ namespace PrtgAPI.Parameters.Helpers
                     splittableStringChar = Cache.GetAttribute<SplittableStringAttribute>()?.Character.ToString();
 
                     if(splittableStringChar == null)
-                        throw new NotSupportedException($"Cannot serialize value for array property {Property} as the property is missing a {nameof(SplittableStringAttribute)}");
+                        throw new NotSupportedException($"Cannot serialize value for array property {Property} as the property is missing a {nameof(SplittableStringAttribute)}.");
                     //we should downcast this too
                 }
                 //if our value is not an array, change property type to the underlying type
@@ -135,7 +135,7 @@ namespace PrtgAPI.Parameters.Helpers
                     throw new ArgumentNullException(nameof(Value), $"Value 'null' could not be assigned to property '{Cache.Property.Name}' of type '{Cache.Property.PropertyType}'. Null may only be assigned to properties of type string, int and double.");
 
                 if (isArray)
-                    throw new NotSupportedException($"Properties containing arrays of type {PropertyType} are not currently supported");
+                    throw new NotSupportedException($"Properties containing arrays of type {PropertyType} are not currently supported.");
 
                 //Convert bool to int
                 if (PropertyType == typeof(bool))
@@ -169,7 +169,7 @@ namespace PrtgAPI.Parameters.Helpers
             object val = null;
 
             if (isArray)
-                throw new NotSupportedException($"Properties containing arrays of type {PropertyType} are not currently supported");
+                throw new NotSupportedException($"Properties containing arrays of type {PropertyType} are not currently supported.");
 
             //If the value is convertable to a double, it is either an int or a double
 
@@ -270,7 +270,7 @@ namespace PrtgAPI.Parameters.Helpers
                 }
                     
                 else
-                    throw new InvalidTypeException($"Cannot serialize value of type {PropertyType}; type does not implement {nameof(ISerializable)}");
+                    throw new InvalidTypeException($"Cannot serialize value of type {PropertyType}; type does not implement {nameof(ISerializable)}.");
             }
             else
                 throw new InvalidTypeException(PropertyType, ValueType);
@@ -297,7 +297,7 @@ namespace PrtgAPI.Parameters.Helpers
             if (Type == null)
                 throw new InvalidOperationException("TypeCategory was null, however this should be impossible. Was method ParseValue run first?");
 
-            throw new InvalidOperationException($"Cannot convert value of category '{Type}' to a primative type");
+            throw new InvalidOperationException($"Cannot convert value of category '{Type}' to a primative type.");
         }
 
         private void ThrowEnumArgumentException()
@@ -316,7 +316,7 @@ namespace PrtgAPI.Parameters.Helpers
                     builder.Append(" or ");
             }
 
-            throw new ArgumentException($"'{Value}' is not a valid value for enum {PropertyType.Name}. Please specify one of {builder}");
+            throw new ArgumentException($"'{Value}' is not a valid value for enum {PropertyType.Name}. Please specify one of {builder}.");
         }
 
         internal CustomParameter GetParameter(Func<Enum, PropertyCache, string> nameResolver)

@@ -64,7 +64,7 @@ namespace PrtgAPI.Exceptions.Internal
 
         private static string GetPropertyMessage(Type type, string property, Type attribute)
         {
-            return $"Property '{property}' of type '{type}' is missing a {attribute}";
+            return $"Property '{property}' of type '{type}' is missing a {attribute}.";
         }
     }
 }

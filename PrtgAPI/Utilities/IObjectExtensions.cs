@@ -25,7 +25,7 @@ namespace PrtgAPI
             if (obj is IEventObject)
                 return ((IEventObject) obj).ObjectId;
 
-            throw new NotSupportedException($"Don't know how to retrieve the object ID for object of type {obj.GetType()}");
+            throw new NotSupportedException($"Don't know how to retrieve the object ID for object of type {obj.GetType()}.");
         }
 
         internal static string GetTypeDescription(this IObject value)

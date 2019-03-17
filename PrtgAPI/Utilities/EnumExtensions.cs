@@ -76,7 +76,7 @@ namespace PrtgAPI.Utilities
             }
 
             if(!toStringFallback)
-                throw new ArgumentException("Is not a description for any value in " + typeof (TEnum), nameof(value));
+                throw new ArgumentException($"'{value}' is not a description for any value in {typeof(TEnum)}.", nameof(value));
 
             return value.ToEnum<TEnum>();
         }
@@ -192,7 +192,7 @@ namespace PrtgAPI.Utilities
             var cache = element.GetEnumFieldCache();
 
             if (cache == null)
-                throw new InvalidOperationException($"Cannot retrieve {typeof(TAttribute)} from element '{element}'; value is not a member of type {element.GetType()}");
+                throw new InvalidOperationException($"Cannot retrieve {typeof(TAttribute)} from element '{element}'; value is not a member of type {element.GetType()}.");
 
             var attribute = cache.GetAttributes<TAttribute>();
 
@@ -210,7 +210,7 @@ namespace PrtgAPI.Utilities
             var cache = element.GetEnumFieldCache();
             
             if(cache == null)
-                throw new InvalidOperationException($"Cannot retrieve {typeof(TAttribute)} from element '{element}'; value is not a member of type {element.GetType()}");
+                throw new InvalidOperationException($"Cannot retrieve {typeof(TAttribute)} from element '{element}'; value is not a member of type {element.GetType()}.");
 
             var attribute = cache.GetAttribute<TAttribute>();
 

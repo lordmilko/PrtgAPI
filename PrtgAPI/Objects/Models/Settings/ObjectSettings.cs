@@ -130,7 +130,7 @@ namespace PrtgAPI
                 }
                 catch(Exception ex)
                 {
-                    throw new HttpDeserializationException($"An error occurred while attempting to deserialize property '{prop.Key}': {ex.Message}", ex);
+                    throw new HttpDeserializationException($"An error occurred while attempting to deserialize property '{prop.Key}': {ex.Message}.", ex);
                 }
             }
 
@@ -318,7 +318,7 @@ namespace PrtgAPI
                     //Don't care
                 }
                 else
-                    throw new NotImplementedException($"Two properties were found with the name '{prop.Name}' but had different types: '{prop.Type}' ({prop.Html}), '{dictionary[prop.Name].Type}' ({dictionary[prop.Name].Html})");
+                    throw new NotImplementedException($"Two properties were found with the name '{prop.Name}' but had different types: '{prop.Type}' ({prop.Html}), '{dictionary[prop.Name].Type}' ({dictionary[prop.Name].Html}).");
             }
         }
     }

@@ -32,5 +32,16 @@ namespace PrtgAPI.Utilities
 
             return str[0].ToString().ToUpper() + str.Substring(1);
         }
+
+        public static string EnsurePeriod(this string str)
+        {
+            if (str == null)
+                return ".";
+
+            if (str.EndsWith("."))
+                return str;
+
+            return $"{str}.";
+        }
     }
 }

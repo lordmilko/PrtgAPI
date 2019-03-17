@@ -20,7 +20,7 @@ namespace PrtgAPI.Request.Serialization
                 case PrtgResponseType.String:
                     return DeserializeType(response.StringValue);
                 default:
-                    throw new NotImplementedException($"Don't know how to deserialize JSON from response of type {response.Type}");
+                    throw new NotImplementedException($"Don't know how to deserialize JSON from response of type {response.Type}.");
             }
         }
 

@@ -13,7 +13,7 @@ namespace PrtgAPI.Parameters
                 if (fileType == ConfigFileType.Lookups)
                     return CommandFunction.LoadLookups;
 
-                throw new NotImplementedException($"Don't know how to handle file type '{fileType}'");
+                throw new NotImplementedException($"Don't know how to handle file type '{fileType}'.");
             }
         }
 

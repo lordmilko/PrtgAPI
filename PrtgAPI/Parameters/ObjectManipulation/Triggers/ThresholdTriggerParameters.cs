@@ -64,8 +64,8 @@ namespace PrtgAPI.Parameters
             get { return TriggerChannel.ParseForRequest(GetCustomParameterValue(TriggerProperty.Channel)); }
             set
             {
-                if(value == TriggerChannel.TrafficIn || value == TriggerChannel.TrafficOut)
-                    throw new InvalidOperationException($"Only '{TriggerChannel.Primary}', '{TriggerChannel.Total}' and sensor specific channels are valid for threshold triggers");
+                if (value == TriggerChannel.TrafficIn || value == TriggerChannel.TrafficOut)
+                    throw new InvalidOperationException($"Only '{TriggerChannel.Primary}', '{TriggerChannel.Total}' and sensor specific channels are valid for threshold triggers.");
 
                 UpdateCustomParameter(TriggerProperty.Channel, value, true);
             }

@@ -19,7 +19,7 @@ namespace PrtgAPI.Parameters
                 throw new ArgumentNullException(nameof(objectIds));
 
             if (objectIds.Length == 0)
-                throw new ArgumentException("At least one Object ID must be specified", nameof(objectIds));
+                throw new ArgumentException("At least one Object ID must be specified.", nameof(objectIds));
 
             ObjectIds = objectIds;
         }

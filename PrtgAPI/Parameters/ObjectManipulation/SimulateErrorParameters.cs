@@ -14,7 +14,7 @@ namespace PrtgAPI.Parameters
                 throw new ArgumentNullException(nameof(sensorIds));
 
             if (sensorIds.Length == 0)
-                throw new ArgumentException("At least one Object ID must be specified", nameof(sensorIds));
+                throw new ArgumentException("At least one Object ID must be specified.", nameof(sensorIds));
 
             SensorIds = sensorIds;
             Action = 1;

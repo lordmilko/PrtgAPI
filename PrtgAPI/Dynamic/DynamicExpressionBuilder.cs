@@ -137,7 +137,7 @@ namespace PrtgAPI.Dynamic
             var methodInfo = source.GetType().GetMethod(methodName);
 
             if (methodInfo == null)
-                throw new ArgumentException($"Could not find method '{methodName}' on {source.GetType().Name}");
+                throw new ArgumentException($"Could not find method '{methodName}' on {source.GetType().Name}.");
 
             var args = BuildCallArgs(callArgs, result);
 
@@ -168,7 +168,7 @@ namespace PrtgAPI.Dynamic
             var resultMO = new DynamicMetaObject(result, BindingRestrictions.Empty);
 
             if (Binder.ReturnType != typeof(object))
-                throw new NotSupportedException($"Binder {Binder.GetType().Name} is not currently supported");
+                throw new NotSupportedException($"Binder {Binder.GetType().Name} is not currently supported.");
 
             if (FallbackInvoke != null)
                 resultMO = FallbackInvoke(resultMO);
@@ -273,12 +273,12 @@ namespace PrtgAPI.Dynamic
         private static void Requires(bool precondition)
         {
             if (!precondition)
-                throw new ArgumentException("Method precondition violated");
+                throw new ArgumentException("Method precondition violated.");
         }
 
         private BindingRestrictions GetRestrictions()
         {
-            Debug.Assert(MetaObject.Restrictions == BindingRestrictions.Empty, "We don't merge, restrictions are always empty");
+            Debug.Assert(MetaObject.Restrictions == BindingRestrictions.Empty, "We don't merge, restrictions are always empty.");
 
             return GetTypeRestriction(MetaObject);
         }

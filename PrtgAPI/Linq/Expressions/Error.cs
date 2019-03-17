@@ -104,7 +104,7 @@ namespace PrtgAPI.Linq.Expressions
                     ));
             }
 
-            throw new NotImplementedException($"Don't know how to handle illegal type '{illegalType}'");
+            throw new NotImplementedException($"Don't know how to handle illegal type '{illegalType}'.");
         }
 
         internal static Exception UnsupportedExpressionType(List<ExpressionType> types, Expression condition)

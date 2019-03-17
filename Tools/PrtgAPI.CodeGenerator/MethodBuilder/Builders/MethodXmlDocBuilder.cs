@@ -143,6 +143,9 @@ namespace PrtgAPI.CodeGenerator.MethodBuilder.Builders
             if (closeTag == null)
                 closeTag = openTag;
 
+            if (!lines.Last().EndsWith("."))
+                xmlHelper.ThrowMissing($"trailing period on the line '{lines.Last()}'");
+
             if (lines.Length == 1)
             {
                 yield return $"/// <{openTag}>{lines[0]}</{closeTag}>";

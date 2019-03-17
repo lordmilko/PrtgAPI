@@ -20,7 +20,7 @@ namespace PrtgAPI.Attributes
                 case ObjectProperty.Location:
                     return MergeLocation(mergee, original);
                 default:
-                    throw new NotImplementedException($"Don't know how to merge property {original.Property} with {mergee.Property}");
+                    throw new NotImplementedException($"Don't know how to merge property {original.Property} with {mergee.Property}.");
             }
         }
 
@@ -33,7 +33,7 @@ namespace PrtgAPI.Attributes
 
                     return original;
                 default:
-                    throw new NotImplementedException($"Don't know how to merge property {original.Property} with {mergee.Property}");
+                    throw new NotImplementedException($"Don't know how to merge property {original.Property} with {mergee.Property}.");
             }
         }
     }
