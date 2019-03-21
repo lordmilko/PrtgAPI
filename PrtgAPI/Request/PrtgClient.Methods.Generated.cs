@@ -2748,7 +2748,7 @@ namespace PrtgAPI
         /// <exception cref="TimeoutException">Sensor parameters failed to resolve within the specified timespan.</exception>
         /// <returns>A dynamic set of sensor parameters that store the the parameters required to create a sensor of a specified type.</returns>
         public DynamicSensorParameters GetDynamicSensorParameters(int deviceId, string sensorType, Func<int, bool> progressCallback = null, int timeout = 60, CancellationToken token = default(CancellationToken)) =>
-            new DynamicSensorParameters(GetSensorTargetsResponse(deviceId, sensorType, progressCallback, timeout, token), sensorType);
+            new DynamicSensorParameters(GetAddSensorQueryResponse(deviceId, sensorType, progressCallback, timeout, token), sensorType);
 
         /// <summary>
         /// Asynchronously creates a set of dynamic sensor parameters for creating a new sensor of a specified type.
@@ -2763,7 +2763,7 @@ namespace PrtgAPI
         /// <exception cref="TimeoutException">Sensor parameters failed to resolve within the specified timespan.</exception>
         /// <returns>A dynamic set of sensor parameters that store the the parameters required to create a sensor of a specified type.</returns>
         public async Task<DynamicSensorParameters> GetDynamicSensorParametersAsync(int deviceId, string sensorType, Func<int, bool> progressCallback = null, int timeout = 60, CancellationToken token = default(CancellationToken)) =>
-            new DynamicSensorParameters(await GetSensorTargetsResponseAsync(deviceId, sensorType, progressCallback, timeout, token).ConfigureAwait(false), sensorType);
+            new DynamicSensorParameters(await GetAddSensorQueryResponseAsync(deviceId, sensorType, progressCallback, timeout, token).ConfigureAwait(false), sensorType);
 
         /// <summary>
         /// Automatically creates sensors under an object based on the object's (or it's children's) device type.

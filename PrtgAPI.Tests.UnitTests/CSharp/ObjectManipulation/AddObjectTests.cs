@@ -8,6 +8,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PrtgAPI.Parameters;
 using PrtgAPI.Request;
 using PrtgAPI.Targets;
+using PrtgAPI.Tests.UnitTests.Support;
 using PrtgAPI.Tests.UnitTests.Support.TestResponses;
 
 namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
@@ -19,50 +20,108 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
 
         [TestMethod]
         [TestCategory("UnitTest")]
-        public void AddSensor_CanExecute()
+        public void AddSensor_CanExecute_v14() => AddSensor(RequestVersion.v14_4);
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public async Task AddSensor_CanExecuteAsync_v14() => await AddSensorAsync(RequestVersion.v14_4);
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void AddSensor_CanExecute_v18() => AddSensor(RequestVersion.v18_1);
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public async Task AddSensor_CanExecuteAsync_v18() => await AddSensorAsync(RequestVersion.v18_1);
+
+        private void AddSensor(RequestVersion version)
         {
             var builder = new StringBuilder();
 
-            builder.Append("addsensor5.htm?name_=XML+Custom+EXE%2FScript+Sensor&priority_=3&inherittriggers_=1&intervalgroup=1&interval_=60%7C60+seconds");
+            builder.Append("https://prtg.example.com/addsensor5.htm?name_=XML+Custom+EXE%2FScript+Sensor&priority_=3&inherittriggers_=1&intervalgroup=1&interval_=60%7C60+seconds");
             builder.Append("&errorintervalsdown_=1&tags_=xmlexesensor&exefile_=test.ps1%7Ctest.ps1%7C%7C&exeparams_=&environment_=0");
-            builder.Append("&usewindowsauthentication_=0&mutexname_=&timeout_=60&writeresult_=0&sensortype=exexml&id=1001");
+            builder.Append("&usewindowsauthentication_=0&mutexname_=&timeout_=60&writeresult_=0&sensortype=exexml&id=1001&");
+
+            var auth = version == RequestVersion.v18_1 ? "tmpid=2" : "username=username&passhash=12345678";
+
+            builder.Append(auth);
+
+            var urls = new List<string>
+            {
+                ////We don't request status since we already injected our version
+                UnitRequest.BeginAddSensorQuery(1001, "exexml"),
+                builder.ToString()
+            };
+
+            if (version == RequestVersion.v18_1)
+                urls.Add(UnitRequest.AddSensorProgress(1001, 2, true));
 
             var parameters = new ExeXmlSensorParameters("test.ps1");
 
             Execute(
                 c => c.AddSensor(1001, parameters, false),
-                builder.ToString()
+                urls.ToArray(),
+                version: version
             );
         }
 
-        [TestMethod]
-        [TestCategory("UnitTest")]
-        public async Task AddSensor_CanExecuteAsync()
+        private async Task AddSensorAsync(RequestVersion version)
         {
             var builder = new StringBuilder();
 
-            builder.Append("addsensor5.htm?name_=XML+Custom+EXE%2FScript+Sensor&priority_=3&inherittriggers_=1&intervalgroup=1&interval_=60%7C60+seconds");
+            builder.Append("https://prtg.example.com/addsensor5.htm?name_=XML+Custom+EXE%2FScript+Sensor&priority_=3&inherittriggers_=1&intervalgroup=1&interval_=60%7C60+seconds");
             builder.Append("&errorintervalsdown_=1&tags_=xmlexesensor&exefile_=test.ps1%7Ctest.ps1%7C%7C&exeparams_=&environment_=0");
-            builder.Append("&usewindowsauthentication_=0&mutexname_=&timeout_=60&writeresult_=0&sensortype=exexml&id=1001");
+            builder.Append("&usewindowsauthentication_=0&mutexname_=&timeout_=60&writeresult_=0&sensortype=exexml&id=1001&");
+
+            var auth = version == RequestVersion.v18_1 ? "tmpid=2" : "username=username&passhash=12345678";
+
+            builder.Append(auth);
+
+            var urls = new List<string>
+            {
+                ////We don't request status since we already injected our version
+                UnitRequest.BeginAddSensorQuery(1001, "exexml"),
+                builder.ToString()
+            };
+
+            if (version == RequestVersion.v18_1)
+                urls.Add(UnitRequest.AddSensorProgress(1001, 2, true));
 
             var parameters = new ExeXmlSensorParameters("test.ps1");
 
             await ExecuteAsync(
                 async c => await c.AddSensorAsync(1001, parameters, false),
-                builder.ToString()
+                urls.ToArray(),
+                version: version
             );
         }
 
+        #region Excessive
+
         [TestMethod]
         [TestCategory("UnitTest")]
-        public void AddSensor_AddsExcessiveItems()
+        public void AddSensor_AddsExcessiveItems_v14() => AddSensorWithExcessiveItems(RequestVersion.v14_4);
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public async Task AddSensor_AddsExcessiveItemsAsync_v14() => await AddSensorWithExcessiveItemsAsync(RequestVersion.v14_4);
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void AddSensor_AddsExcessiveItems_v18() => AddSensorWithExcessiveItems(RequestVersion.v18_1);
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public async Task AddSensor_AddsExcessiveItemsAsync_v18() => await AddSensorWithExcessiveItemsAsync(RequestVersion.v18_1);
+
+        private void AddSensorWithExcessiveItems(RequestVersion version)
         {
             var servicesClient = Initialize_Client(new WmiServiceTargetResponse());
             var services = servicesClient.Targets.GetWmiServices(1001);
 
             Assert.IsTrue(services.Count > 30);
 
-            var client = GetAddExcessiveSensorClient(services);
+            var client = GetAddExcessiveSensorClient(services, version);
 
             var parameters = new WmiServiceSensorParameters(services);
 
@@ -71,16 +130,14 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             client.Item2.AssertFinished();
         }
 
-        [TestMethod]
-        [TestCategory("UnitTest")]
-        public async Task AddSensor_AddsExcessiveItemsAsync()
+        private async Task AddSensorWithExcessiveItemsAsync(RequestVersion version)
         {
             var servicesClient = Initialize_Client(new WmiServiceTargetResponse());
             var services = await servicesClient.Targets.GetWmiServicesAsync(1001);
 
             Assert.IsTrue(services.Count > 30);
 
-            var client = GetAddExcessiveSensorClient(services);
+            var client = GetAddExcessiveSensorClient(services, version);
 
             var parameters = new WmiServiceSensorParameters(services);
 
@@ -89,11 +146,14 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             client.Item2.AssertFinished();
         }
 
-        private Tuple<PrtgClient, AddressValidatorResponse> GetAddExcessiveSensorClient(List<WmiServiceTarget> services)
+        private Tuple<PrtgClient, AddressValidatorResponse> GetAddExcessiveSensorClient(List<WmiServiceTarget> services, RequestVersion version)
         {
             var formats = services.Select(s => "service__check=" + WebUtility.UrlEncode(((ISerializable)s).GetSerializedFormat())).ToList();
 
             var urls = new List<string>();
+
+            //We don't request status since we already injected our version
+            urls.Add(UnitRequest.BeginAddSensorQuery(1001, "wmiservice"));
 
             for (int i = 0; i < formats.Count; i += 30)
             {
@@ -101,19 +161,28 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
 
                 var str = string.Join("&", thisRequest);
 
-                var url = $"https://prtg.example.com/addsensor5.htm?name_=Service&priority_=3&inherittriggers_=1&intervalgroup=1&interval_=60%7C60+seconds&errorintervalsdown_=1&tags_=wmiservicesensor+servicesensor&restart_=0&monitorchange_=1&monitorextended_=0&service_=1&sensortype=wmiservice&{str}&id=1001&username=username&passhash=12345678";
+                var auth = version == RequestVersion.v18_1 ? "tmpid=2" : "username=username&passhash=12345678";
+
+                var url = $"https://prtg.example.com/addsensor5.htm?name_=Service&priority_=3&inherittriggers_=1&intervalgroup=1&interval_=60%7C60+seconds&errorintervalsdown_=1&tags_=wmiservicesensor+servicesensor&restart_=0&monitorchange_=1&monitorextended_=0&service_=1&sensortype=wmiservice&{str}&id=1001&{auth}";
 
                 urls.Add(url);
+
+                if (i == 0 && version == RequestVersion.v18_1)
+                {
+                    urls.Add(UnitRequest.AddSensorProgress(1001, 2, true));
+                }
             }
 
 #pragma warning disable 618
             var response = new AddressValidatorResponse(urls.ToArray(), true);
 
-            var client = Initialize_Client(response);
+            var client = Initialize_Client(response, version);
 #pragma warning restore 618
 
             return Tuple.Create(client, response);
         }
+
+        #endregion
 
         [TestMethod]
         [TestCategory("UnitTest")]

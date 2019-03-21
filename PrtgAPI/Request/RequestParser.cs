@@ -65,6 +65,8 @@ namespace PrtgAPI.Request
         #endregion
         #region Add Objects
 
+        internal static bool IsAddSensor(ICommandParameters parameters) => parameters.Function == CommandFunction.AddSensor5;
+
         internal static SearchFilter[] GetFilters(int destinationId, NewObjectParameters parameters)
         {
             var filters = new List<SearchFilter>()

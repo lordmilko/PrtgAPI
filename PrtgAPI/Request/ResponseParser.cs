@@ -433,13 +433,15 @@ namespace PrtgAPI.Request
             return id;
         }
 
-        internal static void ValidateSensorTargetProgressResult(SensorTargetProgress p)
+        internal static void ValidateAddSensorProgressResult(AddSensorProgress p, bool addFull)
         {
             if (p.TargetUrl.StartsWith("addsensorfailed"))
             {
                 var parts = UrlUtilities.CrackUrl(p.TargetUrl);
 
                 var message = parts["errormsg"];
+
+                var action = addFull ? "add sensor" : "resolve sensor targets";
 
                 if (message != null)
                 {
@@ -449,11 +451,14 @@ namespace PrtgAPI.Request
                     if (message.StartsWith("Incomplete connection settings"))
                         throw new PrtgRequestException("Failed to retrieve data from device; required credentials for sensor type may be missing. See PRTG UI for further details.");
 
-                    throw new PrtgRequestException($"An exception occurred while trying to resolve sensor targets: {message.EnsurePeriod()}");
+                    throw new PrtgRequestException($"An exception occurred while trying to {action}: {message.EnsurePeriod()}");
                 }
 
-                throw new PrtgRequestException("An unspecified error occurred while trying to resolve sensor targets. Check the Device Host is still valid or try adding targets with the PRTG UI.");
+                throw new PrtgRequestException($"An unspecified error occurred while trying to {action}. Specified sensor type may not be valid on this device. Check the Device 'Host' is still valid or try adding targets with the PRTG UI.");
             }
+
+            if (addFull && p.Percent == -1)
+                throw new PrtgRequestException($"PRTG was unable to complete the request. The server responded with the following error: '{p.Error.Replace("<br/><ul><li>", " ").Replace("</li></ul><br/>", " ")}'.");
         }
 
         #endregion

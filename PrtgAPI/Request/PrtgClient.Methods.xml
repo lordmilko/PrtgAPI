@@ -837,7 +837,7 @@
                     <Parameter name="timeout" type="int" default="60" description="Duration (in seconds) to wait for sensor parameters to resolve."/>
 
                     <Body expression="true">
-                        new DynamicSensorParameters(<Call name="GetSensorTargetsResponse" args="deviceId, sensorType, progressCallback, timeout"/>, sensorType)
+                        new DynamicSensorParameters(<Call name="GetAddSensorQueryResponse" args="deviceId, sensorType, progressCallback, timeout"/>, sensorType)
                     </Body>
                 </InlineMethodDef>
                 <InlineMethodDef name="AutoDiscover" returns="void" tokenMode="AutomaticNamed">

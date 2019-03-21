@@ -16,7 +16,16 @@ function ValidateParams($params, $address)
 {
     $device = Run Device { Get-Device }
 
-    WithResponseArgs "AddressValidatorResponse" $address {
+    $urls = @(
+        @(
+            [Request]::Status()
+            [Request]::BeginAddSensorQuery($device.Id, $params["sensortype"])
+            [Request]::AddSensor($address + "&id=$($device.Id)")
+        ),
+        $true
+    )
+
+    WithResponseArgs "AddressValidatorResponse" $urls {
         $device | Add-Sensor $params -Resolve:$false
     }
 }
@@ -265,7 +274,7 @@ Describe "New-SensorParameters" -Tag @("PowerShell", "UnitTest") {
 
             $params.Name = "testName"
             $params.SensorType = "testType"
-            ValidateParams $params "test_=goodbye&name_=testName&sensortype=testType&id=40"
+            ValidateParams $params "test_=goodbye&name_=testName&sensortype=testType"
         }
 
         #endregion
@@ -696,15 +705,20 @@ Describe "New-SensorParameters" -Tag @("PowerShell", "UnitTest") {
 
             $final = "https://prtg.example.com/addsensor5.htm?$combined"
 
-            [object[]]$addresses = (,@(
-                "https://prtg.example.com/controls/addsensor2.htm?id=40&sensortype=http&username=username&passhash=12345678"
-                "https://prtg.example.com/api/getaddsensorprogress.htm?id=40&tmpid=2"
-                "https://prtg.example.com/api/getaddsensorprogress.htm?id=40&tmpid=2"
-                "https://prtg.example.com/addsensor4.htm?id=40&tmpid=2"
-                $final
-            ))
+            $urls = @(
+                @(
+                    [Request]::BeginAddSensorQuery(40, "http")
+                    [Request]::AddSensorProgress(40, 2)
+                    [Request]::AddSensorProgress(40, 2)
+                    [Request]::EndAddSensorQuery(40, 2)
+                    [Request]::Status()
+                    [Request]::BeginAddSensorQuery(40, "http")
+                    $final
+                ),
+                $true
+            )
 
-            WithResponseArgs "AddressValidatorResponse" $addresses {
+            WithResponseArgs "AddressValidatorResponse" $urls {
                 $device | New-SensorParameters -RawType http | Add-Sensor -Resolve:$false
             }
         }

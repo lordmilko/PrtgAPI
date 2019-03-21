@@ -19,7 +19,7 @@
         return $"async {returnType} {name}Async";
     }
 
-    public string GetAsyncTokenSignature(string name, string returnType, string parameters, string tokenParameter, int i)
+    public string GetSignatureWithAsyncOnlyToken(string name, string returnType, string parameters, string tokenParameter, int i)
     {
         if(i == 0)
             return $"{returnType} {name}({parameters})";
@@ -65,7 +65,7 @@
             return $"await {name}Async({parameters}).ConfigureAwait(false)";
     }
 
-    public string CallAsyncTokenFunction(string name, string parameters, string tokenParameter, int i)
+    public string CallFunctionWithAsyncOnlyToken(string name, string parameters, string tokenParameter, int i)
     {
         if(i == 0)
             return $"{name}({parameters})";
@@ -76,7 +76,7 @@
             return $"await {name}Async({parameters}).ConfigureAwait(false)";
     }
 
-	public string CallMandatoryAsyncTokenFunction(string name, string parameters, string tokenParameter, int i)
+	public string CallFunctionWithMandatoryTokenWithAsyncTokenOnly(string name, string parameters, string tokenParameter, int i)
     {
         if(i == 0)
             return $"{name}({parameters}, CancellationToken.None)";

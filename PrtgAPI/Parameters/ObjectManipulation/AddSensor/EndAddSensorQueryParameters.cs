@@ -1,10 +1,10 @@
 ﻿namespace PrtgAPI.Parameters
 {
-    class SensorTargetCompletedParameters : BaseActionParameters, IHtmlParameters
+    class EndAddSensorQueryParameters : BaseActionParameters, IHtmlParameters
     {
         HtmlFunction IHtmlParameters.Function => HtmlFunction.AddSensor4;
 
-        public SensorTargetCompletedParameters(int deviceId, int tmpId) : base(deviceId)
+        public EndAddSensorQueryParameters(int deviceId, int tmpId) : base(deviceId)
         {
             this[Parameter.Custom] = new CustomParameter("tmpid", tmpId);
 

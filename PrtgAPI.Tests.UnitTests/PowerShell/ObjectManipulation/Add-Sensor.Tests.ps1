@@ -2,7 +2,7 @@
 
 Describe "Add-Sensor" -Tag @("PowerShell", "UnitTest") {
 
-    SetActionResponse
+    SetMultiTypeResponse
 
     It "adds a sensor" {
         $params = New-SensorParameters ExeXml -Second "test.ps1"
@@ -80,6 +80,8 @@ Describe "Add-Sensor" -Tag @("PowerShell", "UnitTest") {
         $seventh = GetItemSubset 180 30
 
         SetAddressValidatorResponse @(
+            "api/getstatus.htm?id=0&"
+            "controls/addsensor2.htm?id=40&sensortype=wmiservice&"
             "$base$first$end"
             "$base$second$end"
             "$base$third$end"
@@ -103,7 +105,11 @@ Describe "Add-Sensor" -Tag @("PowerShell", "UnitTest") {
 
         $params = New-SensorParameters WmiService $services
 
-        SetAddressValidatorResponse "addsensor5.htm?name_=Service"
+        SetAddressValidatorResponse @(
+            "api/getstatus.htm?id=0&"
+            "controls/addsensor2.htm?id=40&sensortype=wmiservice&"
+            "addsensor5.htm?name_=Service&priority_=3&inherittriggers_=1&intervalgroup=1&interval_=60%7C60+seconds&errorintervalsdown_=1&tags_=wmiservicesensor+servicesensor&restart_=0&monitorchange_=1&monitorextended_=0&service_=1&sensortype=wmiservice&service__check=AxInstSV%7CActiveX+Installer+(AxInstSV)%7CProvides+User+Account+Control+validation+for+the+installation+of+ActiveX+controls+from+the+Internet+and+enables+management+of+ActiveX+control+installation+based+on+Group+Policy+settings.+This+service+is+started+on+demand+and+if+disabled+the+installation+of+ActiveX+controls+will+behave+according+to+default+browser+settings.%7CStopped%7C%7C&id=40&"
+        )
 
         $device | Add-Sensor $params -Resolve:$false
     }

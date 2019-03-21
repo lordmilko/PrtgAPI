@@ -285,6 +285,14 @@ namespace PrtgAPI
         [Undocumented]
         [ParameterType(ParameterType.MultiParameter)]
         [Description("devicetemplate__check")]
-        DeviceTemplate
+        DeviceTemplate,
+
+        /// <summary>
+        /// Temp ID that identifies the session being used to create a new sensor.
+        /// </summary>
+        [Undocumented]
+        [ParameterType(ParameterType.SingleValue)]
+        [Description("tmpid")]
+        TmpId
     }
 }

@@ -31,13 +31,21 @@ Describe "New-Sensor" -Tag @("PowerShell", "UnitTest") {
     Context "ExeXml" {
 
         It "specifies a file name" {
-            SetAddressValidatorResponse "addsensor5.htm?name_=Custom+Script&priority_=3&inherittriggers_=1&intervalgroup=1&interval_=60%7C60+seconds&errorintervalsdown_=1&tags_=xmlexesensor&exefile_=test.ps1%7Ctest.ps1%7C%7C&exeparams_=&environment_=0&usewindowsauthentication_=0&mutexname_=&timeout_=60&writeresult_=0&sensortype=exexml&id=40"
+            SetAddressValidatorResponse @(
+                "api/getstatus.htm?id=0&"
+                "controls/addsensor2.htm?id=40&sensortype=exexml&"
+                "addsensor5.htm?name_=Custom+Script&priority_=3&inherittriggers_=1&intervalgroup=1&interval_=60%7C60+seconds&errorintervalsdown_=1&tags_=xmlexesensor&exefile_=test.ps1%7Ctest.ps1%7C%7C&exeparams_=&environment_=0&usewindowsauthentication_=0&mutexname_=&timeout_=60&writeresult_=0&sensortype=exexml&id=40&"
+            )
 
             $device | New-Sensor -ExeXml "Custom Script" -ExeFile "test.ps1" -Resolve:$false
         }
 
         It "uses positional parameters" {
-            SetAddressValidatorResponse "addsensor5.htm?name_=Custom+Script&priority_=3&inherittriggers_=1&intervalgroup=1&interval_=60%7C60+seconds&errorintervalsdown_=1&tags_=xmlexesensor&exefile_=test.ps1%7Ctest.ps1%7C%7C&exeparams_=&environment_=0&usewindowsauthentication_=0&mutexname_=&timeout_=60&writeresult_=0&sensortype=exexml&id=40"
+            SetAddressValidatorResponse @(
+                "api/getstatus.htm?id=0&"
+                "controls/addsensor2.htm?id=40&sensortype=exexml&"
+                "addsensor5.htm?name_=Custom+Script&priority_=3&inherittriggers_=1&intervalgroup=1&interval_=60%7C60+seconds&errorintervalsdown_=1&tags_=xmlexesensor&exefile_=test.ps1%7Ctest.ps1%7C%7C&exeparams_=&environment_=0&usewindowsauthentication_=0&mutexname_=&timeout_=60&writeresult_=0&sensortype=exexml&id=40&"
+            )
 
             $device | New-Sensor -ExeXml "Custom Script" "test.ps1" -Resolve:$false
         }
@@ -59,14 +67,22 @@ Describe "New-Sensor" -Tag @("PowerShell", "UnitTest") {
 
         It "specifies an array of services" {
 
-            SetAddressValidatorResponse "addsensor5.htm?name_=Service&priority_=3&inherittriggers_=1&intervalgroup=1&interval_=60%7C60+seconds&errorintervalsdown_=1&tags_=wmiservicesensor+servicesensor&restart_=0&monitorchange_=1&monitorextended_=0&service_=1&sensortype=wmiservice&service__check=PRTGCoreService%7CPRTG+Core+Server+Service%7CPerforms+network+monitoring+using+various+network+protocols+(including+SNMP%2C+WMI%2C+HTTP%2C+packet+sniffing%2C+NetFlow%2C+and+others)+for+PRTG+Network+Monitor+(www.paessler.com%2Fprtg)%7CRunning%7C%7C&id=40"
+            SetAddressValidatorResponse @(
+                "api/getstatus.htm?id=0&"
+                "controls/addsensor2.htm?id=40&sensortype=wmiservice&"
+                "addsensor5.htm?name_=Service&priority_=3&inherittriggers_=1&intervalgroup=1&interval_=60%7C60+seconds&errorintervalsdown_=1&tags_=wmiservicesensor+servicesensor&restart_=0&monitorchange_=1&monitorextended_=0&service_=1&sensortype=wmiservice&service__check=PRTGCoreService%7CPRTG+Core+Server+Service%7CPerforms+network+monitoring+using+various+network+protocols+(including+SNMP%2C+WMI%2C+HTTP%2C+packet+sniffing%2C+NetFlow%2C+and+others)+for+PRTG+Network+Monitor+(www.paessler.com%2Fprtg)%7CRunning%7C%7C&id=40&"
+            )
 
             $device | New-Sensor -WmiService -Service $service -Resolve:$false
         }
 
         It "processes additional parameters" {
 
-            SetAddressValidatorResponse "addsensor5.htm?name_=Service&priority_=3&inherittriggers_=1&intervalgroup=1&interval_=60%7C60+seconds&errorintervalsdown_=1&tags_=wmiservicesensor+servicesensor&restart_=1&monitorchange_=1&monitorextended_=0&service_=1&sensortype=wmiservice&service__check=PRTGCoreService%7CPRTG+Core+Server+Service%7CPerforms+network+monitoring+using+various+network+protocols+(including+SNMP%2C+WMI%2C+HTTP%2C+packet+sniffing%2C+NetFlow%2C+and+others)+for+PRTG+Network+Monitor+(www.paessler.com%2Fprtg)%7CRunning%7C%7C&id=40"
+            SetAddressValidatorResponse @(
+                "api/getstatus.htm?id=0&"
+                "controls/addsensor2.htm?id=40&sensortype=wmiservice&"
+                "addsensor5.htm?name_=Service&priority_=3&inherittriggers_=1&intervalgroup=1&interval_=60%7C60+seconds&errorintervalsdown_=1&tags_=wmiservicesensor+servicesensor&restart_=1&monitorchange_=1&monitorextended_=0&service_=1&sensortype=wmiservice&service__check=PRTGCoreService%7CPRTG+Core+Server+Service%7CPerforms+network+monitoring+using+various+network+protocols+(including+SNMP%2C+WMI%2C+HTTP%2C+packet+sniffing%2C+NetFlow%2C+and+others)+for+PRTG+Network+Monitor+(www.paessler.com%2Fprtg)%7CRunning%7C%7C&id=40&"
+            )
 
             $device | New-Sensor -WmiService -Service $service -StartStopped $true -Resolve:$false
         }
@@ -78,7 +94,11 @@ Describe "New-Sensor" -Tag @("PowerShell", "UnitTest") {
         }
 
         It "uses positional parameters" {
-            SetAddressValidatorResponse "addsensor5.htm?name_=Service&priority_=3&inherittriggers_=1&intervalgroup=1&interval_=60%7C60+seconds&errorintervalsdown_=1&tags_=wmiservicesensor+servicesensor&restart_=0&monitorchange_=1&monitorextended_=0&service_=1&sensortype=wmiservice&service__check=PRTGCoreService%7CPRTG+Core+Server+Service%7CPerforms+network+monitoring+using+various+network+protocols+(including+SNMP%2C+WMI%2C+HTTP%2C+packet+sniffing%2C+NetFlow%2C+and+others)+for+PRTG+Network+Monitor+(www.paessler.com%2Fprtg)%7CRunning%7C%7C&id=40"
+            SetAddressValidatorResponse @(
+                "api/getstatus.htm?id=0&"
+                "controls/addsensor2.htm?id=40&sensortype=wmiservice&"
+                "addsensor5.htm?name_=Service&priority_=3&inherittriggers_=1&intervalgroup=1&interval_=60%7C60+seconds&errorintervalsdown_=1&tags_=wmiservicesensor+servicesensor&restart_=0&monitorchange_=1&monitorextended_=0&service_=1&sensortype=wmiservice&service__check=PRTGCoreService%7CPRTG+Core+Server+Service%7CPerforms+network+monitoring+using+various+network+protocols+(including+SNMP%2C+WMI%2C+HTTP%2C+packet+sniffing%2C+NetFlow%2C+and+others)+for+PRTG+Network+Monitor+(www.paessler.com%2Fprtg)%7CRunning%7C%7C&id=40&"
+            )
 
             $device | New-Sensor -WmiService $service -Resolve:$false
         }
@@ -110,11 +130,13 @@ Describe "New-Sensor" -Tag @("PowerShell", "UnitTest") {
         It "specifies a wildcard of service names" {
 
             $arr = @(
-                "https://prtg.example.com/controls/addsensor2.htm?id=40&sensortype=wmiservice&username=username&passhash=12345678"
-                "https://prtg.example.com/api/getaddsensorprogress.htm?id=40&tmpid=2"
-                "https://prtg.example.com/api/getaddsensorprogress.htm?id=40&tmpid=2"
-                "https://prtg.example.com/addsensor4.htm?id=40&tmpid=2"
-                "https://prtg.example.com/addsensor5.htm?name_=Service&priority_=3&inherittriggers_=1&intervalgroup=1&interval_=60%7C60+seconds&errorintervalsdown_=1&tags_=wmiservicesensor+servicesensor&restart_=0&monitorchange_=1&monitorextended_=0&service_=1&sensortype=wmiservice&service__check=PRTGCoreService%7CPRTG+Core+Server+Service%7CPerforms+network+monitoring+using+various+network+protocols+(including+SNMP%2C+WMI%2C+HTTP%2C+packet+sniffing%2C+NetFlow%2C+and+others)+for+PRTG+Network+Monitor+(www.paessler.com%2Fprtg)%7CRunning%7C%7C&id=40&username=username&passhash=12345678"
+                [Request]::BeginAddSensorQuery(40, "wmiservice")
+                [Request]::AddSensorProgress(40, 2)
+                [Request]::AddSensorProgress(40, 2)
+                [Request]::EndAddSensorQuery(40, 2)
+                [Request]::Status()
+                [Request]::BeginAddSensorQuery(40, "wmiservice")
+                [Request]::AddSensor("name_=Service&priority_=3&inherittriggers_=1&intervalgroup=1&interval_=60%7C60+seconds&errorintervalsdown_=1&tags_=wmiservicesensor+servicesensor&restart_=0&monitorchange_=1&monitorextended_=0&service_=1&sensortype=wmiservice&service__check=PRTGCoreService%7CPRTG+Core+Server+Service%7CPerforms+network+monitoring+using+various+network+protocols+(including+SNMP%2C+WMI%2C+HTTP%2C+packet+sniffing%2C+NetFlow%2C+and+others)+for+PRTG+Network+Monitor+(www.paessler.com%2Fprtg)%7CRunning%7C%7C&id=40")
             )
 
             SetResponseAndClientWithArguments "AddressValidatorResponse" @($arr, $true)
@@ -127,11 +149,13 @@ Describe "New-Sensor" -Tag @("PowerShell", "UnitTest") {
             $service = GetService
 
             $arr = @(
-                "https://prtg.example.com/controls/addsensor2.htm?id=40&sensortype=wmiservice&username=username&passhash=12345678"
-                "https://prtg.example.com/api/getaddsensorprogress.htm?id=40&tmpid=2"
-                "https://prtg.example.com/api/getaddsensorprogress.htm?id=40&tmpid=2"
-                "https://prtg.example.com/addsensor4.htm?id=40&tmpid=2"
-                "https://prtg.example.com/addsensor5.htm?name_=Service&priority_=3&inherittriggers_=1&intervalgroup=1&interval_=60%7C60+seconds&errorintervalsdown_=1&tags_=wmiservicesensor+servicesensor&restart_=1&monitorchange_=1&monitorextended_=0&service_=1&sensortype=wmiservice&service__check=PRTGCoreService%7CPRTG+Core+Server+Service%7CPerforms+network+monitoring+using+various+network+protocols+(including+SNMP%2C+WMI%2C+HTTP%2C+packet+sniffing%2C+NetFlow%2C+and+others)+for+PRTG+Network+Monitor+(www.paessler.com%2Fprtg)%7CRunning%7C%7C&id=40&username=username&passhash=12345678"
+                [Request]::BeginAddSensorQuery(40, "wmiservice")
+                [Request]::AddSensorProgress(40, 2)
+                [Request]::AddSensorProgress(40, 2)
+                [Request]::EndAddSensorQuery(40, 2)
+                [Request]::Status()
+                [Request]::BeginAddSensorQuery(40, "wmiservice")
+                [Request]::AddSensor("name_=Service&priority_=3&inherittriggers_=1&intervalgroup=1&interval_=60%7C60+seconds&errorintervalsdown_=1&tags_=wmiservicesensor+servicesensor&restart_=1&monitorchange_=1&monitorextended_=0&service_=1&sensortype=wmiservice&service__check=PRTGCoreService%7CPRTG+Core+Server+Service%7CPerforms+network+monitoring+using+various+network+protocols+(including+SNMP%2C+WMI%2C+HTTP%2C+packet+sniffing%2C+NetFlow%2C+and+others)+for+PRTG+Network+Monitor+(www.paessler.com%2Fprtg)%7CRunning%7C%7C&id=40")
             )
 
             SetResponseAndClientWithArguments "AddressValidatorResponse" @($arr, $true)
@@ -148,11 +172,13 @@ Describe "New-Sensor" -Tag @("PowerShell", "UnitTest") {
         It "uses positional parameters" {
 
             $arr = @(
-                "https://prtg.example.com/controls/addsensor2.htm?id=40&sensortype=wmiservice&username=username&passhash=12345678"
-                "https://prtg.example.com/api/getaddsensorprogress.htm?id=40&tmpid=2"
-                "https://prtg.example.com/api/getaddsensorprogress.htm?id=40&tmpid=2"
-                "https://prtg.example.com/addsensor4.htm?id=40&tmpid=2"
-                "https://prtg.example.com/addsensor5.htm?name_=Service&priority_=3&inherittriggers_=1&intervalgroup=1&interval_=60%7C60+seconds&errorintervalsdown_=1&tags_=wmiservicesensor+servicesensor&restart_=0&monitorchange_=1&monitorextended_=0&service_=1&sensortype=wmiservice&service__check=PRTGCoreService%7CPRTG+Core+Server+Service%7CPerforms+network+monitoring+using+various+network+protocols+(including+SNMP%2C+WMI%2C+HTTP%2C+packet+sniffing%2C+NetFlow%2C+and+others)+for+PRTG+Network+Monitor+(www.paessler.com%2Fprtg)%7CRunning%7C%7C&id=40&username=username&passhash=12345678"
+                [Request]::BeginAddSensorQuery(40, "wmiservice")
+                [Request]::AddSensorProgress(40, 2)
+                [Request]::AddSensorProgress(40, 2)
+                [Request]::EndAddSensorQuery(40, 2)
+                [Request]::Status()
+                [Request]::BeginAddSensorQuery(40, "wmiservice")
+                [Request]::AddSensor("name_=Service&priority_=3&inherittriggers_=1&intervalgroup=1&interval_=60%7C60+seconds&errorintervalsdown_=1&tags_=wmiservicesensor+servicesensor&restart_=0&monitorchange_=1&monitorextended_=0&service_=1&sensortype=wmiservice&service__check=PRTGCoreService%7CPRTG+Core+Server+Service%7CPerforms+network+monitoring+using+various+network+protocols+(including+SNMP%2C+WMI%2C+HTTP%2C+packet+sniffing%2C+NetFlow%2C+and+others)+for+PRTG+Network+Monitor+(www.paessler.com%2Fprtg)%7CRunning%7C%7C&id=40")
             )
 
             SetResponseAndClientWithArguments "AddressValidatorResponse" @($arr, $true)
@@ -181,25 +207,41 @@ Describe "New-Sensor" -Tag @("PowerShell", "UnitTest") {
 
     Context "HTTP" {
         It "executes with only a SwitchParameter" {
-            SetAddressValidatorResponse "addsensor5.htm?name_=HTTP&priority_=3&inherittriggers_=1&intervalgroup=1&interval_=60%7C60+seconds&errorintervalsdown_=1&tags_=httpsensor&httpurl_=http%3A%2F%2F&httpmethod_=GET&timeout_=60&postdata_=&postcontentoptions_=0&postcontenttype_=&sni_inheritance_=0&sensortype=http&id=40"
+            SetAddressValidatorResponse @(
+                "api/getstatus.htm?id=0&"
+                "controls/addsensor2.htm?id=40&sensortype=http&"
+                "addsensor5.htm?name_=HTTP&priority_=3&inherittriggers_=1&intervalgroup=1&interval_=60%7C60+seconds&errorintervalsdown_=1&tags_=httpsensor&httpurl_=http%3A%2F%2F&httpmethod_=GET&timeout_=60&postdata_=&postcontentoptions_=0&postcontenttype_=&sni_inheritance_=0&sensortype=http&id=40&"
+            )
 
             $device | New-Sensor -Http -Resolve:$false
         }
 
         It "executes with only a name" {
-            SetAddressValidatorResponse "addsensor5.htm?name_=HTTPS&priority_=3&inherittriggers_=1&intervalgroup=1&interval_=60%7C60+seconds&errorintervalsdown_=1&tags_=httpsensor&httpurl_=http%3A%2F%2F&httpmethod_=GET&timeout_=60&postdata_=&postcontentoptions_=0&postcontenttype_=&sni_inheritance_=0&sensortype=http&id=40"
+            SetAddressValidatorResponse @(
+                "api/getstatus.htm?id=0&"
+                "controls/addsensor2.htm?id=40&sensortype=http&"
+                "addsensor5.htm?name_=HTTPS&priority_=3&inherittriggers_=1&intervalgroup=1&interval_=60%7C60+seconds&errorintervalsdown_=1&tags_=httpsensor&httpurl_=http%3A%2F%2F&httpmethod_=GET&timeout_=60&postdata_=&postcontentoptions_=0&postcontenttype_=&sni_inheritance_=0&sensortype=http&id=40&"
+            )
 
             $device | New-Sensor -Http "HTTPS" -Resolve:$false
         }
 
         It "executes with a name and a Url" {
-            SetAddressValidatorResponse "addsensor5.htm?name_=HTTPS&priority_=3&inherittriggers_=1&intervalgroup=1&interval_=60%7C60+seconds&errorintervalsdown_=1&tags_=httpsensor&httpurl_=https%3A%2F%2F&httpmethod_=GET&timeout_=60&postdata_=&postcontentoptions_=0&postcontenttype_=&sni_inheritance_=0&sensortype=http&id=40"
+            SetAddressValidatorResponse @(
+                "api/getstatus.htm?id=0&"
+                "controls/addsensor2.htm?id=40&sensortype=http&"
+                "addsensor5.htm?name_=HTTPS&priority_=3&inherittriggers_=1&intervalgroup=1&interval_=60%7C60+seconds&errorintervalsdown_=1&tags_=httpsensor&httpurl_=https%3A%2F%2F&httpmethod_=GET&timeout_=60&postdata_=&postcontentoptions_=0&postcontenttype_=&sni_inheritance_=0&sensortype=http&id=40&"
+            )
 
             $device | New-Sensor -Http "HTTPS" "https://" -Resolve:$false
         }
 
         It "processes additional parameters" {
-            SetAddressValidatorResponse "addsensor5.htm?name_=HTTP&priority_=3&inherittriggers_=1&intervalgroup=1&interval_=60%7C60+seconds&errorintervalsdown_=1&tags_=httpsensor&httpurl_=http%3A%2F%2F&httpmethod_=POST&timeout_=60&postdata_=&postcontentoptions_=0&postcontenttype_=&sni_inheritance_=0&sensortype=http&id=40"
+            SetAddressValidatorResponse @(
+                "api/getstatus.htm?id=0&"
+                "controls/addsensor2.htm?id=40&sensortype=http&"
+                "addsensor5.htm?name_=HTTP&priority_=3&inherittriggers_=1&intervalgroup=1&interval_=60%7C60+seconds&errorintervalsdown_=1&tags_=httpsensor&httpurl_=http%3A%2F%2F&httpmethod_=POST&timeout_=60&postdata_=&postcontentoptions_=0&postcontenttype_=&sni_inheritance_=0&sensortype=http&id=40&"
+            )
 
             $device | New-Sensor -Http -HttpRequestMethod post -Resolve:$false
         }
@@ -231,6 +273,8 @@ Describe "New-Sensor" -Tag @("PowerShell", "UnitTest") {
             ) -join ""
 
             SetAddressValidatorResponse @(
+                "api/getstatus.htm?id=0&"
+                "controls/addsensor2.htm?id=1001&sensortype=aggregation&"
                 "addsensor5.htm?name_=CPU+Overview&priority_=3&inherittriggers_=1&intervalgroup=1&interval_=60%7C60+seconds&errorintervalsdown_=1&tags_=factorysensor&aggregationchannel_=$channelDefinition&warnonerror_=0&aggregationstatus_=&missingdata_=0&sensortype=aggregation&id=1001&"
             )
 
@@ -248,6 +292,8 @@ Describe "New-Sensor" -Tag @("PowerShell", "UnitTest") {
             ) -join ""
 
             SetAddressValidatorResponse @(
+                "api/getstatus.htm?id=0&"
+                "controls/addsensor2.htm?id=1001&sensortype=aggregation&"
                 "addsensor5.htm?name_=CPU+Overview&priority_=3&inherittriggers_=1&intervalgroup=1&interval_=60%7C60+seconds&errorintervalsdown_=1&tags_=factorysensor&aggregationchannel_=$channelDefinition&warnonerror_=0&aggregationstatus_=&missingdata_=0&sensortype=aggregation&id=1001&"
             )
 
@@ -265,6 +311,8 @@ Describe "New-Sensor" -Tag @("PowerShell", "UnitTest") {
             ) -join ""
 
             SetAddressValidatorResponse @(
+                "api/getstatus.htm?id=0&"
+                "controls/addsensor2.htm?id=1001&sensortype=aggregation&"
                 "addsensor5.htm?name_=CPU+Overview&priority_=3&inherittriggers_=1&intervalgroup=1&interval_=60%7C60+seconds&errorintervalsdown_=1&tags_=factorysensor&aggregationchannel_=$channelDefinition&warnonerror_=1&aggregationstatus_=&missingdata_=0&sensortype=aggregation&id=1001&"
             )
 
@@ -311,6 +359,8 @@ Describe "New-Sensor" -Tag @("PowerShell", "UnitTest") {
             ) -join ""
 
             SetAddressValidatorResponse @(
+                "api/getstatus.htm?id=0&"
+                "controls/addsensor2.htm?id=1001&sensortype=aggregation&"
                 "addsensor5.htm?name_=Manual+Sensor&priority_=3&inherittriggers_=1&intervalgroup=1&interval_=60%7C60+seconds&errorintervalsdown_=1&tags_=factorysensor&aggregationchannel_=$channelDefinition&warnonerror_=0&aggregationstatus_=&missingdata_=0&sensortype=aggregation&id=1001&"
             )
 
@@ -349,6 +399,8 @@ Describe "New-Sensor" -Tag @("PowerShell", "UnitTest") {
             ) -join ""
 
             SetAddressValidatorResponse @(
+                "api/getstatus.htm?id=0&"
+                "controls/addsensor2.htm?id=1001&sensortype=aggregation&"
                 "addsensor5.htm?name_=CPU+Overview&priority_=3&inherittriggers_=1&intervalgroup=1&interval_=60%7C60+seconds&errorintervalsdown_=1&tags_=factorysensor&aggregationchannel_=$channelDefinition&warnonerror_=0&aggregationstatus_=&missingdata_=0&sensortype=aggregation&id=1001&"
             )
 
@@ -362,6 +414,8 @@ Describe "New-Sensor" -Tag @("PowerShell", "UnitTest") {
             ) -join ""
 
             SetAddressValidatorResponse @(
+                "api/getstatus.htm?id=0&"
+                "controls/addsensor2.htm?id=1001&sensortype=aggregation&"
                 "addsensor5.htm?name_=CPU+Overview&priority_=3&inherittriggers_=1&intervalgroup=1&interval_=60%7C60+seconds&errorintervalsdown_=1&tags_=factorysensor&aggregationchannel_=$channelDefinition&warnonerror_=0&aggregationstatus_=&missingdata_=0&sensortype=aggregation&id=1001&"
             )
 
@@ -412,6 +466,8 @@ Describe "New-Sensor" -Tag @("PowerShell", "UnitTest") {
             ) -join ""
 
             SetAddressValidatorResponse @(
+                "api/getstatus.htm?id=0&"
+                "controls/addsensor2.htm?id=1001&sensortype=aggregation&"
                 "addsensor5.htm?name_=CPU+Overview&priority_=3&inherittriggers_=1&intervalgroup=1&interval_=60%7C60+seconds&errorintervalsdown_=1&tags_=factorysensor&aggregationchannel_=$channelDefinition&warnonerror_=0&aggregationstatus_=&missingdata_=0&sensortype=aggregation&id=1001&"
             )
 
@@ -431,6 +487,8 @@ Describe "New-Sensor" -Tag @("PowerShell", "UnitTest") {
             ) -join ""
 
             SetAddressValidatorResponse @(
+                "api/getstatus.htm?id=0&"
+                "controls/addsensor2.htm?id=1001&sensortype=aggregation&"
                 "addsensor5.htm?name_=CPU+Overview&priority_=3&inherittriggers_=1&intervalgroup=1&interval_=60%7C60+seconds&errorintervalsdown_=1&tags_=factorysensor&aggregationchannel_=$channelDefinition&warnonerror_=0&aggregationstatus_=&missingdata_=0&sensortype=aggregation&id=1001&"
             )
 
@@ -462,6 +520,8 @@ Describe "New-Sensor" -Tag @("PowerShell", "UnitTest") {
             ) -join ""
 
             SetAddressValidatorResponse @(
+                "api/getstatus.htm?id=0&"
+                "controls/addsensor2.htm?id=1001&sensortype=aggregation&"
                 "addsensor5.htm?name_=CPU+Overview&priority_=3&inherittriggers_=1&intervalgroup=1&interval_=60%7C60+seconds&errorintervalsdown_=1&tags_=factorysensor&aggregationchannel_=$channelDefinition&warnonerror_=0&aggregationstatus_=&missingdata_=0&sensortype=aggregation&id=1001&"
             )
 
@@ -500,6 +560,8 @@ Describe "New-Sensor" -Tag @("PowerShell", "UnitTest") {
             ) -join ""
 
             SetAddressValidatorResponse @(
+                "api/getstatus.htm?id=0&"
+                "controls/addsensor2.htm?id=1001&sensortype=aggregation&"
                 "addsensor5.htm?name_=CPU+Overview&priority_=3&inherittriggers_=1&intervalgroup=1&interval_=60%7C60+seconds&errorintervalsdown_=1&tags_=factorysensor&aggregationchannel_=$channelDefinition&warnonerror_=0&aggregationstatus_=&missingdata_=0&sensortype=aggregation&id=1001&"
             )
 
@@ -521,6 +583,8 @@ Describe "New-Sensor" -Tag @("PowerShell", "UnitTest") {
             ) -join ""
 
             SetAddressValidatorResponse @(
+                "api/getstatus.htm?id=0&"
+                "controls/addsensor2.htm?id=1001&sensortype=aggregation&"
                 "addsensor5.htm?name_=CPU+Overview&priority_=3&inherittriggers_=1&intervalgroup=1&interval_=60%7C60+seconds&errorintervalsdown_=1&tags_=factorysensor&aggregationchannel_=$channelDefinition&warnonerror_=1&aggregationstatus_=&missingdata_=0&sensortype=aggregation&id=1001&"
             )
 
@@ -566,7 +630,11 @@ Describe "New-Sensor" -Tag @("PowerShell", "UnitTest") {
 
         $device = Get-Device -Count 1
         
-        SetAddressValidatorResponse "addsensor5.htm?name_=test&priority_=3&inherittriggers_=1&intervalgroup=0&interval_=10%7C10+seconds&errorintervalsdown_=1&tags_=xmlexesensor&exefile_=test.ps1%7Ctest.ps1%7C%7C&exeparams_=&environment_=0&usewindowsauthentication_=0&mutexname_=&timeout_=60&writeresult_=0&sensortype=exexml&id=3000&username"
+        SetAddressValidatorResponse @(
+            "api/getstatus.htm?id=0&"
+            "controls/addsensor2.htm?id=3000&sensortype=exexml&"
+            "addsensor5.htm?name_=test&priority_=3&inherittriggers_=1&intervalgroup=0&interval_=10%7C10+seconds&errorintervalsdown_=1&tags_=xmlexesensor&exefile_=test.ps1%7Ctest.ps1%7C%7C&exeparams_=&environment_=0&usewindowsauthentication_=0&mutexname_=&timeout_=60&writeresult_=0&sensortype=exexml&id=3000&"
+        )
 
         $device | New-Sensor -ExeXml test test.ps1 -Interval 00:00:10 -Resolve:$false
     }

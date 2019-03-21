@@ -273,7 +273,7 @@
     <Compile Include="Parameters\ObjectManipulation\LoadConfigFilesParameters.cs" />
     <Compile Include="Parameters\ObjectManipulation\RefreshObjectParameters.cs" />
     <Compile Include="Parameters\ObjectManipulation\RefreshSystemInfoParameters.cs" />
-    <Compile Include="Parameters\ObjectManipulation\SensorTarget\SensorTargetCompletedParameters.cs" />
+    <Compile Include="Parameters\ObjectManipulation\AddSensor\EndAddSensorQueryParameters.cs" />
     <Compile Include="Parameters\ObjectManipulation\SortAlphabeticallyParameters.cs" />
     <Compile Include="Request\PrtgClient.Methods.Generated.cs">
       <AutoGen>True</AutoGen>
@@ -359,11 +359,11 @@
     <Compile Include="Objects\Models\SensorTarget\GenericSensorTarget.cs" />
     <Compile Include="Objects\PrtgObjects\UserGroup.cs" />
     <Compile Include="Objects\PrtgObjects\UserAccount.cs" />
-    <Compile Include="Objects\ProbeRestartProgress.cs" />
+    <Compile Include="Objects\Models\ProbeRestartProgress.cs" />
     <Compile Include="Objects\EventObjects\ChannelHistoryRecord.cs" />
     <Compile Include="Objects\Models\SensorTypeDescriptor.cs" />
     <Compile Include="Objects\PrtgObjects\Ticket.cs" />
-    <Compile Include="Objects\Models\SensorTarget\SensorTargetProgress.cs" />
+    <Compile Include="Objects\Models\AddSensorProgress.cs" />
     <Compile Include="Objects\Models\SensorTarget\ExeFileTarget.cs" />
     <Compile Include="Objects\Models\SensorTarget\SensorTarget.cs" />
     <Compile Include="Objects\Models\SensorTarget\SqlServerQueryTarget.cs" />
@@ -396,8 +396,8 @@
     <Compile Include="Parameters\ObjectManipulation\AcknowledgeSensorParameters.cs" />
     <Compile Include="Parameters\Base\BaseActionParameters.cs" />
     <Compile Include="Parameters\ObjectManipulation\NewObjectParameters\DynamicSensorParameters.cs" />
-    <Compile Include="Parameters\ObjectManipulation\SensorTarget\SensorTargetProgressParameters.cs" />
-    <Compile Include="Parameters\ObjectManipulation\SensorTarget\SensorTargetParameters.cs" />
+    <Compile Include="Parameters\ObjectManipulation\AddSensor\AddSensorProgressParameters.cs" />
+    <Compile Include="Parameters\ObjectManipulation\AddSensor\BeginAddSensorQueryParameters.cs" />
     <Compile Include="Parameters\ObjectManipulation\CloneParameters.cs" />
     <Compile Include="Parameters\ObjectManipulation\MoveObjectParameters.cs" />
     <Compile Include="Parameters\ObjectManipulation\NewObjectParameters\NewDeviceParameters.cs" />

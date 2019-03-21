@@ -92,6 +92,11 @@ Describe "Get-SensorTarget_IT" -Tag @("PowerShell", "IntegrationTest") {
         $services[2].Name | Should Be "PRTGProbeService"
     }
 
+    It "throws retrieving targets for a sensor type unsupported by a device" {
+
+        { $device | Get-SensorTarget -RawType exchangepsbackup } | Should Throw "An unspecified error occurred while trying to resolve sensor targets. Specified sensor type may not be valid on this device"
+    }
+
     It "throws attempting to resolve sensor targets as a readonly user" {
         ReadOnlyClient {
             { $device | Get-SensorTarget ExeXml } | Should Throw "type was not valid or you do not have sufficient permissions on the specified object"

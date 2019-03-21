@@ -1,14 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using PrtgAPI.Linq;
 using PrtgAPI.Parameters;
+using PrtgAPI.Utilities;
 
 namespace PrtgAPI.Request
 {
-    internal class VersionClient
+    internal partial class VersionClient
     {
         internal RequestVersion Version { get; set; }
 
@@ -382,6 +384,33 @@ namespace PrtgAPI.Request
             {
                 throw new PrtgRequestException($"Could not resolve '{address}' to an actual address: server responded with '{response.ErrorMessage?.EnsurePeriod()} {response.Status}'.");
             }
+        }
+
+        #endregion
+        #region AddSensorInternal
+
+        //AddSensorInternal
+
+        internal virtual void AddSensorInternal(ICommandParameters internalParams, int index, CancellationToken token)
+        {
+            if (index == 0)
+            {
+                //Validate the sensor type
+                GetTmpId((int) internalParams[Parameter.Id], internalParams, token);
+            }
+
+            client.AddObjectInternalDefault(internalParams, token);
+        }
+
+        internal virtual async Task AddSensorInternalAsync(ICommandParameters internalParams, int index, CancellationToken token)
+        {
+            if (index == 0)
+            {
+                //Validate the sensor type
+                await GetTmpIdAsync((int) internalParams[Parameter.Id], internalParams, token).ConfigureAwait(false);
+            }
+
+            await client.AddObjectInternalDefaultAsync(internalParams, token).ConfigureAwait(false);
         }
 
         #endregion

@@ -369,6 +369,37 @@ Describe "Add-Sensor_IT" -Tag @("PowerShell", "IntegrationTest") {
         $sensor.Type.StringValue | Should Be "snmpcustomtable"
     }
     
+    It "creates sensors from an excessive number of targets" {
+        $device = Get-Device -Id (Settings Device)
+
+        $targets = $device | Get-SensorTarget WmiService
+
+        $targets.Count | Should BeGreaterThan 100
+
+        $services = $device | New-Sensor -WmiService *
+
+        try
+        {
+            $services.Count | Should Be $targets.Count
+        }
+        finally
+        {
+            $services | Remove-Object -Force
+        }
+    }
+
+    It "throws adding an invalid sensor type using raw parameters" {
+        $table = @{
+            "name_" = "my raw sensor"
+            "exefile_" = "test.ps1|test.ps1||"
+            "sensortype" = "exexml1"
+        }
+
+        $params = New-SensorParameters $table
+
+        { Get-Device -Id (Settings Device) | Add-Sensor $params } | Should Throw "Failed to add sensor for sensor type 'exexml1': type was not valid"
+    }
+
     It "throws attempting to create dynamic parameters as a read only user" {
 
         ReadOnlyClient {
