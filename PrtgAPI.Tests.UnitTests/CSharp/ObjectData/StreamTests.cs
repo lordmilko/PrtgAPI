@@ -950,8 +950,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         private void Stream(SensorParameters parameters, string[] address, int? count = null)
         {
             var url = new List<string>();
-            url.Add(TestHelpers.RequestSensorCount);
-            url.AddRange(address.Select(a => TestHelpers.RequestSensor(a, UrlFlag.Columns)));
+            url.Add(UnitRequest.SensorCount);
+            url.AddRange(address.Select(a => UnitRequest.Sensors(a, UrlFlag.Columns)));
 
             Dictionary<Content, int> countOverride = null;
 
@@ -978,9 +978,9 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             var url = new List<string>();
 
             if (requestCount)
-                url.Add(TestHelpers.RequestSensorCount);
+                url.Add(UnitRequest.SensorCount);
 
-            url.AddRange(address.Select(a => TestHelpers.RequestSensor(a, UrlFlag.Columns)));
+            url.AddRange(address.Select(a => UnitRequest.Sensors(a, UrlFlag.Columns)));
 
             Dictionary<Content, int> countOverride = null;
 
@@ -1007,9 +1007,9 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             var url = new List<string>();
 
             if (requestCount)
-                url.Add(TestHelpers.RequestLog($"count=1&columns=objid,name", null));
+                url.Add(UnitRequest.Logs($"count=1&columns=objid,name", null));
 
-            url.AddRange(address.Select(a => TestHelpers.RequestLog(a, UrlFlag.Columns)));
+            url.AddRange(address.Select(a => UnitRequest.Logs(a, UrlFlag.Columns)));
 
             Execute(
                 c => c.StreamLogs(parameters, true).ToList(),
@@ -1029,8 +1029,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         private void StreamLogs(LogParameters parameters, string[] address, int count = 10)
         {
             var url = new List<string>();
-            url.Add(TestHelpers.RequestLog($"count=1&columns=objid,name", null));
-            url.AddRange(address.Select(a => TestHelpers.RequestLog(a, UrlFlag.Columns)));
+            url.Add(UnitRequest.Logs($"count=1&columns=objid,name", null));
+            url.AddRange(address.Select(a => UnitRequest.Logs(a, UrlFlag.Columns)));
 
             Execute(
                 c => c.StreamLogs(parameters).ToList(),

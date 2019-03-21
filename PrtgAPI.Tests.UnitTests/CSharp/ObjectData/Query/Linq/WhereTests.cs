@@ -347,7 +347,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         {
             ExecuteClient(
                 c => c.QuerySensors(s => s.Name.StartsWith("Vol")).Take(2),
-                new[] { TestHelpers.RequestSensor("filter_name=@sub(Vol)"), },
+                new[] { UnitRequest.Sensors("filter_name=@sub(Vol)"), },
                 s => Assert.AreEqual(2, s.Count())
             );
         }
@@ -358,7 +358,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         {
             ExecuteClient(
                 c => c.QuerySensors(s => s.Name.EndsWith("0")).Take(2),
-                new[] { TestHelpers.RequestSensor("filter_name=@sub(0)") },
+                new[] { UnitRequest.Sensors("filter_name=@sub(0)") },
                 s => Assert.AreEqual(1, s.Count())
             );
         }
@@ -856,7 +856,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         {
             var urls = new List<string>
             {
-                TestHelpers.RequestSensor()
+                UnitRequest.Sensors()
             };
 
             var filters = new[]
@@ -868,7 +868,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
 
             urls.AddRange(filters.SelectMany(f => new[]
                 {
-                    TestHelpers.RequestDevice(f)
+                    UnitRequest.Devices(f)
                 }
             ));
 
@@ -1041,7 +1041,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         {
             ExecuteClient(
                 c => c.QuerySensors().Where(s => s.Id == 4000).AsEnumerable().AsQueryable(),
-                new[] { TestHelpers.RequestSensor("filter_objid=4000") },
+                new[] { UnitRequest.Sensors("filter_objid=4000") },
                 s => Assert.AreEqual(1, s.Count())
             );
         }
@@ -1052,7 +1052,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         {
             ExecuteClient(
                 c => c.QuerySensors().Where(s => s.Id == 4000).AsEnumerable().AsQueryable().Where(n => n.Name == "Volume IO _Total0"),
-                new[] { TestHelpers.RequestSensor("filter_objid=4000&filter_name=Volume+IO+_Total0") },
+                new[] { UnitRequest.Sensors("filter_objid=4000&filter_name=Volume+IO+_Total0") },
                 s => Assert.AreEqual(1, s.Count())
             );
         }
@@ -1063,7 +1063,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         {
             ExecuteClient(
                 c => c.QuerySensors().Where(s => s.Id == 4000).AsEnumerable().Where(s => s.Name == "Volume IO _Total0").AsQueryable(),
-                new[] { TestHelpers.RequestSensor("filter_objid=4000") },
+                new[] { UnitRequest.Sensors("filter_objid=4000") },
                 s => Assert.AreEqual(1, s.Count())
             );
         }
@@ -1077,7 +1077,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
                     .Where(s => s.Id == 4000).AsEnumerable()
                     .Where(s => s.Name == "Volume IO _Total0").AsQueryable()
                     .Select(s => s.Name),
-                new[] { TestHelpers.RequestSensor("filter_objid=4000") },
+                new[] { UnitRequest.Sensors("filter_objid=4000") },
                 s => Assert.AreEqual(1, s.Count())
             );
         }
@@ -1182,7 +1182,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
             ExecuteClient(c => c.QuerySensors().Where(s => new Sensor
             {
                 Message = s.Name
-            }.Message == "test").Where(s => s.Id == 4000), new[] { TestHelpers.RequestSensor("filter_name=test&filter_objid=4000") }, s => s.ToList());
+            }.Message == "test").Where(s => s.Id == 4000), new[] { UnitRequest.Sensors("filter_name=test&filter_objid=4000") }, s => s.ToList());
         }
 
         [TestMethod]
@@ -1192,7 +1192,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
             ExecuteClient(c => c.QuerySensors().Where(s => new Sensor
             {
                 Message = s.Name
-            }.Message == "test").Select(s => s.Name), new[] { TestHelpers.RequestSensor("columns=name&count=500&filter_name=test", null) }, s => s.ToList());
+            }.Message == "test").Select(s => s.Name), new[] { UnitRequest.Sensors("columns=name&count=500&filter_name=test", null) }, s => s.ToList());
         }
 
         #endregion
@@ -1204,7 +1204,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         {
             ExecuteClient(
                 c => c.QueryLogs().Where(l => l.Id == 1001).Select(l => l.Name),
-                new[] { TestHelpers.RequestLog("columns=objid,name&count=500&start=1&id=1001", null) },
+                new[] { UnitRequest.Logs("columns=objid,name&count=500&start=1&id=1001", null) },
                 l => l.ToList()
             );
         }
@@ -1215,7 +1215,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         {
             ExecuteClient(
                 c => c.QueryLogs().Where(l => l.Id == 1001 || l.Id == 1002).Select(l => l.Name),
-                new[] { TestHelpers.RequestLog("start=1&id=1001"), TestHelpers.RequestLog("start=1&id=1002") },
+                new[] { UnitRequest.Logs("start=1&id=1001"), UnitRequest.Logs("start=1&id=1002") },
                 l => l.ToList()
             );
         }
@@ -1226,7 +1226,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         {
             ExecuteClient(
                 c => c.QuerySensors(s => s.Name == "Ping").Select(s => s.Name),
-                new[] { TestHelpers.RequestSensor("columns=name&count=500&filter_name=Ping", null) },
+                new[] { UnitRequest.Sensors("columns=name&count=500&filter_name=Ping", null) },
                 s => s.ToList()
             );
         }
@@ -1239,8 +1239,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
                 c => c.QuerySensors(s => s.Name == "Ping" || s.Device == "dc-1").Select(s => s.Name),
                 new[]
                 {
-                    TestHelpers.RequestSensor("columns=objid,name,device&count=500&filter_name=Ping", null),
-                    TestHelpers.RequestSensor("columns=objid,name,device&count=500&filter_device=dc-1", null)
+                    UnitRequest.Sensors("columns=objid,name,device&count=500&filter_name=Ping", null),
+                    UnitRequest.Sensors("columns=objid,name,device&count=500&filter_device=dc-1", null)
                 },
                 s => s.ToList()
             );

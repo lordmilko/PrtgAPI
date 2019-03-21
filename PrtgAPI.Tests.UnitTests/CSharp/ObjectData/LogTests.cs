@@ -71,10 +71,10 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         {
             var urls = new[]
             {
-                TestHelpers.RequestLog("count=500&start=1&filter_drel=7days", UrlFlag.Columns),
-                TestHelpers.RequestLog("count=500&start=501&filter_drel=7days", UrlFlag.Columns),
-                TestHelpers.RequestLog("count=500&start=1001&filter_drel=7days", UrlFlag.Columns),
-                TestHelpers.RequestLog("count=100&start=1501&filter_drel=7days", UrlFlag.Columns)
+                UnitRequest.Logs("count=500&start=1&filter_drel=7days", UrlFlag.Columns),
+                UnitRequest.Logs("count=500&start=501&filter_drel=7days", UrlFlag.Columns),
+                UnitRequest.Logs("count=500&start=1001&filter_drel=7days", UrlFlag.Columns),
+                UnitRequest.Logs("count=100&start=1501&filter_drel=7days", UrlFlag.Columns)
             };
 
             Execute(

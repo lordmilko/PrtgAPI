@@ -12,7 +12,7 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
         protected override void AssertThird(string address)
         {
             //We did a client side filter for the second item after request 2, so the latest Current is the second item, not the third
-            Assert.AreEqual(TestHelpers.RequestLog($"count=*&{filters}&filter_dstart={LogDate(startDate.AddHours(1).AddMinutes(1))}", UrlFlag.Columns), address);
+            Assert.AreEqual(UnitRequest.Logs($"count=*&{filters}&filter_dstart={LogDate(startDate.AddHours(1).AddMinutes(1))}", UrlFlag.Columns), address);
         }
 
         protected override void AssertFifth(string address)

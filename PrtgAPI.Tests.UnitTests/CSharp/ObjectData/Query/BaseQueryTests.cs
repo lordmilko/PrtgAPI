@@ -20,7 +20,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         {
             Func<string, string> getDelim = f => f != string.Empty ? "&" : "";
 
-            var urls = filters.Select(f => $"content=sensors&columns={TestHelpers.DefaultSensorProperties()}&count=500{getDelim(f)}{f}").ToArray();
+            var urls = filters.Select(f => $"content=sensors&columns={UnitRequest.DefaultSensorProperties()}&count=500{getDelim(f)}{f}").ToArray();
 
             Execute(func, urls, validator);
         }
@@ -63,7 +63,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
 
         protected void ExecuteNow<TResult>(Func<IQueryable<Sensor>, TResult> func, string[] url, Action<TResult> validator, UrlFlag flags = UrlFlag.Columns | UrlFlag.Count, int count = 3)
         {
-            url = url.Select(f => TestHelpers.RequestSensor(f, flags)).ToArray();
+            url = url.Select(f => UnitRequest.Sensors(f, flags)).ToArray();
 
             var client = GetClient(url, count);
 
@@ -82,8 +82,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         protected void ExecuteSkip<TResult>(Func<IQueryable<Sensor>, TResult> func, string[] url, Action<TResult> validator, UrlFlag flags = UrlFlag.Columns | UrlFlag.Count, int count = 3)
         {
             var list = new List<string>();
-            list.Add(TestHelpers.RequestSensorCount);
-            list.AddRange(url.Select(f => TestHelpers.RequestSensor(f, flags)));
+            list.Add(UnitRequest.SensorCount);
+            list.AddRange(url.Select(f => UnitRequest.Sensors(f, flags)));
 
             var client = GetClient(list.ToArray(), count);
 
@@ -110,7 +110,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
             var u = "content=sensors&";
 
             if (!url.Contains("columns"))
-                u += $"columns={TestHelpers.DefaultSensorProperties()}";
+                u += $"columns={UnitRequest.DefaultSensorProperties()}";
             else
                 u += url;
 

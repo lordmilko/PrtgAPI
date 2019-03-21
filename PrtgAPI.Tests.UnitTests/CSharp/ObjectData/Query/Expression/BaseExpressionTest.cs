@@ -19,7 +19,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
 
             var urls = new[]
             {
-                TestHelpers.RequestSensor(url)
+                UnitRequest.Sensors(url)
             };
 
             var client = GetClient(urls.ToArray());

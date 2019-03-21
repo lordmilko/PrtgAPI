@@ -126,10 +126,10 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
 
             var urls = new[]
             {
-                TestHelpers.RequestSensor("count=2&filter_name=@sub(Ye)", UrlFlag.Columns),          //Yes, YeNo
-                TestHelpers.RequestSensor("count=0&filter_name=@sub(Ye)", null),                     //Count
-                TestHelpers.RequestSensor("count=1&filter_name=@sub(Ye)&start=2", UrlFlag.Columns),  //YeNo
-                TestHelpers.RequestSensor("count=3&filter_name=@sub(Ye)&start=3", UrlFlag.Columns) //Yes
+                UnitRequest.Sensors("count=2&filter_name=@sub(Ye)", UrlFlag.Columns),          //Yes, YeNo
+                UnitRequest.Sensors("count=0&filter_name=@sub(Ye)", null),                     //Count
+                UnitRequest.Sensors("count=1&filter_name=@sub(Ye)&start=2", UrlFlag.Columns),  //YeNo
+                UnitRequest.Sensors("count=3&filter_name=@sub(Ye)&start=3", UrlFlag.Columns) //Yes
             };
 
             var itemOverride = new Dictionary<Content, BaseItem[]>
@@ -172,10 +172,10 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
 
             var urls = new object[]
             {
-                TestHelpers.RequestSensor($"count={pageSize}&filter_name=@sub(Ye)", UrlFlag.Columns),                      //Yes
-                TestHelpers.RequestSensor($"count={pageSize}&filter_name=@sub(Ye)&start={pageSize * 1}", UrlFlag.Columns), //YeNo
-                TestHelpers.RequestSensor($"count={pageSize}&filter_name=@sub(Ye)&start={pageSize * 2}", UrlFlag.Columns), //YeNo
-                TestHelpers.RequestSensor($"count={pageSize}&filter_name=@sub(Ye)&start={pageSize * 3}", UrlFlag.Columns)  //Yes
+                UnitRequest.Sensors($"count={pageSize}&filter_name=@sub(Ye)", UrlFlag.Columns),                      //Yes
+                UnitRequest.Sensors($"count={pageSize}&filter_name=@sub(Ye)&start={pageSize * 1}", UrlFlag.Columns), //YeNo
+                UnitRequest.Sensors($"count={pageSize}&filter_name=@sub(Ye)&start={pageSize * 2}", UrlFlag.Columns), //YeNo
+                UnitRequest.Sensors($"count={pageSize}&filter_name=@sub(Ye)&start={pageSize * 3}", UrlFlag.Columns)  //Yes
             };
 
 #pragma warning disable 618

@@ -10,7 +10,7 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
             switch (requestNum)
             {
                 case 1:
-                    Assert.AreEqual(TestHelpers.RequestSensor("count=2", UrlFlag.Columns), address);
+                    Assert.AreEqual(UnitRequest.Sensors("count=2", UrlFlag.Columns), address);
                     return new SensorResponse(new SensorItem(), new SensorItem(), new SensorItem());
 
                 default:

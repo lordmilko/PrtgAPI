@@ -140,7 +140,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
 
                     Assert.AreEqual(1, result.Count);
                 },
-                TestHelpers.RequestSensor("filter_name=Volume+IO+_Total0"),
+                UnitRequest.Sensors("filter_name=Volume+IO+_Total0"),
                 countOverride
             );
         }

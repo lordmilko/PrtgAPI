@@ -10,11 +10,11 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
             switch (requestNum)
             {
                 case 1: //Get a group
-                    Assert.AreEqual(TestHelpers.RequestGroup("count=1", UrlFlag.Columns), address);
+                    Assert.AreEqual(UnitRequest.Groups("count=1", UrlFlag.Columns), address);
                     return new GroupResponse(new GroupItem());
 
                 case 2: //Get 2 sensors under the group "Windows Infrastructure"
-                    Assert.AreEqual(TestHelpers.RequestSensor("count=2&filter_group=Windows+Infrastructure", UrlFlag.Columns), address);
+                    Assert.AreEqual(UnitRequest.Sensors("count=2&filter_group=Windows+Infrastructure", UrlFlag.Columns), address);
                     return new SensorResponse(new SensorItem(name: "First"));
 
                     //todo: why didnt this start streaming?

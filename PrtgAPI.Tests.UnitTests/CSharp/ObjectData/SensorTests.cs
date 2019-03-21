@@ -105,10 +105,10 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         {
             var urls = new[]
             {
-                TestHelpers.RequestSensor("count=500", UrlFlag.Columns),
-                TestHelpers.RequestSensor("count=500&start=500", UrlFlag.Columns),
-                TestHelpers.RequestSensor("count=500&start=1000", UrlFlag.Columns),
-                TestHelpers.RequestSensor("count=100&start=1500", UrlFlag.Columns),
+                UnitRequest.Sensors("count=500", UrlFlag.Columns),
+                UnitRequest.Sensors("count=500&start=500", UrlFlag.Columns),
+                UnitRequest.Sensors("count=500&start=1000", UrlFlag.Columns),
+                UnitRequest.Sensors("count=100&start=1500", UrlFlag.Columns),
             };
 
             var countOverride = new Dictionary<Content, int>

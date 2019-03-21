@@ -663,7 +663,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
 
             var urls = new[]
             {
-                typeof(TSource) == typeof(Log) ? TestHelpers.RequestLog(legalUrl, flags) :TestHelpers. RequestSensor(legalUrl, flags)
+                typeof(TSource) == typeof(Log) ? UnitRequest.Logs(legalUrl, flags) : UnitRequest.Sensors(legalUrl, flags)
             };
 
             ExecuteClient(c => legalAction(query(c)), urls, s => legalValidator(s.ToList()));
@@ -686,7 +686,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
 
             var urls = new[]
             {
-                TestHelpers.RequestSensor(legalUrl, flags)
+                UnitRequest.Sensors(legalUrl, flags)
             };
 
             ExecuteClient(c => legalAction(c.QuerySensors(true)), urls, legalValidator);

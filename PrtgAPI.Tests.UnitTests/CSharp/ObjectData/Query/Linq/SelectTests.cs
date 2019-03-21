@@ -25,7 +25,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         [TestCategory("UnitTest")]
         public void Query_Select_Overload_TSourceIntTResult_SelectIndex()
         {
-            Execute(q => q.Select((s, i) => i), $"content=sensors&columns={TestHelpers.DefaultSensorProperties()}&count=500", s =>
+            Execute(q => q.Select((s, i) => i), $"content=sensors&columns={UnitRequest.DefaultSensorProperties()}&count=500", s =>
             {
                 Assert.AreEqual(0, s[0]);
                 Assert.AreEqual(1, s[1]);
@@ -59,7 +59,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         [TestCategory("UnitTest")]
         public void Query_Select_FromUnsupported()
         {
-            Execute(q => q.SkipWhile((s, i) => i == 0).Select(s => s.Name), $"content=sensors&columns={TestHelpers.DefaultSensorProperties()}&count=500", s =>
+            Execute(q => q.SkipWhile((s, i) => i == 0).Select(s => s.Name), $"content=sensors&columns={UnitRequest.DefaultSensorProperties()}&count=500", s =>
             {
                 Assert.AreEqual("Volume IO _Total1", s[0]);
                 Assert.AreEqual("Volume IO _Total2", s[1]);
@@ -70,7 +70,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         [TestCategory("UnitTest")]
         public void Query_Select_FromUnsupported_FromSupported()
         {
-            Execute(q => q.Where(s => s.Active).SkipWhile((s, i) => i == 0).Select(s => s.Name), $"content=sensors&columns={TestHelpers.DefaultSensorProperties()}&count=500&filter_active=-1", s =>
+            Execute(q => q.Where(s => s.Active).SkipWhile((s, i) => i == 0).Select(s => s.Name), $"content=sensors&columns={UnitRequest.DefaultSensorProperties()}&count=500&filter_active=-1", s =>
             {
                 Assert.AreEqual("Volume IO _Total1", s[0]);
                 Assert.AreEqual("Volume IO _Total2", s[1]);
@@ -188,7 +188,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
             Execute(q => q.Select(s => new
             {
                 First = 3
-            }).Where(f => f.First == 3), $"content=sensors&columns={TestHelpers.DefaultSensorProperties()}&count=500", s => Assert.IsTrue(s.All(e => e.First == 3)));
+            }).Where(f => f.First == 3), $"content=sensors&columns={UnitRequest.DefaultSensorProperties()}&count=500", s => Assert.IsTrue(s.All(e => e.First == 3)));
         }
 
         [TestMethod]
@@ -207,11 +207,11 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         {
             var urls = new[]
             {
-                TestHelpers.RequestSensor(),
+                UnitRequest.Sensors(),
 
-                TestHelpers.RequestDevice(),
-                TestHelpers.RequestDevice(),
-                TestHelpers.RequestDevice()
+                UnitRequest.Devices(),
+                UnitRequest.Devices(),
+                UnitRequest.Devices()
             };
 
             ExecuteClient(
@@ -227,11 +227,11 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         {
             var urls = new[]
             {
-                TestHelpers.RequestSensor("columns=name&count=500", null),
+                UnitRequest.Sensors("columns=name&count=500", null),
 
-                TestHelpers.RequestDevice("filter_active=-1"),
-                TestHelpers.RequestDevice("filter_active=-1"),
-                TestHelpers.RequestDevice("filter_active=-1"),
+                UnitRequest.Devices("filter_active=-1"),
+                UnitRequest.Devices("filter_active=-1"),
+                UnitRequest.Devices("filter_active=-1"),
             };
 
             ExecuteClient(
@@ -251,11 +251,11 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         {
             var urls = new[]
             {
-                TestHelpers.RequestSensor(),
+                UnitRequest.Sensors(),
 
-                TestHelpers.RequestDevice("columns=favorite&count=500", null),
-                TestHelpers.RequestDevice("columns=favorite&count=500", null),
-                TestHelpers.RequestDevice("columns=favorite&count=500", null)
+                UnitRequest.Devices("columns=favorite&count=500", null),
+                UnitRequest.Devices("columns=favorite&count=500", null),
+                UnitRequest.Devices("columns=favorite&count=500", null)
             };
 
             ExecuteClient(
@@ -575,7 +575,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
             {
                 Id = s.ParentId,
                 Message = s.Name
-            }.Message).Where(v => v == "test"), new[] { TestHelpers.RequestSensor("columns=name&count=500&filter_name=test", null) }, s => s.ToList());
+            }.Message).Where(v => v == "test"), new[] { UnitRequest.Sensors("columns=name&count=500&filter_name=test", null) }, s => s.ToList());
         }
 
         [TestMethod]
@@ -586,7 +586,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
             {
                 Id = s.ParentId,
                 Message = s.Name
-            }.Message).Where(v => v == "test"), new[] { TestHelpers.RequestSensor("columns=name&count=500&filter_name=test", null) }, s => s.ToList());
+            }.Message).Where(v => v == "test"), new[] { UnitRequest.Sensors("columns=name&count=500&filter_name=test", null) }, s => s.ToList());
         }
 
         [TestMethod]
@@ -597,7 +597,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
             {
                 Id = s.ParentId,
                 Message = "hello"
-            }.Message).Where(v => v == "test"), new[] { TestHelpers.RequestSensor() }, s => s.ToList());
+            }.Message).Where(v => v == "test"), new[] { UnitRequest.Sensors() }, s => s.ToList());
         }
 
         [TestMethod]
@@ -608,7 +608,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
             {
                 Id = s.ParentId,
                 Message = s.Name + s.Type
-            }.Message).Where(v => v == "test"), new[] { TestHelpers.RequestSensor("columns=name,type&count=500", null) }, s => s.ToList());
+            }.Message).Where(v => v == "test"), new[] { UnitRequest.Sensors("columns=name,type&count=500", null) }, s => s.ToList());
         }
     }
 }

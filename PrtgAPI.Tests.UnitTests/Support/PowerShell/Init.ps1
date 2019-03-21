@@ -7,6 +7,9 @@
 function InitializeUnitTestModules
 {
     InitializeModules "PrtgAPI.Tests.UnitTests" $PSScriptRoot
+
+    $accelerators = [PowerShell].Assembly.GetType("System.Management.Automation.TypeAccelerators")
+    $accelerators::Add("Request", [PrtgAPI.Tests.UnitTests.Support.UnitRequest])
 }
 
 function Shutdown

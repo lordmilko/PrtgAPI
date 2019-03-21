@@ -327,7 +327,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         [TestCategory("UnitTest")]
         public void QueryFilter_LogProperties_DateTime_BackwardsAndForwards()
         {
-            var url = new[] { TestHelpers.RequestLog($"start=1&filter_dend={Time.TodayStr}")};
+            var url = new[] { UnitRequest.Logs($"start=1&filter_dend={Time.TodayStr}")};
 
             ExecuteClient(c => c.QueryLogs().Where(l => l.DateTime < Time.Today), url, l => l.ToList());
             ExecuteClient(c => c.QueryLogs().Where(l => Time.Today > l.DateTime), url, l => l.ToList());
@@ -552,8 +552,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         [TestCategory("UnitTest")]
         public void QueryFilter_Log_WithTake()
         {
-            ExecuteClient(c => c.QueryLogs(), new[] { TestHelpers.RequestLog("start=1")}, s => s.ToList());
-            ExecuteClient(c => c.QueryLogs().Take(3), new[] { TestHelpers.RequestLog("count=3&start=1", UrlFlag.Columns)}, s => s.ToList());
+            ExecuteClient(c => c.QueryLogs(), new[] { UnitRequest.Logs("start=1")}, s => s.ToList());
+            ExecuteClient(c => c.QueryLogs().Take(3), new[] { UnitRequest.Logs("count=3&start=1", UrlFlag.Columns)}, s => s.ToList());
         }
 
         #endregion
@@ -567,7 +567,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         {
             ExecuteClient(c => c.QueryDevices(predicate), new[]
             {
-                TestHelpers.RequestDevice(url)
+                UnitRequest.Devices(url)
             }, s => s.ToList());
         }
 
@@ -575,7 +575,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         {
             ExecuteClient(c => c.QueryGroups(predicate), new[]
             {
-                TestHelpers.RequestGroup(url)
+                UnitRequest.Groups(url)
             }, s => s.ToList());
         }
 
@@ -583,7 +583,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         {
             ExecuteClient(c => c.QueryProbes(predicate), new[]
             {
-                TestHelpers.RequestProbe(url + "&filter_parentid=0")
+                UnitRequest.Probes(url + "&filter_parentid=0")
             }, s => s.ToList());
         }
 
@@ -609,7 +609,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         {
             var urls = url.SelectMany(s => new[]
             {
-                TestHelpers.RequestLog(s)
+                UnitRequest.Logs(s)
             }).ToArray();
 
             ExecuteClient(c => c.QueryLogs(predicate), urls, s => s.ToList());

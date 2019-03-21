@@ -65,7 +65,7 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
 
         protected virtual void AssertFirst(string address)
         {
-            Assert.AreEqual(TestHelpers.RequestLog($"count=*&{filters}&filter_dstart={LogDate(startDate)}", UrlFlag.Columns), address);
+            Assert.AreEqual(UnitRequest.Logs($"count=*&{filters}&filter_dstart={LogDate(startDate)}", UrlFlag.Columns), address);
         }
 
         protected virtual void AssertSecond(string address)
@@ -75,7 +75,7 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
 
         protected virtual void AssertThird(string address)
         {
-            Assert.AreEqual(TestHelpers.RequestLog($"count=*&{filters}&filter_dstart={LogDate(startDate.AddHours(1).AddMinutes(2))}", UrlFlag.Columns), address);
+            Assert.AreEqual(UnitRequest.Logs($"count=*&{filters}&filter_dstart={LogDate(startDate.AddHours(1).AddMinutes(2))}", UrlFlag.Columns), address);
         }
 
         protected virtual void AssertFourth(string address)
@@ -85,7 +85,7 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
 
         protected virtual void AssertFifth(string address)
         {
-            Assert.AreEqual(TestHelpers.RequestLog($"count=*&{filters}&filter_dstart={LogDate(startDate.AddHours(1).AddMinutes(6))}", UrlFlag.Columns), address);
+            Assert.AreEqual(UnitRequest.Logs($"count=*&{filters}&filter_dstart={LogDate(startDate.AddHours(1).AddMinutes(6))}", UrlFlag.Columns), address);
         }
 
         protected string LogDate(DateTime date)

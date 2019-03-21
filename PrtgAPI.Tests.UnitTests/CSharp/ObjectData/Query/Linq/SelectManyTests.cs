@@ -30,7 +30,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         [TestCategory("UnitTest")]
         public void Query_SelectMany_Overload_TSourceIntTResult_SelectIndex()
         {
-            Execute(q => q.SelectMany((s, i) => new[] { i }), $"content=sensors&columns={TestHelpers.DefaultSensorProperties()}&count=500", s =>
+            Execute(q => q.SelectMany((s, i) => new[] { i }), $"content=sensors&columns={UnitRequest.DefaultSensorProperties()}&count=500", s =>
             {
                 Assert.AreEqual(0, s[0]);
                 Assert.AreEqual(1, s[1]);

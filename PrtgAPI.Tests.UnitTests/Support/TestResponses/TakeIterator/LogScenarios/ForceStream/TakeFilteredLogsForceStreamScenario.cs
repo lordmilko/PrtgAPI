@@ -10,11 +10,11 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
             switch (requestNum)
             {
                 case 1:
-                    Assert.AreEqual(TestHelpers.RequestLog("count=1&columns=objid,name&filter_name=ping", null), address);
+                    Assert.AreEqual(UnitRequest.Logs("count=1&columns=objid,name&filter_name=ping", null), address);
                     return GetTotalLogsResponse();
 
                 case 2:
-                    Assert.AreEqual(TestHelpers.RequestLog("count=2&start=1&filter_name=ping", UrlFlag.Columns), address);
+                    Assert.AreEqual(UnitRequest.Logs("count=2&start=1&filter_name=ping", UrlFlag.Columns), address);
                     return new MessageResponse(new MessageItem("Ping"), new MessageItem("Ping"), new MessageItem("Ping"));
 
                 default:

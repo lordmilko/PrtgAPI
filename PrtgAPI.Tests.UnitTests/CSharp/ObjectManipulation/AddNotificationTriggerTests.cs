@@ -199,7 +199,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             var urls = new[]
             {
                 "https://prtg.example.com/api/triggers.json?id=1001&username=username&passhash=12345678", //Validate Supported Triggers
-                TestHelpers.RequestSensor("count=*&filter_objid=1001", UrlFlag.Columns)                   //Validate TriggerChannel target compatibility
+                UnitRequest.Sensors("count=*&filter_objid=1001", UrlFlag.Columns)                   //Validate TriggerChannel target compatibility
             };
 
             AssertEx.Throws<InvalidOperationException>(() => TestTriggerChannel(TriggerChannel.Total, urls, true), "Channel 'Total' is not a valid value");
@@ -212,7 +212,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             var urls = new[]
             {
                 "https://prtg.example.com/api/triggers.json?id=1001&username=username&passhash=12345678", //Validate Supported Triggers
-                TestHelpers.RequestSensor("count=*&filter_objid=1001", UrlFlag.Columns), //Validate TriggerChannel target compatibility
+                UnitRequest.Sensors("count=*&filter_objid=1001", UrlFlag.Columns), //Validate TriggerChannel target compatibility
                 "https://prtg.example.com/editsettings?onnotificationid_=-1%7CNone&class=threshold&offnotificationid_new=-1%7CNone&channel_new=-1&condition_new=0&threshold_new=0&latency_new=60&id=1001&subid=new&objecttype=nodetrigger&username=username&passhash=12345678", //Add Trigger
             };
 
@@ -226,7 +226,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             var urls = new[]
             {
                 "https://prtg.example.com/api/triggers.json?id=1001&username=username&passhash=12345678",                                                   //Validate Supported Triggers
-                TestHelpers.RequestSensor("count=*&filter_objid=1001", UrlFlag.Columns),                                                                    //Validate TriggerChannel target compatibility
+                UnitRequest.Sensors("count=*&filter_objid=1001", UrlFlag.Columns),                                                                    //Validate TriggerChannel target compatibility
                 "https://prtg.example.com/api/table.xml?content=channels&columns=objid,name,lastvalue&count=*&id=1001&username=username&passhash=12345678",
                 "https://prtg.example.com/controls/channeledit.htm?id=1001&channel=1&username=username&passhash=12345678",
                 "https://prtg.example.com/editsettings?onnotificationid_=-1%7CNone&class=threshold&offnotificationid_new=-1%7CNone&channel_new=1&condition_new=0&threshold_new=0&latency_new=60&id=1001&subid=new&objecttype=nodetrigger&username=username&passhash=12345678", //Add Trigger
@@ -248,7 +248,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             var urls = new[]
             {
                 "https://prtg.example.com/api/triggers.json?id=1001&username=username&passhash=12345678",                                                   //Validate Supported Triggers
-                TestHelpers.RequestSensor("count=*&filter_objid=1001", UrlFlag.Columns),                                                                    //Validate TriggerChannel target compatibility
+                UnitRequest.Sensors("count=*&filter_objid=1001", UrlFlag.Columns),                                                                    //Validate TriggerChannel target compatibility
             };
 
             var channel = new Channel
@@ -267,7 +267,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             var urls = new[]
             {
                 "https://prtg.example.com/api/triggers.json?id=1001&username=username&passhash=12345678",                                                   //Validate Supported Triggers
-                TestHelpers.RequestSensor("count=*&filter_objid=1001", UrlFlag.Columns),                                                                    //Validate TriggerChannel target compatibility
+                UnitRequest.Sensors("count=*&filter_objid=1001", UrlFlag.Columns),                                                                    //Validate TriggerChannel target compatibility
                 "https://prtg.example.com/controls/channeledit.htm?id=1001&channel=3&username=username&passhash=12345678",
                 "https://prtg.example.com/editsettings?onnotificationid_=-1%7CNone&class=threshold&offnotificationid_new=-1%7CNone&channel_new=3&condition_new=0&threshold_new=0&latency_new=60&id=1001&subid=new&objecttype=nodetrigger&username=username&passhash=12345678", //Add Trigger
             };
@@ -282,7 +282,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             var urls = new[]
             {
                 "https://prtg.example.com/api/triggers.json?id=1001&username=username&passhash=12345678",                                                   //Validate Supported Triggers
-                TestHelpers.RequestSensor("count=*&filter_objid=1001", UrlFlag.Columns)                                                                     //Validate TriggerChannel target compatibility
+                UnitRequest.Sensors("count=*&filter_objid=1001", UrlFlag.Columns)                                                                     //Validate TriggerChannel target compatibility
             };
 
             AssertEx.Throws<InvalidOperationException>(() => TestTriggerChannel(new TriggerChannel(3), urls, false), "Channel ID '3' is not a valid channel");
@@ -295,7 +295,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             var urls = new[]
             {
                 "https://prtg.example.com/api/triggers.json?id=1001&username=username&passhash=12345678",                                                   //Validate Supported Triggers
-                TestHelpers.RequestSensor("count=*&filter_objid=1001", UrlFlag.Columns),                                                                    //Validate TriggerChannel target compatibility
+                UnitRequest.Sensors("count=*&filter_objid=1001", UrlFlag.Columns),                                                                    //Validate TriggerChannel target compatibility
                 "https://prtg.example.com/controls/channeledit.htm?id=1001&channel=99&username=username&passhash=12345678"
             };
 
@@ -309,7 +309,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             var urls = new[]
             {
                 "https://prtg.example.com/api/triggers.json?id=1001&username=username&passhash=12345678",                                                   //Validate Supported Triggers
-                TestHelpers.RequestSensor("count=*&filter_objid=1001", UrlFlag.Columns)                                                                     //Validate TriggerChannel target compatibility
+                UnitRequest.Sensors("count=*&filter_objid=1001", UrlFlag.Columns)                                                                     //Validate TriggerChannel target compatibility
             };
 
             AssertEx.Throws<InvalidOperationException>(() => TestTriggerChannel(new TriggerChannel(99), urls, false), "Channel ID '99' is not a valid channel");
@@ -322,7 +322,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             var urls = new[]
             {
                 "https://prtg.example.com/api/triggers.json?id=1001&username=username&passhash=12345678",                                                   //Validate Supported Triggers
-                TestHelpers.RequestSensor("count=*&filter_objid=1001", UrlFlag.Columns),                                                                    //Validate TriggerChannel target compatibility
+                UnitRequest.Sensors("count=*&filter_objid=1001", UrlFlag.Columns),                                                                    //Validate TriggerChannel target compatibility
                 "https://prtg.example.com/api/table.xml?content=channels&columns=objid,name,lastvalue&count=*&id=1001&username=username&passhash=12345678",
                 "https://prtg.example.com/controls/channeledit.htm?id=1001&channel=1&username=username&passhash=12345678",
                 "https://prtg.example.com/editsettings?onnotificationid_=-1%7CNone&class=threshold&offnotificationid_new=-1%7CNone&channel_new=1&condition_new=0&threshold_new=0&latency_new=60&id=1001&subid=new&objecttype=nodetrigger&username=username&passhash=12345678", //Add Trigger
@@ -344,7 +344,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             var urls = new[]
             {
                 "https://prtg.example.com/api/triggers.json?id=1001&username=username&passhash=12345678",                                                   //Validate Supported Triggers
-                TestHelpers.RequestSensor("count=*&filter_objid=1001", UrlFlag.Columns)                                                                     //Validate TriggerChannel target compatibility
+                UnitRequest.Sensors("count=*&filter_objid=1001", UrlFlag.Columns)                                                                     //Validate TriggerChannel target compatibility
             };
 
             var channel = new Channel

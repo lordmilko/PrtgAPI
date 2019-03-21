@@ -44,8 +44,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
             ExecuteClient(
                 q => q.QueryDevices().Skip(1).Skip(1).Skip(1),
                 new[] {
-                    TestHelpers.RequestDeviceCount,
-                    TestHelpers.RequestDevice("count=1&start=3", UrlFlag.Columns)
+                    UnitRequest.DeviceCount,
+                    UnitRequest.Devices("count=1&start=3", UrlFlag.Columns)
                 },
                 s => Assert.AreEqual(1, s.Count())
             );
@@ -58,8 +58,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
             ExecuteClient(
                 c => c.QueryLogs().Skip(1),
                 new[] {
-                    TestHelpers.RequestLogCount,
-                    TestHelpers.RequestLog("count=4&start=2", UrlFlag.Columns)
+                    UnitRequest.LogCount,
+                    UnitRequest.Logs("count=4&start=2", UrlFlag.Columns)
                 },
                 s => Assert.AreEqual(4, s.Count())
             );
@@ -103,8 +103,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
             ExecuteClient(
                 c => c.QuerySensors().Where(s => s.Name.Contains("Volume")).Skip(1).ToList(),
                 new[] {
-                    TestHelpers.RequestSensor("count=0&filter_name=@sub(Volume)", null),
-                    TestHelpers.RequestSensor("count=2&filter_name=@sub(Volume)&start=1", UrlFlag.Columns)
+                    UnitRequest.Sensors("count=0&filter_name=@sub(Volume)", null),
+                    UnitRequest.Sensors("count=2&filter_name=@sub(Volume)&start=1", UrlFlag.Columns)
                 },
                 s => Assert.AreEqual(2, s.Count)
             );
@@ -169,8 +169,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
             ExecuteClient(
                 c => c.StreamSensors(parameters, true),
                 new[] {
-                    TestHelpers.RequestSensorCount,
-                    TestHelpers.RequestSensor("count=0&start=3", UrlFlag.Columns)
+                    UnitRequest.SensorCount,
+                    UnitRequest.Sensors("count=0&start=3", UrlFlag.Columns)
                 },
                 s => s.ToList()
             );
