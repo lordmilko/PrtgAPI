@@ -207,7 +207,10 @@ namespace PrtgAPI.Request
         {
             var decodedResponse = WebUtility.UrlDecode(response.StringValue);
 
-            var id = Convert.ToInt32(Regex.Replace(decodedResponse, "(.+id=)(\\d+)(&.*)?", "$2"));
+            if (decodedResponse.Contains(CommandFunction.DuplicateObject.GetDescription()))
+                throw new PrtgRequestException("PRTG successfully cloned the object, however failed to return a response containing the location of the new object. This violates the Clone Object API contract and indicates a bug in PRTG.");
+
+            var id = Convert.ToInt32(Regex.Replace(decodedResponse, "(.+?id=)(\\d+)(&.*)?", "$2"));
 
             return id;
         }
