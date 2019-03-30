@@ -193,7 +193,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
                 response.Properties.Add(new PSNoteProperty("Id", id));
                 response.Properties.Add(new PSNoteProperty("Name", config.Name));
 
-                if(config.Host != null)
+                if (config.Host != null)
                     response.Properties.Add(new PSNoteProperty("Host", config.Host));
 
                 WriteObject(response);

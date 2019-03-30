@@ -81,7 +81,7 @@ namespace PrtgAPI.Linq.Expressions.Visitors
         {
             var binary = node as BinaryExpression;
 
-            if(binary != null)
+            if (binary != null)
             {
                 if (DifferentEnumTypesInternal(node, binary.Left, binary.Right, out outExpr))
                     return true;

@@ -160,7 +160,7 @@ namespace PrtgAPI
 
             var triggerChannel = channel as TriggerChannel;
 
-            if(triggerChannel != null)
+            if (triggerChannel != null)
             {
                 if (triggerChannel.channel is int || triggerChannel.channel is Channel)
                     return false;

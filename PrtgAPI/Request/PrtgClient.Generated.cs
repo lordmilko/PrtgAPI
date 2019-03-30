@@ -215,7 +215,7 @@ namespace PrtgAPI
 
             if (sensor.Count > 0) //Validate this sensor has this channel
             {
-                if(channel.channel is StandardTriggerChannel)
+                if (channel.channel is StandardTriggerChannel)
                     throw new InvalidOperationException($"Channel '{channel}' is not a valid value for sensor with ID {parameters.ObjectId}. Triggers assigned directly to sensors must refer to a specific Channel or Channel ID.");
 
                 bool anyResponse = false;
@@ -261,7 +261,7 @@ namespace PrtgAPI
 
             if (sensor.Count > 0) //Validate this sensor has this channel
             {
-                if(channel.channel is StandardTriggerChannel)
+                if (channel.channel is StandardTriggerChannel)
                     throw new InvalidOperationException($"Channel '{channel}' is not a valid value for sensor with ID {parameters.ObjectId}. Triggers assigned directly to sensors must refer to a specific Channel or Channel ID.");
 
                 bool anyResponse = false;
@@ -293,7 +293,7 @@ namespace PrtgAPI
         {
             foreach (var trigger in triggers)
             {
-                if(trigger.HasChannel())
+                if (trigger.HasChannel())
                 {
                     Log($"Retrieving Channel for sensor specific, channel based Notification Trigger (Sub ID: {trigger.SubId}", LogLevel.Trace);
 
@@ -301,14 +301,14 @@ namespace PrtgAPI
 
                     trigger.channelObj = (GetChannelsInternal(trigger.ObjectId, n => { isSensor = true; return n == trigger.channelName; }, token: token)).FirstOrDefault();
 
-                    if(trigger.channelObj == null)
+                    if (trigger.channelObj == null)
                     {
                         //Either we're not a sensor, or our channel is corrupt.
                         //If we detected we had ANY channels, we must be a sensor.
                         //If SetEnumChannel fails (which should be impossible)
                         //then maybe we're a sensor with zero channels or something?
 
-                        if((isSensor && !trigger.Inherited) || !trigger.SetEnumChannel())
+                        if ((isSensor && !trigger.Inherited) || !trigger.SetEnumChannel())
                             throw new InvalidStateException($"Could not deserialize channel of {trigger.Type.ToString().ToLower()} trigger '{trigger.SubId}' of object ID '{trigger.ObjectId}'. Object may be in a corrupted state. Please check the notification triggers of object ID {trigger.ObjectId} in the PRTG UI.");
                     }
                 }
@@ -319,7 +319,7 @@ namespace PrtgAPI
         {
             foreach (var trigger in triggers)
             {
-                if(trigger.HasChannel())
+                if (trigger.HasChannel())
                 {
                     Log($"Retrieving Channel for sensor specific, channel based Notification Trigger (Sub ID: {trigger.SubId}", LogLevel.Trace);
 
@@ -327,14 +327,14 @@ namespace PrtgAPI
 
                     trigger.channelObj = (await GetChannelsInternalAsync(trigger.ObjectId, n => { isSensor = true; return n == trigger.channelName; }, token: token).ConfigureAwait(false)).FirstOrDefault();
 
-                    if(trigger.channelObj == null)
+                    if (trigger.channelObj == null)
                     {
                         //Either we're not a sensor, or our channel is corrupt.
                         //If we detected we had ANY channels, we must be a sensor.
                         //If SetEnumChannel fails (which should be impossible)
                         //then maybe we're a sensor with zero channels or something?
 
-                        if((isSensor && !trigger.Inherited) || !trigger.SetEnumChannel())
+                        if ((isSensor && !trigger.Inherited) || !trigger.SetEnumChannel())
                             throw new InvalidStateException($"Could not deserialize channel of {trigger.Type.ToString().ToLower()} trigger '{trigger.SubId}' of object ID '{trigger.ObjectId}'. Object may be in a corrupted state. Please check the notification triggers of object ID {trigger.ObjectId} in the PRTG UI.");
                     }
                 }
@@ -351,7 +351,7 @@ namespace PrtgAPI
 
             var match = Regex.Match(responseText, "\"data\": \"(.+?)\",");
 
-            if(match.Success)
+            if (match.Success)
                 responseText = responseText.Replace(match.Value, "");
 
             return responseText;
@@ -363,7 +363,7 @@ namespace PrtgAPI
 
             var match = Regex.Match(responseText, "\"data\": \"(.+?)\",");
 
-            if(match.Success)
+            if (match.Success)
                 responseText = responseText.Replace(match.Value, "");
 
             return responseText;
@@ -867,7 +867,7 @@ namespace PrtgAPI
                 //Probe getaddsensorprogress.htm
                 p = ObjectEngine.GetObject<AddSensorProgress>(parameters, token: token);
 
-                if(progressCallback != null)
+                if (progressCallback != null)
                     continueQuery = progressCallback(p.Percent);
 
                 if (p.Percent < 100)
@@ -912,7 +912,7 @@ namespace PrtgAPI
                 //Probe getaddsensorprogress.htm
                 p = await ObjectEngine.GetObjectAsync<AddSensorProgress>(parameters, token: token).ConfigureAwait(false);
 
-                if(progressCallback != null)
+                if (progressCallback != null)
                     continueQuery = progressCallback(p.Percent);
 
                 if (p.Percent < 100)
@@ -1007,7 +1007,7 @@ namespace PrtgAPI
 
             var newObjects = exceptFunc(before, after);
 
-            if(!allowMultiple && newObjects.Count > 1)
+            if (!allowMultiple && newObjects.Count > 1)
             {
                 var typeName = typeof (T).Name;
 
@@ -1089,7 +1089,7 @@ namespace PrtgAPI
                     }
                 }
 
-                if(modified)
+                if (modified)
                     newObjects = (GetSensors(Property.Id, sensors.Select(s => s.Id), token)).Cast<T>().ToList();
             }
 
@@ -1159,7 +1159,7 @@ namespace PrtgAPI
 
             var newObjects = exceptFunc(before, after);
 
-            if(!allowMultiple && newObjects.Count > 1)
+            if (!allowMultiple && newObjects.Count > 1)
             {
                 var typeName = typeof (T).Name;
 
@@ -1241,7 +1241,7 @@ namespace PrtgAPI
                     }
                 }
 
-                if(modified)
+                if (modified)
                     newObjects = (await GetSensorsAsync(Property.Id, sensors.Select(s => s.Id), token).ConfigureAwait(false)).Cast<T>().ToList();
             }
 

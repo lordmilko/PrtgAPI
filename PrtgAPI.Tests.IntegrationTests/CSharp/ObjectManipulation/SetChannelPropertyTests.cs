@@ -897,14 +897,14 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
                 {
                     var upperErrorLimitProperty = parameters.FirstOrDefault(p => p.Property == ChannelProperty.UpperErrorLimit);
 
-                    if(upperErrorLimitProperty != null && upperErrorLimitProperty.Value != null)
+                    if (upperErrorLimitProperty != null && upperErrorLimitProperty.Value != null)
                         Assert.AreEqual(true, channel.LimitsEnabled, $"{nameof(ChannelProperty.UpperErrorLimit)} did not apply properly on channel '{channel}' (ID: {channel.Id}, Sensor ID: {channel.SensorId})");
 
                     foreach (var parameter in parameters)
                     {
                         var value = channel.GetType().GetProperty(parameter.Property.ToString()).GetValue(channel);
 
-                        if(parameter.Value == null)
+                        if (parameter.Value == null)
                             Assert.IsNull(value, $"{parameter.Property} did not apply properly on channel '{channel}' (ID: {channel.Id}, Sensor ID: {channel.SensorId})");
                         else
                             Assert.AreEqual(parameter.Value.ToString(), value.ToString(), $"{parameter.Property} did not apply properly on channel '{channel}' (ID: {channel.Id}, Sensor ID: {channel.SensorId})");

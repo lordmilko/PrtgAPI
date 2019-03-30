@@ -75,7 +75,7 @@ namespace PrtgAPI.Utilities
                 }
             }
 
-            if(!toStringFallback)
+            if (!toStringFallback)
                 throw new ArgumentException($"'{value}' is not a description for any value in {typeof(TEnum)}.", nameof(value));
 
             return value.ToEnum<TEnum>();

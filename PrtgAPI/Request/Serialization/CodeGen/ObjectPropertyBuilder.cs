@@ -68,7 +68,7 @@ namespace PrtgAPI.Linq.Expressions.Serialization
 
                     if (body != null)
                     {
-                        if(body.NodeType != ExpressionType.Block)
+                        if (body.NodeType != ExpressionType.Block)
                             body = Expression.Convert(body, typeof(object));
 
                         cases.Add(Expression.SwitchCase(body, Expression.Constant(val)));
@@ -106,7 +106,7 @@ namespace PrtgAPI.Linq.Expressions.Serialization
 
             XmlMapping mapping = null;
 
-            if(xmlElement != null)
+            if (xmlElement != null)
             {
                 mapping = mappings.FirstOrDefault(m => m.AttributeValue[0] == xmlElement.ElementName);
             }
@@ -130,12 +130,12 @@ namespace PrtgAPI.Linq.Expressions.Serialization
                     viaObject = true;
             }
 
-            if(mapping != null)
+            if (mapping != null)
             {
                 var deserializer = new ValueDeserializer(mapping, null, rawValue);
                 var result = deserializer.Deserialize();
 
-                if(viaObject)
+                if (viaObject)
                 {
                     //Construct an expression like return new TableSettings { intervalStr = "60|60 seconds" }.Interval;
                     var settingsObj = Expression.Variable(typeLookup, "obj");

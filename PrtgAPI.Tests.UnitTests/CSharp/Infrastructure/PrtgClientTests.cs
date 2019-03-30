@@ -344,7 +344,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             {
                 var message = e.Message;
 
-                if(message.StartsWith("Synchronously") || message.StartsWith("Asynchronously"))
+                if (message.StartsWith("Synchronously") || message.StartsWith("Asynchronously"))
                 {
                     message = Regex.Replace(e.Message, "(.+ request )(.+)", "$2");
                 }

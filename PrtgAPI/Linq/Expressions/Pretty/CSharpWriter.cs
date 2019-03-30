@@ -685,7 +685,7 @@ namespace PrtgAPI.Linq.Expressions.Pretty
                 }
             }
 
-            if(changed)
+            if (changed)
             {
                 return new ElseIfExpression(ifs.ToArray(), newElse);
             }

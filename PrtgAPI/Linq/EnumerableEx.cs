@@ -61,7 +61,7 @@ namespace PrtgAPI.Linq
 
             var desc = IObjectExtensions.GetTypeDescription(typeof(T));
 
-            if(source.Count == 0)
+            if (source.Count == 0)
                 throw new InvalidOperationException($"Failed to retrieve {desc.ToLower()} with {property} '{value}': {desc} does not exist.");
 
             var str = source.Select(s => $"{s} ({s.GetId()})");

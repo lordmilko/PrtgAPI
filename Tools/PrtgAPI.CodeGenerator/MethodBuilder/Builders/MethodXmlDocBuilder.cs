@@ -40,11 +40,11 @@ namespace PrtgAPI.CodeGenerator.MethodBuilder.Builders
             if (methodConfig.MethodType == MethodType.Stream)
                 summary[0] = summary[0].Replace("Retrieves", "Streams");
 
-            if(methodConfig.IsTokenInterface && methodConfig.RequiresTokenSummary)
+            if (methodConfig.IsTokenInterface && methodConfig.RequiresTokenSummary)
             {
                 var endSentence = summary[0].IndexOf(". ");
 
-                if(endSentence == -1)
+                if (endSentence == -1)
                 {
                     if (summary[0].EndsWith("."))
                         endSentence = summary[0].Length - 1;

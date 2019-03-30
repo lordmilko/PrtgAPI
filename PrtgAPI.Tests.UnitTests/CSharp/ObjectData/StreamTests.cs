@@ -920,7 +920,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
                             list.Add($"Stream_{type}_{parameter}_{(modifier != string.Empty ? $"{modifier}_" : "")}{page}");
                         }
 
-                        if(parameter.Contains("Count"))
+                        if (parameter.Contains("Count"))
                         {
                             foreach(var count in counts)
                             {
@@ -984,7 +984,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
 
             Dictionary<Content, int> countOverride = null;
 
-            if(count != null)
+            if (count != null)
             {
                 countOverride = new Dictionary<Content, int>();
                 countOverride[Content.Sensors] = count.Value;

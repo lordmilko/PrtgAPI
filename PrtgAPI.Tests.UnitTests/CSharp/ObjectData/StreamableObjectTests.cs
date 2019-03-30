@@ -123,7 +123,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
 
         private void RunFunctions<TList, TSingle>(Func<int, object> i, Func<Property, object, object> f, Func<Property, FilterOperator, string, object> g, Func<SearchFilter[], object> h) where TList : IEnumerable
         {
-            if(i != null)
+            if (i != null)
                 Assert.IsTrue((TSingle) i(3002) != null);
             CheckResult<TList>(f(testProperty, testValue));
             CheckResult<TList>(g(testProperty, testOperator, testValue));

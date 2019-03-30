@@ -53,11 +53,11 @@ namespace PrtgAPI.Tests.IntegrationTests
             {
                 HadFailure = true;
 
-                if(!retry)
+                if (!retry)
                 {
                     var text = $"{assertName} failed. ";
 
-                    if(ex.Message.StartsWith(text))
+                    if (ex.Message.StartsWith(text))
                         Logger.LogTestDetail(ex.Message.Substring(text.Length), true);
                     else
                         Logger.LogTestDetail(ex.Message, true);

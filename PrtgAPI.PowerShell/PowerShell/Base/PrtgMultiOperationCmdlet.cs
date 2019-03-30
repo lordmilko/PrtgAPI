@@ -203,7 +203,7 @@ namespace PrtgAPI.PowerShell.Base
                 }
             }
 
-            if(remaining > 0)
+            if (remaining > 0)
                 builder.Append($" and {remaining} others");
 
             return builder.ToString();

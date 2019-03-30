@@ -99,7 +99,7 @@ namespace PrtgAPI.Tests.UnitTests.Support.Serialization
                         SkipUnknownNode();
                     }
                 }
-                else if(reader.NodeType == XmlNodeType.Text)
+                else if (reader.NodeType == XmlNodeType.Text)
                 {
                     if (!ProcessText(obj))
                         SkipUnknownNode();

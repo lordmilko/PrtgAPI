@@ -216,7 +216,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
 
                 var val = Parameters.GetCustomParameterInternal(name)?.ToString();
 
-                if(val?.Contains("\n") == true)
+                if (val?.Contains("\n") == true)
                     items.Add($"{param} =\n\n{val}\n\n");
                 else
                     items.Add($"{param} = '{val}'");

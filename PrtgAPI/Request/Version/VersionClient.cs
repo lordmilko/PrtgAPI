@@ -380,7 +380,7 @@ namespace PrtgAPI.Request
 
         private void HandleLastAttempt(GoogleGeoResult response, string address)
         {
-            if(!string.IsNullOrEmpty(response.ErrorMessage))
+            if (!string.IsNullOrEmpty(response.ErrorMessage))
             {
                 throw new PrtgRequestException($"Could not resolve '{address}' to an actual address: server responded with '{response.ErrorMessage?.EnsurePeriod()} {response.Status}'.");
             }

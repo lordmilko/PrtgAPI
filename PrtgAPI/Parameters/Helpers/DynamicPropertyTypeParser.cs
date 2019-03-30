@@ -95,7 +95,7 @@ namespace PrtgAPI.Parameters.Helpers
 
                     splittableStringChar = Cache.GetAttribute<SplittableStringAttribute>()?.Character.ToString();
 
-                    if(splittableStringChar == null)
+                    if (splittableStringChar == null)
                         throw new NotSupportedException($"Cannot serialize value for array property {Property} as the property is missing a {nameof(SplittableStringAttribute)}.");
                     //we should downcast this too
                 }

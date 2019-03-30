@@ -309,7 +309,7 @@ namespace PrtgAPI.PowerShell.Base
                 }
                 else if (stage == ProgressStage.BeforeEach)
                 {
-                    if(!ProgressManager.PipeFromPrtgCmdletPostProcessMode)
+                    if (!ProgressManager.PipeFromPrtgCmdletPostProcessMode)
                         ProgressManager.UpdateRecordsProcessed(ProgressManager.CurrentRecord, obj);
                 }
                 else //PostLoop

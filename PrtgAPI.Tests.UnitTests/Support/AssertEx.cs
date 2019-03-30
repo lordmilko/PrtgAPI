@@ -38,7 +38,7 @@ namespace PrtgAPI.Tests.UnitTests
 
             foreach (var prop in obj.GetType().GetProperties())
             {
-                if(!customHandler(prop))
+                if (!customHandler(prop))
                     Assert.IsFalse(TestReflectionUtilities.IsDefaultValue(prop, obj), $"Property '{prop.Name}' did not have a value.");
             }
         }
@@ -119,13 +119,13 @@ namespace PrtgAPI.Tests.UnitTests
                 }
                 else
                 {
-                    if(TestHelpers.IsPrtgAPIClass(originalValue) && TestHelpers.IsPrtgAPIClass(newValue) && seen.Where(v => v == originalValue).Count() < 3 && seen.Where(v => v == newValue).Count() < 3)
+                    if (TestHelpers.IsPrtgAPIClass(originalValue) && TestHelpers.IsPrtgAPIClass(newValue) && seen.Where(v => v == originalValue).Count() < 3 && seen.Where(v => v == newValue).Count() < 3)
                     {
                         AllPropertiesAndFieldsAreEqual(originalValue, newValue);
                     }
                     else
                     {
-                        if(originalValue is XElement && newValue is XElement)
+                        if (originalValue is XElement && newValue is XElement)
                         {
                             originalValue = ((XElement)originalValue).ToString();
                             newValue = ((XElement)newValue).ToString();

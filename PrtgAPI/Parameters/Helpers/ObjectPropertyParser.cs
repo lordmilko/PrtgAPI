@@ -67,7 +67,7 @@ namespace PrtgAPI.Parameters.Helpers
             var parameter = dependencyParser.GetParameter(nameResolver);
 
             //If there is already an existing value (i.e. from the parameter being specified explicitly) don't set the dependency
-            if(!ParameterExists(parameter))
+            if (!ParameterExists(parameter))
                 container.AddParameter(parameter);
         }
 

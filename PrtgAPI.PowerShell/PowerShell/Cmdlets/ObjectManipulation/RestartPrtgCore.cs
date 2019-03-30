@@ -126,7 +126,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
 
             if (completed)
             {
-                if(ProgressManager.ProgressWritten)
+                if (ProgressManager.ProgressWritten)
                     CompletePostProcessProgress();
 
                 return false;
@@ -150,7 +150,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
                 if (Stopping)
                     return false;
 #if DEBUG
-                if(!client.UnitTest())
+                if (!client.UnitTest())
 #endif
                 Sleep(1000);
 

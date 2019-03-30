@@ -213,7 +213,7 @@ namespace PrtgAPI.Linq.Expressions.Visitors
 
         private void SetValue(object v)
         {
-            if(value == null)
+            if (value == null)
                 value = v;
         }
 

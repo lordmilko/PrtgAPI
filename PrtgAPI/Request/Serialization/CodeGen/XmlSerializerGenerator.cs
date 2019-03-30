@@ -190,7 +190,7 @@ namespace PrtgAPI.Linq.Expressions.Serialization
         /// <summary>
         /// Construct an expression like
         /// 
-        /// if(reader.NodeType == XmlNodeType.Element
+        /// if (reader.NodeType == XmlNodeType.Element
         /// {
         ///     return ProcessTableDataInternal();
         /// }
@@ -209,7 +209,7 @@ namespace PrtgAPI.Linq.Expressions.Serialization
             if (trueType == null)
                 trueType = delegateType;
 
-            if(trueType == typeof(ObjectProperty) || trueType == typeof(ObjectPropertyInternal))
+            if (trueType == typeof(ObjectProperty) || trueType == typeof(ObjectPropertyInternal))
             {
                 //A single ObjectProperty doesn't actually bother with XML; it simply skips straight
                 //to deserializing the value
@@ -314,13 +314,13 @@ namespace PrtgAPI.Linq.Expressions.Serialization
             this.update = update;
             Mappings = XmlMapping.GetMappings(trueType).OrderBy(m => m.AttributeValue.FirstOrDefault() == "message").ToList();
 
-            if(update)
+            if (update)
             {
                 Mappings = Mappings.Where(m =>
                 {
                     var attrib = m.PropertyCache.GetAttribute<PropertyParameterAttribute>();
 
-                    if(attrib != null && attrib.Property != null)
+                    if (attrib != null && attrib.Property != null)
                     {
                         if (attrib.Property.Equals(Property.Name) || attrib.Property.Equals(Property.Id))
                             return false;
@@ -387,7 +387,7 @@ namespace PrtgAPI.Linq.Expressions.Serialization
             if (first)
                 blockExpressions.Add(moveToContent);                                       //reader.MoveToContent();
 
-            if(!update)
+            if (!update)
                 blockExpressions.Add(makeNew);                                             //var obj = new TObj()
             else
             {
@@ -448,7 +448,7 @@ namespace PrtgAPI.Linq.Expressions.Serialization
         /// <summary>
         /// Generate an expression like
         /// 
-        /// if(reader.IsEmptyElement)
+        /// if (reader.IsEmptyElement)
         /// {
         ///     reader.Skip();
         ///     return obj;
@@ -472,7 +472,7 @@ namespace PrtgAPI.Linq.Expressions.Serialization
         /// <summary>
         /// Generate an expression like
         /// 
-        /// if(reader.IsEmptyElement)
+        /// if (reader.IsEmptyElement)
         /// {
         ///     reader.Skip();
         ///     return obj;
@@ -491,7 +491,7 @@ namespace PrtgAPI.Linq.Expressions.Serialization
             if (validator != null)
                 list.Add(validator);
 
-            if(!update)
+            if (!update)
                 list.Add(Target);
 
             return Expression.Block(list.ToArray());
@@ -519,7 +519,7 @@ namespace PrtgAPI.Linq.Expressions.Serialization
 
             var textMappings = Mappings.Where(m => m.AttributeType == XmlAttributeType.Text).ToList();
 
-            if(textMappings.Count > 0)
+            if (textMappings.Count > 0)
             {
                 if (textMappings.Count > 1)
                 {
@@ -534,8 +534,8 @@ namespace PrtgAPI.Linq.Expressions.Serialization
                 loopBody = new ElseIfExpression(
                     new[]
                     {
-                        Expression.IfThen(isElement, elementLadder), //if(reader.NodeType == XmlNodeType.Element) [Ladder]
-                        Expression.IfThen(isText, textBlock)         //else if(reader.NodeType == XmlNodeType.Text) [TextBlock]
+                        Expression.IfThen(isElement, elementLadder), //if (reader.NodeType == XmlNodeType.Element) [Ladder]
+                        Expression.IfThen(isText, textBlock)         //else if (reader.NodeType == XmlNodeType.Text) [TextBlock]
                     },        
                     skipUnknown                                      //else SkipUnknownNode()
                 );
@@ -568,7 +568,7 @@ namespace PrtgAPI.Linq.Expressions.Serialization
             if (validator != null)
                 body.Add(validator);
 
-            if(!update)
+            if (!update)
                 body.Add(Target);
 
             return Expression.Block(body.ToArray());
@@ -643,7 +643,7 @@ namespace PrtgAPI.Linq.Expressions.Serialization
                     names[i] = parentProperty.GetAttribute<XmlElementAttribute>().ElementName;
 
                 //XmlTextAttribute items don't have an AttributeValue
-                if(names[i] != null)
+                if (names[i] != null)
                 {
                     var name = Expression.ArrayAccess(                                                                //nameArray[0]
                         XmlExpressionConstants.SerializerNames,

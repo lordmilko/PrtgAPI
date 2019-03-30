@@ -104,7 +104,7 @@ namespace PrtgAPI.CodeGenerator.MethodBuilder.Builders
 
             args = ResolveInnerCalls(elm, args);
 
-            if(elm.Attribute("alias") == null || xmlHelper.GetBooleanAttribute(elm, "needsToken"))
+            if (elm.Attribute("alias") == null || xmlHelper.GetBooleanAttribute(elm, "needsToken"))
             {
                 if (methodConfig.IsTokenInterface)
                 {
@@ -127,7 +127,7 @@ namespace PrtgAPI.CodeGenerator.MethodBuilder.Builders
 
             var needsSurroundingBrackets = false;
 
-            if(methodConfig.MethodType == MethodType.Asynchronous)
+            if (methodConfig.MethodType == MethodType.Asynchronous)
             {
                 needsSurroundingBrackets = notLast && (nextNode?.ToString().StartsWith(".") == true || nextNode?.ToString().StartsWith("?.") == true);
             }

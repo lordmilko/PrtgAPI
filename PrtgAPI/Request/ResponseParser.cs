@@ -167,7 +167,7 @@ namespace PrtgAPI.Request
             var input = ObjectSettings.GetInput(response, ObjectSettings.backwardsMatchRegex).Where(i => i.Name == "timetable").ToList();
 
             //If user is read only inputs is empty
-            if(input.Count > 0)
+            if (input.Count > 0)
                 schedule.TimeTable = new TimeTable(input);
         }
 
@@ -260,7 +260,7 @@ namespace PrtgAPI.Request
                 return (T)val;
             }
 
-            if(typeof(T).IsArray && val == null)
+            if (typeof(T).IsArray && val == null)
             {
                 return (T)Activator.CreateInstance(typeof(T), new object[] { 0 });
             }
@@ -291,7 +291,7 @@ namespace PrtgAPI.Request
 
             var name = ObjectSettings.prefix + ObjectPropertyParser.GetObjectPropertyName(mandatoryProperty).TrimEnd('_');
 
-            if(xDoc.Descendants(name).ToList().Count > 0)
+            if (xDoc.Descendants(name).ToList().Count > 0)
             {
                 var items = xmlEngine.DeserializeObject<T>(xDoc.CreateReader());
 
@@ -343,7 +343,7 @@ namespace PrtgAPI.Request
 
         internal static PrtgResponse GetSensorHistoryResponse(HttpResponseMessage responseMessage, LogLevel logLevel, bool isDirty)
         {
-            if(RequestEngine.NeedsStringResponse(responseMessage, logLevel, isDirty))
+            if (RequestEngine.NeedsStringResponse(responseMessage, logLevel, isDirty))
             {
                 var response = responseMessage.Content.ReadAsStringAsync().Result;
 

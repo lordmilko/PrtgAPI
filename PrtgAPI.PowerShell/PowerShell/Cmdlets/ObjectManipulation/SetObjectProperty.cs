@@ -270,7 +270,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// <param name="ids">The Object IDs of all queued items.</param>
         protected override void PerformMultiOperation(int[] ids)
         {
-            if(ParameterSetName == ParameterSet.Default)
+            if (ParameterSetName == ParameterSet.Default)
                 ExecuteMultiOperation(() => client.SetObjectProperty(ids, Property, Value), $"Setting {GetMultiTypeListSummary()} setting '{Property}' to '{Value}'");
             else if (ParameterSetName == ParameterSet.Dynamic)
             {
@@ -306,7 +306,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// <returns>An object that defines the dynamic parameters of this cmdlet.</returns>
         public object GetDynamicParameters()
         {
-            if(dynamicParams == null)
+            if (dynamicParams == null)
                 dynamicParams = new PropertyDynamicParameterSet<ObjectProperty>(
                     ParameterSet.Dynamic,
                     e => ObjectPropertyParser.GetPropertyInfoViaTypeLookup(e).Property

@@ -187,7 +187,7 @@ namespace PrtgAPI.Linq
             {
                 var @params = createParameters();
 
-                if(f.Count > 0)
+                if (f.Count > 0)
                     @params.SearchFilters = f;
 
                 if (builder.Properties.Count > 0)
@@ -198,7 +198,7 @@ namespace PrtgAPI.Linq
                     //IEventObject types like Logs can't limit the properties returned when attempting to DistinctBy
                     //across multiple requests as the presence of every property is required to tell
                     //whether or not the record is distinct
-                    if(queryHelper == null || queryHelper.CanLimitProperties(builder.FilterSets))
+                    if (queryHelper == null || queryHelper.CanLimitProperties(builder.FilterSets))
                         @params.Properties = builder.Properties.OrderBy(p => p != Property.Id).ToArray();
                 }
 

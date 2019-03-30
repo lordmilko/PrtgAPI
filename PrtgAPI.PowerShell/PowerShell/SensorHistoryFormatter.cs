@@ -219,7 +219,7 @@ namespace PrtgAPI.PowerShell
 
                 var valueStr = channel.Value;
 
-                if(space > 0)
+                if (space > 0)
                     valueStr = channel.Value.Substring(0, space);
 
                 if (valueStr == "<1")

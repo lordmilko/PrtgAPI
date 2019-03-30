@@ -23,7 +23,7 @@ namespace PrtgAPI.Parameters
 
         public PauseParameters(int[] objectIds, int? durationMinutes, string pauseMessage) : base(objectIds)
         {
-            if(durationMinutes != null)
+            if (durationMinutes != null)
                 Duration = durationMinutes;
 
             if (pauseMessage != null)

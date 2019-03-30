@@ -377,7 +377,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
 
                                 if (str.Count == 1)
                                 {
-                                    if(args[0].ToString() != "str")
+                                    if (args[0].ToString() != "str")
                                         AssertEndsInPeriod(syntax, str.Single(), file);
                                 }
                                 else

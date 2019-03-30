@@ -116,7 +116,7 @@ namespace PrtgAPI.Linq.Expressions.Serialization
 
             BuildNode(badXml, ElementName, LastElementValue);
 
-            if(reader.ReadToFollowing("message"))
+            if (reader.ReadToFollowing("message"))
             {
                 var node = WebUtility.HtmlDecode(Document.ReadNode(reader).OuterXml);
 
@@ -130,7 +130,7 @@ namespace PrtgAPI.Linq.Expressions.Serialization
         {
             builder.Append($"<{elementName}");
 
-            if(allowAttribute && AttributeName != null)
+            if (allowAttribute && AttributeName != null)
             {
                 builder.Append($" {AttributeName}=\"{LastAttributeValue}\"");
             }

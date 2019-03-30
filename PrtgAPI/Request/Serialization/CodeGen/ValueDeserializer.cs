@@ -163,7 +163,7 @@ namespace PrtgAPI.Linq.Expressions.Serialization
                     return GetNullableEnumSwitch(underlying, PropertyType);
             }
 
-            if(PropertyType.GetTypeCache().GetAttribute<XmlRootAttribute>() != null)
+            if (PropertyType.GetTypeCache().GetAttribute<XmlRootAttribute>() != null)
             {
                 var customTypeGenerator = new XmlSerializerGenerator(PropertyType, null, false);
 
@@ -318,7 +318,7 @@ namespace PrtgAPI.Linq.Expressions.Serialization
                     var caseConditions = f.Attributes.Where(v => v.Key == typeof(XmlEnumAttribute) || v.Key == typeof(XmlEnumAlternateName))
                         .SelectMany(a => a.Value).Cast<XmlEnumAttribute>().Select(a => Expression.Constant(a.Name)).ToArray();
 
-                    if(caseConditions.Length > 0)
+                    if (caseConditions.Length > 0)
                         cases.Add(Expression.SwitchCase(Expression.Constant(val), caseConditions));
                 }
             }
@@ -375,7 +375,7 @@ namespace PrtgAPI.Linq.Expressions.Serialization
             var cast = Expression.Convert(val, nullableType);
 
             var condition = Expression.Condition(
-                isNullOrEmpty, //if(string.IsNullOrEmpty(str)
+                isNullOrEmpty, //if (string.IsNullOrEmpty(str)
                 @null,         //    return null;
                 cast           //return ToEnum(str)
             );

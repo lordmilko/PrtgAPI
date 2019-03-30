@@ -169,7 +169,7 @@ for(int i = 0; i < 2; i++)
 
             if (sensor.Count > 0) //Validate this sensor has this channel
             {
-                if(channel.channel is StandardTriggerChannel)
+                if (channel.channel is StandardTriggerChannel)
                     throw new InvalidOperationException($"Channel '{channel}' is not a valid value for sensor with ID {parameters.ObjectId}. Triggers assigned directly to sensors must refer to a specific Channel or Channel ID.");
 
                 bool anyResponse = false;
@@ -208,7 +208,7 @@ for(int i = 0; i < 2; i++)
         {
             foreach (var trigger in triggers)
             {
-                if(trigger.HasChannel())
+                if (trigger.HasChannel())
                 {
                     Log($"Retrieving Channel for sensor specific, channel based Notification Trigger (Sub ID: {trigger.SubId}", LogLevel.Trace);
 
@@ -216,14 +216,14 @@ for(int i = 0; i < 2; i++)
 
                     trigger.channelObj = (<#= CallFunction("GetChannelsInternal", "trigger.ObjectId, n => { isSensor = true; return n == trigger.channelName; }, token: token", i) #>).FirstOrDefault();
 
-                    if(trigger.channelObj == null)
+                    if (trigger.channelObj == null)
                     {
                         //Either we're not a sensor, or our channel is corrupt.
                         //If we detected we had ANY channels, we must be a sensor.
                         //If SetEnumChannel fails (which should be impossible)
                         //then maybe we're a sensor with zero channels or something?
 
-                        if((isSensor && !trigger.Inherited) || !trigger.SetEnumChannel())
+                        if ((isSensor && !trigger.Inherited) || !trigger.SetEnumChannel())
                             throw new InvalidStateException($"Could not deserialize channel of {trigger.Type.ToString().ToLower()} trigger '{trigger.SubId}' of object ID '{trigger.ObjectId}'. Object may be in a corrupted state. Please check the notification triggers of object ID {trigger.ObjectId} in the PRTG UI.");
                     }
                 }
@@ -247,7 +247,7 @@ for(int i = 0; i < 2; i++)
 
             var match = Regex.Match(responseText, "\"data\": \"(.+?)\",");
 
-            if(match.Success)
+            if (match.Success)
                 responseText = responseText.Replace(match.Value, "");
 
             return responseText;
@@ -579,7 +579,7 @@ for(int i = 0; i < 2; i++)
                 //Probe getaddsensorprogress.htm
                 p = <#= CallGenericFunction("ObjectEngine.GetObject", "AddSensorProgress", "parameters, token: token", i) #>;
 
-                if(progressCallback != null)
+                if (progressCallback != null)
                     continueQuery = progressCallback(p.Percent);
 
                 if (p.Percent < 100)
@@ -681,7 +681,7 @@ for(int i = 0; i < 2; i++)
 
             var newObjects = exceptFunc(before, after);
 
-            if(!allowMultiple && newObjects.Count > 1)
+            if (!allowMultiple && newObjects.Count > 1)
             {
                 var typeName = typeof (T).Name;
 
@@ -763,7 +763,7 @@ for(int i = 0; i < 2; i++)
                     }
                 }
 
-                if(modified)
+                if (modified)
                     newObjects = (<#= CallFunction("GetSensors", "Property.Id, sensors.Select(s => s.Id), token", i) #>).Cast<T>().ToList();
             }
 
@@ -1069,7 +1069,7 @@ for(int i = 0; i < 2; i++)
                 <#= CallFunction("versionClient.SetChannelProperty", "sensorIds, channelId.Value, parameters, token", i) #>;
         }
 <#
-if(i == 0)
+if (i == 0)
     WriteLine("");
 }
 #>

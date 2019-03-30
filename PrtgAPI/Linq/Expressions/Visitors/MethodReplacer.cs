@@ -21,7 +21,7 @@ namespace PrtgAPI.Linq.Expressions.Visitors
                 );
             }
 
-            if(node.Method.Name == FilterMethod.Equals && node.Method.DeclaringType == typeof(object) &&
+            if (node.Method.Name == FilterMethod.Equals && node.Method.DeclaringType == typeof(object) &&
                 node.Object == null && node.Arguments.Count == 2)
             {
                 return Expression.Equal(

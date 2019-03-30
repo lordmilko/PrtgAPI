@@ -14,7 +14,7 @@ namespace PrtgAPI.Request.Serialization
 
         public XmlExpressionSerializerImpl(Type type, XmlReader reader, bool getResult = true) : base(reader)
         {
-            if(getResult)
+            if (getResult)
             {
 #if DEBUG && DEBUG_SERIALIZATION
                 var result = XmlSerializerGenerator.Get(type);

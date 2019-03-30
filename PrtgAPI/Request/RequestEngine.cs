@@ -453,7 +453,7 @@ namespace PrtgAPI.Request
                 throw new PrtgRequestException($"PRTG was unable to complete the request. The server responded with the following error: {errorMsg.EnsurePeriod()}");
             }
 
-            if(response.Type == PrtgResponseType.String)
+            if (response.Type == PrtgResponseType.String)
             {
                 if (response.StringValue.StartsWith("<div class=\"errormsg\">")) //Example: GetProbeProperties specifying a content type of Probe instead of ProbeNode
                 {

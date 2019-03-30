@@ -121,7 +121,7 @@ namespace PrtgAPI
                     val = ((IStringEnum) value).StringValue;
             }
 
-            if(filterMode != FilterMode.Raw)
+            if (filterMode != FilterMode.Raw)
             {
                 var converter = property?.GetEnumAttribute<ValueConverterAttribute>();
 

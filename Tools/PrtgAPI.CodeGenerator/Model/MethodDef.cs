@@ -195,7 +195,7 @@ namespace PrtgAPI.CodeGenerator.Model
         {
             var parameters = original.Parameters.ToList();
 
-            if(customDef.Parameters != null)
+            if (customDef.Parameters != null)
             {
                 foreach (var parameter in customDef.Parameters)
                 {
@@ -226,7 +226,7 @@ namespace PrtgAPI.CodeGenerator.Model
                 if (methodConfig.MethodType == MethodType.Query || methodConfig.MethodType == MethodType.Watch)
                     break;
 
-                if(methodConfig.NeedsTokenInterfaceOverload)
+                if (methodConfig.NeedsTokenInterfaceOverload)
                 {
                     var tokenConfig = methodConfig.GetTokenOverloadConfig();
 

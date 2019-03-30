@@ -71,7 +71,7 @@ namespace PrtgAPI.Linq.Expressions
                 //We don't reach this case because we always throw based on having multiple PropertyExpressions before
                 //we can actually determine both expressions were the same
                 case IllegalType.LeftRightSameProperty:
-                    if(ignoredExprProperties.Count == 0)
+                    if (ignoredExprProperties.Count == 0)
                         return new NotSupportedException(string.Format(unsupportedFilterExpression_LeftRightZero, Clean(ignoredExpression)));
 
                     return new NotSupportedException(string.Format(
@@ -173,10 +173,10 @@ namespace PrtgAPI.Linq.Expressions
                     str = ExtensionReducer.Reduce(binary.Left).ToString();
             }
             
-            if(str == null)
+            if (str == null)
                 str = ExtensionReducer.Reduce(condition).ToString();
 
-            if(str.StartsWith("(") && str.EndsWith(")"))
+            if (str.StartsWith("(") && str.EndsWith(")"))
                 return str.Substring(1, str.Length - 2);
 
             return str;

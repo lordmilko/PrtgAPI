@@ -11,7 +11,7 @@
                 case nameof(XmlFunction.TableData):
                     var content = GetContent(address);
 
-                    if(content == Content.Sensors)
+                    if (content == Content.Sensors)
                     {
                         sensorCount++;
 

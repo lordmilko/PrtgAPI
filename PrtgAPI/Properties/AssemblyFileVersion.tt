@@ -18,7 +18,7 @@
                 //Appveyor inserts a bunch of newlines at the top of T4 generated files sometimes
                 firstLine = f.ReadLine();
                 
-                if(firstLine.StartsWith("//"))
+                if (firstLine.StartsWith("//"))
                     break;
             } while (f.Peek() >= 0);
         

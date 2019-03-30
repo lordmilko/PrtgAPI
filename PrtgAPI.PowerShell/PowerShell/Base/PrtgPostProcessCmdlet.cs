@@ -80,7 +80,7 @@ namespace PrtgAPI.PowerShell.Base
         /// </summary>
         protected override void EndProcessing()
         {
-            if(PostProcess)
+            if (PostProcess)
                 ExecuteWithCoreState(EndProcessingEx);
 
             EndProcessing(false);

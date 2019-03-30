@@ -141,7 +141,7 @@ namespace PrtgAPI.Tests.UnitTests.Support.Serialization
 
         private bool ProcessHeaderAttributes(TableData<Sensor> obj, bool[] flagArray)
         {
-            if(!flagArray[0] && AttributeName == totalcount)
+            if (!flagArray[0] && AttributeName == totalcount)
             {
                 obj.TotalCount = ToInt32(reader.ReadContentAsString());
                 flagArray[0] = true;
@@ -153,13 +153,13 @@ namespace PrtgAPI.Tests.UnitTests.Support.Serialization
 
         private bool ProcessHeaderElements(TableData<Sensor> obj, bool[] flagArray)
         {
-            if(!flagArray[1] && ElementName == prtgversion)
+            if (!flagArray[1] && ElementName == prtgversion)
             {
                 obj.Version = reader.ReadElementContentAsString();
                 flagArray[1] = true;
                 return true;
             }
-            else if(ElementName == item)
+            else if (ElementName == item)
             {
                 if (obj.Items == null)
                     obj.Items = new List<Sensor>();
@@ -177,7 +177,7 @@ namespace PrtgAPI.Tests.UnitTests.Support.Serialization
 
         private void ValidateHeader(bool[] flagArray)
         {
-            if(flagArray[0])
+            if (flagArray[0])
             {
                 ElementName = totalcount;
                 throw Fail(null, null, typeof(int));

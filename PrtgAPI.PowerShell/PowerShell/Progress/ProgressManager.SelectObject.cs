@@ -106,7 +106,7 @@ namespace PrtgAPI.PowerShell.Progress
                         {
                             if (PostProcessMode() || NextCmdletIsPostProcessMode)
                             {
-                                if(ReadyToComplete())
+                                if (ReadyToComplete())
                                     CompleteProgress(PreviousRecord, true);
                             }
                             else

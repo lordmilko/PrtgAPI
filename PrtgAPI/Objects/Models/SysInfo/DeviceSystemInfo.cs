@@ -99,7 +99,7 @@ namespace PrtgAPI
             get { return adapterStr; }
             set
             {
-                if(propertyStr != null && !string.IsNullOrEmpty(value))
+                if (propertyStr != null && !string.IsNullOrEmpty(value))
                     UpdateProperty(value, propertyStr);
 
                 SetString(value, ref adapterStr);

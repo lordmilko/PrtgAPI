@@ -76,7 +76,7 @@ namespace PrtgAPI.PowerShell.Progress
         /// <returns></returns>
         public ProgressTask<TNewResult> Finally<TNewResult>(Func<List<TResult>, List<TNewResult>> func, string operationDescription)
         {
-            if(ValueEmpty())
+            if (ValueEmpty())
                 return Empty<TNewResult>();
 
             var newTask = new Lazy<List<TNewResult>>(() =>

@@ -26,7 +26,7 @@ namespace PrtgAPI.Parameters
 
         protected BaseSetObjectPropertyParameters(int[] ids)
         {
-            if(ids != null && ids.Length > 0)
+            if (ids != null && ids.Length > 0)
                 ObjectIdsInternal = ids.Distinct().ToArray();
 
             CustomParameters = new List<CustomParameter>();

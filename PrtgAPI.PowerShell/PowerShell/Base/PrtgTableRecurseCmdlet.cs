@@ -156,7 +156,7 @@ namespace PrtgAPI.PowerShell.Base
                     parameters.SearchFilters = originalFilters;
                 }
 
-                if(objectsFromChildGroup.Count > 0)
+                if (objectsFromChildGroup.Count > 0)
                     client.Log($"    Found {objectsFromChildGroup.Count} {objsStr.Plural(objectsFromChildGroup)}: {string.Join(", ", objectsFromChildGroup)}", LogLevel.Trace);
                 else
                     client.Log($"    Found {objectsFromChildGroup.Count} {objsStr}s", LogLevel.Trace);
@@ -183,7 +183,7 @@ namespace PrtgAPI.PowerShell.Base
                 }
             }
 
-            if(typeof(TObject) != typeof(Group))
+            if (typeof(TObject) != typeof(Group))
             {
                 var grandChildObjects = MaybeRecurseGroupRecordsInternal(childGroup, objsOfTypeInGroup, parameters);
 

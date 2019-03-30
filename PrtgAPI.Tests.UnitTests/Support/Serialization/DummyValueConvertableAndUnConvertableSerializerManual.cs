@@ -31,7 +31,7 @@ namespace PrtgAPI.Tests.UnitTests.Support.Serialization
                 flagArray[0] = true;
                 return true;
             }
-            if(!flagArray[1] && ElementName == propertyConvertable)
+            if (!flagArray[1] && ElementName == propertyConvertable)
             {
                 obj.PropertyConvertable = ToNullableDouble_WithUpDownTimeConverter();
                 flagArray[1] = true;

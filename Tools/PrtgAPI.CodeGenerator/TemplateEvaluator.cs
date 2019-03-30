@@ -128,7 +128,7 @@ namespace PrtgAPI.CodeGenerator
 
                 var region = last as RegionDef;
 
-                if(region != null)
+                if (region != null)
                 {
                     if (region.CancellationToken)
                     {

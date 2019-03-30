@@ -326,7 +326,7 @@ namespace PrtgAPI.PowerShell.Progress
         {
             get
             {
-                if(PreviousCmdletIsSelectObject)
+                if (PreviousCmdletIsSelectObject)
                     return IsBlockingSelectObjectCmdlet(upstreamSelectObjectManager);
 
                 var firstOperation = CacheManager.TryGetFirstOperationCmdletAfterSelectObject();
@@ -1165,7 +1165,7 @@ namespace PrtgAPI.PowerShell.Progress
 
             var str = GetStatusDescriptionProgressCount(index, maxCount);
 
-            if(obj != null)
+            if (obj != null)
                 record.StatusDescription = $"{InitialDescription} '{obj.Name}' ({str})";
             else
                 record.StatusDescription = $"{InitialDescription} {str}";
@@ -1323,7 +1323,7 @@ namespace PrtgAPI.PowerShell.Progress
             if (PreviousCmdletIsSelectObject)
                 TotalRecords = GetSelectObjectOperationFromCmdletFromVariableTotalRecords();
 
-            if(TotalRecords == null)
+            if (TotalRecords == null)
                 throw new InvalidOperationException("Cannot display records procesed as TotalRecords is not initialized");
 
             //Normally the object cmdlet would be responsible for updating the number of records we've processed so far,

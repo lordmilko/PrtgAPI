@@ -40,7 +40,7 @@ namespace PrtgAPI.Linq.Expressions.Visitors.Parameters
         protected override Expression VisitProperty(PropertyExpression node)
         {
             //If we don't have this property already and this isn't a dummy expression
-            if(Members.All(m => node.PropertyInfo.Name != m.PropertyInfo.Name) && node.Expression != null)
+            if (Members.All(m => node.PropertyInfo.Name != m.PropertyInfo.Name) && node.Expression != null)
                 Members.Add(node);
 
             return node;

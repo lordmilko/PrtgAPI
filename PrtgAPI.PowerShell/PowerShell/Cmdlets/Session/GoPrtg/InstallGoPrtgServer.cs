@@ -200,7 +200,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
             }
             else
             {
-                if(servers.Any(s => s.Alias == Alias) && !string.IsNullOrEmpty(Alias))
+                if (servers.Any(s => s.Alias == Alias) && !string.IsNullOrEmpty(Alias))
                     throw new InvalidOperationException($"Cannot add server '{client.Server}' with alias '{Alias}': a record for the alias already exists. For more information see 'Get-GoPrtgServer {Alias}'");                 
             }
         }

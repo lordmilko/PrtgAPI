@@ -67,7 +67,7 @@ for(int i = 0; i < 2; i++)
             return tmpId;
         }
 <#
-if(i == 0)
+if (i == 0)
     WriteLine("");
 }
 #>

@@ -1079,7 +1079,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             AssertEx.Throws<ArgumentNullException>(() => parse(null), "Value cannot be null");
             AssertEx.Throws<ArgumentException>(() => parse(string.Empty), "Cannot convert value '' of type 'System.String'");
 
-            if(typeof(IEnumEx).IsAssignableFrom(typeof(T)))
+            if (typeof(IEnumEx).IsAssignableFrom(typeof(T)))
                 AssertEx.Throws<ArgumentException>(() => parse("abc123"), "Cannot convert value 'abc123' of type 'System.String'");
         }
 
@@ -1185,7 +1185,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
                 .Cast<PropertyParameterAttribute>()
                 .Select(a =>
                 {
-                    if(a.Property.GetType() == typeof(Property))
+                    if (a.Property.GetType() == typeof(Property))
                         return (Property?)a.Property;
 
                     return null;

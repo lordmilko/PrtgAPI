@@ -108,7 +108,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
                 PrtgSessionState.Client.LogLevel = level;
             }
 
-            if(MyInvocation.BoundParameters.ContainsKey(nameof(Progress)))
+            if (MyInvocation.BoundParameters.ContainsKey(nameof(Progress)))
                 PrtgSessionState.EnableProgress = Progress;
 
             WritePassThru();

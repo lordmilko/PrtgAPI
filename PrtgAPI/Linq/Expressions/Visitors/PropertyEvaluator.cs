@@ -460,7 +460,7 @@ namespace PrtgAPI.Linq.Expressions.Visitors
 
         protected override Expression VisitExtension(Expression node)
         {
-            if(node.CanReduce)
+            if (node.CanReduce)
                 return base.VisitExtension(node);
 
             return node;

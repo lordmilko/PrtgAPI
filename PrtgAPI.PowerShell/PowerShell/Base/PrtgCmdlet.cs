@@ -68,7 +68,7 @@ namespace PrtgAPI.PowerShell.Base
 
             try
             {
-                if(client != null)
+                if (client != null)
                     client.DefaultCancellationToken = TokenSource.Token;
 
                 using (ProgressManager = new ProgressManager(this))
@@ -220,7 +220,7 @@ namespace PrtgAPI.PowerShell.Base
         {
             //Lazy values will execute in the context of the previous command when retrieved from the next cmdlet
             //(such as Select-Object)
-            if(CommandRuntime.GetInternalProperty("PipelineProcessor").GetInternalField("_permittedToWrite") == this)
+            if (CommandRuntime.GetInternalProperty("PipelineProcessor").GetInternalField("_permittedToWrite") == this)
                 WriteVerbose($"{MyInvocation.MyCommand}: {args.Message}");
 
             Debug.WriteLine($"{MyInvocation.MyCommand}: {args.Message}");

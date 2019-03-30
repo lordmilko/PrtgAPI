@@ -35,7 +35,7 @@ namespace PrtgAPI.Linq.Expressions
 
         protected override bool IsOriginalMethod()
         {
-            if(Method.Arguments.Count > 1)
+            if (Method.Arguments.Count > 1)
                 return Method.Arguments[1] == Predicate;
 
             return Predicate == null;

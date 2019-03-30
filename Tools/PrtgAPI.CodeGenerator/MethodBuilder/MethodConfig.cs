@@ -99,9 +99,9 @@ namespace PrtgAPI.CodeGenerator.MethodBuilder
                 if (MethodType == MethodType.Stream && !MethodDef.NeedsStream)
                     return false;
 
-                if(region != null)
+                if (region != null)
                 {
-                    if(region.IsTokenRegion)
+                    if (region.IsTokenRegion)
                     {
                         //Only generate synchronous and asynchronous methods in a token region
                         //(e.g. don't create StreamSensors(SensorParameters, CancellationToken))
@@ -155,7 +155,7 @@ namespace PrtgAPI.CodeGenerator.MethodBuilder
         {
             if (region != null)
             {
-                if(region.IsTokenRegion)
+                if (region.IsTokenRegion)
                 {
                     //This is THE "Parameters (Cancellation Token)" region that corresponds to the previous "Parameters" region
                     IsTokenInterface = true;
@@ -172,7 +172,7 @@ namespace PrtgAPI.CodeGenerator.MethodBuilder
                 }
             }
 
-            if(region == null || (!region.IsTokenRegion && !region.HasTokenRegion))
+            if (region == null || (!region.IsTokenRegion && !region.HasTokenRegion))
             {
                 if (isTokenOverload)
                     IsTokenInterface = true;
@@ -192,7 +192,7 @@ namespace PrtgAPI.CodeGenerator.MethodBuilder
                     }
                     else
                     {
-                        if(MethodType == MethodType.Synchronous)
+                        if (MethodType == MethodType.Synchronous)
                         {
                             if (MethodDef.TokenMode == TokenMode.AutomaticAll)
                                 HasTokenInterfaceOverload = true;
@@ -225,7 +225,7 @@ namespace PrtgAPI.CodeGenerator.MethodBuilder
         {
             var parameters = MethodDef.Parameters.ToList();
 
-            if(IsTokenInterface)
+            if (IsTokenInterface)
             {
                 if (!parameters.Any(p => p.Type == "CancellationToken"))
                     parameters.Add(DocumentConfig.CommonParameters["token"]);

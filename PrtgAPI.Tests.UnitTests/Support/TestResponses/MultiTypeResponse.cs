@@ -87,7 +87,7 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
                 case nameof(HtmlFunction.ChannelEdit):
                     var components = UrlUtilities.CrackUrl(address);
 
-                    if(components["channel"] != "99")
+                    if (components["channel"] != "99")
                         return new ChannelResponse(new ChannelItem());
                     return new BasicResponse(string.Empty);
                 case nameof(CommandFunction.DuplicateObject):
@@ -563,7 +563,7 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
             if (components["name"] == "aggregationchannel")
                 return new RawPropertyResponse("#1:Channel\nchannel(4001, 0)\n#2:Channel\nchannel(4002, 0)");
 
-            if(components["name"] == "authorized")
+            if (components["name"] == "authorized")
             {
                 var str = string.Empty;
 

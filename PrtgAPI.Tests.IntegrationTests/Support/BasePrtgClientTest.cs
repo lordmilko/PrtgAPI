@@ -29,7 +29,7 @@ namespace PrtgAPI.Tests.IntegrationTests
         {
             get
             {
-                if(cachedClient == null)
+                if (cachedClient == null)
                     cachedClient = new PrtgClient(Settings.ServerWithProto, Settings.UserName, Settings.Password);
 
                 return cachedClient;

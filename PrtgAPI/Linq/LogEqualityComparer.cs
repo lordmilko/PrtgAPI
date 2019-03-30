@@ -36,7 +36,7 @@ namespace PrtgAPI.Linq
 
                 Expression eq;
 
-                if((typeof(IStructuralEquatable).IsAssignableFrom(property.PropertyType)))
+                if ((typeof(IStructuralEquatable).IsAssignableFrom(property.PropertyType)))
                 {
                     var comparer = StructuralComparisons.StructuralEqualityComparer;
                     var equals = comparer.GetType().GetMethod("Equals", new[] { typeof(object), typeof(object) });

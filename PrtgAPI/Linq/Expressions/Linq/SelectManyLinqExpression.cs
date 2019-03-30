@@ -31,7 +31,7 @@ namespace PrtgAPI.Linq.Expressions
 
         protected override bool IsOriginalMethod()
         {
-            if(ResultSelector == null)
+            if (ResultSelector == null)
                 return base.IsOriginalMethod();
 
             return base.IsOriginalMethod() && Method.Arguments[2] == ResultSelector;
@@ -44,7 +44,7 @@ namespace PrtgAPI.Linq.Expressions
 
         public override string ToString()
         {
-            if(ResultSelector == null)
+            if (ResultSelector == null)
                 return $"{Source}.SelectManyExpr({CollectionSelector})";
 
             return $"{Source}.SelectManyExpr({CollectionSelector}, {ResultSelector})";

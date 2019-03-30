@@ -36,7 +36,7 @@ namespace PrtgAPI.Request.Serialization
 
             var firstMatch = Regex.Match(response, missingPropertyPattern);
 
-            if(firstMatch.Success)
+            if (firstMatch.Success)
             {
                 //We have at least one missing property. Check whether the entire response consists of
                 //objects where every property is missing
@@ -68,7 +68,7 @@ namespace PrtgAPI.Request.Serialization
             {
                 CleanValue(properties, obj, i);
 
-                if(properties[i].Value != "\"_raw\":")
+                if (properties[i].Value != "\"_raw\":")
                 {
                     var match = properties[i];
                     CleanProperty(match, obj, normalProperties.IndexOf(match));

@@ -79,7 +79,7 @@ namespace PrtgAPI.Parameters
             if (action == ModifyAction.Edit && subId == null)
                 throw new ArgumentException("SubId cannot be null when ModifyAction is Edit.", nameof(subId));
 
-            if(action == ModifyAction.Add)
+            if (action == ModifyAction.Add)
                 OnNotificationAction = null;
 
             ObjectId = objectId;

@@ -117,7 +117,7 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
 
         public void AssertFinished()
         {
-            if(strArray != null)
+            if (strArray != null)
             {
                 if (arrayPos < strArray.Length )
                     Assert.Fail($"Failed to call request '{strArray[arrayPos]}'");

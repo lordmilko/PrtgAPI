@@ -27,7 +27,7 @@ namespace PrtgAPI.Request.Serialization.CodeGen
             {
                 lock(lockObj)
                 {
-                    if(assemblyBuilder == null)
+                    if (assemblyBuilder == null)
                     {
                         GenerateAssembly();
                         GenerateModule();
@@ -46,7 +46,7 @@ namespace PrtgAPI.Request.Serialization.CodeGen
             {
                 lock(lockObj)
                 {
-                    if(moduleBuilder == null)
+                    if (moduleBuilder == null)
                     {
                         GenerateAssembly();
                         GenerateModule();

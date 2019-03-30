@@ -102,7 +102,7 @@ namespace PrtgAPI.Targets
             if (all.Count == 0)
                 throw new ArgumentException("Cannot guess sensor target table. Please specify tableName.");
 
-            if(all.Count > 2)
+            if (all.Count > 2)
                 throw new ArgumentException($"Cannot guess sensor target table: multiple tables found. Available tables: {string.Join(", ", all)}.");
 
             var tableName = all.First();

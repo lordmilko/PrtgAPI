@@ -22,7 +22,7 @@ namespace PrtgAPI.Parameters
         {
             get
             {
-                if(IPVersion == IPVersion.IPv4)
+                if (IPVersion == IPVersion.IPv4)
                     return (string)GetCustomParameter(ObjectProperty.Hostv4);
 
                 return (string)GetCustomParameter(ObjectProperty.Hostv6);

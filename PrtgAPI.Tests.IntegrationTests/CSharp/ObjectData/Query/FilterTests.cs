@@ -1828,7 +1828,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
             {
                 var device = client.GetDevice(Settings.Device);
 
-                if(device.Condition != null && device.Condition.Contains("recommendation in progress"))
+                if (device.Condition != null && device.Condition.Contains("recommendation in progress"))
                 {
                     Logger.LogTestDetail("Sensor recommendation in progress. Pausing device");
                     client.PauseObject(device.Id);
@@ -2416,7 +2416,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
 
         private void ExecuteUnsupported(Property property, FilterOperator op, object value, bool @throw = true, bool unsupported = false)
         {
-            if(@throw)
+            if (@throw)
             {
                 var message = unsupported ? "Cannot filter by property" : "Cannot filter where property";
 
@@ -2436,7 +2436,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
 
         private void ExecuteDeviceUnsupported(Property property, FilterOperator op, object value, bool @throw = true)
         {
-            if(@throw)
+            if (@throw)
             {
                 AssertEx.Throws<NotSupportedException>(() => client.GetDevices(property, op, value), "Cannot filter where property");
 
@@ -2635,7 +2635,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
 
             builder.Append(Join(prefix, str.Select(s => s.ToString()).ToArray()));
 
-            if(lambda != null && str.Count > 0)
+            if (lambda != null && str.Count > 0)
             {
                 builder.Append($". Expected: {filter.Value}\\r\n\r\nValues of each object:\r\n");
                 
@@ -2657,7 +2657,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
 
             if (!string.IsNullOrEmpty(newStr))
             {
-                if(prefix != null)
+                if (prefix != null)
                     return prefix + " " + newStr;
 
                 return newStr;

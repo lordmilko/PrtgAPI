@@ -73,7 +73,7 @@ namespace PrtgAPI
             }
             else
             {
-                if(ex != null)
+                if (ex != null)
                     str += " " + ex.Message;
             }
 

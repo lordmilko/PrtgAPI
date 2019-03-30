@@ -22,7 +22,7 @@ namespace PrtgAPI.Utilities
                         {
                             var xDoc = lazy.LazyXml.Value;
 
-                            if(xDoc != null)
+                            if (xDoc != null)
                                 Serializer.Update(xDoc.CreateReader(), obj);
                         }
 

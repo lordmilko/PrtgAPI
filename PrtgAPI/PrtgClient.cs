@@ -111,7 +111,7 @@ namespace PrtgAPI
 
         internal void Log(string message, LogLevel logLevel)
         {
-            if((LogLevel & logLevel) == logLevel)
+            if ((LogLevel & logLevel) == logLevel)
                 HandleEvent(logVerbose, new LogVerboseEventArgs(message, logLevel));
         }
 
@@ -232,7 +232,7 @@ namespace PrtgAPI
         {
             var response = RequestEngine.ExecuteRequest(new PassHashParameters(password), m => m.Content.ReadAsStringAsync().Result).StringValue;
 
-            if(!Regex.Match(response, "^[0-9]+$").Success)
+            if (!Regex.Match(response, "^[0-9]+$").Success)
                 throw new PrtgRequestException($"Could not retrieve PassHash from PRTG Server. PRTG responded '{response}'.");
 
             return response;
@@ -313,7 +313,7 @@ namespace PrtgAPI
 
         private void RefreshSystemInfoInternal(int deviceId, SystemInfoType[] types, CancellationToken token)
         {
-            if(types == null || types.Length == 0)
+            if (types == null || types.Length == 0)
                 types = typeof(SystemInfoType).GetEnumValues().Cast<SystemInfoType>().ToArray();
 
             foreach (var type in types)
@@ -377,7 +377,7 @@ namespace PrtgAPI
                 foreach (var group in actions)
                 {
                     //Key is null when we're a read only user
-                    if(group.Key != null)
+                    if (group.Key != null)
                     {
                         foreach (var action in group)
                             action.schedule = new Lazy<Schedule>(() => schedules.Value.First(s => s.Id == group.Key), LazyThreadSafetyMode.PublicationOnly);
@@ -502,7 +502,7 @@ namespace PrtgAPI
 
             List<Schedule> schedules = new List<Schedule>();
 
-            if(list.Count > 0)
+            if (list.Count > 0)
                 schedules = await GetSchedulesAsync(Property.Id, list.Select(l => l.Key).ToArray(), token).ConfigureAwait(false);
 
             foreach (var group in actions)

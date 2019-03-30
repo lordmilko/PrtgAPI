@@ -250,7 +250,7 @@ namespace PrtgAPI
         {
             var @enum = EnumExtensions.XmlToEnum<XmlEnumAlternateName>(channelName, typeof(StandardTriggerChannel), false);
 
-            if(@enum != null)
+            if (@enum != null)
             {
                 channel = (StandardTriggerChannel)@enum;
                 return true;

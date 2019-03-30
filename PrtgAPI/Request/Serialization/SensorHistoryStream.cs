@@ -19,19 +19,19 @@ namespace PrtgAPI.Request.Serialization
         {
             var result = stream.Read(buffer, offset, count);
 
-            if(!hasRead)
+            if (!hasRead)
             {
                 bool isValid = false;
 
                 for(var i = 0; i < buffer.Length; i++)
                 {
-                    if((char)buffer[i] == '<')
+                    if ((char)buffer[i] == '<')
                     {
                         isValid = true;
                     }
                 }
 
-                if(!isValid)
+                if (!isValid)
                 {
                     var message = Encoding.UTF8.GetString(buffer);
 

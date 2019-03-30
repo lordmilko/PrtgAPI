@@ -237,7 +237,7 @@ namespace PrtgAPI.Request
                         FormatSingleParameterInternal(name, f, encodeValue, isEnum)
                     ).ToList();
 
-                    if(ps.Count > 0)
+                    if (ps.Count > 0)
                         return string.Join("&", ps);
                 }
                 else if (val is ISerializable)
@@ -295,7 +295,7 @@ namespace PrtgAPI.Request
                 }
             }
 
-            if(builder.Length > 0)
+            if (builder.Length > 0)
                 builder.Length--;
 
             return builder.ToString().ToLower();
@@ -336,12 +336,12 @@ namespace PrtgAPI.Request
                         query = FormatSingleParameterWithValEncode(description, val);
                     }
 
-                    if(!string.IsNullOrWhiteSpace(query))
+                    if (!string.IsNullOrWhiteSpace(query))
                         builder.Append(query + "&");
                 }
             }
 
-            if(builder.Length > 0)
+            if (builder.Length > 0)
                 builder.Length--;
 
             return builder.ToString();

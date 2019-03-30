@@ -120,7 +120,7 @@ namespace PrtgAPI.Request.Serialization.CodeGen
             MethodInfo dynamicLazyGetValue;
             MethodInfo dynamicFuncInvoke;
 
-            if(delegateType.IsGenericType)
+            if (delegateType.IsGenericType)
             {
                 //Get Lazy<Func<string, bool>>.get_Value
                 dynamicLazyGetValue = TypeBuilder.GetMethod(dynamicLazyType, lazyGetValue);
@@ -249,7 +249,7 @@ namespace PrtgAPI.Request.Serialization.CodeGen
 
         private ConstructorInfo MakeConstructor(Type dynamicType, ConstructorInfo originalInfo)
         {
-            if(delegateType.IsGenericType)
+            if (delegateType.IsGenericType)
             {
                 //We've had to create Func<string, bool> and in turn Lazy<Func<string, bool>>.
                 //Whatever we're dealing with, its dynamic

@@ -117,7 +117,7 @@ namespace PrtgAPI.CodeGenerator.MethodBuilder.Builders
 
         private bool CanHaveDefaultParameters(List<Parameter> parameters)
         {
-            if(methodConfig.IsTokenInterface || methodConfig.TokenMode == TokenMode.Manual)
+            if (methodConfig.IsTokenInterface || methodConfig.TokenMode == TokenMode.Manual)
             {
                 bool tokenHasDefault = methodConfig.HasDefaultToken || (methodConfig.TokenMode == TokenMode.Manual && parameters.Any(p => p.Type == "CancellationToken" && p.Default != null));
 
@@ -133,7 +133,7 @@ namespace PrtgAPI.CodeGenerator.MethodBuilder.Builders
             if (type == "CancellationToken" && methodConfig.HasDefaultToken)
                 @default = "default(CancellationToken)";
 
-            if(methodConfig.IsTokenInterface)
+            if (methodConfig.IsTokenInterface)
             {
                 var @params = "params ";
 

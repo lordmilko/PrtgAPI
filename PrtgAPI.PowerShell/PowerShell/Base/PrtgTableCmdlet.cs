@@ -97,9 +97,9 @@ namespace PrtgAPI.PowerShell.Base
                         }
                     }
 
-                    if(underlying == typeof(string))
+                    if (underlying == typeof(string))
                         return GetWildcardFilters(p, cleaned, val => val.ToString());
-                    if(typeof(IStringEnum).IsAssignableFrom(underlying))
+                    if (typeof(IStringEnum).IsAssignableFrom(underlying))
                         return GetWildcardFilters(p, cleaned, val => ((IStringEnum)val).StringValue);
 
                     return new[] {GetPipelineFilter(p, cleaned)};

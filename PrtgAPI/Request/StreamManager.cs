@@ -37,7 +37,7 @@ namespace PrtgAPI.Request
         {
             get
             {
-                if(HasStart && RequestedSkippedRecords)
+                if (HasStart && RequestedSkippedRecords)
                 {
                     return Math.Max(TotalRequestedThatExist.Value - RequestedStartPosition, 0);
                 }
@@ -97,7 +97,7 @@ namespace PrtgAPI.Request
         {
             get
             {
-                if(TotalExist != null)
+                if (TotalExist != null)
                 {
                     /* Requested 100. 50 exist.  Start at 3. Min(53,  100) = Last Index is 53. Range is 0 - 53
                      * Requested 100. 100 exist. Start at 3. Min(103, 100) = Last Index is 100. Range is 0 - 100
@@ -144,7 +144,7 @@ namespace PrtgAPI.Request
 
                 int count;
 
-                if(TotalRequestedThatExist == null)
+                if (TotalRequestedThatExist == null)
                 {
                     Logger.Log("TotalRequestedThatExist is null. Either TotalRequested or TotalExist is unknown", Indentation.One);
 

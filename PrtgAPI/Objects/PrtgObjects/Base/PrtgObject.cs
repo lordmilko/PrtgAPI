@@ -135,7 +135,7 @@ namespace PrtgAPI
             if (raw == null)
                 throw new ArgumentNullException(nameof(raw));
 
-            if(raw == "-1")
+            if (raw == "-1")
             {
                 Id = -1;
                 Name = "None";

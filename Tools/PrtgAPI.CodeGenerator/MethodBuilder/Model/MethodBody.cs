@@ -25,12 +25,12 @@ namespace PrtgAPI.CodeGenerator.MethodBuilder.Model
 
         public void Write(SourceWriter writer)
         {
-            if(IsExpression)
+            if (IsExpression)
             {
                 if (Body.Length != 1)
                     throw new InvalidOperationException($"Method body {ToString()} should be expression but is not exactly 1 line");
 
-                if(SingleLineExpression)
+                if (SingleLineExpression)
                     writer.WriteLine($" => {Body.Single()};");
                 else
                 {

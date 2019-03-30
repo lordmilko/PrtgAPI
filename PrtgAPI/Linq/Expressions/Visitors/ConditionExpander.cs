@@ -20,7 +20,7 @@ namespace PrtgAPI.Linq.Expressions.Visitors
             var newLeft = GetNew(left);
             var newRight = GetNew(right);
 
-            if(newLeft != node.Left || newRight != node.Right)
+            if (newLeft != node.Left || newRight != node.Right)
                 return Expression.MakeBinary(node.NodeType, newLeft, newRight);
 
             return node;
@@ -28,7 +28,7 @@ namespace PrtgAPI.Linq.Expressions.Visitors
 
         private Expression GetNew(Expression expr)
         {
-            if(expr.Type == typeof(bool) && !(expr is ConstantExpression || expr is BinaryExpression))
+            if (expr.Type == typeof(bool) && !(expr is ConstantExpression || expr is BinaryExpression))
                 return Expression.MakeBinary(ExpressionType.Equal, expr, Expression.Constant(true));
 
             return expr;

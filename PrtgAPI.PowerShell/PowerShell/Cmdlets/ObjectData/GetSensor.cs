@@ -166,7 +166,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
             //retrieved in GetAdditionalRecords
             var sensors = base.GetObjectsInternal(parameters);
 
-            if(Group != null && Recurse)
+            if (Group != null && Recurse)
                 client.Log($"Found {sensors.Count} {"sensor".Plural(sensors)} in group {Group}", LogLevel.Trace);
 
             return sensors;

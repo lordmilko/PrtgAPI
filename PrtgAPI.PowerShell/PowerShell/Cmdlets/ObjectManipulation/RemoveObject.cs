@@ -74,7 +74,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// </summary>
         protected override void ProcessRecordEx()
         {
-            if(ShouldProcess($"'{Object.Name}' (ID: {Object.Id})"))
+            if (ShouldProcess($"'{Object.Name}' (ID: {Object.Id})"))
             {
                 if (Force.IsPresent || ShouldContinue($"Are you sure you want to delete {Object.GetTypeDescription().ToLower()} '{Object.Name}' (ID: {Object.Id})", "WARNING!"))
                 {

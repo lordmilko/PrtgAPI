@@ -99,7 +99,7 @@ namespace PrtgAPI.PowerShell.Base
 
             SetStreamCount(parameters, countToRetrieve);
 
-            if(totalExist == null)
+            if (totalExist == null)
             {
                 //If TotalExist was known, we set it upon entering StreamRecords.
                 //Otherwise, we set it upon entering SetStreamCount

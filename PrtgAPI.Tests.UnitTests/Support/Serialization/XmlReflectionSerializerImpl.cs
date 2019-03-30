@@ -298,7 +298,7 @@ namespace PrtgAPI.Request.Serialization
 
             if (attrib != null)
             {
-                if(attrib.Property.GetType() == typeof(Property))
+                if (attrib.Property.GetType() == typeof(Property))
                 {
                     var converter = attrib.Property.GetEnumFieldCache().GetAttributes<ValueConverterAttribute>().FirstOrDefault();
 

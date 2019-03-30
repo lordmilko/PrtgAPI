@@ -9,12 +9,12 @@ namespace PrtgAPI.Linq.Expressions.Serialization
     /// <summary>
     /// Construct an expression like
     /// 
-    /// if(!flagArray[0] &amp;&amp; reader.Name == objid)
+    /// if (!flagArray[0] &amp;&amp; reader.Name == objid)
     /// {
     ///     obj.Name = reader.ReadElementString();
     ///     flagArray[0] = true;
     /// }
-    /// else if(...)
+    /// else if (...)
     /// {
     ///     ...
     /// }

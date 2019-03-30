@@ -108,7 +108,7 @@ namespace PrtgAPI.Linq.Expressions
 
             if (IllegalCondition(left.Item2, right.Item2, expr.NodeType))
             {
-                if(expr.NodeType == ExpressionType.OrElse)
+                if (expr.NodeType == ExpressionType.OrElse)
                     illegalExpressionsForSplitRequest.Add((BinaryExpression)right.Item1);
 
                 return Tuple.Create(left.Item1, left.Item2);
