@@ -24,12 +24,21 @@ function Simulate-Appveyor
     Invoke-AppveyorAfterTest $IsCore   # after_test         .NET Coverage
 }
 
+function Simulate-Environment($scriptBlock)
+{
+    InitializeEnvironment
+
+    & $scriptBlock
+}
+
 function InitializeEnvironment
 {
     $env:CONFIGURATION = "Debug"
     $env:APPVEYOR_BUILD_FOLDER = $script:SolutionDir
     $env:APPVEYOR_REPO_COMMIT_MESSAGE = 'Did some stuff'
     $env:APPVEYOR_REPO_COMMIT_MESSAGE_EXTENDED = 'For #4'
+    $env:APPVEYOR_ACCOUNT_NAME = "lordmilko"
+    $env:APPVEYOR_PROJECT_SLUG = "prtgapi"
 
     #Get-AppveyorLocalConfig | Out-Null
 }

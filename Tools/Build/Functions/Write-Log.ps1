@@ -37,7 +37,14 @@ function Write-Log($msg, $color)
     }
     else
     {
-        Write-Host $msg
+        if($psISE)
+        {
+            Write-Verbose $msg
+        }
+        else
+        {
+            Write-Host $msg
+        }
     }
 
     [IO.File]::AppendAllText("$env:TEMP\PrtgAPI.Build.log", "$(Get-Date) $msg`r`n")

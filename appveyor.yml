@@ -11,9 +11,7 @@ install:
   # Install NuGet Provider, Chocolatey dependencies
   - ps: |
       Import-Module .\tools\build\Appveyor.psm1 -DisableNameChecking
-
       Set-AppveyorBuildMode -IsCore:$false
-
       Invoke-AppveyorInstall
 before_build:
   # Restore NuGet packages

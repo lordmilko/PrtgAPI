@@ -21,4 +21,4 @@ function Enable-AppveyorRDPAccess
     $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
 }
 
-Export-ModuleMember Set-AppveyorBuildMode,Enable-AppveyorRDPAccess
+Export-ModuleMember Set-AppveyorBuildMode,Enable-AppveyorRDPAccess,Simulate-Environment

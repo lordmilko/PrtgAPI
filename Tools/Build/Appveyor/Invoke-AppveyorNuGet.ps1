@@ -167,7 +167,7 @@ function New-CSharpPackage($config)
 
             if($env:APPVEYOR)
             {
-                $nugetArgs += $env:APPVEYOR_BUILD_VERSION
+                $nugetArgs += ($env:APPVEYOR_BUILD_VERSION -replace "-.+")
             }
             else
             {
