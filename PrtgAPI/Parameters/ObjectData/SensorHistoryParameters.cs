@@ -9,12 +9,12 @@ namespace PrtgAPI.Parameters
     {
         XmlFunction IXmlParameters.Function => XmlFunction.HistoricData;
 
-        public SensorHistoryParameters(int sensorId, int average, DateTime? startDate, DateTime? endDate, int? count)
+        public SensorHistoryParameters(Either<Sensor, int> sensorOrId, int average, DateTime? startDate, DateTime? endDate, int? count)
         {
             if (average < 0)
                 throw new ArgumentException("Average must be greater than or equal to 0.", nameof(average));
 
-            SensorId = sensorId;
+            SensorId = sensorOrId.GetId();
 
             StartDate = startDate ?? DateTime.Now;
             EndDate = endDate ?? StartDate.AddHours(-1);

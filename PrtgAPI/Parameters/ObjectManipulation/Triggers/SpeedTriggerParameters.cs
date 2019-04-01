@@ -87,8 +87,8 @@ namespace PrtgAPI.Parameters
         /// <summary>
         /// Initializes a new instance of the <see cref="SpeedTriggerParameters"/> class for creating a new notification trigger.
         /// </summary>
-        /// <param name="objectId">The object ID the trigger will apply to.</param>
-        public SpeedTriggerParameters(int objectId) : base(TriggerType.Speed, objectId, (int?)null, ModifyAction.Add)
+        /// <param name="objectOrId">The object or object ID the trigger will apply to.</param>
+        public SpeedTriggerParameters(Either<IPrtgObject, int> objectOrId) : base(TriggerType.Speed, objectOrId, (int?)null, ModifyAction.Add)
         {
             OffNotificationAction = null;
             Channel = TriggerChannel.Primary;
@@ -102,18 +102,18 @@ namespace PrtgAPI.Parameters
         /// <summary>
         /// Initializes a new instance of the <see cref="SpeedTriggerParameters"/> class for editing an existing notification trigger.
         /// </summary>
-        /// <param name="objectId">The object ID the trigger is applied to. Note: if the trigger is inherited, the ParentId should be specified.</param>
+        /// <param name="objectOrId">The object or object ID the trigger is applied to. Note: if the trigger is inherited, the ParentId should be specified.</param>
         /// <param name="triggerId">The sub ID of the trigger on its parent object.</param>
-        public SpeedTriggerParameters(int objectId, int triggerId) : base(TriggerType.Speed, objectId, triggerId, ModifyAction.Edit)
+        public SpeedTriggerParameters(Either<IPrtgObject, int> objectOrId, int triggerId) : base(TriggerType.Speed, objectOrId, triggerId, ModifyAction.Edit)
         {
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SpeedTriggerParameters"/> class for creating a new trigger from an existing <see cref="TriggerType.Speed"/> <see cref="NotificationTrigger"/>.
         /// </summary>
-        /// <param name="objectId">The object ID the trigger will apply to.</param>
+        /// <param name="objectOrId">The object or object ID the trigger will apply to.</param>
         /// <param name="sourceTrigger">The notification trigger whose properties should be used.</param>
-        public SpeedTriggerParameters(int objectId, NotificationTrigger sourceTrigger) : base(TriggerType.Speed, objectId, sourceTrigger, ModifyAction.Add)
+        public SpeedTriggerParameters(Either<IPrtgObject, int> objectOrId, NotificationTrigger sourceTrigger) : base(TriggerType.Speed, objectOrId, sourceTrigger, ModifyAction.Add)
         {
             OffNotificationAction = sourceTrigger.OffNotificationAction;
             Channel = sourceTrigger.Channel;

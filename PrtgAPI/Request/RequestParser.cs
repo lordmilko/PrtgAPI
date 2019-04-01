@@ -67,11 +67,11 @@ namespace PrtgAPI.Request
 
         internal static bool IsAddSensor(ICommandParameters parameters) => parameters.Function == CommandFunction.AddSensor5;
 
-        internal static SearchFilter[] GetFilters(int destinationId, NewObjectParameters parameters)
+        internal static SearchFilter[] GetFilters(Either<IPrtgObject, int> parent, NewObjectParameters parameters)
         {
             var filters = new List<SearchFilter>()
             {
-                new SearchFilter(Property.ParentId, destinationId)
+                new SearchFilter(Property.ParentId, parent.GetId())
             };
 
             if (parameters is NewSensorParameters)
@@ -143,7 +143,7 @@ namespace PrtgAPI.Request
                 ValidateRequiredValue(property, parameters, attrib);
         }
 
-        internal static ICommandParameters GetInternalNewObjectParameters(int deviceId, NewObjectParameters parameters)
+        internal static ICommandParameters GetInternalNewObjectParameters(Either<IPrtgObject, int> deviceOrId, NewObjectParameters parameters)
         {
             var newParams = new CommandFunctionParameters(parameters.Function);
 
@@ -152,7 +152,7 @@ namespace PrtgAPI.Request
                 newParams[param.Key] = param.Value;
             }
 
-            newParams[Parameter.Id] = deviceId;
+            newParams[Parameter.Id] = deviceOrId.GetId();
 
             return newParams;
         }

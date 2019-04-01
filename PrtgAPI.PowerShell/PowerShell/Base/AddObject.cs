@@ -59,7 +59,7 @@ namespace PrtgAPI.PowerShell.Base
                 ProgressManager.RecordsProcessed = -1;
             }
             else
-                client.AddObject(destinationId, Parameters, (f, t) => GetObjects(f), false, CancellationToken);
+                client.AddObject(new PrtgAPI.Either<IPrtgObject, int>(destinationId), Parameters, (f, t) => GetObjects(f), false, CancellationToken);
         }
 
         internal virtual string WhatIfDescription()

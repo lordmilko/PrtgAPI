@@ -4,7 +4,7 @@
     {
         CommandFunction ICommandParameters.Function => CommandFunction.ProbeState;
 
-        public ApproveProbeParameters(int probeId, ProbeApproval action) : base(probeId)
+        public ApproveProbeParameters(Either<Probe, int> probeOrId, ProbeApproval action) : base(probeOrId.ToPrtgObject())
         {
             this[Parameter.Action] = action;
         }

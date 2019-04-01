@@ -31,7 +31,7 @@ namespace PrtgAPI.PowerShell.Base
         {
             return AddAndResolveRunner(
                 () => client.AddObject(
-                    destinationId,
+                    new PrtgAPI.Either<IPrtgObject, int>(destinationId),
                     parameters,
                     (f, t) => getObjects(f),
                     true,

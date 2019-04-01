@@ -4,7 +4,7 @@
     {
         HtmlFunction IHtmlParameters.Function => HtmlFunction.AddSensor4;
 
-        public EndAddSensorQueryParameters(int deviceId, int tmpId) : base(deviceId)
+        public EndAddSensorQueryParameters(Either<Device, int> deviceOrId, int tmpId) : base(deviceOrId.ToPrtgObject())
         {
             this[Parameter.Custom] = new CustomParameter("tmpid", tmpId);
 

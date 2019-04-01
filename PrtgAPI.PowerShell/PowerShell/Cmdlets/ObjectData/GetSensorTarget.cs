@@ -213,7 +213,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
 
         private void GetTargets<T>(
             string typeDescription,
-            Func<int, Func<int, bool>, int, CancellationToken, List<T>> getItems,
+            Func<PrtgAPI.Either<Device, int>, Func<int, bool>, int, CancellationToken, List<T>> getItems,
             Func<List<T>, SensorParametersInternal> createParams,
             params Func<T, string>[] nameProperties)
         {
@@ -223,7 +223,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
             TypeDescription = typeDescription;
 
             WriteProcessProgressRecords(
-                f => ParseItems(getItems(Device.Id, i => f(i, $"Probing target device ({i}%)"), Timeout, CancellationToken), createParams, nameProperties)
+                f => ParseItems(getItems(Device, i => f(i, $"Probing target device ({i}%)"), Timeout, CancellationToken), createParams, nameProperties)
             );
         }
 

@@ -1509,46 +1509,46 @@ namespace PrtgAPI
         /// <summary>
         /// Retrieves a channel with a specified ID from a PRTG Server. If the channel does not exist or an ambiguous match is found, an <see cref="InvalidOperationException"/> is thrown.
         /// </summary>
-        /// <param name="sensorId">The ID of the sensor containing the channel.</param>
+        /// <param name="sensorOrId">The sensor or ID of the sensor containing the channel.</param>
         /// <param name="id">The ID of the channel to retrieve.</param>
         /// <exception cref="InvalidOperationException">The specified channel does not exist or multiple channels were resolved with the specified ID.</exception>
         /// <returns>The channel with the specified ID.</returns>
-        public Channel GetChannel(int sensorId, int id) =>
-            GetChannelsInternal(sensorId, null, i => i == id).SingleObject(id);
+        public Channel GetChannel(Either<Sensor, int> sensorOrId, int id) =>
+            GetChannelsInternal(sensorOrId, null, i => i == id).SingleObject(id);
 
         /// <summary>
         /// Asynchronously retrieves a channel with a specified ID from a PRTG Server. If the channel does not exist or an ambiguous match is found, an <see cref="InvalidOperationException"/> is thrown.
         /// </summary>
-        /// <param name="sensorId">The ID of the sensor containing the channel.</param>
+        /// <param name="sensorOrId">The sensor or ID of the sensor containing the channel.</param>
         /// <param name="id">The ID of the channel to retrieve.</param>
         /// <exception cref="InvalidOperationException">The specified channel does not exist or multiple channels were resolved with the specified ID.</exception>
         /// <returns>The channel with the specified ID.</returns>
-        public async Task<Channel> GetChannelAsync(int sensorId, int id) =>
-            await GetChannelAsync(sensorId, id, CancellationToken.None).ConfigureAwait(false);
+        public async Task<Channel> GetChannelAsync(Either<Sensor, int> sensorOrId, int id) =>
+            await GetChannelAsync(sensorOrId, id, CancellationToken.None).ConfigureAwait(false);
 
         /// <summary>
         /// Asynchronously retrieves a channel with a specified ID from a PRTG Server with a specified cancellation token. If the channel does not exist or an ambiguous match is found, an <see cref="InvalidOperationException"/> is thrown.
         /// </summary>
-        /// <param name="sensorId">The ID of the sensor containing the channel.</param>
+        /// <param name="sensorOrId">The sensor or ID of the sensor containing the channel.</param>
         /// <param name="id">The ID of the channel to retrieve.</param>
         /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="InvalidOperationException">The specified channel does not exist or multiple channels were resolved with the specified ID.</exception>
         /// <returns>The channel with the specified ID.</returns>
-        public async Task<Channel> GetChannelAsync(int sensorId, int id, CancellationToken token) =>
-            (await GetChannelsInternalAsync(sensorId, null, i => i == id, token).ConfigureAwait(false)).SingleObject(id);
+        public async Task<Channel> GetChannelAsync(Either<Sensor, int> sensorOrId, int id, CancellationToken token) =>
+            (await GetChannelsInternalAsync(sensorOrId, null, i => i == id, token).ConfigureAwait(false)).SingleObject(id);
 
         /// <summary>
         /// Retrieves a channel with a specified name from a PRTG Server. If the channel does not exist or an ambiguous match is found, an <see cref="InvalidOperationException"/> is thrown.
         /// </summary>
-        /// <param name="sensorId">The ID of the sensor containing the channel.</param>
+        /// <param name="sensorOrId">The sensor or ID of the sensor containing the channel.</param>
         /// <param name="name">The name of the channel to retrieve.</param>
         /// <exception cref="InvalidOperationException">The specified channel does not exist or multiple channels were resolved with the specified name.</exception>
         /// <returns>The channel with the specified name.</returns>
-        public Channel GetChannel(int sensorId, string name)
+        public Channel GetChannel(Either<Sensor, int> sensorOrId, string name)
         {
             AssertHasValue(name, nameof(name));
 
-            var channels = GetChannelsInternal(sensorId, n => n == name);
+            var channels = GetChannelsInternal(sensorOrId, n => n == name);
 
             return channels.SingleObject(name, "name");
         }
@@ -1556,26 +1556,26 @@ namespace PrtgAPI
         /// <summary>
         /// Asynchronously retrieves a channel with a specified name from a PRTG Server. If the channel does not exist or an ambiguous match is found, an <see cref="InvalidOperationException"/> is thrown.
         /// </summary>
-        /// <param name="sensorId">The ID of the sensor containing the channel.</param>
+        /// <param name="sensorOrId">The sensor or ID of the sensor containing the channel.</param>
         /// <param name="name">The name of the channel to retrieve.</param>
         /// <exception cref="InvalidOperationException">The specified channel does not exist or multiple channels were resolved with the specified name.</exception>
         /// <returns>The channel with the specified name.</returns>
-        public async Task<Channel> GetChannelAsync(int sensorId, string name) =>
-            await GetChannelAsync(sensorId, name, CancellationToken.None).ConfigureAwait(false);
+        public async Task<Channel> GetChannelAsync(Either<Sensor, int> sensorOrId, string name) =>
+            await GetChannelAsync(sensorOrId, name, CancellationToken.None).ConfigureAwait(false);
 
         /// <summary>
         /// Asynchronously retrieves a channel with a specified name from a PRTG Server with a specified cancellation token. If the channel does not exist or an ambiguous match is found, an <see cref="InvalidOperationException"/> is thrown.
         /// </summary>
-        /// <param name="sensorId">The ID of the sensor containing the channel.</param>
+        /// <param name="sensorOrId">The sensor or ID of the sensor containing the channel.</param>
         /// <param name="name">The name of the channel to retrieve.</param>
         /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="InvalidOperationException">The specified channel does not exist or multiple channels were resolved with the specified name.</exception>
         /// <returns>The channel with the specified name.</returns>
-        public async Task<Channel> GetChannelAsync(int sensorId, string name, CancellationToken token)
+        public async Task<Channel> GetChannelAsync(Either<Sensor, int> sensorOrId, string name, CancellationToken token)
         {
             AssertHasValue(name, nameof(name));
 
-            var channels = await GetChannelsInternalAsync(sensorId, n => n == name, token: token).ConfigureAwait(false);
+            var channels = await GetChannelsInternalAsync(sensorOrId, n => n == name, token: token).ConfigureAwait(false);
 
             return channels.SingleObject(name, "name");
         }
@@ -1585,62 +1585,62 @@ namespace PrtgAPI
         /// <summary>
         /// Retrieves all channels of a sensor.
         /// </summary>
-        /// <param name="sensorId">The ID of the sensor to retrieve channels for.</param>
+        /// <param name="sensorOrId">The sensor or ID of the sensor to retrieve channels for.</param>
         /// <returns>A list of channels on the specified sensor.</returns>
-        public List<Channel> GetChannels(int sensorId) =>
-            GetChannelsInternal(sensorId);
+        public List<Channel> GetChannels(Either<Sensor, int> sensorOrId) =>
+            GetChannelsInternal(sensorOrId);
 
         /// <summary>
         /// Asynchronously retrieves all channels of a sensor.
         /// </summary>
-        /// <param name="sensorId">The ID of the sensor to retrieve channels for.</param>
+        /// <param name="sensorOrId">The sensor or ID of the sensor to retrieve channels for.</param>
         /// <returns>A list of channels on the specified sensor.</returns>
-        public async Task<List<Channel>> GetChannelsAsync(int sensorId) =>
-            await GetChannelsAsync(sensorId, CancellationToken.None).ConfigureAwait(false);
+        public async Task<List<Channel>> GetChannelsAsync(Either<Sensor, int> sensorOrId) =>
+            await GetChannelsAsync(sensorOrId, CancellationToken.None).ConfigureAwait(false);
 
         /// <summary>
         /// Asynchronously retrieves all channels of a sensor with a specified cancellation token.
         /// </summary>
-        /// <param name="sensorId">The ID of the sensor to retrieve channels for.</param>
+        /// <param name="sensorOrId">The sensor or ID of the sensor to retrieve channels for.</param>
         /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>A list of channels on the specified sensor.</returns>
-        public async Task<List<Channel>> GetChannelsAsync(int sensorId, CancellationToken token) =>
-            await GetChannelsInternalAsync(sensorId, token: token).ConfigureAwait(false);
+        public async Task<List<Channel>> GetChannelsAsync(Either<Sensor, int> sensorOrId, CancellationToken token) =>
+            await GetChannelsInternalAsync(sensorOrId, token: token).ConfigureAwait(false);
 
         /// <summary>
         /// Retrieves all channels of a sensor that match the specified name.
         /// </summary>
-        /// <param name="sensorId">The ID of the sensor to retrieve channels for.</param>
+        /// <param name="sensorOrId">The sensor or ID of the sensor to retrieve channels for.</param>
         /// <param name="name">The name of the channel to retrieve.</param>
         /// <returns>A list of channels on the specified sensor.</returns>
-        public List<Channel> GetChannels(int sensorId, string name)
+        public List<Channel> GetChannels(Either<Sensor, int> sensorOrId, string name)
         {
             AssertHasValue(name, nameof(name));
 
-            return GetChannelsInternal(sensorId, n => n == name);
+            return GetChannelsInternal(sensorOrId, n => n == name);
         }
 
         /// <summary>
         /// Asynchronously retrieves all channels of a sensor that match the specified name.
         /// </summary>
-        /// <param name="sensorId">The ID of the sensor to retrieve channels for.</param>
+        /// <param name="sensorOrId">The sensor or ID of the sensor to retrieve channels for.</param>
         /// <param name="name">The name of the channel to retrieve.</param>
         /// <returns>A list of channels on the specified sensor.</returns>
-        public async Task<List<Channel>> GetChannelsAsync(int sensorId, string name) =>
-            await GetChannelsAsync(sensorId, name, CancellationToken.None).ConfigureAwait(false);
+        public async Task<List<Channel>> GetChannelsAsync(Either<Sensor, int> sensorOrId, string name) =>
+            await GetChannelsAsync(sensorOrId, name, CancellationToken.None).ConfigureAwait(false);
 
         /// <summary>
         /// Asynchronously retrieves all channels of a sensor that match the specified name with a specified cancellation token.
         /// </summary>
-        /// <param name="sensorId">The ID of the sensor to retrieve channels for.</param>
+        /// <param name="sensorOrId">The sensor or ID of the sensor to retrieve channels for.</param>
         /// <param name="name">The name of the channel to retrieve.</param>
         /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>A list of channels on the specified sensor.</returns>
-        public async Task<List<Channel>> GetChannelsAsync(int sensorId, string name, CancellationToken token)
+        public async Task<List<Channel>> GetChannelsAsync(Either<Sensor, int> sensorOrId, string name, CancellationToken token)
         {
             AssertHasValue(name, nameof(name));
 
-            return await GetChannelsInternalAsync(sensorId, n => n == name, token: token).ConfigureAwait(false);
+            return await GetChannelsInternalAsync(sensorOrId, n => n == name, token: token).ConfigureAwait(false);
         }
 
         #endregion
@@ -1915,15 +1915,15 @@ namespace PrtgAPI
         /// <paramref name="progressCallback"/> returns false or the specified <see cref="CancellationToken"/> is cancelled.<para/>
         /// Logs are ordered from oldest to newest.
         /// </summary>
-        /// <param name="objectId">ID of the object to retrieve logs for.</param>
+        /// <param name="objectOrId">The object or ID of the object to retrieve logs for.</param>
         /// <param name="status">Log event types to retrieve records for. If no types are specified, all record types will be retrieved.</param>
         /// <param name="interval">Interval (in seconds) with which PrtgAPI should poll for new logs.</param>
         /// <param name="progressCallback">Callback used to indicate how many records have been retrieved and whether to abort retrieving records.
         /// Called between each polling attempt. Takes the number of records retrieved so far as an argument. If this method returns false, streaming will abort.</param>
         /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>All logs that meet the specified criteria between the first log retrieved and when streaming is ended.</returns>
-        public IEnumerable<Log> WatchLogs(int objectId, LogStatus[] status = null, int interval = 1, Func<int, bool> progressCallback = null, CancellationToken token = default(CancellationToken)) =>
-            new InfiniteLogGenerator(GetLogs, objectId, status, interval, progressCallback, token);
+        public IEnumerable<Log> WatchLogs(Either<IPrtgObject, int> objectOrId, LogStatus[] status = null, int interval = 1, Func<int, bool> progressCallback = null, CancellationToken token = default(CancellationToken)) =>
+            new InfiniteLogGenerator(GetLogs, objectOrId.GetId(), status, interval, progressCallback, token);
 
             #endregion
             #region Parameters
@@ -2121,52 +2121,52 @@ namespace PrtgAPI
         /// <summary>
         /// Retrieves all notification triggers of a PRTG Object.
         /// </summary>
-        /// <param name="objectId">The object to retrieve triggers for.</param>
+        /// <param name="objectOrId">The object or ID of the object to retrieve triggers for.</param>
         /// <returns>A list of notification triggers that apply to the specified object.</returns>
-        public List<NotificationTrigger> GetNotificationTriggers(int objectId) =>
-            GetNotificationTriggersInternal(objectId, CancellationToken.None);
+        public List<NotificationTrigger> GetNotificationTriggers(Either<IPrtgObject, int> objectOrId) =>
+            GetNotificationTriggersInternal(objectOrId, CancellationToken.None);
 
         /// <summary>
         /// Asynchronously retrieves all notification triggers of a PRTG Object.
         /// </summary>
-        /// <param name="objectId">The object to retrieve triggers for.</param>
+        /// <param name="objectOrId">The object or ID of the object to retrieve triggers for.</param>
         /// <returns>A list of notification triggers that apply to the specified object.</returns>
-        public async Task<List<NotificationTrigger>> GetNotificationTriggersAsync(int objectId) =>
-            await GetNotificationTriggersAsync(objectId, CancellationToken.None).ConfigureAwait(false);
+        public async Task<List<NotificationTrigger>> GetNotificationTriggersAsync(Either<IPrtgObject, int> objectOrId) =>
+            await GetNotificationTriggersAsync(objectOrId, CancellationToken.None).ConfigureAwait(false);
 
         /// <summary>
         /// Asynchronously retrieves all notification triggers of a PRTG Object with a specified cancellation token.
         /// </summary>
-        /// <param name="objectId">The object to retrieve triggers for.</param>
+        /// <param name="objectOrId">The object or ID of the object to retrieve triggers for.</param>
         /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>A list of notification triggers that apply to the specified object.</returns>
-        public async Task<List<NotificationTrigger>> GetNotificationTriggersAsync(int objectId, CancellationToken token) =>
-            await GetNotificationTriggersInternalAsync(objectId, token).ConfigureAwait(false);
+        public async Task<List<NotificationTrigger>> GetNotificationTriggersAsync(Either<IPrtgObject, int> objectOrId, CancellationToken token) =>
+            await GetNotificationTriggersInternalAsync(objectOrId, token).ConfigureAwait(false);
 
         /// <summary>
         /// Retrieves all notification trigger types supported by a PRTG Object.
         /// </summary>
-        /// <param name="objectId">The object to retrieve supported trigger types for.</param>
+        /// <param name="objectOrId">The object or ID of the object to retrieve supported trigger types for.</param>
         /// <returns>The trigger types supported by the object.</returns>
-        public List<TriggerType> GetNotificationTriggerTypes(int objectId) =>
-            GetNotificationTriggerData(objectId, CancellationToken.None).SupportedTypes.ToList();
+        public List<TriggerType> GetNotificationTriggerTypes(Either<IPrtgObject, int> objectOrId) =>
+            GetNotificationTriggerData(objectOrId, CancellationToken.None).SupportedTypes.ToList();
 
         /// <summary>
         /// Asynchronously retrieves all notification trigger types supported by a PRTG Object.
         /// </summary>
-        /// <param name="objectId">The object to retrieve supported trigger types for.</param>
+        /// <param name="objectOrId">The object or ID of the object to retrieve supported trigger types for.</param>
         /// <returns>The trigger types supported by the object.</returns>
-        public async Task<List<TriggerType>> GetNotificationTriggerTypesAsync(int objectId) =>
-            await GetNotificationTriggerTypesAsync(objectId, CancellationToken.None).ConfigureAwait(false);
+        public async Task<List<TriggerType>> GetNotificationTriggerTypesAsync(Either<IPrtgObject, int> objectOrId) =>
+            await GetNotificationTriggerTypesAsync(objectOrId, CancellationToken.None).ConfigureAwait(false);
 
         /// <summary>
         /// Asynchronously retrieves all notification trigger types supported by a PRTG Object with a specified cancellation token.
         /// </summary>
-        /// <param name="objectId">The object to retrieve supported trigger types for.</param>
+        /// <param name="objectOrId">The object or ID of the object to retrieve supported trigger types for.</param>
         /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>The trigger types supported by the object.</returns>
-        public async Task<List<TriggerType>> GetNotificationTriggerTypesAsync(int objectId, CancellationToken token) =>
-            (await GetNotificationTriggerDataAsync(objectId, token).ConfigureAwait(false)).SupportedTypes.ToList();
+        public async Task<List<TriggerType>> GetNotificationTriggerTypesAsync(Either<IPrtgObject, int> objectOrId, CancellationToken token) =>
+            (await GetNotificationTriggerDataAsync(objectOrId, token).ConfigureAwait(false)).SupportedTypes.ToList();
 
         #endregion
         #region Schedules
@@ -2314,7 +2314,7 @@ namespace PrtgAPI
         /// <summary>
         /// Retrieves the historical values of a sensor's channels from within a specified time period.
         /// </summary>
-        /// <param name="sensorId">The ID of the sensor to retrieve historical data for.</param>
+        /// <param name="sensorOrId">The sensor or ID of the sensor to retrieve historical data for.</param>
         /// <param name="average">The time span (in seconds) to average results up to. For example, a value of 300 shows the average of results every 5 minutes. If a value of 0
         /// is used, PRTG will use the true interval of the sensor.<para/>
         /// Note: due to limitations of the PRTG API, value lookup labels can only be retrieved when the average is 0, while downtime information
@@ -2323,9 +2323,9 @@ namespace PrtgAPI
         /// <param name="endDate">The end date and time to retrieve data to. If this value is null, records will be retrieved from one hour prior to <paramref name="startDate"/>.</param>
         /// <param name="count">Limit results to the specified number of items within the specified time period.</param>
         /// <returns>Historical data for the specified sensor within the desired date range.</returns>
-        public List<SensorHistoryData> GetSensorHistory(int sensorId, int average = 300, DateTime? startDate = null, DateTime? endDate = null, int? count = null)
+        public List<SensorHistoryData> GetSensorHistory(Either<Sensor, int> sensorOrId, int average = 300, DateTime? startDate = null, DateTime? endDate = null, int? count = null)
         {
-            var parameters = new SensorHistoryParameters(sensorId, average, startDate, endDate, count);
+            var parameters = new SensorHistoryParameters(sensorOrId, average, startDate, endDate, count);
 
             return GetSensorHistoryInternal(parameters).Item1;
         }
@@ -2333,7 +2333,7 @@ namespace PrtgAPI
         /// <summary>
         /// Asynchronously retrieves the historical values of a sensor's channels from within a specified time period.
         /// </summary>
-        /// <param name="sensorId">The ID of the sensor to retrieve historical data for.</param>
+        /// <param name="sensorOrId">The sensor or ID of the sensor to retrieve historical data for.</param>
         /// <param name="average">The time span (in seconds) to average results up to. For example, a value of 300 shows the average of results every 5 minutes. If a value of 0
         /// is used, PRTG will use the true interval of the sensor.<para/>
         /// Note: due to limitations of the PRTG API, value lookup labels can only be retrieved when the average is 0, while downtime information
@@ -2343,9 +2343,9 @@ namespace PrtgAPI
         /// <param name="count">Limit results to the specified number of items within the specified time period.</param>
         /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Historical data for the specified sensor within the desired date range.</returns>
-        public async Task<List<SensorHistoryData>> GetSensorHistoryAsync(int sensorId, int average = 300, DateTime? startDate = null, DateTime? endDate = null, int? count = null, CancellationToken token = default(CancellationToken))
+        public async Task<List<SensorHistoryData>> GetSensorHistoryAsync(Either<Sensor, int> sensorOrId, int average = 300, DateTime? startDate = null, DateTime? endDate = null, int? count = null, CancellationToken token = default(CancellationToken))
         {
-            var parameters = new SensorHistoryParameters(sensorId, average, startDate, endDate, count);
+            var parameters = new SensorHistoryParameters(sensorOrId, average, startDate, endDate, count);
 
             return await GetSensorHistoryInternalAsync(parameters, token).ConfigureAwait(false);
         }
@@ -2354,7 +2354,7 @@ namespace PrtgAPI
         /// Streams the historical values of a sensor's channels from within a specified time period. When this method's response is enumerated,
         /// requests will be sent to PRTG as required in order to retrieve additional items.
         /// </summary>
-        /// <param name="sensorId">The ID of the sensor to retrieve historical data for.</param>
+        /// <param name="sensorOrId">The sensor or ID of the sensor to retrieve historical data for.</param>
         /// <param name="average">The time span (in seconds) to average results up to. For example, a value of 300 shows the average of results every 5 minutes. If a value of 0
         /// is used, PRTG will use the true interval of the sensor.<para/>
         /// Note: due to limitations of the PRTG API, value lookup labels can only be retrieved when the average is 0, while downtime information
@@ -2362,9 +2362,9 @@ namespace PrtgAPI
         /// <param name="startDate">The start date and time to retrieve data from. If this value is null, records will be retrieved from the current date and time.</param>
         /// <param name="endDate">The end date and time to retrieve data to. If this value is null, records will be retrieved from one hour prior to <paramref name="startDate"/>.</param>
         /// <returns>A generator encapsulating a series of requests capable of streaming a response from a PRTG Server.</returns>
-        public IEnumerable<SensorHistoryData> StreamSensorHistory(int sensorId, int average = 300, DateTime? startDate = null, DateTime? endDate = null)
+        public IEnumerable<SensorHistoryData> StreamSensorHistory(Either<Sensor, int> sensorOrId, int average = 300, DateTime? startDate = null, DateTime? endDate = null)
         {
-            var parameters = new SensorHistoryParameters(sensorId, average, startDate, endDate, null);
+            var parameters = new SensorHistoryParameters(sensorOrId, average, startDate, endDate, null);
 
             return StreamSensorHistoryInternal(parameters, true);
         }
@@ -2375,27 +2375,27 @@ namespace PrtgAPI
         /// <summary>
         /// Retrieves the setting/state modification history of a PRTG Object.
         /// </summary>
-        /// <param name="objectId">The ID of the object to retrieve historical records for.</param>
+        /// <param name="objectOrId">The object or ID of the object to retrieve historical records for.</param>
         /// <returns>A list of all setting/state modifications to the specified object.</returns>
-        public List<ModificationEvent> GetModificationHistory(int objectId) =>
-            ResponseParser.Amend(ObjectEngine.GetObjects<ModificationEvent>(new ModificationHistoryParameters(objectId)), e => e.ObjectId = objectId);
+        public List<ModificationEvent> GetModificationHistory(Either<IPrtgObject, int> objectOrId) =>
+            ResponseParser.Amend(ObjectEngine.GetObjects<ModificationEvent>(new ModificationHistoryParameters(objectOrId)), e => e.ObjectId = objectOrId.GetId());
 
         /// <summary>
         /// Asynchronously retrieves the setting/state modification history of a PRTG Object.
         /// </summary>
-        /// <param name="objectId">The ID of the object to retrieve historical records for.</param>
+        /// <param name="objectOrId">The object or ID of the object to retrieve historical records for.</param>
         /// <returns>A list of all setting/state modifications to the specified object.</returns>
-        public async Task<List<ModificationEvent>> GetModificationHistoryAsync(int objectId) =>
-            await GetModificationHistoryAsync(objectId, CancellationToken.None).ConfigureAwait(false);
+        public async Task<List<ModificationEvent>> GetModificationHistoryAsync(Either<IPrtgObject, int> objectOrId) =>
+            await GetModificationHistoryAsync(objectOrId, CancellationToken.None).ConfigureAwait(false);
 
         /// <summary>
         /// Asynchronously retrieves the setting/state modification history of a PRTG Object with a specified cancellation token.
         /// </summary>
-        /// <param name="objectId">The ID of the object to retrieve historical records for.</param>
+        /// <param name="objectOrId">The object or ID of the object to retrieve historical records for.</param>
         /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>A list of all setting/state modifications to the specified object.</returns>
-        public async Task<List<ModificationEvent>> GetModificationHistoryAsync(int objectId, CancellationToken token) =>
-            ResponseParser.Amend(await ObjectEngine.GetObjectsAsync<ModificationEvent>(new ModificationHistoryParameters(objectId), token: token).ConfigureAwait(false), e => e.ObjectId = objectId);
+        public async Task<List<ModificationEvent>> GetModificationHistoryAsync(Either<IPrtgObject, int> objectOrId, CancellationToken token) =>
+            ResponseParser.Amend(await ObjectEngine.GetObjectsAsync<ModificationEvent>(new ModificationHistoryParameters(objectOrId), token: token).ConfigureAwait(false), e => e.ObjectId = objectOrId.GetId());
 
         #endregion
         #region Server Status
@@ -2430,29 +2430,29 @@ namespace PrtgAPI
         /// Retrieves System Information including hardware, software, process, service and user information for a specified device.<para/>
         /// System Information is automatically refreshed by PRTG once every 24 hours. Devices are not guaranteed to support all system information types.
         /// </summary>
-        /// <param name="deviceId">ID of the device to retrieve information for.</param>
+        /// <param name="deviceOrId">The device or ID of the device to retrieve information for.</param>
         /// <returns>A complete summary of System Information known to PRTG for the specified device.</returns>
-        public SystemInfo GetSystemInfo(int deviceId) =>
-            GetSystemInfoInternal(deviceId);
+        public SystemInfo GetSystemInfo(Either<Device, int> deviceOrId) =>
+            GetSystemInfoInternal(deviceOrId);
 
         /// <summary>
         /// Asynchronously retrieves System Information including hardware, software, process, service and user information for a specified device.<para/>
         /// System Information is automatically refreshed by PRTG once every 24 hours. Devices are not guaranteed to support all system information types.
         /// </summary>
-        /// <param name="deviceId">ID of the device to retrieve information for.</param>
+        /// <param name="deviceOrId">The device or ID of the device to retrieve information for.</param>
         /// <returns>A complete summary of System Information known to PRTG for the specified device.</returns>
-        public async Task<SystemInfo> GetSystemInfoAsync(int deviceId) =>
-            await GetSystemInfoAsync(deviceId, CancellationToken.None).ConfigureAwait(false);
+        public async Task<SystemInfo> GetSystemInfoAsync(Either<Device, int> deviceOrId) =>
+            await GetSystemInfoAsync(deviceOrId, CancellationToken.None).ConfigureAwait(false);
 
         /// <summary>
         /// Asynchronously retrieves System Information including hardware, software, process, service and user information for a specified device with a specified cancellation token.<para/>
         /// System Information is automatically refreshed by PRTG once every 24 hours. Devices are not guaranteed to support all system information types.
         /// </summary>
-        /// <param name="deviceId">ID of the device to retrieve information for.</param>
+        /// <param name="deviceOrId">The device or ID of the device to retrieve information for.</param>
         /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>A complete summary of System Information known to PRTG for the specified device.</returns>
-        public async Task<SystemInfo> GetSystemInfoAsync(int deviceId, CancellationToken token) =>
-            await GetSystemInfoInternalAsync(deviceId, token).ConfigureAwait(false);
+        public async Task<SystemInfo> GetSystemInfoAsync(Either<Device, int> deviceOrId, CancellationToken token) =>
+            await GetSystemInfoInternalAsync(deviceOrId, token).ConfigureAwait(false);
 
             #endregion
             #region Generic
@@ -2461,29 +2461,29 @@ namespace PrtgAPI
         /// Retrieves a specific type of system information for a specified device based on the resulting object type.
         /// </summary>
         /// <typeparam name="T">Type of System Information to retrieve.</typeparam>
-        /// <param name="deviceId">ID of the device to retrieve information for.</param>
+        /// <param name="deviceOrId">The device or ID of the device to retrieve information for.</param>
         /// <returns>System Information known to PRTG for the specified information type for the specified device.</returns>
-        public List<T> GetSystemInfo<T>(int deviceId) where T : IDeviceInfo =>
-            GetSystemInfoInternal<T>(deviceId, CancellationToken.None);
+        public List<T> GetSystemInfo<T>(Either<Device, int> deviceOrId) where T : IDeviceInfo =>
+            GetSystemInfoInternal<T>(deviceOrId, CancellationToken.None);
 
         /// <summary>
         /// Asynchronously retrieves a specific type of system information for a specified device based on the resulting object type.
         /// </summary>
         /// <typeparam name="T">Type of System Information to retrieve.</typeparam>
-        /// <param name="deviceId">ID of the device to retrieve information for.</param>
+        /// <param name="deviceOrId">The device or ID of the device to retrieve information for.</param>
         /// <returns>System Information known to PRTG for the specified information type for the specified device.</returns>
-        public async Task<List<T>> GetSystemInfoAsync<T>(int deviceId) where T : IDeviceInfo =>
-            await GetSystemInfoAsync<T>(deviceId, CancellationToken.None).ConfigureAwait(false);
+        public async Task<List<T>> GetSystemInfoAsync<T>(Either<Device, int> deviceOrId) where T : IDeviceInfo =>
+            await GetSystemInfoAsync<T>(deviceOrId, CancellationToken.None).ConfigureAwait(false);
 
         /// <summary>
         /// Asynchronously retrieves a specific type of system information for a specified device based on the resulting object type with a specified cancellation token.
         /// </summary>
         /// <typeparam name="T">Type of System Information to retrieve.</typeparam>
-        /// <param name="deviceId">ID of the device to retrieve information for.</param>
+        /// <param name="deviceOrId">The device or ID of the device to retrieve information for.</param>
         /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>System Information known to PRTG for the specified information type for the specified device.</returns>
-        public async Task<List<T>> GetSystemInfoAsync<T>(int deviceId, CancellationToken token) where T : IDeviceInfo =>
-            await GetSystemInfoInternalAsync<T>(deviceId, token).ConfigureAwait(false);
+        public async Task<List<T>> GetSystemInfoAsync<T>(Either<Device, int> deviceOrId, CancellationToken token) where T : IDeviceInfo =>
+            await GetSystemInfoInternalAsync<T>(deviceOrId, token).ConfigureAwait(false);
 
             #endregion
             #region Type
@@ -2491,30 +2491,30 @@ namespace PrtgAPI
         /// <summary>
         /// Retrieves a specific type of system information for a specified device based on a <see cref="SystemInfoType"/>.
         /// </summary>
-        /// <param name="deviceId">ID of the device to retrieve information for.</param>
+        /// <param name="deviceOrId">The device or ID of the device to retrieve information for.</param>
         /// <param name="type">Type of information to retrieve.</param>
         /// <returns>System Information known to PRTG for the specified information type for the specified device.</returns>
-        public List<IDeviceInfo> GetSystemInfo(int deviceId, SystemInfoType type) =>
-            GetSystemInfoInternal(deviceId, type);
+        public List<IDeviceInfo> GetSystemInfo(Either<Device, int> deviceOrId, SystemInfoType type) =>
+            GetSystemInfoInternal(deviceOrId, type);
 
         /// <summary>
         /// Asynchronously retrieves a specific type of system information for a specified device based on a <see cref="SystemInfoType"/>.
         /// </summary>
-        /// <param name="deviceId">ID of the device to retrieve information for.</param>
+        /// <param name="deviceOrId">The device or ID of the device to retrieve information for.</param>
         /// <param name="type">Type of information to retrieve.</param>
         /// <returns>System Information known to PRTG for the specified information type for the specified device.</returns>
-        public async Task<List<IDeviceInfo>> GetSystemInfoAsync(int deviceId, SystemInfoType type) =>
-            await GetSystemInfoAsync(deviceId, type, CancellationToken.None).ConfigureAwait(false);
+        public async Task<List<IDeviceInfo>> GetSystemInfoAsync(Either<Device, int> deviceOrId, SystemInfoType type) =>
+            await GetSystemInfoAsync(deviceOrId, type, CancellationToken.None).ConfigureAwait(false);
 
         /// <summary>
         /// Asynchronously retrieves a specific type of system information for a specified device based on a <see cref="SystemInfoType"/> with a specified cancellation token.
         /// </summary>
-        /// <param name="deviceId">ID of the device to retrieve information for.</param>
+        /// <param name="deviceOrId">The device or ID of the device to retrieve information for.</param>
         /// <param name="type">Type of information to retrieve.</param>
         /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>System Information known to PRTG for the specified information type for the specified device.</returns>
-        public async Task<List<IDeviceInfo>> GetSystemInfoAsync(int deviceId, SystemInfoType type, CancellationToken token) =>
-            await GetSystemInfoInternalAsync(deviceId, type, token).ConfigureAwait(false);
+        public async Task<List<IDeviceInfo>> GetSystemInfoAsync(Either<Device, int> deviceOrId, SystemInfoType type, CancellationToken token) =>
+            await GetSystemInfoInternalAsync(deviceOrId, type, token).ConfigureAwait(false);
 
             #endregion
             #region Refresh
@@ -2523,29 +2523,29 @@ namespace PrtgAPI
         /// Refreshes one or more types of system information on a specified device.<para/>
         /// If no types are specified, all information types will be refreshed.
         /// </summary>
-        /// <param name="deviceId">ID of the device to refresh system information for.</param>
+        /// <param name="deviceOrId">The device or ID of the device to refresh system information for.</param>
         /// <param name="types">Types to refresh. If no types are specified, all types will be refreshed.</param>
-        public void RefreshSystemInfo(int deviceId, params SystemInfoType[] types) =>
-            RefreshSystemInfoInternal(deviceId, types, CancellationToken.None);
+        public void RefreshSystemInfo(Either<Device, int> deviceOrId, params SystemInfoType[] types) =>
+            RefreshSystemInfoInternal(deviceOrId, types, CancellationToken.None);
 
         /// <summary>
         /// Asynchronously refreshes one or more types of system information on a specified device.<para/>
         /// If no types are specified, all information types will be refreshed.
         /// </summary>
-        /// <param name="deviceId">ID of the device to refresh system information for.</param>
+        /// <param name="deviceOrId">The device or ID of the device to refresh system information for.</param>
         /// <param name="types">Types to refresh. If no types are specified, all types will be refreshed.</param>
-        public async Task RefreshSystemInfoAsync(int deviceId, params SystemInfoType[] types) =>
-            await RefreshSystemInfoAsync(deviceId, types, CancellationToken.None).ConfigureAwait(false);
+        public async Task RefreshSystemInfoAsync(Either<Device, int> deviceOrId, params SystemInfoType[] types) =>
+            await RefreshSystemInfoAsync(deviceOrId, types, CancellationToken.None).ConfigureAwait(false);
 
         /// <summary>
         /// Asynchronously refreshes one or more types of system information on a specified device with a specified cancellation token.<para/>
         /// If no types are specified, all information types will be refreshed.
         /// </summary>
-        /// <param name="deviceId">ID of the device to refresh system information for.</param>
+        /// <param name="deviceOrId">The device or ID of the device to refresh system information for.</param>
         /// <param name="types">Types to refresh. If no types are specified, all types will be refreshed.</param>
         /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        public async Task RefreshSystemInfoAsync(int deviceId, SystemInfoType[] types, CancellationToken token) =>
-            await RefreshSystemInfoInternalAsync(deviceId, types, token).ConfigureAwait(false);
+        public async Task RefreshSystemInfoAsync(Either<Device, int> deviceOrId, SystemInfoType[] types, CancellationToken token) =>
+            await RefreshSystemInfoInternalAsync(deviceOrId, types, token).ConfigureAwait(false);
 
             #endregion
         #endregion
@@ -2612,33 +2612,33 @@ namespace PrtgAPI
         /// <summary>
         /// Adds a new sensor to a PRTG device. Based on the specified sensor parameters, multiple new sensors may be created.
         /// </summary>
-        /// <param name="deviceId">The ID of the device the sensor will apply to.</param>
+        /// <param name="deviceOrId">The device or ID of the device the sensor will apply to.</param>
         /// <param name="parameters">A set of parameters describing the properties of the sensor to create.
         /// Depending on the type of sensor parameters specified, this may result in the creation of several new sensors.</param>
         /// <param name="resolve">Whether to resolve the new sensors to their resultant <see cref="Sensor"/> objects.
         /// If this value is false, this method will return null.</param>
         /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>If <paramref name="resolve"/> is true, all new sensors that were created from the sensor <paramref name="parameters"/>. Otherwise, null.</returns>
-        public List<Sensor> AddSensor(int deviceId, NewSensorParameters parameters, bool resolve = true, CancellationToken token = default(CancellationToken)) =>
-            AddObject(deviceId, parameters, (f, t) => GetSensors(new SensorParameters(f), t), resolve, allowMultiple: true, token: token);
+        public List<Sensor> AddSensor(Either<Device, int> deviceOrId, NewSensorParameters parameters, bool resolve = true, CancellationToken token = default(CancellationToken)) =>
+            AddObject(deviceOrId.ToPrtgObject(), parameters, (f, t) => GetSensors(new SensorParameters(f), t), resolve, allowMultiple: true, token: token);
 
         /// <summary>
         /// Asynchronously adds a new sensor to a PRTG device. Based on the specified sensor parameters, multiple new sensors may be created.
         /// </summary>
-        /// <param name="deviceId">The ID of the device the sensor will apply to.</param>
+        /// <param name="deviceOrId">The device or ID of the device the sensor will apply to.</param>
         /// <param name="parameters">A set of parameters describing the properties of the sensor to create.
         /// Depending on the type of sensor parameters specified, this may result in the creation of several new sensors.</param>
         /// <param name="resolve">Whether to resolve the new sensors to their resultant <see cref="Sensor"/> objects.
         /// If this value is false, this method will return null.</param>
         /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>If <paramref name="resolve"/> is true, all new sensors that were created from the sensor <paramref name="parameters"/>. Otherwise, null.</returns>
-        public async Task<List<Sensor>> AddSensorAsync(int deviceId, NewSensorParameters parameters, bool resolve = true, CancellationToken token = default(CancellationToken)) =>
-            await AddObjectAsync(deviceId, parameters, async (f, t) => await GetSensorsAsync(new SensorParameters(f), t).ConfigureAwait(false), resolve, allowMultiple: true, token: token).ConfigureAwait(false);
+        public async Task<List<Sensor>> AddSensorAsync(Either<Device, int> deviceOrId, NewSensorParameters parameters, bool resolve = true, CancellationToken token = default(CancellationToken)) =>
+            await AddObjectAsync(deviceOrId.ToPrtgObject(), parameters, async (f, t) => await GetSensorsAsync(new SensorParameters(f), t).ConfigureAwait(false), resolve, allowMultiple: true, token: token).ConfigureAwait(false);
 
         /// <summary>
         /// Adds a new device to a PRTG group or probe.
         /// </summary>
-        /// <param name="parentId">The ID of the group or probe the device will apply to.</param>
+        /// <param name="parent">The group or probe the device will apply to.</param>
         /// <param name="name">The name to use for the new device.</param>
         /// <param name="host">The hostname or IP Address PRTG should use to communicate with the device. If this value is null, the <paramref name="name"/> will be used.</param>
         /// <param name="discoveryMode">Whether an auto-discovery should be automatically performed after device creation.</param>
@@ -2646,13 +2646,13 @@ namespace PrtgAPI
         /// If this value is false, this method will return null.</param>
         /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>If <paramref name="resolve"/> is true, the device that was created from this method's device parameters. Otherwise, null.</returns>
-        public Device AddDevice(int parentId, string name, string host = null, AutoDiscoveryMode discoveryMode = AutoDiscoveryMode.Manual, bool resolve = true, CancellationToken token = default(CancellationToken)) =>
-            AddDevice(parentId, new NewDeviceParameters(name, host) { AutoDiscoveryMode = discoveryMode }, resolve, token: token);
+        public Device AddDevice(Either<GroupOrProbe, int> parent, string name, string host = null, AutoDiscoveryMode discoveryMode = AutoDiscoveryMode.Manual, bool resolve = true, CancellationToken token = default(CancellationToken)) =>
+            AddDevice(parent, new NewDeviceParameters(name, host) { AutoDiscoveryMode = discoveryMode }, resolve, token: token);
 
         /// <summary>
         /// Asynchronously adds a new device to a PRTG group or probe.
         /// </summary>
-        /// <param name="parentId">The ID of the group or probe the device will apply to.</param>
+        /// <param name="parent">The group or probe the device will apply to.</param>
         /// <param name="name">The name to use for the new device.</param>
         /// <param name="host">The hostname or IP Address PRTG should use to communicate with the device. If this value is null, the <paramref name="name"/> will be used.</param>
         /// <param name="discoveryMode">Whether an auto-discovery should be automatically performed after device creation.</param>
@@ -2660,85 +2660,85 @@ namespace PrtgAPI
         /// If this value is false, this method will return null.</param>
         /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>If <paramref name="resolve"/> is true, the device that was created from this method's device parameters. Otherwise, null.</returns>
-        public async Task<Device> AddDeviceAsync(int parentId, string name, string host = null, AutoDiscoveryMode discoveryMode = AutoDiscoveryMode.Manual, bool resolve = true, CancellationToken token = default(CancellationToken)) =>
-            await AddDeviceAsync(parentId, new NewDeviceParameters(name, host) { AutoDiscoveryMode = discoveryMode }, resolve, token: token).ConfigureAwait(false);
+        public async Task<Device> AddDeviceAsync(Either<GroupOrProbe, int> parent, string name, string host = null, AutoDiscoveryMode discoveryMode = AutoDiscoveryMode.Manual, bool resolve = true, CancellationToken token = default(CancellationToken)) =>
+            await AddDeviceAsync(parent, new NewDeviceParameters(name, host) { AutoDiscoveryMode = discoveryMode }, resolve, token: token).ConfigureAwait(false);
 
         /// <summary>
         /// Adds a new device to a PRTG group or probe with a complex set of parameters.
         /// </summary>
-        /// <param name="parentId">The ID of the group or probe the device will apply to.</param>
+        /// <param name="parent">The group or probe the device will apply to.</param>
         /// <param name="parameters">A set of parameters describing the properties of the device to create.</param>
         /// <param name="resolve">Whether to resolve the new device to its resultant <see cref="Device"/> object.
         /// If this value is false, this method will return null.</param>
         /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>If <paramref name="resolve"/> is true, the device that was created from this method's device <paramref name="parameters"/>. Otherwise, null.</returns>
-        public Device AddDevice(int parentId, NewDeviceParameters parameters, bool resolve = true, CancellationToken token = default(CancellationToken)) =>
-            AddObject(parentId, parameters, (f, t) => GetDevices(new DeviceParameters(f), t), resolve, token: token)?.Single();
+        public Device AddDevice(Either<GroupOrProbe, int> parent, NewDeviceParameters parameters, bool resolve = true, CancellationToken token = default(CancellationToken)) =>
+            AddObject(parent.ToPrtgObject(), parameters, (f, t) => GetDevices(new DeviceParameters(f), t), resolve, token: token)?.Single();
 
         /// <summary>
         /// Asynchronously adds a new device to a PRTG group or probe with a complex set of parameters.
         /// </summary>
-        /// <param name="parentId">The ID of the group or probe the device will apply to.</param>
+        /// <param name="parent">The group or probe the device will apply to.</param>
         /// <param name="parameters">A set of parameters describing the properties of the device to create.</param>
         /// <param name="resolve">Whether to resolve the new device to its resultant <see cref="Device"/> object.
         /// If this value is false, this method will return null.</param>
         /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>If <paramref name="resolve"/> is true, the device that was created from this method's device <paramref name="parameters"/>. Otherwise, null.</returns>
-        public async Task<Device> AddDeviceAsync(int parentId, NewDeviceParameters parameters, bool resolve = true, CancellationToken token = default(CancellationToken)) =>
-            (await AddObjectAsync(parentId, parameters, async (f, t) => await GetDevicesAsync(new DeviceParameters(f), t).ConfigureAwait(false), resolve, token: token).ConfigureAwait(false))?.Single();
+        public async Task<Device> AddDeviceAsync(Either<GroupOrProbe, int> parent, NewDeviceParameters parameters, bool resolve = true, CancellationToken token = default(CancellationToken)) =>
+            (await AddObjectAsync(parent.ToPrtgObject(), parameters, async (f, t) => await GetDevicesAsync(new DeviceParameters(f), t).ConfigureAwait(false), resolve, token: token).ConfigureAwait(false))?.Single();
 
         /// <summary>
         /// Adds a new group to a PRTG group or probe.
         /// </summary>
-        /// <param name="parentId">The ID of the group or probe the group will apply to.</param>
+        /// <param name="parent">The group or probe the new group will apply to.</param>
         /// <param name="name">The name to use for the new group.</param>
         /// <param name="resolve">Whether to resolve the new group to its resultant <see cref="Group"/> object.
         /// If this value is false, this method will return null.</param>
         /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>If <paramref name="resolve"/> is true, the group that was created from this method's group parameters. Otherwise, null.</returns>
-        public Group AddGroup(int parentId, string name, bool resolve = true, CancellationToken token = default(CancellationToken)) =>
-            AddGroup(parentId, new NewGroupParameters(name), resolve, token: token);
+        public Group AddGroup(Either<GroupOrProbe, int> parent, string name, bool resolve = true, CancellationToken token = default(CancellationToken)) =>
+            AddGroup(parent, new NewGroupParameters(name), resolve, token: token);
 
         /// <summary>
         /// Asynchronously adds a new group to a PRTG group or probe.
         /// </summary>
-        /// <param name="parentId">The ID of the group or probe the group will apply to.</param>
+        /// <param name="parent">The group or probe the new group will apply to.</param>
         /// <param name="name">The name to use for the new group.</param>
         /// <param name="resolve">Whether to resolve the new group to its resultant <see cref="Group"/> object.
         /// If this value is false, this method will return null.</param>
         /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>If <paramref name="resolve"/> is true, the group that was created from this method's group parameters. Otherwise, null.</returns>
-        public async Task<Group> AddGroupAsync(int parentId, string name, bool resolve = true, CancellationToken token = default(CancellationToken)) =>
-            await AddGroupAsync(parentId, new NewGroupParameters(name), resolve, token: token).ConfigureAwait(false);
+        public async Task<Group> AddGroupAsync(Either<GroupOrProbe, int> parent, string name, bool resolve = true, CancellationToken token = default(CancellationToken)) =>
+            await AddGroupAsync(parent, new NewGroupParameters(name), resolve, token: token).ConfigureAwait(false);
 
         /// <summary>
         /// Adds a new group to a PRTG group or probe with a complex set of parameters.
         /// </summary>
-        /// <param name="parentId">The ID of the group or probe the group will apply to.</param>
+        /// <param name="parent">The group or probe the new group will apply to.</param>
         /// <param name="parameters">A set of parameters describing the properties of the group to create.</param>
         /// <param name="resolve">Whether to resolve the new group to its resultant <see cref="Group"/> object.
         /// If this value is false, this method will return null.</param>
         /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>If <paramref name="resolve"/> is true, the group that was created from this method's group <paramref name="parameters"/>. Otherwise, null.</returns>
-        public Group AddGroup(int parentId, NewGroupParameters parameters, bool resolve = true, CancellationToken token = default(CancellationToken)) =>
-            AddObject(parentId, parameters, (f, t) => GetGroups(new GroupParameters(f), t), resolve, token: token)?.Single();
+        public Group AddGroup(Either<GroupOrProbe, int> parent, NewGroupParameters parameters, bool resolve = true, CancellationToken token = default(CancellationToken)) =>
+            AddObject(parent.ToPrtgObject(), parameters, (f, t) => GetGroups(new GroupParameters(f), t), resolve, token: token)?.Single();
 
         /// <summary>
         /// Asynchronously adds a new group to a PRTG group or probe with a complex set of parameters.
         /// </summary>
-        /// <param name="parentId">The ID of the group or probe the group will apply to.</param>
+        /// <param name="parent">The group or probe the new group will apply to.</param>
         /// <param name="parameters">A set of parameters describing the properties of the group to create.</param>
         /// <param name="resolve">Whether to resolve the new group to its resultant <see cref="Group"/> object.
         /// If this value is false, this method will return null.</param>
         /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>If <paramref name="resolve"/> is true, the group that was created from this method's group <paramref name="parameters"/>. Otherwise, null.</returns>
-        public async Task<Group> AddGroupAsync(int parentId, NewGroupParameters parameters, bool resolve = true, CancellationToken token = default(CancellationToken)) =>
-            (await AddObjectAsync(parentId, parameters, async (f, t) => await GetGroupsAsync(new GroupParameters(f), t).ConfigureAwait(false), resolve, token: token).ConfigureAwait(false))?.Single();
+        public async Task<Group> AddGroupAsync(Either<GroupOrProbe, int> parent, NewGroupParameters parameters, bool resolve = true, CancellationToken token = default(CancellationToken)) =>
+            (await AddObjectAsync(parent.ToPrtgObject(), parameters, async (f, t) => await GetGroupsAsync(new GroupParameters(f), t).ConfigureAwait(false), resolve, token: token).ConfigureAwait(false))?.Single();
 
         /// <summary>
         /// Creates a set of dynamic sensor parameters for creating a new sensor of a specified type.
         /// </summary>
-        /// <param name="deviceId">The ID of a device that supports the specified sensor type.</param>
+        /// <param name="deviceOrId">The device or ID of a device that supports the specified sensor type.</param>
         /// <param name="sensorType">The type of sensor to create sensor paramters for.<para/>
         /// Note: sensor parameters cannot be created for types that require additional information
         /// to be added before interrogating the target device.</param>
@@ -2747,13 +2747,13 @@ namespace PrtgAPI
         /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="TimeoutException">Sensor parameters failed to resolve within the specified timespan.</exception>
         /// <returns>A dynamic set of sensor parameters that store the the parameters required to create a sensor of a specified type.</returns>
-        public DynamicSensorParameters GetDynamicSensorParameters(int deviceId, string sensorType, Func<int, bool> progressCallback = null, int timeout = 60, CancellationToken token = default(CancellationToken)) =>
-            new DynamicSensorParameters(GetAddSensorQueryResponse(deviceId, sensorType, progressCallback, timeout, token), sensorType);
+        public DynamicSensorParameters GetDynamicSensorParameters(Either<Device, int> deviceOrId, string sensorType, Func<int, bool> progressCallback = null, int timeout = 60, CancellationToken token = default(CancellationToken)) =>
+            new DynamicSensorParameters(GetAddSensorQueryResponse(deviceOrId, sensorType, progressCallback, timeout, token), sensorType);
 
         /// <summary>
         /// Asynchronously creates a set of dynamic sensor parameters for creating a new sensor of a specified type.
         /// </summary>
-        /// <param name="deviceId">The ID of a device that supports the specified sensor type.</param>
+        /// <param name="deviceOrId">The device or ID of a device that supports the specified sensor type.</param>
         /// <param name="sensorType">The type of sensor to create sensor paramters for.<para/>
         /// Note: sensor parameters cannot be created for types that require additional information
         /// to be added before interrogating the target device.</param>
@@ -2762,33 +2762,33 @@ namespace PrtgAPI
         /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="TimeoutException">Sensor parameters failed to resolve within the specified timespan.</exception>
         /// <returns>A dynamic set of sensor parameters that store the the parameters required to create a sensor of a specified type.</returns>
-        public async Task<DynamicSensorParameters> GetDynamicSensorParametersAsync(int deviceId, string sensorType, Func<int, bool> progressCallback = null, int timeout = 60, CancellationToken token = default(CancellationToken)) =>
-            new DynamicSensorParameters(await GetAddSensorQueryResponseAsync(deviceId, sensorType, progressCallback, timeout, token).ConfigureAwait(false), sensorType);
+        public async Task<DynamicSensorParameters> GetDynamicSensorParametersAsync(Either<Device, int> deviceOrId, string sensorType, Func<int, bool> progressCallback = null, int timeout = 60, CancellationToken token = default(CancellationToken)) =>
+            new DynamicSensorParameters(await GetAddSensorQueryResponseAsync(deviceOrId, sensorType, progressCallback, timeout, token).ConfigureAwait(false), sensorType);
 
         /// <summary>
         /// Automatically creates sensors under an object based on the object's (or it's children's) device type.
         /// </summary>
-        /// <param name="objectId">The object to run Auto-Discovery for (such as a device or group).</param>
+        /// <param name="objectOrId">The object or ID of the object to run Auto-Discovery for (such as a device or group).</param>
         /// <param name="templates">An optional list of device templates to use for performing the auto-discovery.</param>
-        public void AutoDiscover(int objectId, params DeviceTemplate[] templates) =>
-            RequestEngine.ExecuteRequest(new AutoDiscoverParameters(objectId, templates));
+        public void AutoDiscover(Either<IPrtgObject, int> objectOrId, params DeviceTemplate[] templates) =>
+            RequestEngine.ExecuteRequest(new AutoDiscoverParameters(objectOrId, templates));
 
         /// <summary>
         /// Asynchronously automatically creates sensors under an object based on the object's (or it's children's) device type.
         /// </summary>
-        /// <param name="objectId">The object to run Auto-Discovery for (such as a device or group).</param>
+        /// <param name="objectOrId">The object or ID of the object to run Auto-Discovery for (such as a device or group).</param>
         /// <param name="templates">An optional list of device templates to use for performing the auto-discovery.</param>
-        public async Task AutoDiscoverAsync(int objectId, params DeviceTemplate[] templates) =>
-            await AutoDiscoverAsync(objectId, templates, CancellationToken.None).ConfigureAwait(false);
+        public async Task AutoDiscoverAsync(Either<IPrtgObject, int> objectOrId, params DeviceTemplate[] templates) =>
+            await AutoDiscoverAsync(objectOrId, templates, CancellationToken.None).ConfigureAwait(false);
 
         /// <summary>
         /// Asynchronously automatically creates sensors under an object based on the object's (or it's children's) device type with a specified cancellation token.
         /// </summary>
-        /// <param name="objectId">The object to run Auto-Discovery for (such as a device or group).</param>
+        /// <param name="objectOrId">The object or ID of the object to run Auto-Discovery for (such as a device or group).</param>
         /// <param name="templates">An optional list of device templates to use for performing the auto-discovery.</param>
         /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        public async Task AutoDiscoverAsync(int objectId, DeviceTemplate[] templates, CancellationToken token) =>
-            await RequestEngine.ExecuteRequestAsync(new AutoDiscoverParameters(objectId, templates), token: token).ConfigureAwait(false);
+        public async Task AutoDiscoverAsync(Either<IPrtgObject, int> objectOrId, DeviceTemplate[] templates, CancellationToken token) =>
+            await RequestEngine.ExecuteRequestAsync(new AutoDiscoverParameters(objectOrId, templates), token: token).ConfigureAwait(false);
 
         #endregion
         #region Sensor State
@@ -2797,11 +2797,11 @@ namespace PrtgAPI
         /// <summary>
         /// Marks a <see cref="Status.Down"/> sensor as <see cref="Status.DownAcknowledged"/>. If an acknowledged sensor returns to <see cref="Status.Up"/>, it will not be acknowledged when it goes down again.
         /// </summary>
-        /// <param name="sensorId">ID of the sensor to acknowledge.</param>
+        /// <param name="sensorOrId">The sensor or ID of the sensor to acknowledge.</param>
         /// <param name="duration">Duration (in minutes) to acknowledge the sensor for. If null, sensor will be acknowledged indefinitely.</param>
         /// <param name="message">Message to display on the acknowledged sensor.</param>
-        public void AcknowledgeSensor(int sensorId, int? duration = null, string message = null) =>
-            AcknowledgeSensor(new[] {sensorId}, duration, message);
+        public void AcknowledgeSensor(Either<Sensor, int> sensorOrId, int? duration = null, string message = null) =>
+            AcknowledgeSensor(new[] {sensorOrId.GetId()}, duration, message);
 
         /// <summary>
         /// Marks one or more <see cref="Status.Down"/> sensors as <see cref="Status.DownAcknowledged"/>. If an acknowledged sensor returns to <see cref="Status.Up"/>, it will not be acknowledged when it goes down again.
@@ -2815,12 +2815,12 @@ namespace PrtgAPI
         /// <summary>
         /// Asynchronously marks a <see cref="Status.Down"/> sensor as <see cref="Status.DownAcknowledged"/>. If an acknowledged sensor returns to <see cref="Status.Up"/>, it will not be acknowledged when it goes down again.
         /// </summary>
-        /// <param name="sensorId">ID of the sensor to acknowledge.</param>
+        /// <param name="sensorOrId">The sensor or ID of the sensor to acknowledge.</param>
         /// <param name="duration">Duration (in minutes) to acknowledge the sensor for. If null, sensor will be acknowledged indefinitely.</param>
         /// <param name="message">Message to display on the acknowledged sensor.</param>
         /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        public async Task AcknowledgeSensorAsync(int sensorId, int? duration = null, string message = null, CancellationToken token = default(CancellationToken)) =>
-            await AcknowledgeSensorAsync(new[] {sensorId}, duration, message, token).ConfigureAwait(false);
+        public async Task AcknowledgeSensorAsync(Either<Sensor, int> sensorOrId, int? duration = null, string message = null, CancellationToken token = default(CancellationToken)) =>
+            await AcknowledgeSensorAsync(new[] {sensorOrId.GetId()}, duration, message, token).ConfigureAwait(false);
 
         /// <summary>
         /// Asynchronously marks one or more <see cref="Status.Down"/> sensors as <see cref="Status.DownAcknowledged"/>. If an acknowledged sensor returns to <see cref="Status.Up"/>, it will not be acknowledged when it goes down again.
@@ -2838,11 +2838,11 @@ namespace PrtgAPI
         /// <summary>
         /// Pauses monitoring on a PRTG Object and all child objects.
         /// </summary>
-        /// <param name="objectId">ID of the object to pause.</param>
+        /// <param name="objectOrId">The object or ID of the object to pause.</param>
         /// <param name="duration">Duration (in minutes) to pause the object for. If null, object will be paused indefinitely.</param>
         /// <param name="message">Message to display on the paused object.</param>
-        public void PauseObject(int objectId, int? duration = null, string message = null) =>
-            PauseObject(new[] {objectId}, duration, message);
+        public void PauseObject(Either<IPrtgObject, int> objectOrId, int? duration = null, string message = null) =>
+            PauseObject(new[] {objectOrId.GetId()}, duration, message);
 
         /// <summary>
         /// Pauses monitoring on one or more PRTG Objects and all child objects.
@@ -2856,12 +2856,12 @@ namespace PrtgAPI
         /// <summary>
         /// Asynchronously pauses monitoring on a PRTG Object and all child objects.
         /// </summary>
-        /// <param name="objectId">ID of the object to pause.</param>
+        /// <param name="objectOrId">The object or ID of the object to pause.</param>
         /// <param name="duration">Duration (in minutes) to pause the object for. If null, object will be paused indefinitely.</param>
         /// <param name="message">Message to display on the paused object.</param>
         /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        public async Task PauseObjectAsync(int objectId, int? duration = null, string message = null, CancellationToken token = default(CancellationToken)) =>
-            await PauseObjectAsync(new[] {objectId}, duration, message, token: token).ConfigureAwait(false);
+        public async Task PauseObjectAsync(Either<IPrtgObject, int> objectOrId, int? duration = null, string message = null, CancellationToken token = default(CancellationToken)) =>
+            await PauseObjectAsync(new[] {objectOrId.GetId()}, duration, message, token: token).ConfigureAwait(false);
 
         /// <summary>
         /// Asynchronously pauses monitoring on one or more PRTG Objects and all child objects.
@@ -3005,67 +3005,67 @@ namespace PrtgAPI
         /// <summary>
         /// Clones a sensor or group to another device or group.
         /// </summary>
-        /// <param name="sourceObjectId">The ID of a sensor or group to clone.</param>
+        /// <param name="sourceObject">The sensor or group to clone.</param>
         /// <param name="cloneName">The name that should be given to the cloned object.</param>
-        /// <param name="targetLocationObjectId">If this is a sensor, the ID of the device to clone to. If this is a group, the ID of the group to clone to.</param>
+        /// <param name="targetParentObject">If this is a sensor, the device or ID of the device to clone to. If this is a group, the object or ID of the group or probe to clone to.</param>
         /// <returns>The ID of the object that was created.</returns>
-        public int CloneObject(int sourceObjectId, string cloneName, int targetLocationObjectId) =>
-            CloneObject(new CloneParameters(sourceObjectId, cloneName, targetLocationObjectId), CancellationToken.None);
+        public int CloneObject(Either<IPrtgObject, int> sourceObject, string cloneName, Either<DeviceOrGroupOrProbe, int> targetParentObject) =>
+            CloneObject(new CloneParameters(sourceObject.ToPrtgObject(), cloneName, targetParentObject.ToPrtgObject()), CancellationToken.None);
 
         /// <summary>
         /// Clones a device to another group or probe.
         /// </summary>
-        /// <param name="deviceId">The ID of the device to clone.</param>
+        /// <param name="deviceOrId">The device or ID of the device to clone.</param>
         /// <param name="cloneName">The name that should be given to the cloned device.</param>
         /// <param name="host">The hostname or IP Address that should be assigned to the new device.</param>
-        /// <param name="targetLocationObjectId">The group or probe the device should be cloned to.</param>
+        /// <param name="targetParentObject">The group or probe the device should be cloned to.</param>
         /// <returns>The ID of the object that was created.</returns>
-        public int CloneObject(int deviceId, string cloneName, string host, int targetLocationObjectId) =>
-            CloneObject(new CloneParameters(deviceId, cloneName, targetLocationObjectId, host), CancellationToken.None);
+        public int CloneObject(Either<Device, int> deviceOrId, string cloneName, string host, Either<GroupOrProbe, int> targetParentObject) =>
+            CloneObject(new CloneParameters(deviceOrId, cloneName, targetParentObject, host), CancellationToken.None);
 
         /// <summary>
         /// Asynchronously clones a sensor or group to another device or group.
         /// </summary>
-        /// <param name="sourceObjectId">The ID of a sensor or group to clone.</param>
+        /// <param name="sourceObject">The sensor or group to clone.</param>
         /// <param name="cloneName">The name that should be given to the cloned object.</param>
-        /// <param name="targetLocationObjectId">If this is a sensor, the ID of the device to clone to. If this is a group, the ID of the group to clone to.</param>
+        /// <param name="targetParentObject">If this is a sensor, the device or ID of the device to clone to. If this is a group, the object or ID of the group or probe to clone to.</param>
         /// <returns>The ID of the object that was created.</returns>
-        public async Task<int> CloneObjectAsync(int sourceObjectId, string cloneName, int targetLocationObjectId) =>
-            await CloneObjectAsync(sourceObjectId, cloneName, targetLocationObjectId, CancellationToken.None).ConfigureAwait(false);
+        public async Task<int> CloneObjectAsync(Either<IPrtgObject, int> sourceObject, string cloneName, Either<DeviceOrGroupOrProbe, int> targetParentObject) =>
+            await CloneObjectAsync(sourceObject, cloneName, targetParentObject, CancellationToken.None).ConfigureAwait(false);
 
         /// <summary>
         /// Asynchronously clones a sensor or group to another device or group with a specified cancellation token.
         /// </summary>
-        /// <param name="sourceObjectId">The ID of a sensor or group to clone.</param>
+        /// <param name="sourceObject">The sensor or group to clone.</param>
         /// <param name="cloneName">The name that should be given to the cloned object.</param>
-        /// <param name="targetLocationObjectId">If this is a sensor, the ID of the device to clone to. If this is a group, the ID of the group to clone to.</param>
+        /// <param name="targetParentObject">If this is a sensor, the device or ID of the device to clone to. If this is a group, the object or ID of the group or probe to clone to.</param>
         /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>The ID of the object that was created.</returns>
-        public async Task<int> CloneObjectAsync(int sourceObjectId, string cloneName, int targetLocationObjectId, CancellationToken token) =>
-            await CloneObjectAsync(new CloneParameters(sourceObjectId, cloneName, targetLocationObjectId), token).ConfigureAwait(false);
+        public async Task<int> CloneObjectAsync(Either<IPrtgObject, int> sourceObject, string cloneName, Either<DeviceOrGroupOrProbe, int> targetParentObject, CancellationToken token) =>
+            await CloneObjectAsync(new CloneParameters(sourceObject.ToPrtgObject(), cloneName, targetParentObject.ToPrtgObject()), token).ConfigureAwait(false);
 
         /// <summary>
         /// Asynchronously clones a device to another group or probe.
         /// </summary>
-        /// <param name="deviceId">The ID of the device to clone.</param>
+        /// <param name="deviceOrId">The device or ID of the device to clone.</param>
         /// <param name="cloneName">The name that should be given to the cloned device.</param>
         /// <param name="host">The hostname or IP Address that should be assigned to the new device.</param>
-        /// <param name="targetLocationObjectId">The group or probe the device should be cloned to.</param>
+        /// <param name="targetParentObject">The group or probe the device should be cloned to.</param>
         /// <returns>The ID of the object that was created.</returns>
-        public async Task<int> CloneObjectAsync(int deviceId, string cloneName, string host, int targetLocationObjectId) =>
-            await CloneObjectAsync(deviceId, cloneName, host, targetLocationObjectId, CancellationToken.None).ConfigureAwait(false);
+        public async Task<int> CloneObjectAsync(Either<Device, int> deviceOrId, string cloneName, string host, Either<GroupOrProbe, int> targetParentObject) =>
+            await CloneObjectAsync(deviceOrId, cloneName, host, targetParentObject, CancellationToken.None).ConfigureAwait(false);
 
         /// <summary>
         /// Asynchronously clones a device to another group or probe with a specified cancellation token.
         /// </summary>
-        /// <param name="deviceId">The ID of the device to clone.</param>
+        /// <param name="deviceOrId">The device or ID of the device to clone.</param>
         /// <param name="cloneName">The name that should be given to the cloned device.</param>
         /// <param name="host">The hostname or IP Address that should be assigned to the new device.</param>
-        /// <param name="targetLocationObjectId">The group or probe the device should be cloned to.</param>
+        /// <param name="targetParentObject">The group or probe the device should be cloned to.</param>
         /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>The ID of the object that was created.</returns>
-        public async Task<int> CloneObjectAsync(int deviceId, string cloneName, string host, int targetLocationObjectId, CancellationToken token) =>
-            await CloneObjectAsync(new CloneParameters(deviceId, cloneName, targetLocationObjectId, host), token).ConfigureAwait(false);
+        public async Task<int> CloneObjectAsync(Either<Device, int> deviceOrId, string cloneName, string host, Either<GroupOrProbe, int> targetParentObject, CancellationToken token) =>
+            await CloneObjectAsync(new CloneParameters(deviceOrId, cloneName, targetParentObject, host), token).ConfigureAwait(false);
 
         #endregion
         #region Get Object Properties
@@ -3076,32 +3076,32 @@ namespace PrtgAPI
         /// Retrieves properties and settings of a PRTG Sensor.<para/>
         /// If the current user does not have write access to the specified object, an <see cref="InvalidOperationException"/> will be thrown.
         /// </summary>
-        /// <param name="sensorId">ID of the sensor to retrieve settings for.</param>
-        /// <exception cref="InvalidOperationException">The specified sensor is read only. To retrieve properties from read only sensors, use <see cref="GetObjectProperty(int, ObjectProperty)"/>.</exception>
+        /// <param name="sensor">The sensor or ID of the sensor to retrieve settings for.</param>
+        /// <exception cref="InvalidOperationException">The specified sensor is read only. To retrieve properties from read only sensors, use <see cref="GetObjectProperty(Either{IPrtgObject, int}, ObjectProperty)"/>.</exception>
         /// <returns>All settings of the specified sensor.</returns>
-        public SensorSettings GetSensorProperties(int sensorId) =>
-            GetObjectProperties<SensorSettings>(sensorId, ObjectType.Sensor, ObjectProperty.Name);
+        public SensorSettings GetSensorProperties(Either<Sensor, int> sensor) =>
+            GetObjectProperties<SensorSettings>(sensor.ToPrtgObject(), ObjectType.Sensor, ObjectProperty.Name);
 
         /// <summary>
         /// Asynchronously retrieves properties and settings of a PRTG Sensor.<para/>
         /// If the current user does not have write access to the specified object, an <see cref="InvalidOperationException"/> will be thrown.
         /// </summary>
-        /// <param name="sensorId">ID of the sensor to retrieve settings for.</param>
-        /// <exception cref="InvalidOperationException">The specified sensor is read only. To retrieve properties from read only sensors, use <see cref="GetObjectProperty(int, ObjectProperty)"/>.</exception>
+        /// <param name="sensor">The sensor or ID of the sensor to retrieve settings for.</param>
+        /// <exception cref="InvalidOperationException">The specified sensor is read only. To retrieve properties from read only sensors, use <see cref="GetObjectProperty(Either{IPrtgObject, int}, ObjectProperty)"/>.</exception>
         /// <returns>All settings of the specified sensor.</returns>
-        public async Task<SensorSettings> GetSensorPropertiesAsync(int sensorId) =>
-            await GetSensorPropertiesAsync(sensorId, CancellationToken.None).ConfigureAwait(false);
+        public async Task<SensorSettings> GetSensorPropertiesAsync(Either<Sensor, int> sensor) =>
+            await GetSensorPropertiesAsync(sensor, CancellationToken.None).ConfigureAwait(false);
 
         /// <summary>
         /// Asynchronously retrieves properties and settings of a PRTG Sensor with a specified cancellation token.<para/>
         /// If the current user does not have write access to the specified object, an <see cref="InvalidOperationException"/> will be thrown.
         /// </summary>
-        /// <param name="sensorId">ID of the sensor to retrieve settings for.</param>
+        /// <param name="sensor">The sensor or ID of the sensor to retrieve settings for.</param>
         /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <exception cref="InvalidOperationException">The specified sensor is read only. To retrieve properties from read only sensors, use <see cref="GetObjectProperty(int, ObjectProperty)"/>.</exception>
+        /// <exception cref="InvalidOperationException">The specified sensor is read only. To retrieve properties from read only sensors, use <see cref="GetObjectProperty(Either{IPrtgObject, int}, ObjectProperty)"/>.</exception>
         /// <returns>All settings of the specified sensor.</returns>
-        public async Task<SensorSettings> GetSensorPropertiesAsync(int sensorId, CancellationToken token) =>
-            await GetObjectPropertiesAsync<SensorSettings>(sensorId, ObjectType.Sensor, ObjectProperty.Name, token).ConfigureAwait(false);
+        public async Task<SensorSettings> GetSensorPropertiesAsync(Either<Sensor, int> sensor, CancellationToken token) =>
+            await GetObjectPropertiesAsync<SensorSettings>(sensor.ToPrtgObject(), ObjectType.Sensor, ObjectProperty.Name, token).ConfigureAwait(false);
 
                 #endregion
                 #region Devices
@@ -3110,32 +3110,32 @@ namespace PrtgAPI
         /// Retrieves properties and settings of a PRTG Device.<para/>
         /// If the current user does not have write access to the specified object, an <see cref="InvalidOperationException"/> will be thrown.
         /// </summary>
-        /// <param name="deviceId">ID of the device to retrieve settings for.</param>
-        /// <exception cref="InvalidOperationException">The specified device is read only. To retrieve properties from read only devices, use <see cref="GetObjectProperty(int, ObjectProperty)"/>.</exception>
+        /// <param name="device">The device or ID of the device to retrieve settings for.</param>
+        /// <exception cref="InvalidOperationException">The specified device is read only. To retrieve properties from read only devices, use <see cref="GetObjectProperty(Either{IPrtgObject, int}, ObjectProperty)"/>.</exception>
         /// <returns>All settings of the specified device.</returns>
-        public DeviceSettings GetDeviceProperties(int deviceId) =>
-            GetObjectProperties<DeviceSettings>(deviceId, ObjectType.Device, ObjectProperty.Name);
+        public DeviceSettings GetDeviceProperties(Either<Device, int> device) =>
+            GetObjectProperties<DeviceSettings>(device.ToPrtgObject(), ObjectType.Device, ObjectProperty.Name);
 
         /// <summary>
         /// Asynchronously retrieves properties and settings of a PRTG Device.<para/>
         /// If the current user does not have write access to the specified object, an <see cref="InvalidOperationException"/> will be thrown.
         /// </summary>
-        /// <param name="deviceId">ID of the device to retrieve settings for.</param>
-        /// <exception cref="InvalidOperationException">The specified device is read only. To retrieve properties from read only devices, use <see cref="GetObjectProperty(int, ObjectProperty)"/>.</exception>
+        /// <param name="device">The device or ID of the device to retrieve settings for.</param>
+        /// <exception cref="InvalidOperationException">The specified device is read only. To retrieve properties from read only devices, use <see cref="GetObjectProperty(Either{IPrtgObject, int}, ObjectProperty)"/>.</exception>
         /// <returns>All settings of the specified device.</returns>
-        public async Task<DeviceSettings> GetDevicePropertiesAsync(int deviceId) =>
-            await GetDevicePropertiesAsync(deviceId, CancellationToken.None).ConfigureAwait(false);
+        public async Task<DeviceSettings> GetDevicePropertiesAsync(Either<Device, int> device) =>
+            await GetDevicePropertiesAsync(device, CancellationToken.None).ConfigureAwait(false);
 
         /// <summary>
         /// Asynchronously retrieves properties and settings of a PRTG Device with a specified cancellation token.<para/>
         /// If the current user does not have write access to the specified object, an <see cref="InvalidOperationException"/> will be thrown.
         /// </summary>
-        /// <param name="deviceId">ID of the device to retrieve settings for.</param>
+        /// <param name="device">The device or ID of the device to retrieve settings for.</param>
         /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <exception cref="InvalidOperationException">The specified device is read only. To retrieve properties from read only devices, use <see cref="GetObjectProperty(int, ObjectProperty)"/>.</exception>
+        /// <exception cref="InvalidOperationException">The specified device is read only. To retrieve properties from read only devices, use <see cref="GetObjectProperty(Either{IPrtgObject, int}, ObjectProperty)"/>.</exception>
         /// <returns>All settings of the specified device.</returns>
-        public async Task<DeviceSettings> GetDevicePropertiesAsync(int deviceId, CancellationToken token) =>
-            await GetObjectPropertiesAsync<DeviceSettings>(deviceId, ObjectType.Device, ObjectProperty.Name, token).ConfigureAwait(false);
+        public async Task<DeviceSettings> GetDevicePropertiesAsync(Either<Device, int> device, CancellationToken token) =>
+            await GetObjectPropertiesAsync<DeviceSettings>(device.ToPrtgObject(), ObjectType.Device, ObjectProperty.Name, token).ConfigureAwait(false);
 
                 #endregion
                 #region Groups
@@ -3144,32 +3144,32 @@ namespace PrtgAPI
         /// Retrieves properties and settings of a PRTG Group.<para/>
         /// If the current user does not have write access to the specified object, an <see cref="InvalidOperationException"/> will be thrown.
         /// </summary>
-        /// <param name="groupId">ID of the group to retrieve settings for.</param>
-        /// <exception cref="InvalidOperationException">The specified group is read only. To retrieve properties from read only groups, use <see cref="GetObjectProperty(int, ObjectProperty)"/>.</exception>
+        /// <param name="group">The group or ID of the group to retrieve settings for.</param>
+        /// <exception cref="InvalidOperationException">The specified group is read only. To retrieve properties from read only groups, use <see cref="GetObjectProperty(Either{IPrtgObject, int}, ObjectProperty)"/>.</exception>
         /// <returns>All settings of the specified group.</returns>
-        public GroupSettings GetGroupProperties(int groupId) =>
-            GetObjectProperties<GroupSettings>(groupId, ObjectType.Group, ObjectProperty.Name);
+        public GroupSettings GetGroupProperties(Either<Group, int> group) =>
+            GetObjectProperties<GroupSettings>(group.ToPrtgObject(), ObjectType.Group, ObjectProperty.Name);
 
         /// <summary>
         /// Asynchronously retrieves properties and settings of a PRTG Group.<para/>
         /// If the current user does not have write access to the specified object, an <see cref="InvalidOperationException"/> will be thrown.
         /// </summary>
-        /// <param name="groupId">ID of the group to retrieve settings for.</param>
-        /// <exception cref="InvalidOperationException">The specified group is read only. To retrieve properties from read only groups, use <see cref="GetObjectProperty(int, ObjectProperty)"/>.</exception>
+        /// <param name="group">The group or ID of the group to retrieve settings for.</param>
+        /// <exception cref="InvalidOperationException">The specified group is read only. To retrieve properties from read only groups, use <see cref="GetObjectProperty(Either{IPrtgObject, int}, ObjectProperty)"/>.</exception>
         /// <returns>All settings of the specified group.</returns>
-        public async Task<GroupSettings> GetGroupPropertiesAsync(int groupId) =>
-            await GetGroupPropertiesAsync(groupId, CancellationToken.None).ConfigureAwait(false);
+        public async Task<GroupSettings> GetGroupPropertiesAsync(Either<Group, int> group) =>
+            await GetGroupPropertiesAsync(group, CancellationToken.None).ConfigureAwait(false);
 
         /// <summary>
         /// Asynchronously retrieves properties and settings of a PRTG Group with a specified cancellation token.<para/>
         /// If the current user does not have write access to the specified object, an <see cref="InvalidOperationException"/> will be thrown.
         /// </summary>
-        /// <param name="groupId">ID of the group to retrieve settings for.</param>
+        /// <param name="group">The group or ID of the group to retrieve settings for.</param>
         /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <exception cref="InvalidOperationException">The specified group is read only. To retrieve properties from read only groups, use <see cref="GetObjectProperty(int, ObjectProperty)"/>.</exception>
+        /// <exception cref="InvalidOperationException">The specified group is read only. To retrieve properties from read only groups, use <see cref="GetObjectProperty(Either{IPrtgObject, int}, ObjectProperty)"/>.</exception>
         /// <returns>All settings of the specified group.</returns>
-        public async Task<GroupSettings> GetGroupPropertiesAsync(int groupId, CancellationToken token) =>
-            await GetObjectPropertiesAsync<GroupSettings>(groupId, ObjectType.Group, ObjectProperty.Name, token).ConfigureAwait(false);
+        public async Task<GroupSettings> GetGroupPropertiesAsync(Either<Group, int> group, CancellationToken token) =>
+            await GetObjectPropertiesAsync<GroupSettings>(group.ToPrtgObject(), ObjectType.Group, ObjectProperty.Name, token).ConfigureAwait(false);
 
                 #endregion
                 #region Probes
@@ -3178,32 +3178,32 @@ namespace PrtgAPI
         /// Retrieves properties and settings of a PRTG Probe.<para/>
         /// If the current user does not have write access to the specified object, an <see cref="InvalidOperationException"/> will be thrown.
         /// </summary>
-        /// <param name="probeId">ID of the probe to retrieve settings for.</param>
-        /// <exception cref="InvalidOperationException">The specified probe is read only. To retrieve properties from read only probes, use <see cref="GetObjectProperty(int, ObjectProperty)"/>.</exception>
+        /// <param name="probe">The probe or ID of the probe to retrieve settings for.</param>
+        /// <exception cref="InvalidOperationException">The specified probe is read only. To retrieve properties from read only probes, use <see cref="GetObjectProperty(Either{IPrtgObject, int}, ObjectProperty)"/>.</exception>
         /// <returns>All settings of the specified probe.</returns>
-        public ProbeSettings GetProbeProperties(int probeId) =>
-            GetObjectProperties<ProbeSettings>(probeId, ObjectType.Probe, ObjectProperty.Name);
+        public ProbeSettings GetProbeProperties(Either<Probe, int> probe) =>
+            GetObjectProperties<ProbeSettings>(probe.ToPrtgObject(), ObjectType.Probe, ObjectProperty.Name);
 
         /// <summary>
         /// Asynchronously retrieves properties and settings of a PRTG Probe.<para/>
         /// If the current user does not have write access to the specified object, an <see cref="InvalidOperationException"/> will be thrown.
         /// </summary>
-        /// <param name="probeId">ID of the probe to retrieve settings for.</param>
-        /// <exception cref="InvalidOperationException">The specified probe is read only. To retrieve properties from read only probes, use <see cref="GetObjectProperty(int, ObjectProperty)"/>.</exception>
+        /// <param name="probe">The probe or ID of the probe to retrieve settings for.</param>
+        /// <exception cref="InvalidOperationException">The specified probe is read only. To retrieve properties from read only probes, use <see cref="GetObjectProperty(Either{IPrtgObject, int}, ObjectProperty)"/>.</exception>
         /// <returns>All settings of the specified probe.</returns>
-        public async Task<ProbeSettings> GetProbePropertiesAsync(int probeId) =>
-            await GetProbePropertiesAsync(probeId, CancellationToken.None).ConfigureAwait(false);
+        public async Task<ProbeSettings> GetProbePropertiesAsync(Either<Probe, int> probe) =>
+            await GetProbePropertiesAsync(probe, CancellationToken.None).ConfigureAwait(false);
 
         /// <summary>
         /// Asynchronously retrieves properties and settings of a PRTG Probe with a specified cancellation token.<para/>
         /// If the current user does not have write access to the specified object, an <see cref="InvalidOperationException"/> will be thrown.
         /// </summary>
-        /// <param name="probeId">ID of the probe to retrieve settings for.</param>
+        /// <param name="probe">The probe or ID of the probe to retrieve settings for.</param>
         /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <exception cref="InvalidOperationException">The specified probe is read only. To retrieve properties from read only probes, use <see cref="GetObjectProperty(int, ObjectProperty)"/>.</exception>
+        /// <exception cref="InvalidOperationException">The specified probe is read only. To retrieve properties from read only probes, use <see cref="GetObjectProperty(Either{IPrtgObject, int}, ObjectProperty)"/>.</exception>
         /// <returns>All settings of the specified probe.</returns>
-        public async Task<ProbeSettings> GetProbePropertiesAsync(int probeId, CancellationToken token) =>
-            await GetObjectPropertiesAsync<ProbeSettings>(probeId, ObjectType.Probe, ObjectProperty.Name, token).ConfigureAwait(false);
+        public async Task<ProbeSettings> GetProbePropertiesAsync(Either<Probe, int> probe, CancellationToken token) =>
+            await GetObjectPropertiesAsync<ProbeSettings>(probe.ToPrtgObject(), ObjectType.Probe, ObjectProperty.Name, token).ConfigureAwait(false);
 
                 #endregion
             #endregion
@@ -3213,55 +3213,55 @@ namespace PrtgAPI
         /// Retrieves all raw properties and settings of a PRTG Object. Note: objects may have additional properties
         /// that cannot be retrieved via this method.
         /// </summary>
-        /// <param name="objectId">The ID of the object to retrieve settings and properties for.</param>
+        /// <param name="objectOrId">The object or ID of the object to retrieve settings and properties for.</param>
         /// <param name="objectType">The type of object to retrieve settings and properties for.</param>
         /// <returns>A dictionary mapping all discoverable properties to raw values.</returns>
-        public Dictionary<string, string> GetObjectPropertiesRaw(int objectId, ObjectType objectType) =>
-            GetObjectPropertiesRawDictionary(objectId, objectType);
+        public Dictionary<string, string> GetObjectPropertiesRaw(Either<IPrtgObject, int> objectOrId, ObjectType objectType) =>
+            GetObjectPropertiesRawDictionary(objectOrId, objectType);
 
         /// <summary>
         /// Retrieves all raw properties and settings of an unsupported object type. Note: objects may have additional properties
         /// that cannot be retrieved via this method.
         /// </summary>
-        /// <param name="objectId">The ID of the object to retrieve settings and properties for.</param>
+        /// <param name="objectOrId">The object or ID of the object to retrieve settings and properties for.</param>
         /// <param name="objectType">The type of object to retrieve settings and properties for.
-        /// If this value is null, PRTG will attempt to guess the object type based on the specified <paramref name="objectId"/>.</param>
+        /// If this value is null, PRTG will attempt to guess the object type based on the specified <paramref name="objectOrId"/>.</param>
         /// <returns>A dictionary mapping all discoverable properties to raw values.</returns>
-        public Dictionary<string, string> GetObjectPropertiesRaw(int objectId, string objectType = null) =>
-            GetObjectPropertiesRawDictionary(objectId, objectType);
+        public Dictionary<string, string> GetObjectPropertiesRaw(Either<IPrtgObject, int> objectOrId, string objectType = null) =>
+            GetObjectPropertiesRawDictionary(objectOrId, objectType);
 
         /// <summary>
         /// Asynchronously retrieves all raw properties and settings of a PRTG Object. Note: objects may have additional properties
         /// that cannot be retrieved via this method.
         /// </summary>
-        /// <param name="objectId">The ID of the object to retrieve settings and properties for.</param>
+        /// <param name="objectOrId">The object or ID of the object to retrieve settings and properties for.</param>
         /// <param name="objectType">The type of object to retrieve settings and properties for.</param>
         /// <returns>A dictionary mapping all discoverable properties to raw values.</returns>
-        public async Task<Dictionary<string, string>> GetObjectPropertiesRawAsync(int objectId, ObjectType objectType) =>
-            await GetObjectPropertiesRawAsync(objectId, objectType, CancellationToken.None).ConfigureAwait(false);
+        public async Task<Dictionary<string, string>> GetObjectPropertiesRawAsync(Either<IPrtgObject, int> objectOrId, ObjectType objectType) =>
+            await GetObjectPropertiesRawAsync(objectOrId, objectType, CancellationToken.None).ConfigureAwait(false);
 
         /// <summary>
         /// Asynchronously retrieves all raw properties and settings of a PRTG Object with a specified cancellation token. Note: objects may have additional properties
         /// that cannot be retrieved via this method.
         /// </summary>
-        /// <param name="objectId">The ID of the object to retrieve settings and properties for.</param>
+        /// <param name="objectOrId">The object or ID of the object to retrieve settings and properties for.</param>
         /// <param name="objectType">The type of object to retrieve settings and properties for.</param>
         /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>A dictionary mapping all discoverable properties to raw values.</returns>
-        public async Task<Dictionary<string, string>> GetObjectPropertiesRawAsync(int objectId, ObjectType objectType, CancellationToken token) =>
-            await GetObjectPropertiesRawDictionaryAsync(objectId, objectType, token).ConfigureAwait(false);
+        public async Task<Dictionary<string, string>> GetObjectPropertiesRawAsync(Either<IPrtgObject, int> objectOrId, ObjectType objectType, CancellationToken token) =>
+            await GetObjectPropertiesRawDictionaryAsync(objectOrId, objectType, token).ConfigureAwait(false);
 
         /// <summary>
         /// Asynchronously retrieves all raw properties and settings of an unsupported object type. Note: objects may have additional properties
         /// that cannot be retrieved via this method.
         /// </summary>
-        /// <param name="objectId">The ID of the object to retrieve settings and properties for.</param>
+        /// <param name="objectOrId">The object or ID of the object to retrieve settings and properties for.</param>
         /// <param name="objectType">The type of object to retrieve settings and properties for.
-        /// If this value is null, PRTG will attempt to guess the object type based on the specified <paramref name="objectId"/>.</param>
+        /// If this value is null, PRTG will attempt to guess the object type based on the specified <paramref name="objectOrId"/>.</param>
         /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>A dictionary mapping all discoverable properties to raw values.</returns>
-        public async Task<Dictionary<string, string>> GetObjectPropertiesRawAsync(int objectId, string objectType = null, CancellationToken token = default(CancellationToken)) =>
-            await GetObjectPropertiesRawDictionaryAsync(objectId, objectType, token).ConfigureAwait(false);
+        public async Task<Dictionary<string, string>> GetObjectPropertiesRawAsync(Either<IPrtgObject, int> objectOrId, string objectType = null, CancellationToken token = default(CancellationToken)) =>
+            await GetObjectPropertiesRawDictionaryAsync(objectOrId, objectType, token).ConfigureAwait(false);
 
             #endregion
             #region Get Single Typed Property
@@ -3269,67 +3269,67 @@ namespace PrtgAPI
         /// <summary>
         /// Retrieves a type safe property from a PRTG Server.
         /// </summary>
-        /// <param name="objectId">The ID of the object to retrieve the property from.</param>
+        /// <param name="objectOrId">The object or ID of the object to retrieve the property from.</param>
         /// <param name="property">The well known property to retrieve.</param>
         /// <returns>A type safe representation of the specified property.</returns>
-        public object GetObjectProperty(int objectId, ObjectProperty property) =>
-            GetObjectPropertyInternal(objectId, property);
+        public object GetObjectProperty(Either<IPrtgObject, int> objectOrId, ObjectProperty property) =>
+            GetObjectPropertyInternal(objectOrId, property);
 
         /// <summary>
         /// Asynchronously retrieves a type safe property from a PRTG Server.
         /// </summary>
-        /// <param name="objectId">The ID of the object to retrieve the property from.</param>
+        /// <param name="objectOrId">The object or ID of the object to retrieve the property from.</param>
         /// <param name="property">The well known property to retrieve.</param>
         /// <returns>A type safe representation of the specified property.</returns>
-        public async Task<object> GetObjectPropertyAsync(int objectId, ObjectProperty property) =>
-            await GetObjectPropertyAsync(objectId, property, CancellationToken.None).ConfigureAwait(false);
+        public async Task<object> GetObjectPropertyAsync(Either<IPrtgObject, int> objectOrId, ObjectProperty property) =>
+            await GetObjectPropertyAsync(objectOrId, property, CancellationToken.None).ConfigureAwait(false);
 
         /// <summary>
         /// Asynchronously retrieves a type safe property from a PRTG Server with a specified cancellation token.
         /// </summary>
-        /// <param name="objectId">The ID of the object to retrieve the property from.</param>
+        /// <param name="objectOrId">The object or ID of the object to retrieve the property from.</param>
         /// <param name="property">The well known property to retrieve.</param>
         /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>A type safe representation of the specified property.</returns>
-        public async Task<object> GetObjectPropertyAsync(int objectId, ObjectProperty property, CancellationToken token) =>
-            await GetObjectPropertyInternalAsync(objectId, property, token).ConfigureAwait(false);
+        public async Task<object> GetObjectPropertyAsync(Either<IPrtgObject, int> objectOrId, ObjectProperty property, CancellationToken token) =>
+            await GetObjectPropertyInternalAsync(objectOrId, property, token).ConfigureAwait(false);
 
         /// <summary>
         /// Retrieves a type safe property from a PRTG Server, cast to its actual type. If the deserialized value is not of the type specified,
         /// an <see cref="InvalidCastException"/> will be thrown.
         /// </summary>
         /// <typeparam name="T">The type to cast the object to.</typeparam>
-        /// <param name="objectId">The ID of the object to retrieve the property from.</param>
+        /// <param name="objectOrId">The object or ID of the object to retrieve the property from.</param>
         /// <param name="property">The well known property to retrieve.</param>
         /// <exception cref="InvalidCastException">The deserialized value could not be cast to the specified type.</exception>
         /// <returns>A type safe representation of the specified property, cast to its actual type.</returns>
-        public T GetObjectProperty<T>(int objectId, ObjectProperty property) =>
-            ResponseParser.GetTypedProperty<T>(GetObjectProperty(objectId, property));
+        public T GetObjectProperty<T>(Either<IPrtgObject, int> objectOrId, ObjectProperty property) =>
+            ResponseParser.GetTypedProperty<T>(GetObjectProperty(objectOrId, property));
 
         /// <summary>
         /// Asynchronously retrieves a type safe property from a PRTG Server, cast to its actual type. If the deserialized value is not of the type specified,
         /// an <see cref="InvalidCastException"/> will be thrown.
         /// </summary>
         /// <typeparam name="T">The type to cast the object to.</typeparam>
-        /// <param name="objectId">The ID of the object to retrieve the property from.</param>
+        /// <param name="objectOrId">The object or ID of the object to retrieve the property from.</param>
         /// <param name="property">The well known property to retrieve.</param>
         /// <exception cref="InvalidCastException">The deserialized value could not be cast to the specified type.</exception>
         /// <returns>A type safe representation of the specified property, cast to its actual type.</returns>
-        public async Task<T> GetObjectPropertyAsync<T>(int objectId, ObjectProperty property) =>
-            await GetObjectPropertyAsync<T>(objectId, property, CancellationToken.None).ConfigureAwait(false);
+        public async Task<T> GetObjectPropertyAsync<T>(Either<IPrtgObject, int> objectOrId, ObjectProperty property) =>
+            await GetObjectPropertyAsync<T>(objectOrId, property, CancellationToken.None).ConfigureAwait(false);
 
         /// <summary>
         /// Asynchronously retrieves a type safe property from a PRTG Server, cast to its actual type with a specified cancellation token. If the deserialized value is not of the type specified,
         /// an <see cref="InvalidCastException"/> will be thrown.
         /// </summary>
         /// <typeparam name="T">The type to cast the object to.</typeparam>
-        /// <param name="objectId">The ID of the object to retrieve the property from.</param>
+        /// <param name="objectOrId">The object or ID of the object to retrieve the property from.</param>
         /// <param name="property">The well known property to retrieve.</param>
         /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="InvalidCastException">The deserialized value could not be cast to the specified type.</exception>
         /// <returns>A type safe representation of the specified property, cast to its actual type.</returns>
-        public async Task<T> GetObjectPropertyAsync<T>(int objectId, ObjectProperty property, CancellationToken token) =>
-            ResponseParser.GetTypedProperty<T>(await GetObjectPropertyAsync(objectId, property, token).ConfigureAwait(false));
+        public async Task<T> GetObjectPropertyAsync<T>(Either<IPrtgObject, int> objectOrId, ObjectProperty property, CancellationToken token) =>
+            ResponseParser.GetTypedProperty<T>(await GetObjectPropertyAsync(objectOrId, property, token).ConfigureAwait(false));
 
             #endregion
             #region Get Single Raw Property
@@ -3339,29 +3339,29 @@ namespace PrtgAPI
         /// If the specified property does not exist, a <see cref="PrtgRequestException"/> will be thrown, unless
         /// the PRTG Server is not in English, in which case "(Property not found)" will be returned in your server's native language.
         /// </summary>
-        /// <param name="objectId">The ID of the object whose property should be retrieved.</param>
+        /// <param name="objectOrId">The object or ID of the object whose property should be retrieved.</param>
         /// <param name="property">The property of the object to retrieve. This can be typically discovered by inspecting the "name" attribute of the properties' &lt;input/&gt; tag on the Settings page of PRTG.<para/>
         /// If the properties name ends in an underscore, this must be included.</param>
         /// <param name="text">If true, displays option properties using their label names instead of their internal numeric values.</param>
         /// <exception cref="PrtgRequestException">The specified property does not exist and the PRTG Server's language is English.</exception>
         /// <returns>The raw value of the object's property.</returns>
-        public string GetObjectPropertyRaw(int objectId, string property, bool text = false) =>
-            GetObjectPropertyRawInternal(new GetObjectPropertyRawParameters(objectId, property, text), property);
+        public string GetObjectPropertyRaw(Either<IPrtgObject, int> objectOrId, string property, bool text = false) =>
+            GetObjectPropertyRawInternal(new GetObjectPropertyRawParameters(objectOrId, property, text), property);
 
         /// <summary>
         /// Asynchronously retrieves unsupported properties and settings of a PRTG Object.<para/>
         /// If the specified property does not exist, a <see cref="PrtgRequestException"/> will be thrown, unless
         /// the PRTG Server is not in English, in which case "(Property not found)" will be returned in your server's native language.
         /// </summary>
-        /// <param name="objectId">The ID of the object whose property should be retrieved.</param>
+        /// <param name="objectOrId">The object or ID of the object whose property should be retrieved.</param>
         /// <param name="property">The property of the object to retrieve. This can be typically discovered by inspecting the "name" attribute of the properties' &lt;input/&gt; tag on the Settings page of PRTG.<para/>
         /// If the properties name ends in an underscore, this must be included.</param>
         /// <param name="text">If true, displays option properties using their label names instead of their internal numeric values.</param>
         /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="PrtgRequestException">The specified property does not exist and the PRTG Server's language is English.</exception>
         /// <returns>The raw value of the object's property.</returns>
-        public async Task<string> GetObjectPropertyRawAsync(int objectId, string property, bool text = false, CancellationToken token = default(CancellationToken)) =>
-            await GetObjectPropertyRawInternalAsync(new GetObjectPropertyRawParameters(objectId, property, text), property, token).ConfigureAwait(false);
+        public async Task<string> GetObjectPropertyRawAsync(Either<IPrtgObject, int> objectOrId, string property, bool text = false, CancellationToken token = default(CancellationToken)) =>
+            await GetObjectPropertyRawInternalAsync(new GetObjectPropertyRawParameters(objectOrId, property, text), property, token).ConfigureAwait(false);
 
             #endregion
             #region Get Single Sub Raw Property
@@ -3371,7 +3371,7 @@ namespace PrtgAPI
         /// If the specified property does not exist, a <see cref="PrtgRequestException"/> will be thrown, unless
         /// the PRTG Server is not in English, in which case "(Property not found)" will be returned in your server's native language.
         /// </summary>
-        /// <param name="objectId">The ID of the object whose property should be retrieved.</param>
+        /// <param name="objectOrId">The object or ID of the object whose property should be retrieved.</param>
         /// <param name="subId">The ID of the sub object whose property should be retrieved.</param>
         /// <param name="subType">The type of sub object to retrieve the property from.</param>
         /// <param name="property">The property of the object to retrieve. This can be typically discovered by inspecting the "name" attribute of the properties' &lt;input/&gt; tag on the Settings page of PRTG.<para/>
@@ -3379,15 +3379,15 @@ namespace PrtgAPI
         /// <param name="text">If true, displays option properties using their label names instead of their internal numeric values.</param>
         /// <exception cref="PrtgRequestException">The specified property does not exist and the PRTG Server's language is English.</exception>
         /// <returns>The raw value of the sub object's property.</returns>
-        public string GetObjectPropertyRaw(int objectId, int subId, string subType, string property, bool text = false) =>
-            GetObjectPropertyRawInternal(new GetObjectPropertyRawParameters(objectId, subId, subType, property, text), property);
+        public string GetObjectPropertyRaw(Either<IPrtgObject, int> objectOrId, int subId, string subType, string property, bool text = false) =>
+            GetObjectPropertyRawInternal(new GetObjectPropertyRawParameters(objectOrId, subId, subType, property, text), property);
 
         /// <summary>
         /// Asynchronously retrieves unsupported properties and settings of a PRTG <see cref="ISubObject"/> such as Channels and Notification Triggers.<para/>
         /// If the specified property does not exist, a <see cref="PrtgRequestException"/> will be thrown, unless
         /// the PRTG Server is not in English, in which case "(Property not found)" will be returned in your server's native language.
         /// </summary>
-        /// <param name="objectId">The ID of the object whose property should be retrieved.</param>
+        /// <param name="objectOrId">The object or ID of the object whose property should be retrieved.</param>
         /// <param name="subId">The ID of the sub object whose property should be retrieved.</param>
         /// <param name="subType">The type of sub object to retrieve the property from.</param>
         /// <param name="property">The property of the object to retrieve. This can be typically discovered by inspecting the "name" attribute of the properties' &lt;input/&gt; tag on the Settings page of PRTG.<para/>
@@ -3396,8 +3396,8 @@ namespace PrtgAPI
         /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="PrtgRequestException">The specified property does not exist and the PRTG Server's language is English.</exception>
         /// <returns>The raw value of the sub object's property.</returns>
-        public async Task<string> GetObjectPropertyRawAsync(int objectId, int subId, string subType, string property, bool text = false, CancellationToken token = default(CancellationToken)) =>
-            await GetObjectPropertyRawInternalAsync(new GetObjectPropertyRawParameters(objectId, subId, subType, property, text), property, token).ConfigureAwait(false);
+        public async Task<string> GetObjectPropertyRawAsync(Either<IPrtgObject, int> objectOrId, int subId, string subType, string property, bool text = false, CancellationToken token = default(CancellationToken)) =>
+            await GetObjectPropertyRawInternalAsync(new GetObjectPropertyRawParameters(objectOrId, subId, subType, property, text), property, token).ConfigureAwait(false);
 
             #endregion
         #endregion
@@ -3409,11 +3409,11 @@ namespace PrtgAPI
         /// Each <see cref="ObjectProperty"/> corresponds with a Property of a type derived from <see cref="ObjectSettings"/>.<para/>
         /// If PrtgAPI cannot convert the specified value to the type required by the property, PrtgAPI will throw an exception indicating the type that was expected.
         /// </summary>
-        /// <param name="objectId">The ID of the object whose properties should be modified.</param>
+        /// <param name="objectOrId">The object or ID of the object whose properties should be modified.</param>
         /// <param name="property">The property of the object to modify.</param>
         /// <param name="value">The value to set the object's property to.</param>
-        public void SetObjectProperty(int objectId, ObjectProperty property, object value) =>
-            SetObjectProperty(new[] {objectId}, property, value);
+        public void SetObjectProperty(Either<IPrtgObject, int> objectOrId, ObjectProperty property, object value) =>
+            SetObjectProperty(new[] {objectOrId.GetId()}, property, value);
 
         /// <summary>
         /// Modifies properties and settings of one or more PRTG Objects.<para/>
@@ -3431,23 +3431,23 @@ namespace PrtgAPI
         /// Each <see cref="ObjectProperty"/> corresponds with a Property of a type derived from <see cref="ObjectSettings"/>.<para/>
         /// If PrtgAPI cannot convert the specified value to the type required by the property, PrtgAPI will throw an exception indicating the type that was expected.
         /// </summary>
-        /// <param name="objectId">The ID of the object whose properties should be modified.</param>
+        /// <param name="objectOrId">The object or ID of the object whose properties should be modified.</param>
         /// <param name="property">The property of the object to modify.</param>
         /// <param name="value">The value to set the object's property to.</param>
-        public async Task SetObjectPropertyAsync(int objectId, ObjectProperty property, object value) =>
-            await SetObjectPropertyAsync(objectId, property, value, CancellationToken.None).ConfigureAwait(false);
+        public async Task SetObjectPropertyAsync(Either<IPrtgObject, int> objectOrId, ObjectProperty property, object value) =>
+            await SetObjectPropertyAsync(objectOrId, property, value, CancellationToken.None).ConfigureAwait(false);
 
         /// <summary>
         /// Asynchronously modifies properties and settings of a PRTG Object with a specified cancellation token.<para/>
         /// Each <see cref="ObjectProperty"/> corresponds with a Property of a type derived from <see cref="ObjectSettings"/>.<para/>
         /// If PrtgAPI cannot convert the specified value to the type required by the property, PrtgAPI will throw an exception indicating the type that was expected.
         /// </summary>
-        /// <param name="objectId">The ID of the object whose properties should be modified.</param>
+        /// <param name="objectOrId">The object or ID of the object whose properties should be modified.</param>
         /// <param name="property">The property of the object to modify.</param>
         /// <param name="value">The value to set the object's property to.</param>
         /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        public async Task SetObjectPropertyAsync(int objectId, ObjectProperty property, object value, CancellationToken token) =>
-            await SetObjectPropertyAsync(new[] {objectId}, property, value, token).ConfigureAwait(false);
+        public async Task SetObjectPropertyAsync(Either<IPrtgObject, int> objectOrId, ObjectProperty property, object value, CancellationToken token) =>
+            await SetObjectPropertyAsync(new[] {objectOrId.GetId()}, property, value, token).ConfigureAwait(false);
 
         /// <summary>
         /// Asynchronously modifies properties and settings of one or more PRTG Objects.<para/>
@@ -3480,10 +3480,10 @@ namespace PrtgAPI
         /// Each <see cref="ObjectProperty"/> corresponds with a Property of a type derived from <see cref="ObjectSettings"/>.<para/>
         /// If PrtgAPI cannot convert the specified value to the type required by the property, PrtgAPI will throw an exception indicating the type that was expected.
         /// </summary>
-        /// <param name="objectId">The ID of the object whose properties should be modified.</param>
+        /// <param name="objectOrId">The object or ID of the object whose properties should be modified.</param>
         /// <param name="parameters">A set of parameters describing the properties and their values to process.</param>
-        public void SetObjectProperty(int objectId, params PropertyParameter[] parameters) =>
-            SetObjectProperty(new[] {objectId}, parameters);
+        public void SetObjectProperty(Either<IPrtgObject, int> objectOrId, params PropertyParameter[] parameters) =>
+            SetObjectProperty(new[] {objectOrId.GetId()}, parameters);
 
         /// <summary>
         /// Modifies multiple properties of one or more PRTG Objects.<para/>
@@ -3500,21 +3500,21 @@ namespace PrtgAPI
         /// Each <see cref="ObjectProperty"/> corresponds with a Property of a type derived from <see cref="ObjectSettings"/>.<para/>
         /// If PrtgAPI cannot convert the specified value to the type required by the property, PrtgAPI will throw an exception indicating the type that was expected.
         /// </summary>
-        /// <param name="objectId">The ID of the object whose properties should be modified.</param>
+        /// <param name="objectOrId">The object or ID of the object whose properties should be modified.</param>
         /// <param name="parameters">A set of parameters describing the properties and their values to process.</param>
-        public async Task SetObjectPropertyAsync(int objectId, params PropertyParameter[] parameters) =>
-            await SetObjectPropertyAsync(objectId, parameters, CancellationToken.None).ConfigureAwait(false);
+        public async Task SetObjectPropertyAsync(Either<IPrtgObject, int> objectOrId, params PropertyParameter[] parameters) =>
+            await SetObjectPropertyAsync(objectOrId, parameters, CancellationToken.None).ConfigureAwait(false);
 
         /// <summary>
         /// Asynchronously modifies multiple properties of a PRTG Object with a specified cancellation token.<para/>
         /// Each <see cref="ObjectProperty"/> corresponds with a Property of a type derived from <see cref="ObjectSettings"/>.<para/>
         /// If PrtgAPI cannot convert the specified value to the type required by the property, PrtgAPI will throw an exception indicating the type that was expected.
         /// </summary>
-        /// <param name="objectId">The ID of the object whose properties should be modified.</param>
+        /// <param name="objectOrId">The object or ID of the object whose properties should be modified.</param>
         /// <param name="parameters">A set of parameters describing the properties and their values to process.</param>
         /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        public async Task SetObjectPropertyAsync(int objectId, PropertyParameter[] parameters, CancellationToken token) =>
-            await SetObjectPropertyAsync(new[] {objectId}, parameters, token).ConfigureAwait(false);
+        public async Task SetObjectPropertyAsync(Either<IPrtgObject, int> objectOrId, PropertyParameter[] parameters, CancellationToken token) =>
+            await SetObjectPropertyAsync(new[] {objectOrId.GetId()}, parameters, token).ConfigureAwait(false);
 
         /// <summary>
         /// Asynchronously modifies multiple properties of one or more PRTG Objects.<para/>
@@ -3693,23 +3693,23 @@ namespace PrtgAPI
         /// <summary>
         /// Modifies a property of a PRTG Channel based on its Sensor ID and Channel ID.
         /// </summary>
-        /// <param name="sensorId">The ID of the sensor whose channels should be modified.</param>
+        /// <param name="sensorOrId">The sensor or ID of the sensor whose channels should be modified.</param>
         /// <param name="channelId">The ID of the channel to modify.</param>
         /// <param name="property">The property of the channel to modify.</param>
         /// <param name="value">The value to set the channel's property to.</param>
-        public void SetChannelProperty(int sensorId, int channelId, ChannelProperty property, object value) =>
-            SetChannelProperty(sensorId, channelId, property, value, CancellationToken.None);
+        public void SetChannelProperty(Either<Sensor, int> sensorOrId, int channelId, ChannelProperty property, object value) =>
+            SetChannelProperty(sensorOrId, channelId, property, value, CancellationToken.None);
 
         /// <summary>
         /// Modifies a property of a PRTG Channel based on its Sensor ID and Channel ID with a specified cancellation token.
         /// </summary>
-        /// <param name="sensorId">The ID of the sensor whose channels should be modified.</param>
+        /// <param name="sensorOrId">The sensor or ID of the sensor whose channels should be modified.</param>
         /// <param name="channelId">The ID of the channel to modify.</param>
         /// <param name="property">The property of the channel to modify.</param>
         /// <param name="value">The value to set the channel's property to.</param>
         /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        public void SetChannelProperty(int sensorId, int channelId, ChannelProperty property, object value, CancellationToken token) =>
-            SetChannelProperty(new[] {sensorId}, channelId, property, value, token);
+        public void SetChannelProperty(Either<Sensor, int> sensorOrId, int channelId, ChannelProperty property, object value, CancellationToken token) =>
+            SetChannelProperty(new[] {sensorOrId.GetId()}, channelId, property, value, token);
 
         /// <summary>
         /// Modifies a property of PRTG Channels with a given Channel ID across one or more PRTG Sensors.
@@ -3735,23 +3735,23 @@ namespace PrtgAPI
         /// <summary>
         /// Asynchronously modifies a property of a PRTG Channel based on its Sensor ID and Channel ID.
         /// </summary>
-        /// <param name="sensorId">The ID of the sensor whose channels should be modified.</param>
+        /// <param name="sensorOrId">The sensor or ID of the sensor whose channels should be modified.</param>
         /// <param name="channelId">The ID of the channel to modify.</param>
         /// <param name="property">The property of the channel to modify.</param>
         /// <param name="value">The value to set the channel's property to.</param>
-        public async Task SetChannelPropertyAsync(int sensorId, int channelId, ChannelProperty property, object value) =>
-            await SetChannelPropertyAsync(sensorId, channelId, property, value, CancellationToken.None).ConfigureAwait(false);
+        public async Task SetChannelPropertyAsync(Either<Sensor, int> sensorOrId, int channelId, ChannelProperty property, object value) =>
+            await SetChannelPropertyAsync(sensorOrId, channelId, property, value, CancellationToken.None).ConfigureAwait(false);
 
         /// <summary>
         /// Asynchronously modifies a property of a PRTG Channel based on its Sensor ID and Channel ID with a specified cancellation token.
         /// </summary>
-        /// <param name="sensorId">The ID of the sensor whose channels should be modified.</param>
+        /// <param name="sensorOrId">The sensor or ID of the sensor whose channels should be modified.</param>
         /// <param name="channelId">The ID of the channel to modify.</param>
         /// <param name="property">The property of the channel to modify.</param>
         /// <param name="value">The value to set the channel's property to.</param>
         /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        public async Task SetChannelPropertyAsync(int sensorId, int channelId, ChannelProperty property, object value, CancellationToken token) =>
-            await SetChannelPropertyAsync(new[] {sensorId}, channelId, property, value, token).ConfigureAwait(false);
+        public async Task SetChannelPropertyAsync(Either<Sensor, int> sensorOrId, int channelId, ChannelProperty property, object value, CancellationToken token) =>
+            await SetChannelPropertyAsync(new[] {sensorOrId.GetId()}, channelId, property, value, token).ConfigureAwait(false);
 
         /// <summary>
         /// Asynchronously modifies a property of PRTG Channels with a given Channel ID across one or more PRTG Sensors.
@@ -3780,21 +3780,21 @@ namespace PrtgAPI
         /// <summary>
         /// Modifies one or more properties of a PRTG Channel based on its Sensor ID and Channel ID.
         /// </summary>
-        /// <param name="sensorId">The ID of the sensor whose channels should be modified.</param>
+        /// <param name="sensorOrId">The sensor or ID of the sensor whose channels should be modified.</param>
         /// <param name="channelId">The ID of the channel to modify.</param>
         /// <param name="parameters">A set of parameters describing the properties and their values to process.</param>
-        public void SetChannelProperty(int sensorId, int channelId, params ChannelParameter[] parameters) =>
-            SetChannelProperty(sensorId, channelId, parameters, CancellationToken.None);
+        public void SetChannelProperty(Either<Sensor, int> sensorOrId, int channelId, params ChannelParameter[] parameters) =>
+            SetChannelProperty(sensorOrId, channelId, parameters, CancellationToken.None);
 
         /// <summary>
         /// Modifies one or more properties of a PRTG Channel based on its Sensor ID and Channel ID with a specified cancellation token.
         /// </summary>
-        /// <param name="sensorId">The ID of the sensor whose channels should be modified.</param>
+        /// <param name="sensorOrId">The sensor or ID of the sensor whose channels should be modified.</param>
         /// <param name="channelId">The ID of the channel to modify.</param>
         /// <param name="parameters">A set of parameters describing the properties and their values to process.</param>
         /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        public void SetChannelProperty(int sensorId, int channelId, ChannelParameter[] parameters, CancellationToken token) =>
-            SetChannelProperty(new[] { sensorId }, channelId, parameters, token);
+        public void SetChannelProperty(Either<Sensor, int> sensorOrId, int channelId, ChannelParameter[] parameters, CancellationToken token) =>
+            SetChannelProperty(new[] {sensorOrId.GetId()}, channelId, parameters, token);
 
         /// <summary>
         /// Modifies multiple properties of PRTG Channels with a given Channel ID across one or more PRTG Sensors.
@@ -3818,21 +3818,21 @@ namespace PrtgAPI
         /// <summary>
         /// Asynchronously modifies one or more properties of a PRTG Channel based on its Sensor ID and Channel ID.
         /// </summary>
-        /// <param name="sensorId">The ID of the sensor whose channels should be modified.</param>
+        /// <param name="sensorOrId">The sensor or ID of the sensor whose channels should be modified.</param>
         /// <param name="channelId">The ID of the channel to modify.</param>
         /// <param name="parameters">A set of parameters describing the properties and their values to process.</param>
-        public async Task SetChannelPropertyAsync(int sensorId, int channelId, params ChannelParameter[] parameters) =>
-            await SetChannelPropertyAsync(sensorId, channelId, parameters, CancellationToken.None).ConfigureAwait(false);
+        public async Task SetChannelPropertyAsync(Either<Sensor, int> sensorOrId, int channelId, params ChannelParameter[] parameters) =>
+            await SetChannelPropertyAsync(sensorOrId, channelId, parameters, CancellationToken.None).ConfigureAwait(false);
 
         /// <summary>
         /// Asynchronously modifies one or more properties of a PRTG Channel based on its Sensor ID and Channel ID with a specified cancellation token.
         /// </summary>
-        /// <param name="sensorId">The ID of the sensor whose channels should be modified.</param>
+        /// <param name="sensorOrId">The sensor or ID of the sensor whose channels should be modified.</param>
         /// <param name="channelId">The ID of the channel to modify.</param>
         /// <param name="parameters">A set of parameters describing the properties and their values to process.</param>
         /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        public async Task SetChannelPropertyAsync(int sensorId, int channelId, ChannelParameter[] parameters, CancellationToken token) =>
-            await SetChannelPropertyAsync(new[] { sensorId }, channelId, parameters, token).ConfigureAwait(false);
+        public async Task SetChannelPropertyAsync(Either<Sensor, int> sensorOrId, int channelId, ChannelParameter[] parameters, CancellationToken token) =>
+            await SetChannelPropertyAsync(new[] {sensorOrId.GetId()}, channelId, parameters, token).ConfigureAwait(false);
 
         /// <summary>
         /// Asynchronously modifies multiple properties of PRTG Channels with a given Channel ID across one or more PRTG Sensors.
@@ -3859,12 +3859,12 @@ namespace PrtgAPI
         /// <summary>
         /// Modifies unsupported properties and settings of a PRTG Object.
         /// </summary>
-        /// <param name="objectId">The ID of the object whose properties should be modified.</param>
+        /// <param name="objectOrId">The object or ID of the object whose properties should be modified.</param>
         /// <param name="property">The property of the object to modify. This can be typically discovered by inspecting the "name" attribute of the properties' &lt;input/&gt; tag on the Settings page of PRTG.<para/>
         /// If the properties name ends in an underscore, this must be included.</param>
         /// <param name="value">The value to set the object's property to. For radio buttons and dropdown lists, this is the integer found in the 'value' attribute.</param>
-        public void SetObjectPropertyRaw(int objectId, string property, string value) =>
-            SetObjectPropertyRaw(new[] {objectId}, property, value);
+        public void SetObjectPropertyRaw(Either<IPrtgObject, int> objectOrId, string property, string value) =>
+            SetObjectPropertyRaw(new[] {objectOrId.GetId()}, property, value);
 
         /// <summary>
         /// Modifies unsupported properties and settings of one or more PRTG Objects.
@@ -3879,23 +3879,23 @@ namespace PrtgAPI
         /// <summary>
         /// Asynchronously modifies unsupported properties and settings of a PRTG Object.
         /// </summary>
-        /// <param name="objectId">The ID of the object whose properties should be modified.</param>
+        /// <param name="objectOrId">The object or ID of the object whose properties should be modified.</param>
         /// <param name="property">The property of the object to modify. This can be typically discovered by inspecting the "name" attribute of the properties' &lt;input/&gt; tag on the Settings page of PRTG.<para/>
         /// If the properties name ends in an underscore, this must be included.</param>
         /// <param name="value">The value to set the object's property to. For radio buttons and dropdown lists, this is the integer found in the 'value' attribute.</param>
-        public async Task SetObjectPropertyRawAsync(int objectId, string property, string value) =>
-            await SetObjectPropertyRawAsync(objectId, property, value, CancellationToken.None).ConfigureAwait(false);
+        public async Task SetObjectPropertyRawAsync(Either<IPrtgObject, int> objectOrId, string property, string value) =>
+            await SetObjectPropertyRawAsync(objectOrId, property, value, CancellationToken.None).ConfigureAwait(false);
 
         /// <summary>
         /// Asynchronously modifies unsupported properties and settings of a PRTG Object with a specified cancellation token.
         /// </summary>
-        /// <param name="objectId">The ID of the object whose properties should be modified.</param>
+        /// <param name="objectOrId">The object or ID of the object whose properties should be modified.</param>
         /// <param name="property">The property of the object to modify. This can be typically discovered by inspecting the "name" attribute of the properties' &lt;input/&gt; tag on the Settings page of PRTG.<para/>
         /// If the properties name ends in an underscore, this must be included.</param>
         /// <param name="value">The value to set the object's property to. For radio buttons and dropdown lists, this is the integer found in the 'value' attribute.</param>
         /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        public async Task SetObjectPropertyRawAsync(int objectId, string property, string value, CancellationToken token) =>
-            await SetObjectPropertyRawAsync(new[] {objectId}, property, value, token).ConfigureAwait(false);
+        public async Task SetObjectPropertyRawAsync(Either<IPrtgObject, int> objectOrId, string property, string value, CancellationToken token) =>
+            await SetObjectPropertyRawAsync(new[] {objectOrId.GetId()}, property, value, token).ConfigureAwait(false);
 
         /// <summary>
         /// Asynchronously modifies unsupported properties and settings of one or more PRTG Objects.
@@ -3924,10 +3924,10 @@ namespace PrtgAPI
         /// <summary>
         /// Modifies multiple unsupported properties of a PRTG Object.
         /// </summary>
-        /// <param name="objectId">The ID of the object whose properties should be modified.</param>
+        /// <param name="objectOrId">The object or ID of the object whose properties should be modified.</param>
         /// <param name="parameters">A set of parameters describing the properties and their values to process.</param>
-        public void SetObjectPropertyRaw(int objectId, params CustomParameter[] parameters) =>
-            SetObjectPropertyRaw(new[] { objectId }, parameters);
+        public void SetObjectPropertyRaw(Either<IPrtgObject, int> objectOrId, params CustomParameter[] parameters) =>
+            SetObjectPropertyRaw(new[] {objectOrId.GetId()}, parameters);
 
         /// <summary>
         /// Modifies multiple unsupported properties of one or more PRTG Objects.
@@ -3940,19 +3940,19 @@ namespace PrtgAPI
         /// <summary>
         /// Asynchronously modifies multiple unsupported properties of a PRTG Object.
         /// </summary>
-        /// <param name="objectId">The ID of the object whose properties should be modified.</param>
+        /// <param name="objectOrId">The object or ID of the object whose properties should be modified.</param>
         /// <param name="parameters">A set of parameters describing the properties and their values to process.</param>
-        public async Task SetObjectPropertyRawAsync(int objectId, params CustomParameter[] parameters) =>
-            await SetObjectPropertyRawAsync(objectId, parameters, CancellationToken.None).ConfigureAwait(false);
+        public async Task SetObjectPropertyRawAsync(Either<IPrtgObject, int> objectOrId, params CustomParameter[] parameters) =>
+            await SetObjectPropertyRawAsync(objectOrId, parameters, CancellationToken.None).ConfigureAwait(false);
 
         /// <summary>
         /// Asynchronously modifies multiple unsupported properties of a PRTG Object with a specified cancellation token.
         /// </summary>
-        /// <param name="objectId">The ID of the object whose properties should be modified.</param>
+        /// <param name="objectOrId">The object or ID of the object whose properties should be modified.</param>
         /// <param name="parameters">A set of parameters describing the properties and their values to process.</param>
         /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        public async Task SetObjectPropertyRawAsync(int objectId, CustomParameter[] parameters, CancellationToken token) =>
-            await SetObjectPropertyRawAsync(new[] { objectId }, parameters, token).ConfigureAwait(false);
+        public async Task SetObjectPropertyRawAsync(Either<IPrtgObject, int> objectOrId, CustomParameter[] parameters, CancellationToken token) =>
+            await SetObjectPropertyRawAsync(new[] {objectOrId.GetId()}, parameters, token).ConfigureAwait(false);
 
         /// <summary>
         /// Asynchronously modifies multiple unsupported properties of one or more PRTG Objects.
@@ -4065,12 +4065,12 @@ namespace PrtgAPI
         /// If a progress callback is specified, it is up to the programmer to specify the wait duration between each request. If at any time
         /// the progress callback returns false, PrtgAPI will stop waiting for all probes to restart.
         /// </summary>
-        /// <param name="probeId">The ID of the probe to restart.</param>
+        /// <param name="probeOrId">The probe or ID of the probe to restart.</param>
         /// <param name="waitForRestart">Whether to wait for the Probe Service on all probes to restart before completing this method.</param>
         /// <param name="progressCallback">A callback method to execute upon each request against PRTG to check whether all probes have restarted.</param>
         /// <param name="token">A cancellation token to use when waiting for all probes to restart. If cancellation is requested, this method will abort waiting for any remaining probes to restart.</param>
-        public void RestartProbe(int probeId, bool waitForRestart = false, Func<ProbeRestartProgress, bool> progressCallback = null, CancellationToken token = default(CancellationToken)) =>
-            RestartProbe(new[] { probeId }, waitForRestart, p => progressCallback(p.First()), token);
+        public void RestartProbe(Either<Probe, int> probeOrId, bool waitForRestart = false, Func<ProbeRestartProgress, bool> progressCallback = null, CancellationToken token = default(CancellationToken)) =>
+            RestartProbe(new[] {probeOrId.GetId()}, waitForRestart, p => progressCallback(p.First()), token);
 
         /// <summary>
         /// Asynchronously restarts the PRTG Probe Service of a specified PRTG Probe.<para/>
@@ -4078,12 +4078,12 @@ namespace PrtgAPI
         /// If a progress callback is specified, it is up to the programmer to specify the wait duration between each request. If at any time
         /// the progress callback returns false, PrtgAPI will stop waiting for all probes to restart.
         /// </summary>
-        /// <param name="probeId">The ID of the probe to restart.</param>
+        /// <param name="probeOrId">The probe or ID of the probe to restart.</param>
         /// <param name="waitForRestart">Whether to wait for the Probe Service on all probes to restart before completing this method.</param>
         /// <param name="progressCallback">A callback method to execute upon each request against PRTG to check whether all probes have restarted.</param>
         /// <param name="token">A cancellation token to use when waiting for all probes to restart. If cancellation is requested, this method will abort waiting for any remaining probes to restart.</param>
-        public async Task RestartProbeAsync(int probeId, bool waitForRestart = false, Func<ProbeRestartProgress, bool> progressCallback = null, CancellationToken token = default(CancellationToken)) =>
-            await RestartProbeAsync(new[] { probeId }, waitForRestart, p => progressCallback(p.First()), token).ConfigureAwait(false);
+        public async Task RestartProbeAsync(Either<Probe, int> probeOrId, bool waitForRestart = false, Func<ProbeRestartProgress, bool> progressCallback = null, CancellationToken token = default(CancellationToken)) =>
+            await RestartProbeAsync(new[] {probeOrId.GetId()}, waitForRestart, p => progressCallback(p.First()), token).ConfigureAwait(false);
 
         /// <summary>
         /// Restarts the PRTG Probe Service of one or more PRTG Probes. If no probe ID is specified, the PRTG Probe Service will be restarted on all PRTG Probes.<para/>
@@ -4140,43 +4140,43 @@ namespace PrtgAPI
         /// <summary>
         /// Approves or denies a newly installed probe for use within PRTG.
         /// </summary>
-        /// <param name="probeId">The ID of the probe to set the approval status of.</param>
+        /// <param name="probeOrId">The probe or ID of the probe to set the approval status of.</param>
         /// <param name="action">The approval action to perform for the probe.</param>
         /// <exception cref="InvalidOperationException">The specified object ID is not a probe or is a probe that has already been approved.</exception>
-        public void ApproveProbe(int probeId, ProbeApproval action)
+        public void ApproveProbe(Either<Probe, int> probeOrId, ProbeApproval action)
         {
-            var approved = GetProbeApprovalStatus(probeId);
+            var approved = GetProbeApprovalStatus(probeOrId);
 
             if (approved)
-                throw new InvalidOperationException($"Cannot change approval status of probe with ID '{probeId}': probe has already been approved.");
+            throw new InvalidOperationException($"Cannot change approval status of probe with ID '{probeOrId}': probe has already been approved.");
 
-            ApproveProbeInternal(probeId, action);
+            ApproveProbeInternal(probeOrId, action);
         }
 
         /// <summary>
         /// Asynchronously approves or denies a newly installed probe for use within PRTG.
         /// </summary>
-        /// <param name="probeId">The ID of the probe to set the approval status of.</param>
+        /// <param name="probeOrId">The probe or ID of the probe to set the approval status of.</param>
         /// <param name="action">The approval action to perform for the probe.</param>
         /// <exception cref="InvalidOperationException">The specified object ID is not a probe or is a probe that has already been approved.</exception>
-        public async Task ApproveProbeAsync(int probeId, ProbeApproval action) =>
-            await ApproveProbeAsync(probeId, action, CancellationToken.None).ConfigureAwait(false);
+        public async Task ApproveProbeAsync(Either<Probe, int> probeOrId, ProbeApproval action) =>
+            await ApproveProbeAsync(probeOrId, action, CancellationToken.None).ConfigureAwait(false);
 
         /// <summary>
         /// Asynchronously approves or denies a newly installed probe for use within PRTG with a specified cancellation token.
         /// </summary>
-        /// <param name="probeId">The ID of the probe to set the approval status of.</param>
+        /// <param name="probeOrId">The probe or ID of the probe to set the approval status of.</param>
         /// <param name="action">The approval action to perform for the probe.</param>
         /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="InvalidOperationException">The specified object ID is not a probe or is a probe that has already been approved.</exception>
-        public async Task ApproveProbeAsync(int probeId, ProbeApproval action, CancellationToken token)
+        public async Task ApproveProbeAsync(Either<Probe, int> probeOrId, ProbeApproval action, CancellationToken token)
         {
-            var approved = await GetProbeApprovalStatusAsync(probeId, token).ConfigureAwait(false);
+            var approved = await GetProbeApprovalStatusAsync(probeOrId, token).ConfigureAwait(false);
 
             if (approved)
-                throw new InvalidOperationException($"Cannot change approval status of probe with ID '{probeId}': probe has already been approved.");
+            throw new InvalidOperationException($"Cannot change approval status of probe with ID '{probeOrId}': probe has already been approved.");
 
-            await ApproveProbeInternalAsync(probeId, action, token).ConfigureAwait(false);
+            await ApproveProbeInternalAsync(probeOrId, action, token).ConfigureAwait(false);
         }
 
         #endregion
@@ -4211,10 +4211,10 @@ namespace PrtgAPI
         /// <summary>
         /// Moves the position of an object up or down under its parent within the PRTG User Interface.
         /// </summary>
-        /// <param name="objectId">The object to reposition.</param>
+        /// <param name="objectOrId">The object or ID of the object to reposition.</param>
         /// <param name="position">The direction to move in.</param>
-        public void SetPosition(int objectId, Position position) =>
-            RequestEngine.ExecuteRequest(new SetPositionParameters(objectId, position));
+        public void SetPosition(Either<IPrtgObject, int> objectOrId, Position position) =>
+            RequestEngine.ExecuteRequest(new SetPositionParameters(objectOrId, position));
 
         /// <summary>
         /// Sets the absolute position of an object under its parent within the PRTG User Interface.
@@ -4227,19 +4227,19 @@ namespace PrtgAPI
         /// <summary>
         /// Asynchronously moves the position of an object up or down under its parent within the PRTG User Interface.
         /// </summary>
-        /// <param name="objectId">The object to reposition.</param>
+        /// <param name="objectOrId">The object or ID of the object to reposition.</param>
         /// <param name="position">The direction to move in.</param>
-        public async Task SetPositionAsync(int objectId, Position position) =>
-            await SetPositionAsync(objectId, position, CancellationToken.None).ConfigureAwait(false);
+        public async Task SetPositionAsync(Either<IPrtgObject, int> objectOrId, Position position) =>
+            await SetPositionAsync(objectOrId, position, CancellationToken.None).ConfigureAwait(false);
 
         /// <summary>
         /// Asynchronously moves the position of an object up or down under its parent within the PRTG User Interface with a specified cancellation token.
         /// </summary>
-        /// <param name="objectId">The object to reposition.</param>
+        /// <param name="objectOrId">The object or ID of the object to reposition.</param>
         /// <param name="position">The direction to move in.</param>
         /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        public async Task SetPositionAsync(int objectId, Position position, CancellationToken token) =>
-            await RequestEngine.ExecuteRequestAsync(new SetPositionParameters(objectId, position), token: token).ConfigureAwait(false);
+        public async Task SetPositionAsync(Either<IPrtgObject, int> objectOrId, Position position, CancellationToken token) =>
+            await RequestEngine.ExecuteRequestAsync(new SetPositionParameters(objectOrId, position), token: token).ConfigureAwait(false);
 
         /// <summary>
         /// Asynchronously sets the absolute position of an object under its parent within the PRTG User Interface.
@@ -4264,27 +4264,27 @@ namespace PrtgAPI
         /// <summary>
         /// Moves a device or group (excluding the root group) to another group or probe within PRTG.
         /// </summary>
-        /// <param name="objectId">The ID of a device or group to move.</param>
-        /// <param name="destinationId">The group or probe to move the object to.</param>
-        public void MoveObject(int objectId, int destinationId) =>
-            RequestEngine.ExecuteRequest(new MoveObjectParameters(objectId, destinationId));
+        /// <param name="objectOrId">The device or group to move.</param>
+        /// <param name="destination">The group or probe to move the object to.</param>
+        public void MoveObject(Either<IPrtgObject, int> objectOrId, Either<GroupOrProbe, int> destination) =>
+            RequestEngine.ExecuteRequest(new MoveObjectParameters(objectOrId, destination));
 
         /// <summary>
         /// Asynchronously moves a device or group (excluding the root group) to another group or probe within PRTG.
         /// </summary>
-        /// <param name="objectId">The ID of a device or group to move.</param>
-        /// <param name="destinationId">The group or probe to move the object to.</param>
-        public async Task MoveObjectAsync(int objectId, int destinationId) =>
-            await MoveObjectAsync(objectId, destinationId, CancellationToken.None).ConfigureAwait(false);
+        /// <param name="objectOrId">The device or group to move.</param>
+        /// <param name="destination">The group or probe to move the object to.</param>
+        public async Task MoveObjectAsync(Either<IPrtgObject, int> objectOrId, Either<GroupOrProbe, int> destination) =>
+            await MoveObjectAsync(objectOrId, destination, CancellationToken.None).ConfigureAwait(false);
 
         /// <summary>
         /// Asynchronously moves a device or group (excluding the root group) to another group or probe within PRTG with a specified cancellation token.
         /// </summary>
-        /// <param name="objectId">The ID of a device or group to move.</param>
-        /// <param name="destinationId">The group or probe to move the object to.</param>
+        /// <param name="objectOrId">The device or group to move.</param>
+        /// <param name="destination">The group or probe to move the object to.</param>
         /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        public async Task MoveObjectAsync(int objectId, int destinationId, CancellationToken token) =>
-            await RequestEngine.ExecuteRequestAsync(new MoveObjectParameters(objectId, destinationId), token: token).ConfigureAwait(false);
+        public async Task MoveObjectAsync(Either<IPrtgObject, int> objectOrId, Either<GroupOrProbe, int> destination, CancellationToken token) =>
+            await RequestEngine.ExecuteRequestAsync(new MoveObjectParameters(objectOrId, destination), token: token).ConfigureAwait(false);
 
             #endregion
             #region Sort Alphabetically
@@ -4292,24 +4292,24 @@ namespace PrtgAPI
         /// <summary>
         /// Sorts the children of a device, group or probe alphabetically.
         /// </summary>
-        /// <param name="objectId">The ID of the object to sort.</param>
-        public void SortAlphabetically(int objectId) =>
-            RequestEngine.ExecuteRequest(new SortAlphabeticallyParameters(objectId));
+        /// <param name="objectOrId">The object or ID of the object to sort.</param>
+        public void SortAlphabetically(Either<IPrtgObject, int> objectOrId) =>
+            RequestEngine.ExecuteRequest(new SortAlphabeticallyParameters(objectOrId));
 
         /// <summary>
         /// Asynchronously sorts the children of a device, group or probe alphabetically.
         /// </summary>
-        /// <param name="objectId">The ID of the object to sort.</param>
-        public async Task SortAlphabeticallyAsync(int objectId) =>
-            await SortAlphabeticallyAsync(objectId, CancellationToken.None).ConfigureAwait(false);
+        /// <param name="objectOrId">The object or ID of the object to sort.</param>
+        public async Task SortAlphabeticallyAsync(Either<IPrtgObject, int> objectOrId) =>
+            await SortAlphabeticallyAsync(objectOrId, CancellationToken.None).ConfigureAwait(false);
 
         /// <summary>
         /// Asynchronously sorts the children of a device, group or probe alphabetically with a specified cancellation token.
         /// </summary>
-        /// <param name="objectId">The ID of the object to sort.</param>
+        /// <param name="objectOrId">The object or ID of the object to sort.</param>
         /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        public async Task SortAlphabeticallyAsync(int objectId, CancellationToken token) =>
-            await RequestEngine.ExecuteRequestAsync(new SortAlphabeticallyParameters(objectId), token: token).ConfigureAwait(false);
+        public async Task SortAlphabeticallyAsync(Either<IPrtgObject, int> objectOrId, CancellationToken token) =>
+            await RequestEngine.ExecuteRequestAsync(new SortAlphabeticallyParameters(objectOrId), token: token).ConfigureAwait(false);
 
             #endregion
             #region Remove Object
@@ -4342,10 +4342,10 @@ namespace PrtgAPI
         /// <summary>
         /// Renames an object such as a Sensor, Device, Group or Probe within PRTG.
         /// </summary>
-        /// <param name="objectId">ID of the object to rename.</param>
+        /// <param name="objectOrId">The object or ID of the object to rename.</param>
         /// <param name="name">New name to give the object.</param>
-        public void RenameObject(int objectId, string name) =>
-            RenameObject(new[] {objectId}, name);
+        public void RenameObject(Either<IPrtgObject, int> objectOrId, string name) =>
+            RenameObject(new[] {objectOrId.GetId()}, name);
 
         /// <summary>
         /// Renames one or more Sensors, Devices, Groups or Probes within PRTG.
@@ -4358,19 +4358,19 @@ namespace PrtgAPI
         /// <summary>
         /// Asynchronously renames an object such as a Sensor, Device, Group or Probe within PRTG.
         /// </summary>
-        /// <param name="objectId">ID of the object to rename.</param>
+        /// <param name="objectOrId">The object or ID of the object to rename.</param>
         /// <param name="name">New name to give the object.</param>
-        public async Task RenameObjectAsync(int objectId, string name) =>
-            await RenameObjectAsync(objectId, name, CancellationToken.None).ConfigureAwait(false);
+        public async Task RenameObjectAsync(Either<IPrtgObject, int> objectOrId, string name) =>
+            await RenameObjectAsync(objectOrId, name, CancellationToken.None).ConfigureAwait(false);
 
         /// <summary>
         /// Asynchronously renames an object such as a Sensor, Device, Group or Probe within PRTG with a specified cancellation token.
         /// </summary>
-        /// <param name="objectId">ID of the object to rename.</param>
+        /// <param name="objectOrId">The object or ID of the object to rename.</param>
         /// <param name="name">New name to give the object.</param>
         /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        public async Task RenameObjectAsync(int objectId, string name, CancellationToken token) =>
-            await RenameObjectAsync(new[] {objectId}, name, token: token).ConfigureAwait(false);
+        public async Task RenameObjectAsync(Either<IPrtgObject, int> objectOrId, string name, CancellationToken token) =>
+            await RenameObjectAsync(new[] {objectOrId.GetId()}, name, token: token).ConfigureAwait(false);
 
         /// <summary>
         /// Asynchronously renames one or more Sensors, Devices, Groups or Probes within PRTG.

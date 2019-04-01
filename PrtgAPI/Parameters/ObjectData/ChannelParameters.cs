@@ -5,9 +5,9 @@ namespace PrtgAPI.Parameters
     [ExcludeFromCodeCoverage]
     class ChannelParameters : ContentParameters<Channel>
     {
-        public ChannelParameters(int sensorId) : base(Content.Channels)
+        public ChannelParameters(Either<Sensor, int> sensorOrId) : base(Content.Channels)
         {
-            this[Parameter.Id] = sensorId;
+            this[Parameter.Id] = sensorOrId.GetId();
         }
     }
 }

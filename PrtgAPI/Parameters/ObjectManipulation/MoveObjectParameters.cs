@@ -7,9 +7,9 @@ namespace PrtgAPI.Parameters
     {
         CommandFunction ICommandParameters.Function => CommandFunction.MoveObjectNow;
 
-        public MoveObjectParameters(int objectId, int targetId) : base(objectId)
+        public MoveObjectParameters(Either<IPrtgObject, int> objectOrId, Either<GroupOrProbe, int> destination) : base(objectOrId)
         {
-            TargetId = targetId;
+            TargetId = destination.GetId();
         }
 
         public int TargetId

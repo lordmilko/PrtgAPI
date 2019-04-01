@@ -52,5 +52,21 @@ namespace PrtgAPI
 
             return type.Name;
         }
+
+        internal static int GetId<T>(this Either<T, int> either) where T : IPrtgObject
+        {
+            if (either.IsLeft)
+                return either.Left.GetId();
+
+            return either.Right;
+        }
+
+        internal static Either<IPrtgObject, int> ToPrtgObject<T>(this Either<T, int> either) where T : IPrtgObject
+        {
+            if (either.IsLeft)
+                return either.Left;
+
+            return either.Right;
+        }
     }
 }

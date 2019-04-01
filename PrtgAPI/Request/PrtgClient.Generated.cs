@@ -33,7 +33,7 @@ namespace PrtgAPI
         // GetChannelsInternal
         //######################################
 
-        internal List<Channel> GetChannelsInternal(int sensorId, Func<string, bool> nameFilter = null, Func<int, bool> idFilter = null, CancellationToken token = default(CancellationToken))
+        internal List<Channel> GetChannelsInternal(Either<Sensor, int> sensorOrId, Func<string, bool> nameFilter = null, Func<int, bool> idFilter = null, CancellationToken token = default(CancellationToken))
         {
             if (nameFilter == null)
                 nameFilter = n => true;
@@ -41,7 +41,7 @@ namespace PrtgAPI
             if (idFilter == null)
                 idFilter = i => true;
 
-            var response = ObjectEngine.GetObjectsXml(new ChannelParameters(sensorId), token: token);
+            var response = ObjectEngine.GetObjectsXml(new ChannelParameters(sensorOrId), token: token);
 
             response.Descendants("item").Where(item => item.Element("objid").Value == "-4").Remove();
 
@@ -58,10 +58,10 @@ namespace PrtgAPI
             {
                 var id = Convert.ToInt32(item.Element("objid").Value);
 
-                var properties = GetChannelProperties(sensorId, id, token);
+                var properties = GetChannelProperties(sensorOrId, id, token);
 
                 item.Add(properties.Nodes());
-                item.Add(new XElement("injected_sensorId", sensorId));
+                item.Add(new XElement("injected_sensorId", sensorOrId.GetId()));
             }
 
             if (items.Count > 0)
@@ -70,7 +70,7 @@ namespace PrtgAPI
             return new List<Channel>();
         }
 
-        internal async Task<List<Channel>> GetChannelsInternalAsync(int sensorId, Func<string, bool> nameFilter = null, Func<int, bool> idFilter = null, CancellationToken token = default(CancellationToken))
+        internal async Task<List<Channel>> GetChannelsInternalAsync(Either<Sensor, int> sensorOrId, Func<string, bool> nameFilter = null, Func<int, bool> idFilter = null, CancellationToken token = default(CancellationToken))
         {
             if (nameFilter == null)
                 nameFilter = n => true;
@@ -78,7 +78,7 @@ namespace PrtgAPI
             if (idFilter == null)
                 idFilter = i => true;
 
-            var response = await ObjectEngine.GetObjectsXmlAsync(new ChannelParameters(sensorId), token: token).ConfigureAwait(false);
+            var response = await ObjectEngine.GetObjectsXmlAsync(new ChannelParameters(sensorOrId), token: token).ConfigureAwait(false);
 
             response.Descendants("item").Where(item => item.Element("objid").Value == "-4").Remove();
 
@@ -95,10 +95,10 @@ namespace PrtgAPI
             {
                 var id = Convert.ToInt32(item.Element("objid").Value);
 
-                var properties = await GetChannelPropertiesAsync(sensorId, id, token).ConfigureAwait(false);
+                var properties = await GetChannelPropertiesAsync(sensorOrId, id, token).ConfigureAwait(false);
 
                 item.Add(properties.Nodes());
-                item.Add(new XElement("injected_sensorId", sensorId));
+                item.Add(new XElement("injected_sensorId", sensorOrId.GetId()));
             })).ConfigureAwait(false);
 
             if (items.Count > 0)
@@ -628,52 +628,52 @@ namespace PrtgAPI
         /// Entry point for resolving sensor targets of a supported sensor type.
         /// </summary>
         /// <typeparam name="T">The type of sensor targets the response should be transformed into.</typeparam>
-        /// <param name="deviceId">ID of the device to retrieve sensor targets from.</param>
+        /// <param name="deviceOrId">The device or ID of the device to retrieve sensor targets from.</param>
         /// <param name="sensorType">Type of sensor to retrieve sensor targets for.</param>
         /// <param name="progressCallback">A callback function used to monitor the progress of the request. If this function returns false, the request is aborted and this method returns null.</param>
         /// <param name="timeout">Duration (in seconds) to wait for sensor targets to resolve.</param>
         /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <param name="parser">Transforms the result of <see cref="HtmlFunction.AddSensor4"/> to instances of type <typeparamref name="T"/>.</param>
         /// <returns>A list of targets that were extracted from PRTG.</returns>
-        internal List<T> ResolveSensorTargets<T>(int deviceId, SensorType sensorType, Func<int, bool> progressCallback, int timeout, CancellationToken token, Func<string, List<T>> parser)
+        internal List<T> ResolveSensorTargets<T>(Either<Device, int> deviceOrId, SensorType sensorType, Func<int, bool> progressCallback, int timeout, CancellationToken token, Func<string, List<T>> parser)
         {
-            var parameters = new BeginAddSensorQueryParameters(deviceId, sensorType);
+            var parameters = new BeginAddSensorQueryParameters(deviceOrId, sensorType);
 
-            return ResolveSensorTargets(deviceId, parameters, progressCallback, timeout, token, parser);
+            return ResolveSensorTargets(deviceOrId, parameters, progressCallback, timeout, token, parser);
         }
 
         /// <summary>
         /// Entry point for resolving sensor targets of a raw sensor type.
         /// </summary>
         /// <typeparam name="T">The type of sensor targets the response should be transformed into.</typeparam>
-        /// <param name="deviceId">ID of the device to retrieve sensor targets from.</param>
+        /// <param name="deviceOrId">The device or ID of the device to retrieve sensor targets from.</param>
         /// <param name="sensorType">Type of sensor to retrieve sensor targets for.</param>
         /// <param name="progressCallback">A callback function used to monitor the progress of the request. If this function returns false, the request is aborted and this method returns null.</param>
         /// <param name="timeout">Duration (in seconds) to wait for sensor targets to resolve.</param>
         /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <param name="parser">Transforms the result of <see cref="HtmlFunction.AddSensor4"/> to instances of type <typeparamref name="T"/>.</param>
         /// <returns>A list of targets that were extracted from PRTG.</returns>
-        internal List<T> ResolveSensorTargets<T>(int deviceId, string sensorType, Func<int, bool> progressCallback, int timeout, CancellationToken token, Func<string, List<T>> parser)
+        internal List<T> ResolveSensorTargets<T>(Either<Device, int> deviceOrId, string sensorType, Func<int, bool> progressCallback, int timeout, CancellationToken token, Func<string, List<T>> parser)
         {
-            var parameters = new BeginAddSensorQueryParameters(deviceId, sensorType);
+            var parameters = new BeginAddSensorQueryParameters(deviceOrId, sensorType);
 
-            return ResolveSensorTargets(deviceId, parameters, progressCallback, timeout, token, parser);
+            return ResolveSensorTargets(deviceOrId, parameters, progressCallback, timeout, token, parser);
         }
 
         /// <summary>
         /// Common entry point for scraping <see cref="HtmlFunction.AddSensor4"/> for either a supported or raw sensor type and then transforming the response into a set of sensor targets.
         /// </summary>
         /// <typeparam name="T">The type of sensor targets the response should be transformed into.</typeparam>
-        /// <param name="deviceId">ID of the device to retrieve sensor targets from.</param>
+        /// <param name="deviceOrId">The device or ID of the device to retrieve sensor targets from.</param>
         /// <param name="parameters">A set of parameters for requesting the <see cref="Parameter.TmpId"/> of either a supported or raw sensor type.</param>
         /// <param name="progressCallback">A callback function used to monitor the progress of the request. If this function returns false, the request is aborted and this method returns null.</param>
         /// <param name="timeout">Duration (in seconds) to wait for sensor targets to resolve.</param>
         /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <param name="parser">Transforms the result of <see cref="HtmlFunction.AddSensor4"/> to instances of type <typeparamref name="T"/>.</param>
         /// <returns>A list of targets that were extracted from PRTG.</returns>
-        private List<T> ResolveSensorTargets<T>(int deviceId, BeginAddSensorQueryParameters parameters, Func<int, bool> progressCallback, int timeout, CancellationToken token, Func<string, List<T>> parser)
+        private List<T> ResolveSensorTargets<T>(Either<Device, int> deviceOrId, BeginAddSensorQueryParameters parameters, Func<int, bool> progressCallback, int timeout, CancellationToken token, Func<string, List<T>> parser)
         {
-            var response = GetSensorTargetsResponse(deviceId, parameters, progressCallback, timeout, token);
+            var response = GetSensorTargetsResponse(deviceOrId, parameters, progressCallback, timeout, token);
 
             if (response == null)
                 return null;
@@ -685,52 +685,52 @@ namespace PrtgAPI
         /// Entry point for resolving sensor targets of a supported sensor type.
         /// </summary>
         /// <typeparam name="T">The type of sensor targets the response should be transformed into.</typeparam>
-        /// <param name="deviceId">ID of the device to retrieve sensor targets from.</param>
+        /// <param name="deviceOrId">The device or ID of the device to retrieve sensor targets from.</param>
         /// <param name="sensorType">Type of sensor to retrieve sensor targets for.</param>
         /// <param name="progressCallback">A callback function used to monitor the progress of the request. If this function returns false, the request is aborted and this method returns null.</param>
         /// <param name="timeout">Duration (in seconds) to wait for sensor targets to resolve.</param>
         /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <param name="parser">Transforms the result of <see cref="HtmlFunction.AddSensor4"/> to instances of type <typeparamref name="T"/>.</param>
         /// <returns>A list of targets that were extracted from PRTG.</returns>
-        internal async Task<List<T>> ResolveSensorTargetsAsync<T>(int deviceId, SensorType sensorType, Func<int, bool> progressCallback, int timeout, CancellationToken token, Func<string, List<T>> parser)
+        internal async Task<List<T>> ResolveSensorTargetsAsync<T>(Either<Device, int> deviceOrId, SensorType sensorType, Func<int, bool> progressCallback, int timeout, CancellationToken token, Func<string, List<T>> parser)
         {
-            var parameters = new BeginAddSensorQueryParameters(deviceId, sensorType);
+            var parameters = new BeginAddSensorQueryParameters(deviceOrId, sensorType);
 
-            return await ResolveSensorTargetsAsync(deviceId, parameters, progressCallback, timeout, token, parser).ConfigureAwait(false);
+            return await ResolveSensorTargetsAsync(deviceOrId, parameters, progressCallback, timeout, token, parser).ConfigureAwait(false);
         }
 
         /// <summary>
         /// Entry point for resolving sensor targets of a raw sensor type.
         /// </summary>
         /// <typeparam name="T">The type of sensor targets the response should be transformed into.</typeparam>
-        /// <param name="deviceId">ID of the device to retrieve sensor targets from.</param>
+        /// <param name="deviceOrId">The device or ID of the device to retrieve sensor targets from.</param>
         /// <param name="sensorType">Type of sensor to retrieve sensor targets for.</param>
         /// <param name="progressCallback">A callback function used to monitor the progress of the request. If this function returns false, the request is aborted and this method returns null.</param>
         /// <param name="timeout">Duration (in seconds) to wait for sensor targets to resolve.</param>
         /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <param name="parser">Transforms the result of <see cref="HtmlFunction.AddSensor4"/> to instances of type <typeparamref name="T"/>.</param>
         /// <returns>A list of targets that were extracted from PRTG.</returns>
-        internal async Task<List<T>> ResolveSensorTargetsAsync<T>(int deviceId, string sensorType, Func<int, bool> progressCallback, int timeout, CancellationToken token, Func<string, List<T>> parser)
+        internal async Task<List<T>> ResolveSensorTargetsAsync<T>(Either<Device, int> deviceOrId, string sensorType, Func<int, bool> progressCallback, int timeout, CancellationToken token, Func<string, List<T>> parser)
         {
-            var parameters = new BeginAddSensorQueryParameters(deviceId, sensorType);
+            var parameters = new BeginAddSensorQueryParameters(deviceOrId, sensorType);
 
-            return await ResolveSensorTargetsAsync(deviceId, parameters, progressCallback, timeout, token, parser).ConfigureAwait(false);
+            return await ResolveSensorTargetsAsync(deviceOrId, parameters, progressCallback, timeout, token, parser).ConfigureAwait(false);
         }
 
         /// <summary>
         /// Common entry point for scraping <see cref="HtmlFunction.AddSensor4"/> for either a supported or raw sensor type and then transforming the response into a set of sensor targets.
         /// </summary>
         /// <typeparam name="T">The type of sensor targets the response should be transformed into.</typeparam>
-        /// <param name="deviceId">ID of the device to retrieve sensor targets from.</param>
+        /// <param name="deviceOrId">The device or ID of the device to retrieve sensor targets from.</param>
         /// <param name="parameters">A set of parameters for requesting the <see cref="Parameter.TmpId"/> of either a supported or raw sensor type.</param>
         /// <param name="progressCallback">A callback function used to monitor the progress of the request. If this function returns false, the request is aborted and this method returns null.</param>
         /// <param name="timeout">Duration (in seconds) to wait for sensor targets to resolve.</param>
         /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <param name="parser">Transforms the result of <see cref="HtmlFunction.AddSensor4"/> to instances of type <typeparamref name="T"/>.</param>
         /// <returns>A list of targets that were extracted from PRTG.</returns>
-        private async Task<List<T>> ResolveSensorTargetsAsync<T>(int deviceId, BeginAddSensorQueryParameters parameters, Func<int, bool> progressCallback, int timeout, CancellationToken token, Func<string, List<T>> parser)
+        private async Task<List<T>> ResolveSensorTargetsAsync<T>(Either<Device, int> deviceOrId, BeginAddSensorQueryParameters parameters, Func<int, bool> progressCallback, int timeout, CancellationToken token, Func<string, List<T>> parser)
         {
-            var response = await GetSensorTargetsResponseAsync(deviceId, parameters, progressCallback, timeout, token).ConfigureAwait(false);
+            var response = await GetSensorTargetsResponseAsync(deviceOrId, parameters, progressCallback, timeout, token).ConfigureAwait(false);
 
             if (response == null)
                 return null;
@@ -745,36 +745,36 @@ namespace PrtgAPI
         /// <summary>
         /// Special entry point for constructing parameters from a raw sensor type and retrieving the contents of <see cref="HtmlFunction.AddSensor4"/> without parsing into sensor targets..
         /// </summary>
-        /// <param name="deviceId">ID of the device to probe.</param>
+        /// <param name="deviceOrId">The device or ID of the device to probe.</param>
         /// <param name="sensorType">Type of sensor to retrieve parameters for.</param>
         /// <param name="progressCallback">A callback function used to monitor the progress of the request. If this function returns false, the request is aborted and this method returns null.</param>
         /// <param name="timeout">Duration (in seconds) to wait for sensor targets to resolve.</param>
         /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>The contents of the <see cref="HtmlFunction.AddSensor4"/> page.</returns>
-        private string GetAddSensorQueryResponse(int deviceId, string sensorType, Func<int, bool> progressCallback, int timeout, CancellationToken token)
+        private string GetAddSensorQueryResponse(Either<Device, int> deviceOrId, string sensorType, Func<int, bool> progressCallback, int timeout, CancellationToken token)
         {
-            var parameters = new BeginAddSensorQueryParameters(deviceId, sensorType);
+            var parameters = new BeginAddSensorQueryParameters(deviceOrId, sensorType);
 
-            return GetSensorTargetsResponse(deviceId, parameters, progressCallback, timeout, token);
+            return GetSensorTargetsResponse(deviceOrId, parameters, progressCallback, timeout, token);
         }
 
         /// <summary>
         /// Entry point for retrieving the raw contents of the <see cref="HtmlFunction.AddSensor4"/> page (without performing any post-request manipulations)
         /// </summary>
-        /// <param name="deviceId">ID of the device to probe.</param>
+        /// <param name="deviceOrId">The device or ID of the device to probe.</param>
         /// <param name="parameters">A set of parameters for requesting the <see cref="Parameter.TmpId"/> of either a supported or raw sensor type.</param>
         /// <param name="progressCallback">A callback function used to monitor the progress of the request. If this function returns false, the request is aborted and this method returns null.</param>
         /// <param name="timeout">Duration (in seconds) to wait for sensor targets to resolve.</param>
         /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>The contents of the <see cref="HtmlFunction.AddSensor4"/> page.</returns>
-        private string GetSensorTargetsResponse(int deviceId, BeginAddSensorQueryParameters parameters, Func<int, bool> progressCallback, int timeout, CancellationToken token)
+        private string GetSensorTargetsResponse(Either<Device, int> deviceOrId, BeginAddSensorQueryParameters parameters, Func<int, bool> progressCallback, int timeout, CancellationToken token)
         {
             var tmpId = (GetAddSensorTmpId(parameters, token));
 
             if (tmpId == null)
                 throw new PrtgRequestException($"Failed to resolve sensor targets for sensor type '{parameters[Parameter.SensorType]}': type was not valid or you do not have sufficient permissions on the specified object.");
 
-            var response = WaitForSensorTargetResolution(deviceId, tmpId.Value, progressCallback, timeout, token);
+            var response = WaitForSensorTargetResolution(deviceOrId, tmpId.Value, progressCallback, timeout, token);
 
             return response;
         }
@@ -797,36 +797,36 @@ namespace PrtgAPI
         /// <summary>
         /// Special entry point for constructing parameters from a raw sensor type and retrieving the contents of <see cref="HtmlFunction.AddSensor4"/> without parsing into sensor targets..
         /// </summary>
-        /// <param name="deviceId">ID of the device to probe.</param>
+        /// <param name="deviceOrId">The device or ID of the device to probe.</param>
         /// <param name="sensorType">Type of sensor to retrieve parameters for.</param>
         /// <param name="progressCallback">A callback function used to monitor the progress of the request. If this function returns false, the request is aborted and this method returns null.</param>
         /// <param name="timeout">Duration (in seconds) to wait for sensor targets to resolve.</param>
         /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>The contents of the <see cref="HtmlFunction.AddSensor4"/> page.</returns>
-        private async Task<string> GetAddSensorQueryResponseAsync(int deviceId, string sensorType, Func<int, bool> progressCallback, int timeout, CancellationToken token)
+        private async Task<string> GetAddSensorQueryResponseAsync(Either<Device, int> deviceOrId, string sensorType, Func<int, bool> progressCallback, int timeout, CancellationToken token)
         {
-            var parameters = new BeginAddSensorQueryParameters(deviceId, sensorType);
+            var parameters = new BeginAddSensorQueryParameters(deviceOrId, sensorType);
 
-            return await GetSensorTargetsResponseAsync(deviceId, parameters, progressCallback, timeout, token).ConfigureAwait(false);
+            return await GetSensorTargetsResponseAsync(deviceOrId, parameters, progressCallback, timeout, token).ConfigureAwait(false);
         }
 
         /// <summary>
         /// Entry point for retrieving the raw contents of the <see cref="HtmlFunction.AddSensor4"/> page (without performing any post-request manipulations)
         /// </summary>
-        /// <param name="deviceId">ID of the device to probe.</param>
+        /// <param name="deviceOrId">The device or ID of the device to probe.</param>
         /// <param name="parameters">A set of parameters for requesting the <see cref="Parameter.TmpId"/> of either a supported or raw sensor type.</param>
         /// <param name="progressCallback">A callback function used to monitor the progress of the request. If this function returns false, the request is aborted and this method returns null.</param>
         /// <param name="timeout">Duration (in seconds) to wait for sensor targets to resolve.</param>
         /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>The contents of the <see cref="HtmlFunction.AddSensor4"/> page.</returns>
-        private async Task<string> GetSensorTargetsResponseAsync(int deviceId, BeginAddSensorQueryParameters parameters, Func<int, bool> progressCallback, int timeout, CancellationToken token)
+        private async Task<string> GetSensorTargetsResponseAsync(Either<Device, int> deviceOrId, BeginAddSensorQueryParameters parameters, Func<int, bool> progressCallback, int timeout, CancellationToken token)
         {
             var tmpId = (await GetAddSensorTmpIdAsync(parameters, token).ConfigureAwait(false));
 
             if (tmpId == null)
                 throw new PrtgRequestException($"Failed to resolve sensor targets for sensor type '{parameters[Parameter.SensorType]}': type was not valid or you do not have sufficient permissions on the specified object.");
 
-            var response = await WaitForSensorTargetResolutionAsync(deviceId, tmpId.Value, progressCallback, timeout, token).ConfigureAwait(false);
+            var response = await WaitForSensorTargetResolutionAsync(deviceOrId, tmpId.Value, progressCallback, timeout, token).ConfigureAwait(false);
 
             return response;
         }
@@ -850,9 +850,9 @@ namespace PrtgAPI
         // WaitForSensorTargetResolution
         //######################################
 
-        private string WaitForSensorTargetResolution(int deviceId, int tmpId, Func<int, bool> progressCallback, int timeout, CancellationToken token)
+        private string WaitForSensorTargetResolution(Either<Device, int> deviceOrId, int tmpId, Func<int, bool> progressCallback, int timeout, CancellationToken token)
         {
-            var parameters = new AddSensorProgressParameters(deviceId, tmpId);
+            var parameters = new AddSensorProgressParameters(deviceOrId, tmpId);
 
             AddSensorProgress p;
             bool continueQuery = true;
@@ -890,14 +890,14 @@ namespace PrtgAPI
             ResponseParser.ValidateAddSensorProgressResult(p, false);
 
             //Scrape addsensor4.htm
-            var page = (RequestEngine.ExecuteRequest(new EndAddSensorQueryParameters(deviceId, tmpId), token: token)).StringValue;
+            var page = (RequestEngine.ExecuteRequest(new EndAddSensorQueryParameters(deviceOrId, tmpId), token: token)).StringValue;
 
             return page;
         }
 
-        private async Task<string> WaitForSensorTargetResolutionAsync(int deviceId, int tmpId, Func<int, bool> progressCallback, int timeout, CancellationToken token)
+        private async Task<string> WaitForSensorTargetResolutionAsync(Either<Device, int> deviceOrId, int tmpId, Func<int, bool> progressCallback, int timeout, CancellationToken token)
         {
-            var parameters = new AddSensorProgressParameters(deviceId, tmpId);
+            var parameters = new AddSensorProgressParameters(deviceOrId, tmpId);
 
             AddSensorProgress p;
             bool continueQuery = true;
@@ -935,7 +935,7 @@ namespace PrtgAPI
             ResponseParser.ValidateAddSensorProgressResult(p, false);
 
             //Scrape addsensor4.htm
-            var page = (await RequestEngine.ExecuteRequestAsync(new EndAddSensorQueryParameters(deviceId, tmpId), token: token).ConfigureAwait(false)).StringValue;
+            var page = (await RequestEngine.ExecuteRequestAsync(new EndAddSensorQueryParameters(deviceOrId, tmpId), token: token).ConfigureAwait(false)).StringValue;
 
             return page;
         }
@@ -944,7 +944,7 @@ namespace PrtgAPI
         // AddObject
         //######################################
 
-        internal List<T> AddObject<T>(int parentId, NewObjectParameters parameters,
+        internal List<T> AddObject<T>(Either<IPrtgObject, int> parent, NewObjectParameters parameters,
             Func<SearchFilter[], CancellationToken, List<T>> getObjects, bool resolve, CancellationToken token, Action<Type, int> errorCallback = null,
             Func<bool> shouldStop = null, bool allowMultiple = false) where T : SensorOrDeviceOrGroupOrProbe
         {
@@ -953,26 +953,26 @@ namespace PrtgAPI
 
             if (resolve)
             {
-                var filters = RequestParser.GetFilters(parentId, parameters);
+                var filters = RequestParser.GetFilters(parent, parameters);
 
-                Action<CancellationToken> addObjectInternal = t => AddObjectInternal(parentId, parameters, t);
+                Action<CancellationToken> addObjectInternal = t => AddObjectInternal(parent, parameters, t);
                 Func<CancellationToken, List<T>> getObjs = t => getObjects(filters, t);
 
                 return (ResolveWithDiff(addObjectInternal, getObjs, ResponseParser.ExceptTableObject, token, errorCallback, shouldStop, allowMultiple)).OrderBy(o => o.Id).ToList();
             }
             else
             {
-                AddObjectInternal(parentId, parameters, token);
+                AddObjectInternal(parent, parameters, token);
 
                 return null;
             }
         }
 
-        private void AddObjectInternal(int objectId, NewObjectParameters parameters, CancellationToken token)
+        private void AddObjectInternal(Either<IPrtgObject, int> parent, NewObjectParameters parameters, CancellationToken token)
         {
             var lengthLimit = RequestParser.ValidateObjectParameters(parameters);
 
-            var internalParams = RequestParser.GetInternalNewObjectParameters(objectId, parameters);
+            var internalParams = RequestParser.GetInternalNewObjectParameters(parent, parameters);
 
             if (lengthLimit.Count > 0)
                 AddObjectWithExcessiveValue(lengthLimit, internalParams, token);
@@ -1096,7 +1096,7 @@ namespace PrtgAPI
             return newObjects;
         }
 
-        internal async Task<List<T>> AddObjectAsync<T>(int parentId, NewObjectParameters parameters,
+        internal async Task<List<T>> AddObjectAsync<T>(Either<IPrtgObject, int> parent, NewObjectParameters parameters,
             Func<SearchFilter[], CancellationToken, Task<List<T>>> getObjects, bool resolve, CancellationToken token, Action<Type, int> errorCallback = null,
             Func<bool> shouldStop = null, bool allowMultiple = false) where T : SensorOrDeviceOrGroupOrProbe
         {
@@ -1105,26 +1105,26 @@ namespace PrtgAPI
 
             if (resolve)
             {
-                var filters = RequestParser.GetFilters(parentId, parameters);
+                var filters = RequestParser.GetFilters(parent, parameters);
 
-                Func<CancellationToken, Task> addObjectInternal = async t => await AddObjectInternalAsync(parentId, parameters, t).ConfigureAwait(false);
+                Func<CancellationToken, Task> addObjectInternal = async t => await AddObjectInternalAsync(parent, parameters, t).ConfigureAwait(false);
                 Func<CancellationToken, Task<List<T>>> getObjs = async t => await getObjects(filters, t).ConfigureAwait(false);
 
                 return (await ResolveWithDiffAsync(addObjectInternal, getObjs, ResponseParser.ExceptTableObject, token, errorCallback, shouldStop, allowMultiple).ConfigureAwait(false)).OrderBy(o => o.Id).ToList();
             }
             else
             {
-                await AddObjectInternalAsync(parentId, parameters, token).ConfigureAwait(false);
+                await AddObjectInternalAsync(parent, parameters, token).ConfigureAwait(false);
 
                 return null;
             }
         }
 
-        private async Task AddObjectInternalAsync(int objectId, NewObjectParameters parameters, CancellationToken token)
+        private async Task AddObjectInternalAsync(Either<IPrtgObject, int> parent, NewObjectParameters parameters, CancellationToken token)
         {
             var lengthLimit = RequestParser.ValidateObjectParameters(parameters);
 
-            var internalParams = RequestParser.GetInternalNewObjectParameters(objectId, parameters);
+            var internalParams = RequestParser.GetInternalNewObjectParameters(parent, parameters);
 
             if (lengthLimit.Count > 0)
                 await AddObjectWithExcessiveValueAsync(lengthLimit, internalParams, token).ConfigureAwait(false);
@@ -1360,8 +1360,10 @@ namespace PrtgAPI
         // GetSystemInfoInternal
         //######################################
 
-        internal List<T> GetSystemInfoInternal<T>(int deviceId, CancellationToken token) where T : IDeviceInfo
+        internal List<T> GetSystemInfoInternal<T>(Either<Device, int> deviceOrId, CancellationToken token) where T : IDeviceInfo
         {
+            var deviceId = deviceOrId.GetId();
+
             var parameters = new SystemInfoParameters<T>(deviceId);
 
             Func<HttpResponseMessage, PrtgResponse> func = (m) => ParseSystemInfoResponse(m, parameters.Columns);
@@ -1374,8 +1376,10 @@ namespace PrtgAPI
             return info.Items;
         }
 
-        internal List<IDeviceInfo> GetSystemInfoInternal(int deviceId, SystemInfoType type)
+        internal List<IDeviceInfo> GetSystemInfoInternal(Either<Device, int> deviceOrId, SystemInfoType type)
         {
+            var deviceId = deviceOrId.GetId();
+
             switch (type)
             {
                 case SystemInfoType.System:
@@ -1395,8 +1399,10 @@ namespace PrtgAPI
             }
         }
 
-        internal async Task<List<T>> GetSystemInfoInternalAsync<T>(int deviceId, CancellationToken token) where T : IDeviceInfo
+        internal async Task<List<T>> GetSystemInfoInternalAsync<T>(Either<Device, int> deviceOrId, CancellationToken token) where T : IDeviceInfo
         {
+            var deviceId = deviceOrId.GetId();
+
             var parameters = new SystemInfoParameters<T>(deviceId);
 
             Func<HttpResponseMessage, Task<PrtgResponse>> func = async (m) => await ParseSystemInfoResponseAsync(m, parameters.Columns).ConfigureAwait(false);
@@ -1409,8 +1415,10 @@ namespace PrtgAPI
             return info.Items;
         }
 
-        internal async Task<List<IDeviceInfo>> GetSystemInfoInternalAsync(int deviceId, SystemInfoType type, CancellationToken token)
+        internal async Task<List<IDeviceInfo>> GetSystemInfoInternalAsync(Either<Device, int> deviceOrId, SystemInfoType type, CancellationToken token)
         {
+            var deviceId = deviceOrId.GetId();
+
             switch (type)
             {
                 case SystemInfoType.System:
@@ -1470,22 +1478,22 @@ namespace PrtgAPI
         // GetObjectPropertyRawInternal
         //######################################
 
-        private string GetObjectPropertyRawInternal(int objectId, Enum property)
+        private string GetObjectPropertyRawInternal(Either<IPrtgObject, int> objectOrId, Enum property)
         {
             var cache = ObjectPropertyParser.GetPropertyInfoViaTypeLookup(property);
             var rawName = ObjectPropertyParser.GetObjectPropertyNameViaCache(property, cache);
 
-            var rawValue = GetObjectPropertyRaw(objectId, rawName, cache.Property.PropertyType == typeof(string));
+            var rawValue = GetObjectPropertyRaw(objectOrId, rawName, cache.Property.PropertyType == typeof(string));
 
             return rawValue;
         }
 
-        private async Task<string> GetObjectPropertyRawInternalAsync(int objectId, Enum property, CancellationToken token)
+        private async Task<string> GetObjectPropertyRawInternalAsync(Either<IPrtgObject, int> objectOrId, Enum property, CancellationToken token)
         {
             var cache = ObjectPropertyParser.GetPropertyInfoViaTypeLookup(property);
             var rawName = ObjectPropertyParser.GetObjectPropertyNameViaCache(property, cache);
 
-            var rawValue = await GetObjectPropertyRawAsync(objectId, rawName, cache.Property.PropertyType == typeof(string), token).ConfigureAwait(false);
+            var rawValue = await GetObjectPropertyRawAsync(objectOrId, rawName, cache.Property.PropertyType == typeof(string), token).ConfigureAwait(false);
 
             return rawValue;
         }
@@ -1494,9 +1502,9 @@ namespace PrtgAPI
         // GetObjectPropertyInternal
         //######################################
 
-        private object GetObjectPropertyInternal(int objectId, Enum property)
+        private object GetObjectPropertyInternal(Either<IPrtgObject, int> objectOrId, Enum property)
         {
-            var rawValue = GetObjectPropertyRawInternal(objectId, property);
+            var rawValue = GetObjectPropertyRawInternal(objectOrId, property);
 
             if (property is ObjectProperty)
                 return ObjectEngine.XmlEngine.DeserializeObjectProperty((ObjectProperty) property, rawValue);
@@ -1504,9 +1512,9 @@ namespace PrtgAPI
                 return ObjectEngine.XmlEngine.DeserializeObjectProperty((ObjectPropertyInternal) property, rawValue);
         }
 
-        private async Task<object> GetObjectPropertyInternalAsync(int objectId, Enum property, CancellationToken token)
+        private async Task<object> GetObjectPropertyInternalAsync(Either<IPrtgObject, int> objectOrId, Enum property, CancellationToken token)
         {
-            var rawValue = await GetObjectPropertyRawInternalAsync(objectId, property, token).ConfigureAwait(false);
+            var rawValue = await GetObjectPropertyRawInternalAsync(objectOrId, property, token).ConfigureAwait(false);
 
             if (property is ObjectProperty)
                 return ObjectEngine.XmlEngine.DeserializeObjectProperty((ObjectProperty) property, rawValue);
@@ -1518,11 +1526,11 @@ namespace PrtgAPI
         // GetProbeApprovalStatus
         //######################################
 
-        internal bool GetProbeApprovalStatus(int probeId)
+        internal bool GetProbeApprovalStatus(Either<Probe, int> probeOrId)
         {
             try
             {
-                var result = GetObjectPropertyRawInternal(probeId, ObjectPropertyInternal.ProbeApproved);
+                var result = GetObjectPropertyRawInternal(probeOrId.GetId(), ObjectPropertyInternal.ProbeApproved);
 
                 if (result != "0" && result != "1")
                     throw new PrtgRequestException($"Probe authorization status was '{result}', however should have been '0' or '1'. Object is most likely not a probe.");
@@ -1531,15 +1539,15 @@ namespace PrtgAPI
             }
             catch(PrtgRequestException ex)
             {
-                throw new InvalidOperationException($"Cannot change approval status of object with ID '{probeId}': object does not appear to be a probe.", ex);
+                throw new InvalidOperationException($"Cannot change approval status of object with ID '{probeOrId.GetId()}': object does not appear to be a probe.", ex);
             }
         }
 
-        internal async Task<bool> GetProbeApprovalStatusAsync(int probeId, CancellationToken token)
+        internal async Task<bool> GetProbeApprovalStatusAsync(Either<Probe, int> probeOrId, CancellationToken token)
         {
             try
             {
-                var result = await GetObjectPropertyRawInternalAsync(probeId, ObjectPropertyInternal.ProbeApproved, token).ConfigureAwait(false);
+                var result = await GetObjectPropertyRawInternalAsync(probeOrId.GetId(), ObjectPropertyInternal.ProbeApproved, token).ConfigureAwait(false);
 
                 if (result != "0" && result != "1")
                     throw new PrtgRequestException($"Probe authorization status was '{result}', however should have been '0' or '1'. Object is most likely not a probe.");
@@ -1548,7 +1556,7 @@ namespace PrtgAPI
             }
             catch(PrtgRequestException ex)
             {
-                throw new InvalidOperationException($"Cannot change approval status of object with ID '{probeId}': object does not appear to be a probe.", ex);
+                throw new InvalidOperationException($"Cannot change approval status of object with ID '{probeOrId.GetId()}': object does not appear to be a probe.", ex);
             }
         }
 

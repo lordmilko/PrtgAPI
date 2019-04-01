@@ -4,7 +4,7 @@
     {
         CommandFunction ICommandParameters.Function => CommandFunction.SysInfoCheckNow;
 
-        public RefreshSystemInfoParameters(int deviceId, SystemInfoType type) : base(deviceId)
+        public RefreshSystemInfoParameters(Either<Device, int> deviceOrId, SystemInfoType type) : base(deviceOrId.ToPrtgObject())
         {
             this[Parameter.Kind] = type;
         }

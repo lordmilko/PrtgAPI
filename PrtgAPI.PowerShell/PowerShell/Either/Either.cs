@@ -27,7 +27,7 @@ namespace PrtgAPI.PowerShell
         /// <summary>
         /// Initializes a new instance of the <see cref="Either{TLeft, TRight}"/> class with a value of the first possible type.
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name="value">The value to use.</param>
         protected Either(TLeft value)
         {
             if (value == null)
@@ -40,7 +40,7 @@ namespace PrtgAPI.PowerShell
         /// <summary>
         /// Initializes a new instance of the <see cref="Either{TLeft, TRight}"/> class with a value of the second possible type.
         /// </summary>
-        /// <param name="value"></param>
+        /// <param name="value">The value to use.</param>
         protected Either(TRight value)
         {
             if (value == null)

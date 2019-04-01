@@ -7,9 +7,9 @@ namespace PrtgAPI.Parameters
     {
         HtmlFunction IHtmlParameters.Function => HtmlFunction.ChannelEdit;
 
-        public ChannelPropertiesParameters(int sensorId, int channelId)
+        public ChannelPropertiesParameters(Either<Sensor, int> sensorOrId, int channelId)
         {
-            SensorId = sensorId;
+            SensorId = sensorOrId.GetId();
             ChannelId = channelId;
         }
 

@@ -7,7 +7,7 @@ namespace PrtgAPI.Parameters
     {
         HtmlFunction IHtmlParameters.Function => HtmlFunction.ObjectData;
 
-        public GetObjectPropertyParameters(int objectId, object objectType) : base(objectId)
+        public GetObjectPropertyParameters(Either<IPrtgObject, int> objectOrId, object objectType) : base(objectOrId)
         {
             if (objectType != null)
                 ObjectType = objectType;

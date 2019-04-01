@@ -5,9 +5,9 @@ namespace PrtgAPI.Parameters
     [ExcludeFromCodeCoverage]
     class ModificationHistoryParameters : ContentParameters<ModificationEvent>
     {
-        public ModificationHistoryParameters(int objectId) : base(Content.History)
+        public ModificationHistoryParameters(Either<IPrtgObject, int> objectOrId) : base(Content.History)
         {
-            this[Parameter.Id] = objectId;
+            this[Parameter.Id] = objectOrId.GetId();
         }
     }
 }

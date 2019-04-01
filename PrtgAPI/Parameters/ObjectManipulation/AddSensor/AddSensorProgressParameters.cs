@@ -4,7 +4,7 @@
     {
         JsonFunction IJsonParameters.Function => JsonFunction.GetAddSensorProgress;
 
-        public AddSensorProgressParameters(int deviceId, int tmpId) : base(deviceId)
+        public AddSensorProgressParameters(Either<Device, int> deviceOrId, int tmpId) : base(deviceOrId.ToPrtgObject())
         {
             this[Parameter.TmpId] = tmpId;
 
@@ -13,7 +13,7 @@
             Cookie = true;
         }
 
-        public AddSensorProgressParameters(int deviceId, int tmpId, bool isFinalStep) : this(deviceId, tmpId)
+        public AddSensorProgressParameters(Either<Device, int> deviceOrId, int tmpId, bool isFinalStep) : this(deviceOrId, tmpId)
         {
             if (isFinalStep)
                 this[Parameter.Custom] = new CustomParameter("step", 3);

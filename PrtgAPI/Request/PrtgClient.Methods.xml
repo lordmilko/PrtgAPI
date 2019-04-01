@@ -371,14 +371,14 @@
                     </Summary>
                     <ReturnDescription>All logs that meet the specified criteria between the first log retrieved and when streaming is ended.</ReturnDescription>
 
-                    <Parameter name="objectId" type="int" description="ID of the object to retrieve logs for."/>
+                    <Parameter name="objectOrId" type="Either&lt;IPrtgObject, int&gt;" description="The object or ID of the object to retrieve logs for."/>
                     <Parameter name="status" type="LogStatus[]" default="null" description="Log event types to retrieve records for. If no types are specified, all record types will be retrieved."/>
                     <Parameter name="interval" type="int" default="1" description="Interval (in seconds) with which PrtgAPI should poll for new logs."/>
                     <Parameter name="progressCallback" type="Func&lt;int, bool&gt;" default="null" description="Callback used to indicate how many records have been retrieved and whether to abort retrieving records.\nCalled between each polling attempt. Takes the number of records retrieved so far as an argument. If this method returns false, streaming will abort."/>
                     <Parameter name="token" type="CancellationToken" default="default(CancellationToken)" description="A cancellation token that can be used by other objects or threads to receive notice of cancellation."/>
 
                     <Body expression="true">
-                        new InfiniteLogGenerator(GetLogs, objectId, status, interval, progressCallback, token)
+                        new InfiniteLogGenerator(GetLogs, objectOrId.GetId(), status, interval, progressCallback, token)
                     </Body>
                 </MethodDef>
             </Region>
@@ -394,11 +394,11 @@
                     
                     <Exception type="InvalidOperationException" description="The specified channel does not exist or multiple channels were resolved with the specified ID."/>
 
-                    <Parameter name="sensorId" type="int" description="The ID of the sensor containing the channel."/>
+                    <Parameter name="sensorOrId" type="Either&lt;Sensor, int&gt;" description="The sensor or ID of the sensor containing the channel."/>
                     <Parameter name="id" type="int" description="The ID of the channel to retrieve."/>
 
                     <Body expression="true">
-                        <Call name="GetChannelsInternal" args="sensorId, null, i =&gt; i == id"/>.SingleObject(id)
+                        <Call name="GetChannelsInternal" args="sensorOrId, null, i =&gt; i == id"/>.SingleObject(id)
                     </Body>
                 </MethodDef>
                 <MethodDef name="{Request}{Name}" returns="{type}" tokenMode="AutomaticNamed">
@@ -407,13 +407,13 @@
                     
                     <Exception type="InvalidOperationException" description="The specified channel does not exist or multiple channels were resolved with the specified name."/>
 
-                    <Parameter name="sensorId" type="int" description="The ID of the sensor containing the channel."/>
+                    <Parameter name="sensorOrId" type="Either&lt;Sensor, int&gt;" description="The sensor or ID of the sensor containing the channel."/>
                     <Parameter name="name" type="string" description="The name of the channel to retrieve."/>
 
                     <Body expression="false">
                         AssertHasValue(name, nameof(name));
 
-                        var channels = <Call name="GetChannelsInternal" args="sensorId, n =&gt; n == name"/>;
+                        var channels = <Call name="GetChannelsInternal" args="sensorOrId, n =&gt; n == name"/>;
 
                         return channels.SingleObject(name, "name");
                     </Body>
@@ -424,23 +424,23 @@
                 <Summary>Retrieves all channels of a sensor.</Summary>
                 <ReturnDescription>A list of channels on the specified sensor.</ReturnDescription>
 
-                <Parameter name="sensorId" type="int" description="The ID of the sensor to retrieve channels for."/>
+                <Parameter name="sensorOrId" type="Either&lt;Sensor, int&gt;" description="The sensor or ID of the sensor to retrieve channels for."/>
 
                 <Body expression="true">
-                    <Call name="GetChannelsInternal" args="sensorId"/>
+                    <Call name="GetChannelsInternal" args="sensorOrId"/>
                 </Body>
             </MethodDef>
             <MethodDef name="{Request}{Name}s" returns="List&lt;{type}&gt;" tokenMode="AutomaticNamed">
                 <Summary>Retrieves all channels of a sensor that match the specified name.</Summary>
                 <ReturnDescription>A list of channels on the specified sensor.</ReturnDescription>
 
-                <Parameter name="sensorId" type="int" description="The ID of the sensor to retrieve channels for."/>
+                <Parameter name="sensorOrId" type="Either&lt;Sensor, int&gt;" description="The sensor or ID of the sensor to retrieve channels for."/>
                 <Parameter name="name" type="string" description="The name of the channel to retrieve."/>
 
                 <Body expression="false">
                     AssertHasValue(name, nameof(name));
 
-                    return <Call name="GetChannelsInternal" args="sensorId, n =&gt; n == name"/>;
+                    return <Call name="GetChannelsInternal" args="sensorOrId, n =&gt; n == name"/>;
                 </Body>
             </MethodDef>
         </Template>
@@ -473,20 +473,20 @@
                 <Summary>Retrieves all notification triggers of a PRTG Object.</Summary>
                 <ReturnDescription>A list of notification triggers that apply to the specified object.</ReturnDescription>
 
-                <Parameter name="objectId" type="int" description="The object to retrieve triggers for."/>
+                <Parameter name="objectOrId" type="Either&lt;IPrtgObject, int&gt;" description="The object or ID of the object to retrieve triggers for."/>
                 
                 <Body expression="true">
-                    <Call name="GetNotificationTriggersInternal" args="objectId"/>
+                    <Call name="GetNotificationTriggersInternal" args="objectOrId"/>
                 </Body>
             </MethodDef>
             <MethodDef name="{Request}{Name}Types" returns="List&lt;TriggerType&gt;" tokenMode="MandatoryCall">
                 <Summary>Retrieves all notification trigger types supported by a PRTG Object.</Summary>
                 <ReturnDescription>The trigger types supported by the object.</ReturnDescription>
 
-                <Parameter name="objectId" type="int" description="The object to retrieve supported trigger types for."/>
+                <Parameter name="objectOrId" type="Either&lt;IPrtgObject, int&gt;" description="The object or ID of the object to retrieve supported trigger types for."/>
 
                 <Body expression="true">
-                    <Call name="GetNotificationTriggerData" args="objectId"/>.SupportedTypes.ToList()
+                    <Call name="GetNotificationTriggerData" args="objectOrId"/>.SupportedTypes.ToList()
                 </Body>
             </MethodDef>
         </Template>
@@ -501,24 +501,24 @@
                     <Resource name="SerialOnlyReturnDescription" condition="Stream" mode="replace"/>
                 </ReturnDescription>
 
-                <Parameter name="sensorId" type="int" description="The ID of the sensor to retrieve historical data for."/>
+                <Parameter name="sensorOrId" type="Either&lt;Sensor, int&gt;" description="The sensor or ID of the sensor to retrieve historical data for."/>
                 <Parameter name="average" type="int" default="300" description="The time span (in seconds) to average results up to. For example, a value of 300 shows the average of results every 5 minutes. If a value of 0\nis used, PRTG will use the true interval of the sensor.&lt;para/&gt;\nNote: due to limitations of the PRTG API, value lookup labels can only be retrieved when the average is 0, while downtime information\ncan only be retrieved when the average is not 0."/>
                 <Parameter name="startDate" type="DateTime?" default="null" description="The start date and time to retrieve data from. If this value is null, records will be retrieved from the current date and time."/>
                 <Parameter name="endDate" type="DateTime?" default="null" description="The end date and time to retrieve data to. If this value is null, records will be retrieved from one hour prior to &lt;paramref name=&quot;startDate&quot;/&gt;."/>
                 <Parameter name="count" type="int?" default="null" description="Limit results to the specified number of items within the specified time period." excludeStream="true"/>
 
                 <SyncBody expression="false">
-                    var parameters = new SensorHistoryParameters(sensorId, average, startDate, endDate, count);
+                    var parameters = new SensorHistoryParameters(sensorOrId, average, startDate, endDate, count);
 
                     return <Call name="GetSensorHistoryInternal" args="parameters"/>.Item1;
                 </SyncBody>
                 <AsyncBody expression="false">
-                    var parameters = new SensorHistoryParameters(sensorId, average, startDate, endDate, count);
+                    var parameters = new SensorHistoryParameters(sensorOrId, average, startDate, endDate, count);
 
                     return <Call name="{Request}SensorHistoryInternal" args="parameters"/>;
                 </AsyncBody>
                 <StreamBody expression="false">
-                    var parameters = new SensorHistoryParameters(sensorId, average, startDate, endDate, null);
+                    var parameters = new SensorHistoryParameters(sensorOrId, average, startDate, endDate, null);
 
                     return <Call name="{Request}SensorHistoryInternal" args="parameters, true"/>;
                 </StreamBody>
@@ -529,10 +529,10 @@
                 <Summary>Retrieves the setting/state modification history of a PRTG Object.</Summary>
                 <ReturnDescription>A list of all setting/state modifications to the specified object.</ReturnDescription>
 
-                <Parameter name="objectId" type="int" description="The ID of the object to retrieve historical records for."/>
+                <Parameter name="objectOrId" type="Either&lt;IPrtgObject, int&gt;" description="The object or ID of the object to retrieve historical records for."/>
 
                 <Body expression="true">
-                    ResponseParser.Amend(<Call name="ObjectEngine.GetObjects" genericArgs="ModificationEvent" args="new ModificationHistoryParameters(objectId)"/>, e => e.ObjectId = objectId)
+                    ResponseParser.Amend(<Call name="ObjectEngine.GetObjects" genericArgs="ModificationEvent" args="new ModificationHistoryParameters(objectOrId)"/>, e => e.ObjectId = objectOrId.GetId())
                 </Body>
             </MethodDef>
         </Template>
@@ -555,10 +555,10 @@
                     </Summary>
                     <ReturnDescription>A complete summary of System Information known to PRTG for the specified device.</ReturnDescription>
 
-                    <Parameter name="deviceId" type="int" description="ID of the device to retrieve information for."/>
+                    <Parameter name="deviceOrId" type="Either&lt;Device, int&gt;" description="The device or ID of the device to retrieve information for."/>
 
                     <Body expression="true">
-                        <Call name="GetSystemInfoInternal" args="deviceId"/>
+                        <Call name="GetSystemInfoInternal" args="deviceOrId"/>
                     </Body>
                 </MethodDef>
             </Region>
@@ -568,10 +568,10 @@
                     <ReturnDescription>System Information known to PRTG for the specified information type for the specified device.</ReturnDescription>
 
                     <GenericArg name="T" description="Type of System Information to retrieve." constraint="IDeviceInfo"/>
-                    <Parameter name="deviceId" type="int" description="ID of the device to retrieve information for."/>
+                    <Parameter name="deviceOrId" type="Either&lt;Device, int&gt;" description="The device or ID of the device to retrieve information for."/>
 
                     <Body expression="true">
-                        <Call name="GetSystemInfoInternal" args="deviceId" genericArgs="T"/>
+                        <Call name="GetSystemInfoInternal" args="deviceOrId" genericArgs="T"/>
                     </Body>
                 </MethodDef>
             </Region>
@@ -580,11 +580,11 @@
                     <Summary>Retrieves a specific type of system information for a specified device based on a &lt;see cref="SystemInfoType"/&gt;.</Summary>
                     <ReturnDescription>System Information known to PRTG for the specified information type for the specified device.</ReturnDescription>
 
-                    <Parameter name="deviceId" type="int" description="ID of the device to retrieve information for."/>
+                    <Parameter name="deviceOrId" type="Either&lt;Device, int&gt;" description="The device or ID of the device to retrieve information for."/>
                     <Parameter name="type" type="SystemInfoType" description="Type of information to retrieve."/>
 
                     <Body expression="true">
-                        <Call name="GetSystemInfoInternal" args="deviceId, type"/>
+                        <Call name="GetSystemInfoInternal" args="deviceOrId, type"/>
                     </Body>
                 </MethodDef>
             </Region>
@@ -594,13 +594,13 @@
                         Refreshes one or more types of system information on a specified device.&lt;para/&gt;
 
                         If no types are specified, all information types will be refreshed.
-                </Summary>
+                    </Summary>
 
-                    <Parameter name="deviceId" type="int" description="ID of the device to refresh system information for."/>
+                    <Parameter name="deviceOrId" type="Either&lt;Device, int&gt;" description="The device or ID of the device to refresh system information for."/>
                     <Parameter name="types" type="params SystemInfoType[]" description="Types to refresh. If no types are specified, all types will be refreshed."/>
 
                     <Body expression="true">
-                        <Call name="RefreshSystemInfoInternal" args="deviceId, types"/>
+                        <Call name="RefreshSystemInfoInternal" args="deviceOrId, types"/>
                     </Body>
                 </MethodDef>
             </Region>
@@ -633,12 +633,12 @@
                 <Summary>
                     Retrieves properties and settings of a PRTG {type}.&lt;para/&gt;
                     If the current user does not have write access to the specified object, an &lt;see cref="InvalidOperationException"/&gt; will be thrown.</Summary>
-                <Exception type="InvalidOperationException" description="The specified {name} is read only. To retrieve properties from read only {name}s, use &lt;see cref=&quot;GetObjectProperty(int, ObjectProperty)&quot;/&gt;."/>
+                <Exception type="InvalidOperationException" description="The specified {name} is read only. To retrieve properties from read only {name}s, use &lt;see cref=&quot;GetObjectProperty(Either{IPrtgObject, int}, ObjectProperty)&quot;/&gt;."/>
                 <ReturnDescription>All settings of the specified {name}.</ReturnDescription>
 
-                <Parameter name="{name}Id" type="int" description="ID of the {name} to retrieve settings for."/>
+                <Parameter name="{name}" type="Either&lt;{Name}, int&gt;" description="The {name} or ID of the {name} to retrieve settings for."/>
                 <Body expression="true">
-                    <Call name="GetObjectProperties" genericArgs="{type}Settings" args="{name}Id, ObjectType.{type}, ObjectProperty.Name"/>
+                    <Call name="GetObjectProperties" genericArgs="{type}Settings" args="{name}.ToPrtgObject(), ObjectType.{type}, ObjectProperty.Name"/>
                 </Body>
             </MethodDef>
         </Template>
@@ -761,12 +761,12 @@
                     <Summary>Adds a new sensor to a PRTG device. Based on the specified sensor parameters, multiple new sensors may be created.</Summary>
                     <ReturnDescription>If &lt;paramref name=&quot;resolve&quot;/&gt; is true, all new sensors that were created from the sensor &lt;paramref name=&quot;parameters&quot;/&gt;. Otherwise, null.</ReturnDescription>
 
-                    <Parameter name="deviceId" type="int" description="The ID of the device the sensor will apply to."/>
+                    <Parameter name="deviceOrId" type="Either&lt;Device, int&gt;" description="The device or ID of the device the sensor will apply to."/>
                     <Parameter name="parameters" type="NewSensorParameters" description="A set of parameters describing the properties of the sensor to create.\nDepending on the type of sensor parameters specified, this may result in the creation of several new sensors."/>
                     <Parameter name="resolve" type="bool" default="true" description="Whether to resolve the new sensors to their resultant &lt;see cref=&quot;Sensor&quot;/&gt; objects.\nIf this value is false, this method will return null."/>
 
                     <Body expression="true">
-                        <Call name="AddObject" args="deviceId, parameters, {RequestLambda}(f, t) => {Alias:GetObjects}, resolve, allowMultiple: true">
+                        <Call name="AddObject" args="deviceOrId.ToPrtgObject(), parameters, {RequestLambda}(f, t) => {Alias:GetObjects}, resolve, allowMultiple: true">
                             <Call name="{Request}Sensors" args="new SensorParameters(f), t" alias="GetObjects"/>
                         </Call>
                     </Body>
@@ -775,26 +775,26 @@
                     <Summary>Adds a new device to a PRTG group or probe.</Summary>
                     <ReturnDescription>If &lt;paramref name=&quot;resolve&quot;/&gt; is true, the device that was created from this method's device parameters. Otherwise, null.</ReturnDescription>
 
-                    <Parameter name="parentId" type="int" description="The ID of the group or probe the device will apply to."/>
+                    <Parameter name="parent" type="Either&lt;GroupOrProbe, int&gt;" description="The group or probe the device will apply to."/>
                     <Parameter name="name" type="string" description="The name to use for the new device."/>
                     <Parameter name="host" type="string" default="null" description="The hostname or IP Address PRTG should use to communicate with the device. If this value is null, the &lt;paramref name=&quot;name&quot;/&gt; will be used."/>
                     <Parameter name="discoveryMode" type="AutoDiscoveryMode" default="AutoDiscoveryMode.Manual" description="Whether an auto-discovery should be automatically performed after device creation."/>
                     <Parameter name="resolve" type="bool" default="true" description="Whether to resolve the new device to its resultant &lt;see cref=&quot;Device&quot;/&gt; object.\nIf this value is false, this method will return null."/>
 
                     <Body expression="true">
-                        <Call name="AddDevice" args="parentId, new NewDeviceParameters(name, host) { AutoDiscoveryMode = discoveryMode }, resolve"/>
+                        <Call name="AddDevice" args="parent, new NewDeviceParameters(name, host) { AutoDiscoveryMode = discoveryMode }, resolve"/>
                     </Body>
                 </InlineMethodDef>
                 <InlineMethodDef name="AddDevice" returns="Device" tokenMode="MandatoryNamedDefault">
                     <Summary>Adds a new device to a PRTG group or probe with a complex set of parameters.</Summary>
                     <ReturnDescription>If &lt;paramref name=&quot;resolve&quot;/&gt; is true, the device that was created from this method's device &lt;paramref name=&quot;parameters&quot;/&gt;. Otherwise, null.</ReturnDescription>
 
-                    <Parameter name="parentId" type="int" description="The ID of the group or probe the device will apply to."/>
+                    <Parameter name="parent" type="Either&lt;GroupOrProbe, int&gt;" description="The group or probe the device will apply to."/>
                     <Parameter name="parameters" type="NewDeviceParameters" description="A set of parameters describing the properties of the device to create."/>
                     <Parameter name="resolve" type="bool" default="true" description="Whether to resolve the new device to its resultant &lt;see cref=&quot;Device&quot;/&gt; object.\nIf this value is false, this method will return null."/>
 
                     <Body expression="true">
-                        <Call name="AddObject" args="parentId, parameters, {RequestLambda}(f, t) => {Alias:GetObjects}, resolve">
+                        <Call name="AddObject" args="parent.ToPrtgObject(), parameters, {RequestLambda}(f, t) => {Alias:GetObjects}, resolve">
                             <Call name="{Request}Devices" args="new DeviceParameters(f), t" alias="GetObjects"/>
                         </Call>?.Single()
                     </Body>
@@ -803,24 +803,24 @@
                     <Summary>Adds a new group to a PRTG group or probe.</Summary>
                     <ReturnDescription>If &lt;paramref name=&quot;resolve&quot;/&gt; is true, the group that was created from this method's group parameters. Otherwise, null.</ReturnDescription>
 
-                    <Parameter name="parentId" type="int" description="The ID of the group or probe the group will apply to."/>
+                    <Parameter name="parent" type="Either&lt;GroupOrProbe, int&gt;" description="The group or probe the new group will apply to."/>
                     <Parameter name="name" type="string" description="The name to use for the new group."/>
                     <Parameter name="resolve" type="bool" default="true" description="Whether to resolve the new group to its resultant &lt;see cref=&quot;Group&quot;/&gt; object.\nIf this value is false, this method will return null."/>
 
                     <Body expression="true">
-                        <Call name="AddGroup" args="parentId, new NewGroupParameters(name), resolve"/>
+                        <Call name="AddGroup" args="parent, new NewGroupParameters(name), resolve"/>
                     </Body>
                 </InlineMethodDef>
                 <InlineMethodDef name="AddGroup" returns="Group" tokenMode="MandatoryNamedDefault">
                     <Summary>Adds a new group to a PRTG group or probe with a complex set of parameters.</Summary>
                     <ReturnDescription>If &lt;paramref name=&quot;resolve&quot;/&gt; is true, the group that was created from this method's group &lt;paramref name=&quot;parameters&quot;/&gt;. Otherwise, null.</ReturnDescription>
 
-                    <Parameter name="parentId" type="int" description="The ID of the group or probe the group will apply to."/>
+                    <Parameter name="parent" type="Either&lt;GroupOrProbe, int&gt;" description="The group or probe the new group will apply to."/>
                     <Parameter name="parameters" type="NewGroupParameters" description="A set of parameters describing the properties of the group to create."/>
                     <Parameter name="resolve" type="bool" default="true" description="Whether to resolve the new group to its resultant &lt;see cref=&quot;Group&quot;/&gt; object.\nIf this value is false, this method will return null."/>
 
                     <Body expression="true">
-                        <Call name="AddObject" args="parentId, parameters, {RequestLambda}(f, t) => {Alias:GetObjects}, resolve">
+                        <Call name="AddObject" args="parent.ToPrtgObject(), parameters, {RequestLambda}(f, t) => {Alias:GetObjects}, resolve">
                             <Call name="{Request}Groups" args="new GroupParameters(f), t" alias="GetObjects"/>
                         </Call>?.Single()
                     </Body>
@@ -831,23 +831,23 @@
                     
                     <Exception type="TimeoutException" description="Sensor parameters failed to resolve within the specified timespan."/>
 
-                    <Parameter name="deviceId" type="int" description="The ID of a device that supports the specified sensor type."/>
+                    <Parameter name="deviceOrId" type="Either&lt;Device, int&gt;" description="The device or ID of a device that supports the specified sensor type."/>
                     <Parameter name="sensorType" type="string" description="The type of sensor to create sensor paramters for.&lt;para/&gt;\nNote: sensor parameters cannot be created for types that require additional information\nto be added before interrogating the target device."/>
                     <Parameter name="progressCallback" type="Func&lt;int, bool&gt;" default="null" description="A callback function used to monitor the progress of the request. If this function returns false, the request is aborted and this method returns null."/>
                     <Parameter name="timeout" type="int" default="60" description="Duration (in seconds) to wait for sensor parameters to resolve."/>
 
                     <Body expression="true">
-                        new DynamicSensorParameters(<Call name="GetAddSensorQueryResponse" args="deviceId, sensorType, progressCallback, timeout"/>, sensorType)
+                        new DynamicSensorParameters(<Call name="GetAddSensorQueryResponse" args="deviceOrId, sensorType, progressCallback, timeout"/>, sensorType)
                     </Body>
                 </InlineMethodDef>
                 <InlineMethodDef name="AutoDiscover" returns="void" tokenMode="AutomaticNamed">
                     <Summary>Automatically creates sensors under an object based on the object's (or it's children's) device type.</Summary>
 
-                    <Parameter name="objectId" type="int" description="The object to run Auto-Discovery for (such as a device or group)."/>
+                    <Parameter name="objectOrId" type="Either&lt;IPrtgObject, int&gt;" description="The object or ID of the object to run Auto-Discovery for (such as a device or group)."/>
                     <Parameter name="templates" type="params DeviceTemplate[]" description="An optional list of device templates to use for performing the auto-discovery."/>
 
                     <Body expression="true">
-                        <Call name="RequestEngine.ExecuteRequest" args="new AutoDiscoverParameters(objectId, templates)"/>
+                        <Call name="RequestEngine.ExecuteRequest" args="new AutoDiscoverParameters(objectOrId, templates)"/>
                     </Body>
                 </InlineMethodDef>
             </Region>
@@ -856,12 +856,12 @@
                     <InlineMethodDef name="AcknowledgeSensor" returns="void" tokenMode="AutomaticDefault">
                         <Summary>Marks a &lt;see cref="Status.Down"/&gt; sensor as &lt;see cref="Status.DownAcknowledged"/&gt;. If an acknowledged sensor returns to &lt;see cref="Status.Up"/&gt;, it will not be acknowledged when it goes down again.</Summary>
 
-                        <Parameter name="sensorId" type="int" description="ID of the sensor to acknowledge."/>
+                        <Parameter name="sensorOrId" type="Either&lt;Sensor, int&gt;" description="The sensor or ID of the sensor to acknowledge."/>
                         <Parameter name="duration" type="int?" default="null" description="Duration (in minutes) to acknowledge the sensor for. If null, sensor will be acknowledged indefinitely."/>
                         <Parameter name="message" type="string" default="null" description="Message to display on the acknowledged sensor."/>
 
                         <Body expression="true">
-                            <Call name="AcknowledgeSensor" args="new[] {sensorId}, duration, message"/>
+                            <Call name="AcknowledgeSensor" args="new[] {sensorOrId.GetId()}, duration, message"/>
                         </Body>
                     </InlineMethodDef>
                     <InlineMethodDef name="AcknowledgeSensor" returns="void" tokenMode="AutomaticNamedDefault">
@@ -880,12 +880,12 @@
                     <InlineMethodDef name="PauseObject" returns="void" tokenMode="AutomaticNamedDefault">
                         <Summary>Pauses monitoring on a PRTG Object and all child objects.</Summary>
 
-                        <Parameter name="objectId" type="int" description="ID of the object to pause."/>
+                        <Parameter name="objectOrId" type="Either&lt;IPrtgObject, int&gt;" description="The object or ID of the object to pause."/>
                         <Parameter name="duration" type="int?" default="null" description="Duration (in minutes) to pause the object for. If null, object will be paused indefinitely."/>
                         <Parameter name="message" type="string" default="null" description="Message to display on the paused object."/>
 
                         <Body expression="true">
-                            <Call name="PauseObject" args="new[] {objectId}, duration, message"/>
+                            <Call name="PauseObject" args="new[] {objectOrId.GetId()}, duration, message"/>
                         </Body>
                     </InlineMethodDef>
                     <InlineMethodDef name="PauseObject" returns="void" tokenMode="AutomaticNamedDefault">
@@ -964,25 +964,25 @@
                     <Summary>Clones a sensor or group to another device or group.</Summary>
                     <ReturnDescription>The ID of the object that was created.</ReturnDescription>
 
-                    <Parameter name="sourceObjectId" type="int" description="The ID of a sensor or group to clone."/>
+                    <Parameter name="sourceObject" type="Either&lt;IPrtgObject, int&gt;" description="The sensor or group to clone."/>
                     <Parameter name="cloneName" type="string" description="The name that should be given to the cloned object."/>
-                    <Parameter name="targetLocationObjectId" type="int" description="If this is a sensor, the ID of the device to clone to. If this is a group, the ID of the group to clone to."/>
+                    <Parameter name="targetParentObject" type="Either&lt;DeviceOrGroupOrProbe, int&gt;" description="If this is a sensor, the device or ID of the device to clone to. If this is a group, the object or ID of the group or probe to clone to."/>
 
                     <Body expression="true">
-                        <Call name="CloneObject" args="new CloneParameters(sourceObjectId, cloneName, targetLocationObjectId)"/>
+                        <Call name="CloneObject" args="new CloneParameters(sourceObject.ToPrtgObject(), cloneName, targetParentObject.ToPrtgObject())"/>
                     </Body>
                 </InlineMethodDef>
                 <InlineMethodDef name="CloneObject" returns="int" tokenMode="MandatoryCall">
                     <Summary>Clones a device to another group or probe.</Summary>
                     <ReturnDescription>The ID of the object that was created.</ReturnDescription>
 
-                    <Parameter name="deviceId" type="int" description="The ID of the device to clone."/>
+                    <Parameter name="deviceOrId" type="Either&lt;Device, int&gt;" description="The device or ID of the device to clone."/>
                     <Parameter name="cloneName" type="string" description="The name that should be given to the cloned device."/>
                     <Parameter name="host" type="string" description="The hostname or IP Address that should be assigned to the new device."/>
-                    <Parameter name="targetLocationObjectId" type="int" description="The group or probe the device should be cloned to."/>
+                    <Parameter name="targetParentObject" type="Either&lt;GroupOrProbe, int&gt;" description="The group or probe the device should be cloned to."/>
 
                     <Body expression="true">
-                        <Call name="CloneObject" args="new CloneParameters(deviceId, cloneName, targetLocationObjectId, host)"/>
+                        <Call name="CloneObject" args="new CloneParameters(deviceOrId, cloneName, targetParentObject, host)"/>
                     </Body>
                 </InlineMethodDef>
             </Region>
@@ -1001,11 +1001,11 @@
                         </Summary>
                         <ReturnDescription>A dictionary mapping all discoverable properties to raw values.</ReturnDescription>
 
-                        <Parameter name="objectId" type="int" description="The ID of the object to retrieve settings and properties for."/>
+                        <Parameter name="objectOrId" type="Either&lt;IPrtgObject, int&gt;" description="The object or ID of the object to retrieve settings and properties for."/>
                         <Parameter name="objectType" type="ObjectType" description="The type of object to retrieve settings and properties for."/>
 
                         <Body expression="true">
-                            <Call name="GetObjectPropertiesRawDictionary" args="objectId, objectType"/>
+                            <Call name="GetObjectPropertiesRawDictionary" args="objectOrId, objectType"/>
                         </Body>
                     </InlineMethodDef>
                     <InlineMethodDef name="GetObjectPropertiesRaw" returns="Dictionary&lt;string, string&gt;" tokenMode="AutomaticDefault">
@@ -1015,11 +1015,11 @@
                         </Summary>
                         <ReturnDescription>A dictionary mapping all discoverable properties to raw values.</ReturnDescription>
 
-                        <Parameter name="objectId" type="int" description="The ID of the object to retrieve settings and properties for."/>
-                        <Parameter name="objectType" type="string" default="null" description="The type of object to retrieve settings and properties for.\nIf this value is null, PRTG will attempt to guess the object type based on the specified &lt;paramref name=&quot;objectId&quot;/&gt;."/>
+                        <Parameter name="objectOrId" type="Either&lt;IPrtgObject, int&gt;" description="The object or ID of the object to retrieve settings and properties for."/>
+                        <Parameter name="objectType" type="string" default="null" description="The type of object to retrieve settings and properties for.\nIf this value is null, PRTG will attempt to guess the object type based on the specified &lt;paramref name=&quot;objectOrId&quot;/&gt;."/>
 
                         <Body expression="true">
-                            <Call name="GetObjectPropertiesRawDictionary" args="objectId, objectType"/>
+                            <Call name="GetObjectPropertiesRawDictionary" args="objectOrId, objectType"/>
                         </Body>
                     </InlineMethodDef>
                 </Region>
@@ -1028,11 +1028,11 @@
                         <Summary>Retrieves a type safe property from a PRTG Server.</Summary>
                         <ReturnDescription>A type safe representation of the specified property.</ReturnDescription>
 
-                        <Parameter name="objectId" type="int" description="The ID of the object to retrieve the property from."/>
+                        <Parameter name="objectOrId" type="Either&lt;IPrtgObject, int&gt;" description="The object or ID of the object to retrieve the property from."/>
                         <Parameter name="property" type="ObjectProperty" description="The well known property to retrieve."/>
 
                         <Body expression="true">
-                            <Call name="GetObjectPropertyInternal" args="objectId, property"/>
+                            <Call name="GetObjectPropertyInternal" args="objectOrId, property"/>
                         </Body>
                     </InlineMethodDef>
                     <InlineMethodDef name="GetObjectProperty" returns="T">
@@ -1045,11 +1045,11 @@
                         <Exception type="InvalidCastException" description="The deserialized value could not be cast to the specified type."/>
 
                         <GenericArg name="T" description="The type to cast the object to."/>
-                        <Parameter name="objectId" type="int" description="The ID of the object to retrieve the property from."/>
+                        <Parameter name="objectOrId" type="Either&lt;IPrtgObject, int&gt;" description="The object or ID of the object to retrieve the property from."/>
                         <Parameter name="property" type="ObjectProperty" description="The well known property to retrieve."/>
 
                         <Body expression="true">
-                            ResponseParser.GetTypedProperty&lt;T&gt;(<Call name="GetObjectProperty" args="objectId, property"/>)
+                            ResponseParser.GetTypedProperty&lt;T&gt;(<Call name="GetObjectProperty" args="objectOrId, property"/>)
                         </Body>
                     </InlineMethodDef>
                 </Region>
@@ -1065,12 +1065,12 @@
 
                         <Exception type="PrtgRequestException" description="The specified property does not exist and the PRTG Server's language is English."/>
                         
-                        <Parameter name="objectId" type="int" description="The ID of the object whose property should be retrieved."/>
+                        <Parameter name="objectOrId" type="Either&lt;IPrtgObject, int&gt;" description="The object or ID of the object whose property should be retrieved."/>
                         <Parameter name="property" type="string" description="The property of the object to retrieve. This can be typically discovered by inspecting the &quot;name&quot; attribute of the properties' &amp;lt;input/&amp;gt; tag on the Settings page of PRTG.&lt;para/&gt;\nIf the properties name ends in an underscore, this must be included."/>
                         <Parameter name="text" type="bool" default="false" description="If true, displays option properties using their label names instead of their internal numeric values."/>
 
                         <Body expression="true">
-                            <Call name="GetObjectPropertyRawInternal" args="new GetObjectPropertyRawParameters(objectId, property, text), property"/>
+                            <Call name="GetObjectPropertyRawInternal" args="new GetObjectPropertyRawParameters(objectOrId, property, text), property"/>
                         </Body>
                     </InlineMethodDef>
                 </Region>
@@ -1086,14 +1086,14 @@
 
                         <Exception type="PrtgRequestException" description="The specified property does not exist and the PRTG Server's language is English."/>
 
-                        <Parameter name="objectId" type="int" description="The ID of the object whose property should be retrieved."/>
+                        <Parameter name="objectOrId" type="Either&lt;IPrtgObject, int&gt;" description="The object or ID of the object whose property should be retrieved."/>
                         <Parameter name="subId" type="int" description="The ID of the sub object whose property should be retrieved."/>
                         <Parameter name="subType" type="string" description="The type of sub object to retrieve the property from."/>
                         <Parameter name="property" type="string" description="The property of the object to retrieve. This can be typically discovered by inspecting the &quot;name&quot; attribute of the properties' &amp;lt;input/&amp;gt; tag on the Settings page of PRTG.&lt;para/&gt;\nIf the properties name ends in an underscore, this must be included."/>
                         <Parameter name="text" type="bool" default="false" description="If true, displays option properties using their label names instead of their internal numeric values."/>
 
                         <Body expression="true">
-                            <Call name="GetObjectPropertyRawInternal" args="new GetObjectPropertyRawParameters(objectId, subId, subType, property, text), property"/>
+                            <Call name="GetObjectPropertyRawInternal" args="new GetObjectPropertyRawParameters(objectOrId, subId, subType, property, text), property"/>
                         </Body>
                     </InlineMethodDef>
                 </Region>
@@ -1107,12 +1107,12 @@
                             If PrtgAPI cannot convert the specified value to the type required by the property, PrtgAPI will throw an exception indicating the type that was expected.
                         </Summary>
 
-                        <Parameter name="objectId" type="int" description="The ID of the object whose properties should be modified."/>
+                        <Parameter name="objectOrId" type="Either&lt;IPrtgObject, int&gt;" description="The object or ID of the object whose properties should be modified."/>
                         <Parameter name="property" type="ObjectProperty" description="The property of the object to modify."/>
                         <Parameter name="value" type="object" description="The value to set the object's property to."/>
 
                         <Body expression="true">
-                            <Call name="SetObjectProperty" args="new[] {objectId}, property, value"/>
+                            <Call name="SetObjectProperty" args="new[] {objectOrId.GetId()}, property, value"/>
                         </Body>
                     </InlineMethodDef>
                     <InlineMethodDef name="SetObjectProperty" returns="void">
@@ -1142,11 +1142,11 @@
                             If PrtgAPI cannot convert the specified value to the type required by the property, PrtgAPI will throw an exception indicating the type that was expected.
                         </Summary>
 
-                        <Parameter name="objectId" type="int" description="The ID of the object whose properties should be modified."/>
+                        <Parameter name="objectOrId" type="Either&lt;IPrtgObject, int&gt;" description="The object or ID of the object whose properties should be modified."/>
                         <Parameter name="parameters" type="params PropertyParameter[]" description="A set of parameters describing the properties and their values to process."/>
 
                         <Body expression="true">
-                            <Call name="SetObjectProperty" args="new[] {objectId}, parameters"/>
+                            <Call name="SetObjectProperty" args="new[] {objectOrId.GetId()}, parameters"/>
                         </Body>
                     </InlineMethodDef>
                     <InlineMethodDef name="SetObjectProperty" returns="void" tokenMode="MandatoryCall">
@@ -1219,13 +1219,13 @@
                     <InlineMethodDef name="SetChannelProperty" returns="void" tokenMode="AutomaticAll">
                         <Summary>Modifies a property of a PRTG Channel based on its Sensor ID and Channel ID.</Summary>
 
-                        <Parameter name="sensorId" type="int" description="The ID of the sensor whose channels should be modified."/>
+                        <Parameter name="sensorOrId" type="Either&lt;Sensor, int&gt;" description="The sensor or ID of the sensor whose channels should be modified."/>
                         <Parameter name="channelId" type="int" description="The ID of the channel to modify."/>
                         <Parameter name="property" type="ChannelProperty" description="The property of the channel to modify."/>
                         <Parameter name="value" type="object" description="The value to set the channel's property to."/>
 
                         <Body expression="true">
-                            <Call name="SetChannelProperty" args="new[] {sensorId}, channelId, property, value"/>
+                            <Call name="SetChannelProperty" args="new[] {sensorOrId.GetId()}, channelId, property, value"/>
                         </Body>
                     </InlineMethodDef>
                     <InlineMethodDef name="SetChannelProperty" returns="void" tokenMode="AutomaticAll">
@@ -1248,12 +1248,12 @@
                     <InlineMethodDef name="SetChannelProperty" returns="void" tokenMode="AutomaticAll">
                         <Summary>Modifies one or more properties of a PRTG Channel based on its Sensor ID and Channel ID.</Summary>
 
-                        <Parameter name="sensorId" type="int" description="The ID of the sensor whose channels should be modified."/>
+                        <Parameter name="sensorOrId" type="Either&lt;Sensor, int&gt;" description="The sensor or ID of the sensor whose channels should be modified."/>
                         <Parameter name="channelId" type="int" description="The ID of the channel to modify."/>
                         <Parameter name="parameters" type="params ChannelParameter[]" description="A set of parameters describing the properties and their values to process."/>
 
                         <Body expression="true">
-                            <Call name="SetChannelProperty" args="new[] { sensorId }, channelId, parameters"/>
+                            <Call name="SetChannelProperty" args="new[] {sensorOrId.GetId()}, channelId, parameters"/>
                         </Body>
                     </InlineMethodDef>
                     <InlineMethodDef name="SetChannelProperty" returns="void" tokenMode="AutomaticAll">
@@ -1272,12 +1272,12 @@
                     <InlineMethodDef name="SetObjectPropertyRaw" returns="void">
                         <Summary>Modifies unsupported properties and settings of a PRTG Object.</Summary>
 
-                        <Parameter name="objectId" type="int" description="The ID of the object whose properties should be modified."/>
+                        <Parameter name="objectOrId" type="Either&lt;IPrtgObject, int&gt;" description="The object or ID of the object whose properties should be modified."/>
                         <Parameter name="property" type="string" description="The property of the object to modify. This can be typically discovered by inspecting the &quot;name&quot; attribute of the properties' &amp;lt;input/&amp;gt; tag on the Settings page of PRTG.&lt;para/&gt;\nIf the properties name ends in an underscore, this must be included."/>
                         <Parameter name="value" type="string" description="The value to set the object's property to. For radio buttons and dropdown lists, this is the integer found in the 'value' attribute."/>
 
                         <Body expression="true">
-                            <Call name="SetObjectPropertyRaw" args="new[] {objectId}, property, value"/>
+                            <Call name="SetObjectPropertyRaw" args="new[] {objectOrId.GetId()}, property, value"/>
                         </Body>
                     </InlineMethodDef>
                     <InlineMethodDef name="SetObjectPropertyRaw" returns="void">
@@ -1299,11 +1299,11 @@
                     <InlineMethodDef name="SetObjectPropertyRaw" returns="void">
                         <Summary>Modifies multiple unsupported properties of a PRTG Object.</Summary>
 
-                        <Parameter name="objectId" type="int" description="The ID of the object whose properties should be modified."/>
+                        <Parameter name="objectOrId" type="Either&lt;IPrtgObject, int&gt;" description="The object or ID of the object whose properties should be modified."/>
                         <Parameter name="parameters" type="params CustomParameter[]" description="A set of parameters describing the properties and their values to process."/>
 
                         <Body expression="true">
-                            <Call name="SetObjectPropertyRaw" args="new[] { objectId }, parameters"/>
+                            <Call name="SetObjectPropertyRaw" args="new[] {objectOrId.GetId()}, parameters"/>
                         </Body>
                     </InlineMethodDef>
                     <InlineMethodDef name="SetObjectPropertyRaw" returns="void" tokenMode="MandatoryCall">
@@ -1362,13 +1362,13 @@
                         the progress callback returns false, PrtgAPI will stop waiting for all probes to restart.
                     </Summary>
 
-                    <Parameter name="probeId" type="int" description="The ID of the probe to restart."/>
+                    <Parameter name="probeOrId" type="Either&lt;Probe, int&gt;" description="The probe or ID of the probe to restart."/>
                     <Parameter name="waitForRestart" type="bool" default="false" description="Whether to wait for the Probe Service on all probes to restart before completing this method."/>
                     <Parameter name="progressCallback" type="Func&lt;ProbeRestartProgress, bool&gt;" default="null" description="A callback method to execute upon each request against PRTG to check whether all probes have restarted."/>
                     <Parameter name="token" type="CancellationToken" default="default(CancellationToken)" description="A cancellation token to use when waiting for all probes to restart. If cancellation is requested, this method will abort waiting for any remaining probes to restart."/>
                     
                     <Body expression="true">
-                        <Call name="RestartProbe" args="new[] { probeId }, waitForRestart, p =&gt; progressCallback(p.First()), token"/>
+                        <Call name="RestartProbe" args="new[] {probeOrId.GetId()}, waitForRestart, p =&gt; progressCallback(p.First()), token"/>
                     </Body>
                 </InlineMethodDef>
                 <InlineMethodDef name="RestartProbe" returns="void" tokenMode="Manual">
@@ -1409,16 +1409,16 @@
                     <Summary>Approves or denies a newly installed probe for use within PRTG.</Summary>
                     <Exception type="InvalidOperationException" description="The specified object ID is not a probe or is a probe that has already been approved."/>
                     
-                    <Parameter name="probeId" type="int" description="The ID of the probe to set the approval status of."/>
+                    <Parameter name="probeOrId" type="Either&lt;Probe, int&gt;" description="The probe or ID of the probe to set the approval status of."/>
                     <Parameter name="action" type="ProbeApproval" description="The approval action to perform for the probe."/>
 
                     <Body expression="false">
-                        var approved = <Call name="GetProbeApprovalStatus" args="probeId"/>;
+                        var approved = <Call name="GetProbeApprovalStatus" args="probeOrId"/>;
 
                         if (approved)
-                            throw new InvalidOperationException($"Cannot change approval status of probe with ID '{probeId}': probe has already been approved.");
+                        throw new InvalidOperationException($"Cannot change approval status of probe with ID '{probeOrId}': probe has already been approved.");
 
-                        <Call name="ApproveProbeInternal" args="probeId, action"/>;
+                        <Call name="ApproveProbeInternal" args="probeOrId, action"/>;
                     </Body>
                 </InlineMethodDef>
             </Region>
@@ -1438,11 +1438,11 @@
                     <InlineMethodDef name="SetPosition" returns="void" tokenMode="AutomaticNamed">
                         <Summary>Moves the position of an object up or down under its parent within the PRTG User Interface.</Summary>
 
-                        <Parameter name="objectId" type="int" description="The object to reposition."/>
+                        <Parameter name="objectOrId" type="Either&lt;IPrtgObject, int&gt;" description="The object or ID of the object to reposition."/>
                         <Parameter name="position" type="Position" description="The direction to move in."/>
 
                         <Body expression="true">
-                            <Call name="RequestEngine.ExecuteRequest" args="new SetPositionParameters(objectId, position)"/>
+                            <Call name="RequestEngine.ExecuteRequest" args="new SetPositionParameters(objectOrId, position)"/>
                         </Body>
                     </InlineMethodDef>
                     <InlineMethodDef name="SetPosition" returns="void" tokenMode="AutomaticNamed">
@@ -1460,11 +1460,11 @@
                     <InlineMethodDef name="MoveObject" returns="void" tokenMode="AutomaticNamed">
                         <Summary>Moves a device or group (excluding the root group) to another group or probe within PRTG.</Summary>
 
-                        <Parameter name="objectId" type="int" description="The ID of a device or group to move."/>
-                        <Parameter name="destinationId" type="int" description="The group or probe to move the object to."/>
+                        <Parameter name="objectOrId" type="Either&lt;IPrtgObject, int&gt;" description="The device or group to move."/>
+                        <Parameter name="destination" type="Either&lt;GroupOrProbe, int&gt;" description="The group or probe to move the object to."/>
 
                         <Body expression="true">
-                            <Call name="RequestEngine.ExecuteRequest" args="new MoveObjectParameters(objectId, destinationId)"/>
+                            <Call name="RequestEngine.ExecuteRequest" args="new MoveObjectParameters(objectOrId, destination)"/>
                         </Body>
                     </InlineMethodDef>
                 </Region>
@@ -1472,10 +1472,10 @@
                     <InlineMethodDef name="SortAlphabetically" returns="void" tokenMode="AutomaticNamed">
                         <Summary>Sorts the children of a device, group or probe alphabetically.</Summary>
 
-                        <Parameter name="objectId" type="int" description="The ID of the object to sort."/>
+                        <Parameter name="objectOrId" type="Either&lt;IPrtgObject, int&gt;" description="The object or ID of the object to sort."/>
 
                         <Body expression="true">
-                            <Call name="RequestEngine.ExecuteRequest" args="new SortAlphabeticallyParameters(objectId)"/>
+                            <Call name="RequestEngine.ExecuteRequest" args="new SortAlphabeticallyParameters(objectOrId)"/>
                         </Body>
                     </InlineMethodDef>
                 </Region>
@@ -1494,11 +1494,11 @@
                     <InlineMethodDef name="RenameObject" returns="void" tokenMode="AutomaticNamed">
                         <Summary>Renames an object such as a Sensor, Device, Group or Probe within PRTG.</Summary>
 
-                        <Parameter name="objectId" type="int" description="ID of the object to rename."/>
+                        <Parameter name="objectOrId" type="Either&lt;IPrtgObject, int&gt;" description="The object or ID of the object to rename."/>
                         <Parameter name="name" type="string" description="New name to give the object."/>
 
                         <Body expression="true">
-                            <Call name="RenameObject" args="new[] {objectId}, name"/>
+                            <Call name="RenameObject" args="new[] {objectOrId.GetId()}, name"/>
                         </Body>
                     </InlineMethodDef>
                     <InlineMethodDef name="RenameObject" returns="void" tokenMode="AutomaticNamed">

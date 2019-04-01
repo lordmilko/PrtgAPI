@@ -7,7 +7,7 @@ namespace PrtgAPI.Parameters
     {
         CommandFunction ICommandParameters.Function => CommandFunction.SetPosition;
 
-        public SetPositionParameters(int objectId, Position position) : base(objectId)
+        public SetPositionParameters(Either<IPrtgObject, int> objectOrId, Position position) : base(objectOrId)
         {
             Position = position;
         }

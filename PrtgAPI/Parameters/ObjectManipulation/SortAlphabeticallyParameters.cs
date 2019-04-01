@@ -4,7 +4,7 @@
     {
         CommandFunction ICommandParameters.Function => CommandFunction.SortSubObjects;
 
-        public SortAlphabeticallyParameters(int objectId) : base(objectId)
+        public SortAlphabeticallyParameters(Either<IPrtgObject, int> objectOrId) : base(objectOrId)
         {
         }
     }

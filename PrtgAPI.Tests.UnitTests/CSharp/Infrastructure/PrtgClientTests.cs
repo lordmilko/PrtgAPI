@@ -523,6 +523,79 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             client.GetSensors();
         }
 
+        #region Either
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void PrtgClient_Either_Object()
+        {
+            var urls = new[]
+            {
+                UnitRequest.Sensors("count=*&filter_objid=4000", UrlFlag.Columns),
+                UnitRequest.Channels(4000),
+                UnitRequest.ChannelProperties(4000, 1)
+            };
+
+            Execute(c =>
+            {
+                var sensor = c.GetSensor(4000);
+                var channel = c.GetChannel(sensor, 1);
+            }, urls);
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void PrtgClient_Either_Id()
+        {
+            var urls = new[]
+            {
+                UnitRequest.Channels(4000),
+                UnitRequest.ChannelProperties(4000, 1)
+            };
+
+            Execute(
+                c => c.GetChannel(4000, 1),
+                urls
+            );
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void PrtgClient_Either_Null_Throws()
+        {
+            var client = Initialize_Client(new MultiTypeResponse());
+
+            AssertEx.Throws<ArgumentNullException>(
+                () => client.GetChannel(null, 1),
+                "Value of type 'Sensor' cannot be null."
+            );
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void PrtgClient_Either_Default_Throws()
+        {
+            var client = Initialize_Client(new MultiTypeResponse());
+
+            AssertEx.Throws<InvalidOperationException>(
+                () => client.GetChannel(default(Either<Sensor, int>), 1),
+                "Value of type 'Either<Sensor, Int32>' was not properly initialized. Value must specify a 'Left' (Sensor) or 'Right' (Int32) value."
+            );
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public async Task PrtgClient_Either_Default_ThrowsAsync()
+        {
+            var client = Initialize_Client(new MultiTypeResponse());
+
+            await AssertEx.ThrowsAsync<InvalidOperationException>(
+                async () => await client.GetChannelAsync(default(Either<Sensor, int>), 1),
+                "Value of type 'Either<Sensor, Int32>' was not properly initialized. Value must specify a 'Left' (Sensor) or 'Right' (Int32) value."
+            );
+        }
+
+        #endregion
         #region Execute With Log Response
 
         [TestMethod]
@@ -844,6 +917,18 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
                 return ObjectType.Device;
             if (t == typeof(WmiServiceTarget))
                 return Initialize_Client(new MultiTypeResponse()).Targets.GetWmiServices(1001).First();
+            if (t == typeof(Either<IPrtgObject, int>))
+                return new Either<IPrtgObject, int>(1001);
+            if (t == typeof(Either<Sensor, int>))
+                return new Either<Sensor, int>(1001);
+            if (t == typeof(Either<Device, int>))
+                return new Either<Device, int>(1001);
+            if (t == typeof(Either<Probe, int>))
+                return new Either<Probe, int>(1001);
+            if (t == typeof(Either<GroupOrProbe, int>))
+                return new Either<GroupOrProbe, int>(1001);
+            if (t == typeof(Either<DeviceOrGroupOrProbe, int>))
+                return new Either<DeviceOrGroupOrProbe, int>(1001);
             if (parameter.Name == "versionSpecific")
                 return null;
 

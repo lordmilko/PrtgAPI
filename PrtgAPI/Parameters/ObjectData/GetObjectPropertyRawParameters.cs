@@ -20,7 +20,7 @@ namespace PrtgAPI.Parameters
             }
         }
 
-        public GetObjectPropertyRawParameters(int objectId, string property, bool text) : base(objectId)
+        public GetObjectPropertyRawParameters(Either<IPrtgObject, int> objectOrId, string property, bool text) : base(objectOrId)
         {
             if (property == null)
                 throw new ArgumentNullException(nameof(property), "Property cannot be null.");
@@ -37,7 +37,7 @@ namespace PrtgAPI.Parameters
                 this[Parameter.Show] = CustomValueFormat.Text;
         }
 
-        public GetObjectPropertyRawParameters(int objectId, int subId, string subType, string property, bool text) : this(objectId, property, false)
+        public GetObjectPropertyRawParameters(Either<IPrtgObject, int> objectOrId, int subId, string subType, string property, bool text) : this(objectOrId, property, false)
         {
             if (subType == null)
                 throw new ArgumentNullException(nameof(subType), "SubType cannot be null.");

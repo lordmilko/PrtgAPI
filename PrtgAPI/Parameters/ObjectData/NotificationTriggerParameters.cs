@@ -7,9 +7,9 @@ namespace PrtgAPI.Parameters
     {
         XmlFunction IXmlParameters.Function => XmlFunction.TableData;
 
-        public NotificationTriggerParameters(int objectId)
+        public NotificationTriggerParameters(Either<IPrtgObject, int> objectOrId)
         {
-            ObjectId = objectId;
+            ObjectId = objectOrId.GetId();
             this[Parameter.Content] = Content.Triggers;
             this[Parameter.Columns] = new[] { Property.Content, Property.Id };
         }

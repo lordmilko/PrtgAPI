@@ -7,12 +7,12 @@ namespace PrtgAPI.Parameters
     {
         CommandFunction ICommandParameters.Function => CommandFunction.AddSensor2;
 
-        public BeginAddSensorQueryParameters(int deviceId, SensorType type) : base(deviceId)
+        public BeginAddSensorQueryParameters(Either<Device, int> deviceOrId, SensorType type) : base(deviceOrId.ToPrtgObject())
         {
             SensorType = type;
         }
 
-        internal BeginAddSensorQueryParameters(int deviceId, string sensorType) : base(deviceId)
+        internal BeginAddSensorQueryParameters(Either<Device, int> deviceOrId, string sensorType) : base(deviceOrId.ToPrtgObject())
         {
             if (sensorType == null)
                 throw new ArgumentNullException(nameof(sensorType), "Sensor type cannot be null.");

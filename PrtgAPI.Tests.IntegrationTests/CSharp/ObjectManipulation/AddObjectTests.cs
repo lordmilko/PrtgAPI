@@ -331,7 +331,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         {
             var host = "exch-1";
 
-            AddsWithLightParameters(
+            AddsWithLightParameters<Device, GroupOrProbe>(
                 (p, n, r, t) => client.AddDevice(p, n, host, resolve: r, token: t),
                 client.GetDevices,
                 device => AssertEx.AreEqual(device.Host, host, "Host was not correct")
@@ -342,7 +342,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         [TestCategory("IntegrationTest")]
         public void AddDevice_AddsWithRealParameters()
         {
-            AddsWithRealParameters(
+            AddsWithRealParameters<Device, NewDeviceParameters, GroupOrProbe>(
                 new NewDeviceParameters("realParameters", "exch-2") { AutoDiscoverySchedule = AutoDiscoverySchedule.Hourly },
                 client.AddDevice,
                 client.GetDevices,
@@ -361,7 +361,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         [TestCategory("IntegrationTest")]
         public void AddDevice_Resolves()
         {
-            Resolves(
+            Resolves<Device, NewDeviceParameters, GroupOrProbe>(
                 n => new NewDeviceParameters(n, "exch-3"),
                 client.AddDevice,
                 (o, n, r, t) => client.AddDevice(o, n, "sql-2", resolve: r, token: t),
@@ -374,7 +374,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         [TestCategory("IntegrationTest")]
         public void AddDevice_DoesntResolve()
         {
-            Resolves(
+            Resolves<Device, NewDeviceParameters, GroupOrProbe>(
                 n => new NewDeviceParameters(n, "exch-3"),
                 client.AddDevice,
                 (o, n, r, t) => client.AddDevice(o, n, "sql-2", resolve: r, token: t),
@@ -390,7 +390,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         [TestCategory("IntegrationTest")]
         public async Task AddDevice_AddsWithLightParametersAsync()
         {
-            await AddsWithLightParametersAsync(
+            await AddsWithLightParametersAsync<Device, GroupOrProbe>(
                 async (p, n, r, t) => await client.AddDeviceAsync(p, n, "exc-1", resolve: r, token: t),
                 client.GetDevicesAsync,
                 null
@@ -401,7 +401,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         [TestCategory("IntegrationTest")]
         public async Task AddDevice_AddsWithRealParametersAsync()
         {
-            await AddsWithRealParametersAsync(
+            await AddsWithRealParametersAsync<Device, NewDeviceParameters, GroupOrProbe>(
                 new NewDeviceParameters("realParameters", "exch-2") { AutoDiscoverySchedule = AutoDiscoverySchedule.Hourly },
                 client.AddDeviceAsync,
                 client.GetDevicesAsync,
@@ -420,7 +420,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         [TestCategory("IntegrationTest")]
         public async Task AddDevice_ResolvesAsync()
         {
-            await ResolvesAsync(
+            await ResolvesAsync<Device, NewDeviceParameters, GroupOrProbe>(
                 n => new NewDeviceParameters(n, "exch-3"),
                 client.AddDeviceAsync,
                 (p, n, r, t) => client.AddDeviceAsync(p, n, "sql-2", resolve: r, token: t),
@@ -433,7 +433,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         [TestCategory("IntegrationTest")]
         public async Task AddDevice_DoesntResolveAsync()
         {
-            await ResolvesAsync(
+            await ResolvesAsync<Device, NewDeviceParameters, GroupOrProbe>(
                 n => new NewDeviceParameters(n, "exch-3"),
                 client.AddDeviceAsync,
                 (p, n, r, t) => client.AddDeviceAsync(p, n, "sql-2", resolve: r, token: t),
@@ -451,7 +451,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         [TestCategory("IntegrationTest")]
         public void AddGroup_AddsWithLightParameters()
         {
-            AddsWithLightParameters(
+            AddsWithLightParameters<Group, GroupOrProbe>(
                 client.AddGroup,
                 client.GetGroups,
                 null
@@ -462,14 +462,14 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         [TestCategory("IntegrationTest")]
         public void AddGroup_AddsWithRealParameters()
         {
-            AddsWithRealParameters(new NewGroupParameters("realParameters"), client.AddGroup, client.GetGroups, null);
+            AddsWithRealParameters<Group, NewGroupParameters, GroupOrProbe>(new NewGroupParameters("realParameters"), client.AddGroup, client.GetGroups, null);
         }
 
         [TestMethod]
         [TestCategory("IntegrationTest")]
         public void AddGroup_Resolves()
         {
-            Resolves(
+            Resolves<Group, NewGroupParameters, GroupOrProbe>(
                 n => new NewGroupParameters(n),
                 client.AddGroup,
                 client.AddGroup,
@@ -482,7 +482,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         [TestCategory("IntegrationTest")]
         public void AddGroup_DoesntResolve()
         {
-            Resolves(
+            Resolves<Group, NewGroupParameters, GroupOrProbe>(
                 n => new NewGroupParameters(n),
                 client.AddGroup,
                 client.AddGroup,
@@ -498,7 +498,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         [TestCategory("IntegrationTest")]
         public async Task AddGroup_AddsWithLightParametersAsync()
         {
-            await AddsWithLightParametersAsync(
+            await AddsWithLightParametersAsync<Group, GroupOrProbe>(
                 client.AddGroupAsync,
                 client.GetGroupsAsync,
                 null
@@ -509,14 +509,14 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         [TestCategory("IntegrationTest")]
         public async Task AddGroup_AddsWithRealParametersAsync()
         {
-            await AddsWithRealParametersAsync(new NewGroupParameters("realParameters"), client.AddGroupAsync, client.GetGroupsAsync, null);
+            await AddsWithRealParametersAsync<Group, NewGroupParameters, GroupOrProbe>(new NewGroupParameters("realParameters"), client.AddGroupAsync, client.GetGroupsAsync, null);
         }
 
         [TestMethod]
         [TestCategory("IntegrationTest")]
         public async Task AddGroup_ResolvesAsync()
         {
-            await ResolvesAsync(
+            await ResolvesAsync<Group, NewGroupParameters, GroupOrProbe>(
                 n => new NewGroupParameters(n),
                 client.AddGroupAsync,
                 client.AddGroupAsync,
@@ -529,7 +529,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         [TestCategory("IntegrationTest")]
         public async Task AddGroup_DoesntResolveAsync()
         {
-            await ResolvesAsync(
+            await ResolvesAsync<Group, NewGroupParameters, GroupOrProbe>(
                 n => new NewGroupParameters(n),
                 client.AddGroupAsync,
                 client.AddGroupAsync,
@@ -542,8 +542,8 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         #endregion
         #region Synchronous Helpers
 
-        private void AddsWithLightParameters<TObject>(
-            Func<int, string, bool, CancellationToken, TObject> addObject,
+        private void AddsWithLightParameters<TObject, TParent>(
+            Func<Either<TParent, int>, string, bool, CancellationToken, TObject> addObject,
             Func<Property, object, List<TObject>> getObjects,
             Action<TObject> validateAdditional) where TObject : SensorOrDeviceOrGroupOrProbe
         {
@@ -566,9 +566,9 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
             }
         }
 
-        private void AddsWithRealParameters<TObject, TParams>(
+        private void AddsWithRealParameters<TObject, TParams, TParent>(
             TParams parameters,
-            Func<int, TParams, bool, CancellationToken, TObject> addObject,
+            Func<Either<TParent, int>, TParams, bool, CancellationToken, TObject> addObject,
             Func<Property, object, List<TObject>> getObjects,
             Action<TObject, TParams> validateAdditional) where TParams : NewObjectParameters where TObject : SensorOrDeviceOrGroupOrProbe
         {
@@ -589,10 +589,10 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
             }
         }
 
-        private void Resolves<TObject, TParams>(
+        private void Resolves<TObject, TParams, TParent>(
             Func<string, TParams> createParams,
-            Func<int, TParams, bool, CancellationToken, TObject> addObjectParams,
-            Func<int, string, bool, CancellationToken, TObject> addObjectLight,
+            Func<Either<TParent, int>, TParams, bool, CancellationToken, TObject> addObjectParams,
+            Func<Either<TParent, int>, string, bool, CancellationToken, TObject> addObjectLight,
             Func<Property, object, List<TObject>> getObjects,
             bool resolve) where TObject : PrtgObject
         {
@@ -627,8 +627,8 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         #endregion
         #region Asynchronous Helpers
 
-        private async Task AddsWithLightParametersAsync<TObject>(
-            Func<int, string, bool, CancellationToken, Task<TObject>> addObject,
+        private async Task AddsWithLightParametersAsync<TObject, TParent>(
+            Func<Either<TParent, int>, string, bool, CancellationToken, Task<TObject>> addObject,
             Func<Property, object, Task<List<TObject>>> getObjects,
             Func<TObject, Task> validateAdditional) where TObject : SensorOrDeviceOrGroupOrProbe
         {
@@ -651,9 +651,9 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
             }
         }
 
-        private async Task AddsWithRealParametersAsync<TObject, TParams>(
+        private async Task AddsWithRealParametersAsync<TObject, TParams, TParent>(
             TParams parameters,
-            Func<int, TParams, bool, CancellationToken, Task<TObject>> addObject,
+            Func<Either<TParent, int>, TParams, bool, CancellationToken, Task<TObject>> addObject,
             Func<Property, object, Task<List<TObject>>> getObjects,
             Func<TObject, TParams, Task> validateAdditional) where TParams : NewObjectParameters where TObject : SensorOrDeviceOrGroupOrProbe
         {
@@ -674,10 +674,10 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
             }
         }
 
-        private async Task ResolvesAsync<TObject, TParams>(
+        private async Task ResolvesAsync<TObject, TParams, TParent>(
             Func<string, TParams> createParams,
-            Func<int, TParams, bool, CancellationToken, Task<TObject>> addObjectParams,
-            Func<int, string, bool, CancellationToken, Task<TObject>> addObjectLight,
+            Func<Either<TParent, int>, TParams, bool, CancellationToken, Task<TObject>> addObjectParams,
+            Func<Either<TParent, int>, string, bool, CancellationToken, Task<TObject>> addObjectLight,
             Func<Property, object, Task<List<TObject>>> getObjects,
             bool resolve) where TObject : PrtgObject
         {

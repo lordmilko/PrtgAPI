@@ -127,6 +127,7 @@
     <Compile Include="Enums\ConfigFileType.cs" />
     <Compile Include="Enums\RequestVersion.cs" />
     <Compile Include="Enums\SystemInfoType.cs" />
+    <Compile Include="Objects\Models\Either.cs" />
     <Compile Include="Request\LogVerboseEventArgs.cs" />
     <Compile Include="Exceptions\HttpDeserializationException.cs" />
     <Compile Include="Exceptions\Internal\InvalidExpressionException.cs" />

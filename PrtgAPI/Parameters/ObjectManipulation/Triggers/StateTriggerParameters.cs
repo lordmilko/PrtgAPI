@@ -75,8 +75,8 @@ namespace PrtgAPI.Parameters
         /// <summary>
         /// Initializes a new instance of the <see cref="StateTriggerParameters"/> class for creating a new notification trigger.
         /// </summary>
-        /// <param name="objectId">The object ID the trigger will apply to.</param>
-        public StateTriggerParameters(int objectId) : base(TriggerType.State, objectId, (int?)null, ModifyAction.Add)
+        /// <param name="objectOrId">The object or object ID the trigger will apply to.</param>
+        public StateTriggerParameters(Either<IPrtgObject, int> objectOrId) : base(TriggerType.State, objectOrId, (int?)null, ModifyAction.Add)
         {
             EscalationNotificationAction = null;
             OffNotificationAction = null;
@@ -89,18 +89,18 @@ namespace PrtgAPI.Parameters
         /// <summary>
         /// Initializes a new instance of the <see cref="StateTriggerParameters"/> class for editing an existing notification trigger.
         /// </summary>
-        /// <param name="objectId">The object ID the trigger is applied to. Note: if the trigger is inherited, the ParentId should be specified.</param>
+        /// <param name="objectOrId">The object or object ID the trigger is applied to. Note: if the trigger is inherited, the ParentId should be specified.</param>
         /// <param name="triggerId">The sub ID of the trigger on its parent object.</param>
-        public StateTriggerParameters(int objectId, int triggerId) : base(TriggerType.State, objectId, triggerId, ModifyAction.Edit)
+        public StateTriggerParameters(Either<IPrtgObject, int> objectOrId, int triggerId) : base(TriggerType.State, objectOrId, triggerId, ModifyAction.Edit)
         {
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="StateTriggerParameters"/> class for creating a new trigger from an existing <see cref="TriggerType.State"/> <see cref="NotificationTrigger"/>.
         /// </summary>
-        /// <param name="objectId">The object ID the trigger will apply to.</param>
+        /// <param name="objectOrId">The object or object ID the trigger will apply to.</param>
         /// <param name="sourceTrigger">The notification trigger whose properties should be used.</param>
-        public StateTriggerParameters(int objectId, NotificationTrigger sourceTrigger) : base(TriggerType.State, objectId, sourceTrigger, ModifyAction.Add)
+        public StateTriggerParameters(Either<IPrtgObject, int> objectOrId, NotificationTrigger sourceTrigger) : base(TriggerType.State, objectOrId, sourceTrigger, ModifyAction.Add)
         {
             OffNotificationAction = sourceTrigger.OffNotificationAction;
             EscalationNotificationAction = sourceTrigger.EscalationNotificationAction;

@@ -123,7 +123,7 @@ var sensors = client.GetSensors(Status.Down);
 
 foreach (var sensor in sensors)
 {
-    client.AcknowledgeSensor(sensor.Id, 10, "Go away!");
+    client.AcknowledgeSensor(sensor, 10, "Go away!");
 }
 ```
 ```c#
@@ -132,17 +132,17 @@ var sensors = client.GetSensors(Property.Name, "ping");
 
 foreach (var sensor in sensors)
 {
-    client.RenameObject(sensor.Id, "Ping");
+    client.RenameObject(sensor, "Ping");
 }
 ```
 ```c#
 //Set the upper error limit on the "Total" channel of all WMI CPU Load sensors to 90%
 var sensors = client.GetSensors(Property.Tags, "wmicpuloadsensor");
-var channels = sensors.SelectMany(s => client.GetChannels(s.Id, "Total"));
+var channels = sensors.SelectMany(s => client.GetChannels(s, "Total"));
 
 foreach (var channel in channels)
 {
-    client.SetObjectProperty(channel.SensorId, channel.Id, ChannelProperty.UpperErrorLimit, 90);
+    client.SetObjectProperty(channel, ChannelProperty.UpperErrorLimit, 90);
 }
 ```
 
@@ -162,23 +162,23 @@ You can construct an entirely new object hierarchy all within your application.
 First, create a group
 
 ```c#
-//Add a new group named "Servers" to the object with ID 1
-var group = client.AddGroup(1, "Servers");
+//Add a new group named "Servers" to the object with ID 1001
+var group = client.AddGroup(1001, "Servers");
 ```
 
 Then, add a device to it
 
 ```c#
 //Add a new device named "dc-1" to the "Servers" group
-var device = client.AddDevice(group.Id, "dc-1");
+var device = client.AddDevice(group, "dc-1");
 ```
 
 We'll add a new sensor
 
 ```c#
 //Create a brand new Ping sensor and add it to our device
-var pingParams = client.GetDynamicSensorParameters(device.Id, "ping");
-var sensor = client.AddSensor(device.Id, pingParams).Single();
+var pingParams = client.GetDynamicSensorParameters(device, "ping");
+var sensor = client.AddSensor(device, pingParams).Single();
 ```
 
 And since we've already defined some notification triggers elsewhere, let's copy one in!
@@ -188,7 +188,7 @@ And since we've already defined some notification triggers elsewhere, let's copy
 var existingTrigger = client.GetNotificationTriggers(2001).First(t => t.OnNotificationAction.Name.Contains("PagerDuty"));
 
 //Add it to our Ping sensor
-var triggerParams = new StateTriggerParameters(sensor.Id, existingTrigger);
+var triggerParams = new StateTriggerParameters(sensor, existingTrigger);
 var newTrigger = client.AddNotificationTrigger(triggerParams);
 ```
 

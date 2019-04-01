@@ -7,7 +7,7 @@ namespace PrtgAPI.Parameters
     {
         CommandFunction ICommandParameters.Function => CommandFunction.DiscoverNow;
 
-        public AutoDiscoverParameters(int objectId, DeviceTemplate[] templates) : base(objectId)
+        public AutoDiscoverParameters(Either<IPrtgObject, int> objectOrId, DeviceTemplate[] templates) : base(objectOrId)
         {
             if (templates != null && templates.Length > 0)
                 DeviceTemplates = templates.WithoutNull();

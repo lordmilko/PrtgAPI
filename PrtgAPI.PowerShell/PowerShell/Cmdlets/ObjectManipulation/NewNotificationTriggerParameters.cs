@@ -189,15 +189,15 @@ namespace PrtgAPI.PowerShell.Cmdlets
                 if (Source != null)
                 {
                     if (Id != null)
-                        return (T)Activator.CreateInstance(typeof(T), Id, Source); //Add from an existing notification trigger
+                        return (T)Activator.CreateInstance(typeof(T), MakeEither(Id.Value), Source); //Add from an existing notification trigger
                     else
                         return (T)Activator.CreateInstance(typeof(T), Source); //Edit from an existing notification trigger
                 }
 
                 if (TriggerId != null)
-                    return (T)Activator.CreateInstance(typeof(T), Id, TriggerId); //Edit a notification trigger
+                    return (T)Activator.CreateInstance(typeof(T), MakeEither(Id.Value), TriggerId); //Edit a notification trigger
                 else
-                    return (T)Activator.CreateInstance(typeof(T), Id); //Create a new notification trigger
+                    return (T)Activator.CreateInstance(typeof(T), MakeEither(Id.Value)); //Create a new notification trigger
             }
             catch(TargetInvocationException ex)
             {
@@ -207,5 +207,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
                 throw;
             }
         }
+
+        private PrtgAPI.Either<IPrtgObject, int> MakeEither(PrtgAPI.Either<IPrtgObject, int> value) => value;
     }
 }

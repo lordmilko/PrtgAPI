@@ -68,10 +68,10 @@ namespace PrtgAPI.Parameters
         /// Initializes a new instance of the <see cref="TriggerParameters"/> class.
         /// </summary>
         /// <param name="type">The type of notification trigger this object will manipulate.</param>
-        /// <param name="objectId">The object ID the trigger will apply to.</param>
+        /// <param name="objectOrId">The object or object ID the trigger will apply to.</param>
         /// <param name="subId">If this trigger is being edited, the trigger's sub ID. If the trigger is being added, this value is null.</param>
         /// <param name="action">Whether to add a new trigger or modify an existing one.</param>
-        protected TriggerParameters(TriggerType type, int objectId, int? subId, ModifyAction action)
+        protected TriggerParameters(TriggerType type, Either<IPrtgObject, int> objectOrId, int? subId, ModifyAction action)
         {
             if (action == ModifyAction.Add && subId != null)
                 throw new ArgumentException("SubId must be null when ModifyAction is Add.", nameof(subId));
@@ -82,13 +82,13 @@ namespace PrtgAPI.Parameters
             if (action == ModifyAction.Add)
                 OnNotificationAction = null;
 
-            ObjectId = objectId;
+            ObjectId = objectOrId.GetId();
 
             this.subId = action == ModifyAction.Add ? "new" : subId.Value.ToString();
             Action = action;
             Type = type;
 
-            this[Parameter.Id] = objectId;
+            this[Parameter.Id] = ObjectId;
             this[Parameter.SubId] = this.subId;
 
             if (action == ModifyAction.Add)
@@ -102,10 +102,10 @@ namespace PrtgAPI.Parameters
         /// Initializes a new instance of the <see cref="TriggerParameters"/> class for creating a new <see cref="NotificationTrigger"/> from an existing one.
         /// </summary>
         /// <param name="type">The type of notification trigger these parameters will manipulate.</param>
-        /// <param name="objectId">The ID of the object the notification trigger will apply to.</param>
+        /// <param name="objectOrId">The object or ID of the object the notification trigger will apply to.</param>
         /// <param name="sourceTrigger">The notification trigger whose properties should be used as the basis of this trigger.</param>
         /// <param name="action">Whether these parameters will create a new trigger or edit an existing one.</param>
-        protected TriggerParameters(TriggerType type, int objectId, NotificationTrigger sourceTrigger, ModifyAction action) : this(type, objectId, action == ModifyAction.Edit ? sourceTrigger.SubId : (int?)null, action)
+        protected TriggerParameters(TriggerType type, Either<IPrtgObject, int> objectOrId, NotificationTrigger sourceTrigger, ModifyAction action) : this(type, objectOrId, action == ModifyAction.Edit ? sourceTrigger.SubId : (int?)null, action)
         {
             if (sourceTrigger == null)
                 throw new ArgumentNullException(nameof(sourceTrigger));

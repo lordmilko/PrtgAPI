@@ -114,7 +114,7 @@ namespace PrtgAPI.Request
             return xml;
         }
 
-        internal static List<NotificationTrigger> ParseNotificationTriggerResponse(int objectId, XDocument xmlResponse)
+        internal static List<NotificationTrigger> ParseNotificationTriggerResponse(Either<IPrtgObject, int> objectOrId, XDocument xmlResponse)
         {
             var xmlResponseContent = xmlResponse.Descendants("item").Select(x => new
             {
@@ -126,7 +126,7 @@ namespace PrtgAPI.Request
                 (e, o) =>
                 {
                     o.SubId = e.Id;
-                    o.ObjectId = objectId;
+                    o.ObjectId = objectOrId.GetId();
                 }
             );
 

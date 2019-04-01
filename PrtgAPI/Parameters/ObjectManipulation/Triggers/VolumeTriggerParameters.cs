@@ -53,8 +53,8 @@ namespace PrtgAPI.Parameters
         /// <summary>
         /// Initializes a new instance of the <see cref="VolumeTriggerParameters"/> class for creating a new notification trigger.
         /// </summary>
-        /// <param name="objectId">The object ID the trigger will apply to.</param>
-        public VolumeTriggerParameters(int objectId) : base(TriggerType.Volume, objectId, (int?)null, ModifyAction.Add)
+        /// <param name="objectOrId">The object or object ID the trigger will apply to.</param>
+        public VolumeTriggerParameters(Either<IPrtgObject, int> objectOrId) : base(TriggerType.Volume, objectOrId, (int?)null, ModifyAction.Add)
         {
             Channel = TriggerChannel.Primary;
             UnitSize = DataVolumeUnit.Byte;
@@ -65,18 +65,18 @@ namespace PrtgAPI.Parameters
         /// <summary>
         /// Initializes a new instance of the <see cref="VolumeTriggerParameters"/> class for editing an existing notification trigger.
         /// </summary>
-        /// <param name="objectId">The object ID the trigger is applied to. Note: if the trigger is inherited, the ParentId should be specified.</param>
+        /// <param name="objectOrId">The object or object ID the trigger is applied to. Note: if the trigger is inherited, the ParentId should be specified.</param>
         /// <param name="triggerId">The sub ID of the trigger on its parent object.</param>
-        public VolumeTriggerParameters(int objectId, int triggerId) : base(TriggerType.Volume, objectId, triggerId, ModifyAction.Edit)
+        public VolumeTriggerParameters(Either<IPrtgObject, int> objectOrId, int triggerId) : base(TriggerType.Volume, objectOrId, triggerId, ModifyAction.Edit)
         {
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="VolumeTriggerParameters"/> class for creating a new trigger from an existing <see cref="TriggerType.Volume"/> <see cref="NotificationTrigger"/>.
         /// </summary>
-        /// <param name="objectId">The object ID the trigger will apply to.</param>
+        /// <param name="objectOrId">The object or object ID the trigger will apply to.</param>
         /// <param name="sourceTrigger">The notification trigger whose properties should be used.</param>
-        public VolumeTriggerParameters(int objectId, NotificationTrigger sourceTrigger) : base(TriggerType.Volume, objectId, sourceTrigger, ModifyAction.Add)
+        public VolumeTriggerParameters(Either<IPrtgObject, int> objectOrId, NotificationTrigger sourceTrigger) : base(TriggerType.Volume, objectOrId, sourceTrigger, ModifyAction.Add)
         {
             Channel = sourceTrigger.Channel;
             Period = sourceTrigger.Period;

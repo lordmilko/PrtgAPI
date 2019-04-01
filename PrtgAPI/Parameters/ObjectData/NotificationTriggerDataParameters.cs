@@ -4,7 +4,7 @@
     {
         JsonFunction IJsonParameters.Function => JsonFunction.Triggers;
 
-        public NotificationTriggerDataParameters(int objectId) : base(objectId)
+        public NotificationTriggerDataParameters(Either<IPrtgObject, int> objectOrId) : base(objectOrId)
         {
         }
     }
