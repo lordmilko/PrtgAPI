@@ -3,6 +3,7 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Security;
 using System.Security.Cryptography.X509Certificates;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -22,7 +23,13 @@ namespace PrtgAPI.Request
         public PrtgWebClient(bool ignoreSSL, string server)
         {
             //PrtgWebClient will be initialized before PrtgClient has validated server value
-            this.server = server?.ToLower();
+            if (server != null)
+            {
+                server = server.ToLower();
+
+                //Strip the protocol and port (if applicable)
+                this.server = Regex.Replace(server, "(.+?://)?(.+?)(:.*)?", "$2");
+            }
 
             if (ignoreSSL)
                 ServicePointManager.ServerCertificateValidationCallback += IgnoreSSLCallback;
