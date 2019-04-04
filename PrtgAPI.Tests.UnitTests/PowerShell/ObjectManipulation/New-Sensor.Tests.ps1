@@ -332,6 +332,12 @@ Describe "New-Sensor" -Tag @("PowerShell", "UnitTest") {
             { $sensors | New-Sensor -Factory -Name "CPU Overview" -ChannelName { $_.Device } -DestinationId 1001 -Resolve:$false -ChannelDefinition "a","b" } | Should Throw "Parameter set cannot be resolved"
         }
 
+        It "pipes an empty list of sensors" {
+            SetAddressValidatorResponse "address_not_called"
+
+            { $sensors | where name -EQ "blah" | New-Sensor -Factory "CPU Overview" { $_.Device } -DestinationId 1001 -Resolve:$false } | Should Throw "Property 'ChannelDefinition' requires a value"
+        }
+
         It "displays -WhatIf message" {
             SetMultiTypeResponse
             Set-PrtgClient -LogLevel None
@@ -637,6 +643,16 @@ Describe "New-Sensor" -Tag @("PowerShell", "UnitTest") {
         )
 
         $device | New-Sensor -ExeXml test test.ps1 -Interval 00:00:10 -Resolve:$false
+    }
+
+    It "pipes an empty list of devices" {
+        SetMultiTypeResponse
+
+        $device = Get-Device -Count 1
+
+        SetAddressValidatorResponse "address_not_called"
+
+        $device | where name -EQ "blah" | New-Sensor -WmiService *
     }
     
     It "doesn't allow parameters that aren't object properties" {

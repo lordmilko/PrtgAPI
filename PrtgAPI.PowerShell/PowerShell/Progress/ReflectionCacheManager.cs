@@ -413,7 +413,7 @@ namespace PrtgAPI.PowerShell.Progress
         {
             var command = (PSCmdlet)GetUpstreamCmdletNotOfType<WhereObjectCommand>();
 
-            var queue = (Queue<PSObject>) command.GetInternalField("selectObjectQueue");
+            var queue = (Queue<PSObject>) command.PSGetInternalField("_selectObjectQueue", "selectObjectQueue");
 
             var cmdletPipeline = GetCmdletPipelineInput();
 

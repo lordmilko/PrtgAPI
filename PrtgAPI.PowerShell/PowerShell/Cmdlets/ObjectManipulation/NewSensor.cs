@@ -84,7 +84,26 @@ namespace PrtgAPI.PowerShell.Cmdlets
     [Cmdlet(VerbsCommon.New, "Sensor", SupportsShouldProcess = true)]
     public class NewSensor : AddObject<NewSensorParameters, Sensor>, IDynamicParameters
     {
-        private bool IsDeviceSensor => MyInvocation.BoundParameters.ContainsKey(NewSensorDestinationType.Device.ToString());
+        private bool IsDeviceSensor
+        {
+            get
+            {
+                var hasDevice = MyInvocation.BoundParameters.ContainsKey(NewSensorDestinationType.Device.ToString());
+
+                if (hasDevice)
+                    return true;
+
+                var hasDestinationId = MyInvocation.BoundParameters.ContainsKey(NewSensorDestinationType.DestinationId.ToString());
+
+                if (hasDestinationId)
+                    return false;
+
+                //Someone piped an empty list of devices into the cmdlet
+
+                //todo: unit test
+                return true;
+            }
+        } 
 
         private bool IsDestinationIdSensor => MyInvocation.BoundParameters.ContainsKey(NewSensorDestinationType.DestinationId.ToString());
 
@@ -178,7 +197,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
                     case NewSensorDestinationType.Device:
                         return ((Device) MyInvocation.BoundParameters[type.ToString()]).Id;
                     default:
-                        throw new NotImplementedException();
+                        throw new NotImplementedException($"Don't know how to handle destination type '{type}'.");
                 }
             }
         }
@@ -241,7 +260,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
 
                         return $"'{device.Name}' (ID: {device.Id})";
                     default:
-                        throw new NotImplementedException();
+                        throw new NotImplementedException($"Don't know how to handle destination type '{type}'.");
                 }
             }
         }
@@ -262,7 +281,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
                     case NewSensorDestinationType.Device:
                         return $"Adding {dynamicParams.ActiveSensorType.Type} sensor {str}to device '{((Device)MyInvocation.BoundParameters["Device"]).Name}'";
                     default:
-                        throw new NotImplementedException();
+                        throw new NotImplementedException($"Don't know how to handle destination type '{type}'.");
                 }
             }
         }
@@ -319,7 +338,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
                     parameters = new HttpSensorParameters();
                     break;
                 default:
-                    throw new NotImplementedException();
+                    throw new NotImplementedException($"Don't know how to create a sensor of type '{dynamicParams.ActiveSensorType.Type}'.");
             }
 
             BindParametersAndAddSensor(parameters, endOperation);
@@ -342,7 +361,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
                     parameters = new FactorySensorParameters(channelDefinition);
                     break;
                 default:
-                    throw new NotImplementedException();
+                    throw new NotImplementedException($"Don't know what needs to be done to process DestinationId sensor type '{dynamicParams.ActiveSensorType.Type}'.");
             }
 
             BindParametersAndAddSensor(parameters, endOperation);

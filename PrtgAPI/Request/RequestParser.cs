@@ -128,10 +128,13 @@ namespace PrtgAPI.Request
 
             if (list != null && !(val is string))
             {
-                var casted = list.Cast<object>();
+                var casted = list.Cast<object>().ToList();
 
                 if (!casted.Any())
                     throw new InvalidOperationException($"Property '{property.Name}' requires a value, however an empty collection was specified.");
+
+                if (casted.All(c => string.IsNullOrWhiteSpace(c?.ToString())))
+                    throw new InvalidOperationException($"Property '{property.Name}' requires a value, however a collection consisting of null, empty or whitespace values was specified.");
             }
         }
 
