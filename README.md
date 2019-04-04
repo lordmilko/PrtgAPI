@@ -3,6 +3,7 @@
 [![Build status](https://img.shields.io/appveyor/ci/lordmilko/prtgapi.svg)](https://ci.appveyor.com/project/lordmilko/prtgapi)
 [![NuGet](https://img.shields.io/nuget/v/PrtgAPI.svg)](https://www.nuget.org/packages/PrtgAPI/)
 [![Coverage](https://img.shields.io/codecov/c/github/lordmilko/PrtgAPI.svg)](https://codecov.io/gh/lordmilko/PrtgAPI)
+[![Donate](http://img.shields.io/liberapay/patrons/lordmilko.svg?logo=liberapay)](https://liberapay.com/lordmilko/donate)
 
 ![PrtgAPI](https://raw.githubusercontent.com/lordmilko/PrtgAPI/master/assets/PrtgAPI.png)
 
@@ -23,6 +24,8 @@ Useful things you can do with PrtgAPI:
 For information on features that are currently in the pipeline, check out the [Roadmap](https://github.com/lordmilko/PrtgAPI/projects/1).
 
 PrtgAPI also provides a secondary, optional module *PrtgAPI.CustomSensors* which provides a collection of wrapper functions for generating output in *PRTG EXE/Script Advanced* custom sensors. For more information, see [PrtgAPI.CustomSensors](https://github.com/lordmilko/PrtgAPI.CustomSensors).
+
+If, for some reason, you feel the need to throw money at me to show your appreciation for this project, you can do so anonymously by clicking [here](https://liberapay.com/lordmilko/donate).
 
 ## Installation
 
