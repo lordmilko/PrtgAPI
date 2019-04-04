@@ -850,7 +850,7 @@ namespace PrtgAPI.PowerShell.Progress
             if (cmdlet.CommandRuntime is DummyRuntime)
                 val = DummyRuntime._lastUsedSourceId;
             else
-                val = Convert.ToInt64(cmdlet.CommandRuntime.GetInternalStaticField("_lastUsedSourceId"));
+                val = Convert.ToInt64(cmdlet.CommandRuntime.PSGetInternalStaticField("s_lastUsedSourceId", "_lastUsedSourceId"));
 
             if (PipeFromVariableWithProgress && FirstInChain)
             {

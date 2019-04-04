@@ -153,7 +153,7 @@ namespace PrtgAPI.Reflection
 
         public static object GetInternalStaticField(this Type type, string name)
         {
-            var info = type.GetField(name, BindingFlags.Static | BindingFlags.NonPublic);
+            var info = type.GetInternalStaticFieldInfo(name);
 
             if (info == null)
                 throw new MissingMemberException(type.Name, name);

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics.CodeAnalysis;
 using System.Management.Automation;
 using PrtgAPI.PowerShell.Base;
 
@@ -193,6 +192,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
                 var authMode = PassHash.IsPresent ? AuthMode.PassHash : AuthMode.Password;
 
                 PrtgSessionState.Client = new PrtgClient(Server, cred.UserName, cred.Password, authMode, IgnoreSSL);
+                PrtgSessionState.PSEdition = GetPSEdition(cmdlet);
 
                 if (RetryCount != null)
                     PrtgSessionState.Client.RetryCount = RetryCount.Value;
@@ -220,6 +220,21 @@ namespace PrtgAPI.PowerShell.Cmdlets
             else
             {
                 throw new InvalidOperationException($"Already connected to server {PrtgSessionState.Client.Server}. To override please specify -Force");
+            }
+        }
+
+        private PSEdition GetPSEdition(PSCmdlet cmdlet)
+        {
+            var variable = cmdlet.GetVariableValue("global:PSEdition")?.ToString();
+
+            switch (variable)
+            {
+                case "Desktop":
+                    return PSEdition.Desktop;
+                case "Core":
+                    return PSEdition.Core;
+                default:
+                    return PSEdition.Other;
             }
         }
     }

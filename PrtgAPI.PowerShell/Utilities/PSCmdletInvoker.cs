@@ -53,7 +53,7 @@ namespace PrtgAPI.Utilities
             var method = Cmdlet.GetInternalMethod("SetParameterSetName");
             method.Invoke(Cmdlet, new[] { parameterSetName.Value });
 
-            var myInvocation = Cmdlet.GetType().GetInternalFieldInfoFromBase("myInvocation");
+            var myInvocation = Cmdlet.GetType().PSGetInternalFieldInfoFromBase("_myInvocation", "myInvocation");
             myInvocation.SetValue(Cmdlet, ((PSCmdlet)owner).MyInvocation);
 
             Cmdlet.BeginProcessingInternal();

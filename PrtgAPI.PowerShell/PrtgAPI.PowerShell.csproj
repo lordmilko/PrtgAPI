@@ -175,6 +175,7 @@
     <Compile Include="PowerShell\Progress\ReflectionCacheManager.cs" />
     <Compile Include="PowerShell\Progress\SelectObjectManager.cs" />
     <Compile Include="PowerShell\PrtgSessionState.cs" />
+    <Compile Include="PowerShell\PSEdition.cs" />
     <Compile Include="PowerShell\PSObjectParameterContainer.cs" />
     <Compile Include="PowerShell\RuntimeDefinedParameterEx.cs" />
     <Compile Include="PowerShell\DummyRuntime.cs" />
@@ -190,6 +191,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Version.tt</DependentUpon>
     </Compile>
+    <Compile Include="Utilities\PSReflectionUtilities.cs" />
     <Compile Include="Utilities\ScriptBlockUtilities.cs" />
   </ItemGroup>
   <ItemGroup>

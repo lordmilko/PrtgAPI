@@ -11,7 +11,7 @@ namespace PrtgAPI.PowerShell
     [ExcludeFromCodeCoverage]
     class DummyRuntime : ICommandRuntime
     {
-        internal static long _lastUsedSourceId => (long) typeof(PSCmdlet).Assembly.GetType("System.Management.Automation.MshCommandRuntime").GetInternalStaticField("_lastUsedSourceId");
+        internal static long _lastUsedSourceId => (long) typeof(PSCmdlet).Assembly.GetType("System.Management.Automation.MshCommandRuntime").PSGetInternalStaticField("s_lastUsedSourceId", "_lastUsedSourceId");
 
         public List<object> Output { get; } = new List<object>();
 
