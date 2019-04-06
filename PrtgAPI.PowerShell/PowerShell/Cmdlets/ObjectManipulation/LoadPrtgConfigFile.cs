@@ -55,7 +55,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
             if (fileType == ConfigFileType.Lookups)
                 return "Lookups";
 
-            throw new NotImplementedException($"Don't know how to handle file type '{fileType}'");
+            throw new NotImplementedException($"Don't know how to handle file type '{fileType}'.");
         }
     }
 }

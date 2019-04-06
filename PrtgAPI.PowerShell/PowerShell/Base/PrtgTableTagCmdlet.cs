@@ -62,7 +62,7 @@ namespace PrtgAPI.PowerShell.Base
             else if (ParameterSetName == LogicalOrTags)
                 ProcessLogicalOrTagsFilter();
             else
-                throw new NotImplementedException($"Don't know how to process tags for parameter set '{ParameterSetName}'");
+                throw new NotImplementedException($"Don't know how to process tags for parameter set '{ParameterSetName}'.");
 
             base.ProcessAdditionalParameters();
         }
@@ -79,7 +79,7 @@ namespace PrtgAPI.PowerShell.Base
             else if (ParameterSetName == LogicalOrTags)
                 records = FilterResponseRecordsByLogicalOrTag(records);
             else
-                throw new NotImplementedException($"Don't know how to process tags for parameter set '{ParameterSetName}'");
+                throw new NotImplementedException($"Don't know how to process tags for parameter set '{ParameterSetName}'.");
 
             return base.PostProcessAdditionalFilters(records);
         }

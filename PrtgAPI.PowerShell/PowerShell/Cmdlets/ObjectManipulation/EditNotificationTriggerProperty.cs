@@ -83,7 +83,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
             var property = parameters.GetTypeCache().Properties.FirstOrDefault(p => p.GetAttribute<PropertyParameterAttribute>()?.Property.Equals(Property) == true);
 
             if (property == null)
-                throw new InvalidOperationException($"Property '{Property}' does not exist on triggers of type '{parameters.Type}'");
+                throw new InvalidOperationException($"Property '{Property}' does not exist on triggers of type '{parameters.Type}'.");
 
             Value = ParseValueIfRequired(property.Property, Value);
 

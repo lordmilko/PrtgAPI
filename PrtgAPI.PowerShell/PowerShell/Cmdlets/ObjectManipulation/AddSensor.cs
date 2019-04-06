@@ -120,7 +120,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
             if (internalParams?.Source != null)
                 AddObjectInternal(internalParams.Source);
             else
-                throw new InvalidOperationException("Only sensor parameters created by Get-SensorTarget can be piped to Add-Sensor. Please use 'Default' parameter set, specifying both -Destination and -Parameters");
+                throw new InvalidOperationException("Only sensor parameters created by Get-SensorTarget can be piped to Add-Sensor. Please use 'Default' parameter set, specifying both -Destination and -Parameters.");
         }
 
         /// <summary>

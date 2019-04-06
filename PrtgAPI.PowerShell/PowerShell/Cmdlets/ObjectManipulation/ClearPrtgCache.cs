@@ -78,7 +78,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
             if (cacheType == SystemCacheType.GraphData)
                 return "Graph Data";
 
-            throw new NotImplementedException($"Don't know how to handle cache type '{cacheType}'");
+            throw new NotImplementedException($"Don't know how to handle cache type '{cacheType}'.");
         }
     }
 }

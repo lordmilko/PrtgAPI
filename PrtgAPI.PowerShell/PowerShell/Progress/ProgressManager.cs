@@ -702,7 +702,7 @@ namespace PrtgAPI.PowerShell.Progress
                 else if (operationUpstreamSelectObjectManager.HasSkipLast)
                     Scenario = ProgressScenario.SelectSkipLast;
                 else
-                    throw new NotImplementedException("Don't know what parameter Select-Object is blocking with");
+                    throw new NotImplementedException("Don't know what parameter Select-Object is blocking with.");
             }
             else
             {
@@ -809,7 +809,7 @@ namespace PrtgAPI.PowerShell.Progress
                 if (cmdlet.Stopping)
                     throw new PipelineStoppedException();
 
-                throw new InvalidOperationException("Attempted to write progress on an uninitialized ProgressRecord. If this is a Release build, please report this bug along with the cmdlet chain you tried to execute. To disable PrtgAPI Cmdlet Progress in the meantime use Disable-PrtgProgress");
+                throw new InvalidOperationException("Attempted to write progress on an uninitialized ProgressRecord. If this is a Release build, please report this bug along with the cmdlet chain you tried to execute. To disable PrtgAPI Cmdlet Progress in the meantime use Disable-PrtgProgress.");
             }
 
             progressRecord.State.Completed = progressRecord.RecordType == ProgressRecordType.Completed;
@@ -1324,7 +1324,7 @@ namespace PrtgAPI.PowerShell.Progress
                 TotalRecords = GetSelectObjectOperationFromCmdletFromVariableTotalRecords();
 
             if (TotalRecords == null)
-                throw new InvalidOperationException("Cannot display records procesed as TotalRecords is not initialized");
+                throw new InvalidOperationException("Cannot display records procesed as TotalRecords is not initialized.");
 
             //Normally the object cmdlet would be responsible for updating the number of records we've processed so far,
             //but for REASONS UNKNOWN (TODO: WHY) thats not the case, so we have to do it instead
@@ -1444,7 +1444,7 @@ namespace PrtgAPI.PowerShell.Progress
             }
 
             //Neither of our previous cmdlets have TotalRecords. This is not allowed
-            throw new InvalidOperationException("Cannot display records procesed as previous TotalRecords is not initialized");
+            throw new InvalidOperationException("Cannot display records procesed as previous TotalRecords is not initialized.");
         }
 
         private void SkipCurrentRecord()

@@ -95,7 +95,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
             servers = servers.Where(s => wildcard.IsMatch(s.Server) || wildcard.IsMatch(s.Alias)).ToList();
 
             if (servers.Count == 0)
-                throw new InvalidOperationException($"'{server}' is not a valid server name or alias. To view all saved servers, run Get-GoPrtgServer");
+                throw new InvalidOperationException($"'{server}' is not a valid server name or alias. To view all saved servers, run Get-GoPrtgServer.");
 
             return servers;
         }
@@ -152,7 +152,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
                 if (string.IsNullOrEmpty(Server))
                 {
                     if (servers.Count > 1)
-                        throw new InvalidOperationException("Cannot remove servers; server name or alias must be specified when multiple entries exist. To remove all servers, specify -Force");
+                        throw new InvalidOperationException("Cannot remove servers; server name or alias must be specified when multiple entries exist. To remove all servers, specify -Force.");
 
                     server = "*";
                 }

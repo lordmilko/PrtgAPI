@@ -145,7 +145,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
                 ProgressManager.CurrentRecord.SecondsRemaining = secondsRemaining;
 
                 if (secondsElapsed > Timeout)
-                    throw new TimeoutException($"Timed out waiting for PRTG Core Service to restart");
+                    throw new TimeoutException($"Timed out waiting for PRTG Core Service to restart.");
 
                 if (Stopping)
                     return false;

@@ -230,12 +230,12 @@ namespace PrtgAPI.PowerShell.Cmdlets
                         WriteObjectWithProgress(() => WarnReadOnly(client.GetProbeProperties(Object.Id)));
                         break;
                     default:
-                        throw new NotImplementedException($"Property handler not implemented for base type {knownObj.BaseType}");
+                        throw new NotImplementedException($"Property handler not implemented for base type {knownObj.BaseType}.");
                 }
             }
             else
             {
-                throw new NotSupportedException($"Typed property handler not implemented for object type {Object.DisplayType}");
+                throw new NotSupportedException($"Typed property handler not implemented for object type {Object.DisplayType}.");
             }
         }
 
@@ -299,7 +299,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
                     case BaseType.Probe:
                         return ObjectType.Probe;
                     default:
-                        throw new NotImplementedException($"Unable to resolve {nameof(ObjectType)} from base type {obj.BaseType}");
+                        throw new NotImplementedException($"Unable to resolve {nameof(ObjectType)} from base type {obj.BaseType}.");
                 }
             }
 

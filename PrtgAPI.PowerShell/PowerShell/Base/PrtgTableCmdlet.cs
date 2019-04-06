@@ -185,7 +185,7 @@ namespace PrtgAPI.PowerShell.Base
                     );
                 }
 
-                throw new NotImplementedException($"Don't know how to watch objects of type ({typeof(TObject).Name})");
+                throw new NotImplementedException($"Don't know how to watch objects of type ({typeof(TObject).Name}).");
             }
 
             if (Count != null && filters != null)
@@ -658,7 +658,7 @@ namespace PrtgAPI.PowerShell.Base
                 );
 
             if (property.Property.PropertyType.IsArray)
-                throw new NotImplementedException("Cannot filter array properties dynamically");
+                throw new NotImplementedException("Cannot filter array properties dynamically.");
 
             //Was the value that was specified enumerable? The answer should always be yes, as
             //DynamicParameterPropertyTypes only defines array types
@@ -678,7 +678,7 @@ namespace PrtgAPI.PowerShell.Base
                 }, records);
             }
 
-            throw new NotImplementedException($"All PropertyInfo values should be array types, however type {filter.Item2.GetType().FullName} was not");
+            throw new NotImplementedException($"All PropertyInfo values should be array types, however type {filter.Item2.GetType().FullName} was not.");
         }
 
         private string[] GetDynamicWildcardFilterValues(Tuple<Property, object> filter)

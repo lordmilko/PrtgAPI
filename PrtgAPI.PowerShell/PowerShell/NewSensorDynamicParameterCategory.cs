@@ -251,7 +251,7 @@ namespace PrtgAPI.PowerShell
                 if (pluralMap.TryGetValue(property.Property.Name, out value))
                     return value;
 
-                throw new NotImplementedException($"Don't know how to de-pluralize '{property.Property.Name}'");
+                throw new NotImplementedException($"Don't know how to de-pluralize '{property.Property.Name}'.");
             }
 
             return property.Property.Name;
@@ -387,7 +387,7 @@ namespace PrtgAPI.PowerShell
                     if (Type == SensorType.Factory)
                         return new ParameterSetDescriptor(s, true, ObjectProperty.ChannelDefinition);
                     else
-                        throw new NotImplementedException();
+                        throw new NotImplementedException($"Don't know what cmdlet based parameter set descriptor to use for sensor type '{Type}'.");
                 })
                 .ToList();
 
@@ -405,7 +405,7 @@ namespace PrtgAPI.PowerShell
             if (Type == SensorType.WmiService)
                 return new Enum[] { Parameter.Service };
 
-            throw new NotImplementedException();
+            throw new NotImplementedException($"Don't know what alternate set to use for sensor type '{Type}'.");
         }
 
         public bool TryGetSensorTarget(NewSensor newSensorCmdlet, PrtgClient client, ref string propertyName, ref object propertyValue)

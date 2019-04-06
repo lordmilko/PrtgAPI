@@ -317,10 +317,10 @@ namespace PrtgAPI.PowerShell.Cmdlets
         private NewSensorParameters CreateRawParameters()
         {
             if (!RawParameters.ContainsKey(NameParameter))
-                throw new InvalidOperationException($"Hashtable record '{NameParameter}' is mandatory, however a value was not specified");
+                throw new InvalidOperationException($"Hashtable record '{NameParameter}' is mandatory, however a value was not specified.");
 
             if (!RawParameters.ContainsKey(SensorTypeParameter))
-                throw new InvalidOperationException($"Hashtable record '{SensorTypeParameter}' is mandatory, however a value was not specified'");
+                throw new InvalidOperationException($"Hashtable record '{SensorTypeParameter}' is mandatory, however a value was not specified.");
 
             var parameters = new PSRawSensorParameters(RawParameters[NameParameter]?.ToString(), RawParameters[SensorTypeParameter]?.ToString());
 
@@ -362,7 +362,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
                 }
                 else
                 {
-                    throw new InvalidOperationException("Cannot filter targets as multiple target fields are present. Please filter targets manually after parameter creation");
+                    throw new InvalidOperationException("Cannot filter targets as multiple target fields are present. Please filter targets manually after parameter creation.");
                 }
             }
 
@@ -402,7 +402,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
                     };
                     break;
                 default:
-                    throw new NotImplementedException($"Sensor type '{Type}' is currently not supported");
+                    throw new NotImplementedException($"Sensor type '{Type}' is currently not supported.");
             }
 
             return parameters;
@@ -420,7 +420,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
             var implicitOp = typeof (T).GetMethod("op_Implicit", new[] {typeof (string)});
 
             if (implicitOp == null)
-                throw new InvalidOperationException($"Object type {typeof (T)} does not contain an implicit operator for objects of type string");
+                throw new InvalidOperationException($"Object type {typeof (T)} does not contain an implicit operator for objects of type string.");
 
             return (T) implicitOp.Invoke(null, new object[] {val.ToString()});
         }
@@ -456,13 +456,13 @@ namespace PrtgAPI.PowerShell.Cmdlets
                     if (obj1 is T)
                         list.Add((T)obj1);
                     else
-                        throw new ArgumentException($"Expected one or more items of type {typeof (T)}, however an item of type {obj1.GetType()} was specified");
+                        throw new ArgumentException($"Expected one or more items of type {typeof (T)}, however an item of type {obj1.GetType()} was specified.");
                 }
 
                 return list;
             }
 
-            throw new ArgumentException($"Expected one or more items of type {typeof (T)}, however an item of type {val.GetType()} was specified");
+            throw new ArgumentException($"Expected one or more items of type {typeof (T)}, however an item of type {val.GetType()} was specified.");
         }
 
         private void MaybeSet(object v, Action<object> set)

@@ -153,7 +153,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
             else
             {
                 if (Downtime && average == 0)
-                    throw new InvalidOperationException($"Cannot retrieve downtime with an {nameof(Average)} of 0");
+                    throw new InvalidOperationException($"Cannot retrieve downtime with an {nameof(Average)} of 0.");
             }
 
             var parameters = new SensorHistoryParameters(Id, average.Value, StartDate, EndDate, Count);

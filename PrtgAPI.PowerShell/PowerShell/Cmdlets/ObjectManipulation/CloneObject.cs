@@ -310,7 +310,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
                 return;
             }
             
-            throw new PSArgumentException($"Cannot clone object with ID '{SourceId}' as it is not a sensor, device or group");
+            throw new PSArgumentException($"Cannot clone object with ID '{SourceId}' as it is not a sensor, device or group.");
         }
 
         private void ExecuteOperation(Action action)

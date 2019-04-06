@@ -219,7 +219,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
             }
             else
             {
-                throw new InvalidOperationException($"Already connected to server {PrtgSessionState.Client.Server}. To override please specify -Force");
+                throw new InvalidOperationException($"Already connected to server {PrtgSessionState.Client.Server}. To override please specify -Force.");
             }
         }
 

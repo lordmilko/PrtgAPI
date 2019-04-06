@@ -355,68 +355,86 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
         [TestMethod]
         [TestCategory("SlowCoverage")]
         [TestCategory("UnitTest")]
+        public void All_PrtgAPI_ExceptionMessages_EndInAPeriod()
+        {
+            WithTree(AllExceptionMessages_EndInAPeriodInternal);
+        }
+
+        [TestMethod]
+        [TestCategory("SlowCoverage")]
+        [TestCategory("UnitTest")]
+        public void All_PowerShell_ExceptionMessages_EndInAPeriod()
+        {
+            WithTree(AllExceptionMessages_EndInAPeriodInternal, true);
+        }
+
+        [TestMethod]
+        [TestCategory("SlowCoverage")]
+        [TestCategory("UnitTest")]
         public void AllExceptionMessages_EndInAPeriod()
         {
-            WithTree((file, tree, model) =>
+            WithTree(AllExceptionMessages_EndInAPeriodInternal);
+        }
+
+        private void AllExceptionMessages_EndInAPeriodInternal(string file, SyntaxTree tree, Lazy<SemanticModel> model)
+        {
+            foreach (var item in tree.GetRoot().DescendantNodes())
             {
-                foreach (var item in tree.GetRoot().DescendantNodes())
+                if (item.IsKind(SyntaxKind.ThrowStatement))
                 {
-                    if (item.IsKind(SyntaxKind.ThrowStatement))
+                    var child = item.ChildNodes().FirstOrDefault();
+
+                    if (child != null && child.IsKind(SyntaxKind.ObjectCreationExpression))
                     {
-                        var child = item.ChildNodes().FirstOrDefault();
+                        var syntax = child as ObjectCreationExpressionSyntax;
 
-                        if (child != null && child.IsKind(SyntaxKind.ObjectCreationExpression))
+                        var args = syntax.ArgumentList.Arguments.Where(IsNotNameOfParameter).ToList();
+
+                        if (args.Count > 0)
                         {
-                            var syntax = child as ObjectCreationExpressionSyntax;
+                            var str = args.Select(a => a.ToString().TrimEnd('"').TrimEnd('\\')).ToList();
 
-                            var args = syntax.ArgumentList.Arguments.Where(IsNotNameOfParameter).ToList();
-
-                            if (args.Count > 0)
+                            if (str.Count == 1)
                             {
-                                var str = args.Select(a => a.ToString().TrimEnd('"').TrimEnd('\\')).ToList();
-
-                                if (str.Count == 1)
+                                if (args[0].ToString() != "str")
+                                    AssertEndsInPeriod(syntax, str.Single(), file);
+                            }
+                            else
+                            {
+                                if (str[0] == "paramName" && str.Count == 2)
                                 {
-                                    if (args[0].ToString() != "str")
-                                        AssertEndsInPeriod(syntax, str.Single(), file);
+                                    AssertEndsInPeriod(syntax, str.Last(), file);
+                                }
+                                else if ((str[1] == "paramName" || str[1] == "ex") && str.Count == 2)
+                                {
+                                    AssertEndsInPeriod(syntax, str.First(), file);
                                 }
                                 else
                                 {
-                                    if (str[0] == "paramName" && str.Count == 2)
-                                    {
-                                        AssertEndsInPeriod(syntax, str.Last(), file);
-                                    }
-                                    else if ((str[1] == "paramName" || str[1] == "ex") && str.Count == 2)
-                                    {
-                                        AssertEndsInPeriod(syntax, str.First(), file);
-                                    }
-                                    else
-                                    {
-                                        var exceptionType = ((IdentifierNameSyntax) syntax.Type).Identifier.ToString();
+                                    var exceptionType = ((IdentifierNameSyntax) syntax.Type).Identifier.ToString();
 
-                                        var allowedExceptions = new string[]
-                                        {
-                                            nameof(InvalidTypeException),
-                                            nameof(Exceptions.Internal.MissingAttributeException),
-                                            nameof(InvalidTriggerTypeException),
-                                            nameof(XmlDeserializationException),
-                                            nameof(MissingMemberException)
-                                        };
+                                    var allowedExceptions = new string[]
+                                    {
+                                        nameof(InvalidTypeException),
+                                        nameof(Exceptions.Internal.MissingAttributeException),
+                                        nameof(InvalidTriggerTypeException),
+                                        nameof(XmlDeserializationException),
+                                        nameof(MissingMemberException)
+                                    };
 
-                                        if (!allowedExceptions.Contains(exceptionType))
-                                            throw new NotImplementedException($"Don't know where exception message should be in exception '{syntax}' in file '{file}'");
-                                    }
+                                    if (!allowedExceptions.Contains(exceptionType))
+                                        throw new NotImplementedException($"Don't know where exception message should be in exception '{syntax}' in file '{file}'");
                                 }
                             }
                         }
                     }
                 }
-            });
+            }
         }
 
         private void AssertEndsInPeriod(ObjectCreationExpressionSyntax syntax, string str, string file)
         {
-            if (!str.EndsWith(".") && !str.EndsWith("?") && !str.EndsWith("EnsurePeriod()}") && (str.StartsWith("$") || str.StartsWith("\"")))
+            if (!str.EndsWith(".") && !str.EndsWith("?") && !str.EndsWith("EnsurePeriod()}") && !str.EndsWith("{str}") && (str.StartsWith("$") || str.StartsWith("\"")))
                 Assert.Fail($"Exception message in exception '{syntax}' in file '{file}' does not end in a period.");
         }
 

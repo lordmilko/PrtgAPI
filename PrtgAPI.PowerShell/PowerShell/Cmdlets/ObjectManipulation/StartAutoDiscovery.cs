@@ -88,7 +88,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
                     ).ToArray();
 
                     if (Template.Length == 0)
-                        throw new ArgumentException($"No device templates could be found that match the specified template names {string.Join(", ", TemplateName.Select(t => $"'{t}'"))}");
+                        throw new ArgumentException($"No device templates could be found that match the specified template names {string.Join(", ", TemplateName.Select(t => $"'{t}'"))}.");
                 }
 
                 ExecuteOperation(() => client.AutoDiscover(Device.Id, Template), $"Starting Auto-Discovery on device '{Device}'");

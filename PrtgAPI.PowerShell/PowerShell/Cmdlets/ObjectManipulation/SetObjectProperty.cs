@@ -155,7 +155,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
             {
                 //Value is not required, but is required in that we need to explicitly say null
                 if (!MyInvocation.BoundParameters.ContainsKey("Value"))
-                    throw new ParameterBindingException("Value parameter is mandatory, however a value was not specified. If Value should be empty, specify $null");
+                    throw new ParameterBindingException("Value parameter is mandatory, however a value was not specified. If Value should be empty, specify $null.");
 
                 ParseValue();
             }
@@ -219,7 +219,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
                 continueStr = $"properties {whatIfStr}";
             }
             else
-                throw new NotImplementedException($"Don't know how to handle parameter set '{ParameterSetName}'");
+                throw new NotImplementedException($"Don't know how to handle parameter set '{ParameterSetName}'.");
 
             if (Force || ShouldContinue($"Are you sure you want to set raw object {continueStr} on {Object.GetTypeDescription().ToLower()} '{Object.Name}'? This may cause minor corruption if the specified value is not valid for the target property. Only proceed if you know what you are doing.", "WARNING!"))
             {

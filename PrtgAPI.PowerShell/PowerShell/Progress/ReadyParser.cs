@@ -61,7 +61,7 @@ namespace PrtgAPI.PowerShell.Progress
             else
             {
                 if (previousManager.RecordsProcessed == -1)
-                    throw new NotImplementedException("Attempted to process a recordsProcessed that is not in use");
+                    throw new NotImplementedException("Attempted to process a recordsProcessed that is not in use.");
 
                 //12.1a: Get-Probe -Count 3 | Select -First 2 | Get-Device
                 if (previousManager.RecordsProcessed < selectObject.First)

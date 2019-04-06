@@ -77,7 +77,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
                 var duplicateServer = servers.Where(s => s.Server == newClient.Server && s.UserName == newClient.UserName).ToList();
 
                 if (duplicateServer.Count > 0)
-                    throw new InvalidOperationException($"Cannot update credential: a record with username '{newClient.UserName}' for server '{newClient.Server}' already exists");
+                    throw new InvalidOperationException($"Cannot update credential: a record with username '{newClient.UserName}' for server '{newClient.Server}' already exists.");
             }
 
             var encryptedString = EncryptString(newClient.PassHash);

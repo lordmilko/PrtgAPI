@@ -134,9 +134,9 @@ namespace PrtgAPI.PowerShell.Cmdlets
                     var serversIgnoringUserName = servers.Where(s => s.Server == client.Server).ToList();
 
                     if (serversIgnoringUserName.Count == 0)
-                        throw new InvalidOperationException($"Server '{client.Server}' is not a valid GoPrtg server. To install this server, run Install-GoPrtgServer [<alias>]");
+                        throw new InvalidOperationException($"Server '{client.Server}' is not a valid GoPrtg server. To install this server, run Install-GoPrtgServer [<alias>].");
 
-                    throw new InvalidOperationException($"Server '{client.Server}' is a valid GoPrtg server, however you are not authenticated as a valid user for this server. To modify this server, first run GoPrtg [<alias>], then re-run the original command");
+                    throw new InvalidOperationException($"Server '{client.Server}' is a valid GoPrtg server, however you are not authenticated as a valid user for this server. To modify this server, first run GoPrtg [<alias>], then re-run the original command.");
                 }
                 else if (activeServer.Count == 1)
                 {

@@ -183,7 +183,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
                     GetSqlServerQuery();
                     break;
                 default:
-                    throw new NotImplementedException($"Sensor type '{Type}' is not currently supported");
+                    throw new NotImplementedException($"Sensor type '{Type}' is not currently supported.");
             }
         }
 
@@ -218,7 +218,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
             params Func<T, string>[] nameProperties)
         {
             if (nameProperties.Length == 0)
-                throw new NotImplementedException($"Must specify at least one name property resolver for filtering targets of type {Type}");
+                throw new NotImplementedException($"Must specify at least one name property resolver for filtering targets of type {Type}.");
 
             TypeDescription = typeDescription;
 
@@ -259,13 +259,13 @@ namespace PrtgAPI.PowerShell.Cmdlets
 
         internal SensorParametersInternal ParametersNotSupported<T>(List<T> items)
         {
-            throw new NotSupportedException($"Creating sensor parameters for sensor type '{Type}' is not supported");
+            throw new NotSupportedException($"Creating sensor parameters for sensor type '{Type}' is not supported.");
         }
 
         private T EnsureSingle<T>(List<T> items)
         {
             if (items.Count > 1)
-                throw new InvalidOperationException($"Parameters for sensor type {Type} cannot be used against multiple targets in a single request. Please filter objects further with -Name, or create parameters manually with New-SensorParameters");
+                throw new InvalidOperationException($"Parameters for sensor type {Type} cannot be used against multiple targets in a single request. Please filter objects further with -Name, or create parameters manually with New-SensorParameters.");
 
             if (items.Count == 1)
                 return items.First();

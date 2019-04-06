@@ -127,7 +127,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
             var str = Channel != null ? $"'{Channel.Name}' (Channel ID: {Channel.Id}, Sensor ID: {Channel.SensorId})" : $"Channel ID: {ChannelId} (Sensor ID: {SensorId})";
 
             if (!MyInvocation.BoundParameters.ContainsKey("Value") && !DynamicSet())
-                throw new ParameterBindingException("Value parameter is mandatory, however a value was not specified. If Value should be empty, specify $null");
+                throw new ParameterBindingException("Value parameter is mandatory, however a value was not specified. If Value should be empty, specify $null.");
 
             if (Channel != null)
             {

@@ -179,7 +179,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
 
                     var plural = remaining == 1 ? "probe" : "probes";
 
-                    throw new TimeoutException($"Timed out waiting for {remaining} {plural} to restart");
+                    throw new TimeoutException($"Timed out waiting for {remaining} {plural} to restart.");
                 }
 
                 if (Stopping)

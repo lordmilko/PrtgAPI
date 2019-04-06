@@ -203,7 +203,7 @@ namespace PrtgAPI.PowerShell.Base
                     UpdateScenarioProgress_VariableToMultipleCmdlet(ProgressStage.PreLoop, null);
                     break;
                 default:
-                    throw new NotImplementedException($"Handler for ProgressScenario '{ProgressManager.Scenario}' is not implemented");
+                    throw new NotImplementedException($"Handler for ProgressScenario '{ProgressManager.Scenario}' is not implemented.");
             }
         }
 
@@ -241,7 +241,7 @@ namespace PrtgAPI.PowerShell.Base
                         UpdateScenarioProgress_VariableToMultipleCmdlet(ProgressStage.BeforeEach, prtgObj);
                     break;
                 default:
-                    throw new NotImplementedException($"Handler for ProgressScenario '{ProgressManager.Scenario}' is not implemented");
+                    throw new NotImplementedException($"Handler for ProgressScenario '{ProgressManager.Scenario}' is not implemented.");
             }
         }
 
@@ -269,7 +269,7 @@ namespace PrtgAPI.PowerShell.Base
                     UpdateScenarioProgress_VariableToMultipleCmdlet(ProgressStage.PostLoop, null);
                     break;
                 default:
-                    throw new NotImplementedException($"Handler for ProgressScenario '{ProgressManager.Scenario}' is not implemented");
+                    throw new NotImplementedException($"Handler for ProgressScenario '{ProgressManager.Scenario}' is not implemented.");
             }
         }
 

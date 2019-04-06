@@ -124,7 +124,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
                         ).ToList();
 
                         if (templates.Count == 0)
-                            throw new ArgumentException($"No device templates could be found that match the specified template names {string.Join(", ", Template.Select(t => $"'{t}'"))}");
+                            throw new ArgumentException($"No device templates could be found that match the specified template names {string.Join(", ", Template.Select(t => $"'{t}'"))}.");
 
                         Parameters.DeviceTemplates = templates;
                     }
