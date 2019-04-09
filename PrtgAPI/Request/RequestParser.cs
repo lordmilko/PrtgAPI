@@ -195,7 +195,7 @@ namespace PrtgAPI.Request
 
                 if (double.TryParse(matches[0].Value, out latitude) && double.TryParse(matches[1].Value, out longitude))
                 {
-                    if (!findLabel && address.Contains("\n"))
+                    if (!findLabel && (address.Contains('\n') || address.Contains('\r')))
                     {
                         //There exists a set of coordinates in this address. Could we have acquired these same coordinates if we were looking
                         //for labels?
@@ -221,7 +221,21 @@ namespace PrtgAPI.Request
 
         internal static string GetLocationLabel(ref string address)
         {
-            var index = address.IndexOf("\n");
+            var primary = '\n';
+            var secondary = '\r';
+
+            var index = address.IndexOf(primary);
+
+            if (index == -1)
+            {
+                //If we're on OSX maybe only a carriage return was used
+
+                var tmp = primary;
+                primary = secondary;
+                secondary = tmp;
+
+                index = address.IndexOf(primary);
+            }
 
             if (index != -1)
             {
@@ -234,7 +248,7 @@ namespace PrtgAPI.Request
                 else
                     address = proposedAddress;
 
-                return label.Replace("\r", "");
+                return label.Replace(secondary.ToString(), "");
             }
 
             return null;

@@ -499,7 +499,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         {
             Execute(
                 c => c.SetObjectProperty(1001, ObjectProperty.Location, "Headquarters\r12.3456, -7.8910"),
-                "editsettings?id=1001&location_=12.3456%2C+-7.891&lonlat_=-7.891%2C12.3456&locationgroup=0&username"
+                "editsettings?id=1001&location_=Headquarters%0A12.3456%2C+-7.891&lonlat_=-7.891%2C12.3456&locationgroup=0&username"
             );
         }
 
@@ -509,7 +509,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         {
             await ExecuteAsync(
                 async c => await c.SetObjectPropertyAsync(1001, ObjectProperty.Location, "Headquarters\r12.3456, -7.8910"),
-                "editsettings?id=1001&location_=12.3456%2C+-7.891&lonlat_=-7.891%2C12.3456&locationgroup=0&username"
+                "editsettings?id=1001&location_=Headquarters%0A12.3456%2C+-7.891&lonlat_=-7.891%2C12.3456&locationgroup=0&username"
             );
         }
 
@@ -572,8 +572,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
                 new[]
                 {
                     "https://prtg.example.com/api/getstatus.htm?id=0&username=username&passhash=12345678",
-                    "https://prtg.example.com/api/geolocator.htm?cache=false&dom=0&path=Headquarters%0D23%2BFleet%2BStreet&username=username&passhash=12345678",
-                    "https://prtg.example.com/editsettings?id=1001&location_=23+Fleet+St%2C+Boston%2C+MA+02113%2C+USA&lonlat_=-71.0527997%2C42.3643847&locationgroup=0&username=username&passhash=12345678"
+                    "https://prtg.example.com/api/geolocator.htm?cache=false&dom=0&path=23%2BFleet%2BStreet&username=username&passhash=12345678",
+                    "https://prtg.example.com/editsettings?id=1001&location_=Headquarters%0A23+Fleet+St%2C+Boston%2C+MA+02113%2C+USA&lonlat_=-71.0527997%2C42.3643847&locationgroup=0&username=username&passhash=12345678"
                 }
             );
         }
@@ -587,8 +587,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
                 new[]
                 {
                     "https://prtg.example.com/api/getstatus.htm?id=0&username=username&passhash=12345678",
-                    "https://prtg.example.com/api/geolocator.htm?cache=false&dom=0&path=Headquarters%0D23%2BFleet%2BStreet&username=username&passhash=12345678",
-                    "https://prtg.example.com/editsettings?id=1001&location_=23+Fleet+St%2C+Boston%2C+MA+02113%2C+USA&lonlat_=-71.0527997%2C42.3643847&locationgroup=0&username=username&passhash=12345678"
+                    "https://prtg.example.com/api/geolocator.htm?cache=false&dom=0&path=23%2BFleet%2BStreet&username=username&passhash=12345678",
+                    "https://prtg.example.com/editsettings?id=1001&location_=Headquarters%0A23+Fleet+St%2C+Boston%2C+MA+02113%2C+USA&lonlat_=-71.0527997%2C42.3643847&locationgroup=0&username=username&passhash=12345678"
                 }
             );
         }
