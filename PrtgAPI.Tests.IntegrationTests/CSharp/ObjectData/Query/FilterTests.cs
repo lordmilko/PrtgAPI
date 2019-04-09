@@ -2637,14 +2637,14 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
 
             if (lambda != null && str.Count > 0)
             {
-                builder.Append($". Expected: {filter.Value}\\r\n\r\nValues of each object:\r\n");
+                builder.Append($". Expected: {filter.Value}{Environment.NewLine}{Environment.NewLine}Values of each object:{Environment.NewLine}");
                 
                 for(var i = 0; i < str.Count; i++)
                 {
                     builder.Append($"{str[i].Name}: '{lambda(str[i])}'");
 
                     if (i < str.Count - 1)
-                        builder.Append("\r\n");
+                        builder.Append(Environment.NewLine);
                 }
             }
 

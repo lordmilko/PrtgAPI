@@ -26,7 +26,7 @@ namespace PrtgAPI.Tests.IntegrationTests
             if (newFile == false)
             {
                 newFile = true;
-                File.AppendAllText(path, "\n");
+                File.AppendAllText(path, Environment.NewLine);
             }
 
             var pid = Process.GetCurrentProcess().Id.ToString();
@@ -41,7 +41,7 @@ namespace PrtgAPI.Tests.IntegrationTests
 
             var errText = error ? "!!!" : "   ";
 
-            File.AppendAllText(path, $"{DateTime.Now} [{pid}:{tid}] {engine} {errText} : {PSTestStr(engine)}{message}\r\n");
+            File.AppendAllText(path, $"{DateTime.Now} [{pid}:{tid}] {engine} {errText} : {PSTestStr(engine)}{message}{Environment.NewLine}");
         }
 
         public static void LogTest(string message, bool error = false, string engine = "C#")

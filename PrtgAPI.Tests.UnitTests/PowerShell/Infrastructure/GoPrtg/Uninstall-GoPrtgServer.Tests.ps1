@@ -2,9 +2,11 @@
 
 Describe "Uninstall-GoPrtgServer" -Tag @("PowerShell", "UnitTest") {
 
-    $baseExpected = ("########################### Start GoPrtg Servers ###########################`r`n`r`n" +
-                    "function __goPrtgGetServers {@(`r`n    `"```"prtg.example.com```",,```"username```",```"*```"`"`r`n)}`r`n" +
-                    "`r`n############################ End GoPrtg Servers ############################`r`n").Replace("``", "````")
+    $nl = [Environment]::NewLine
+
+    $baseExpected = ("########################### Start GoPrtg Servers ###########################$nl$nl" +
+                    "function __goPrtgGetServers {@($nl    `"```"prtg.example.com```",,```"username```",```"*```"`"$nl)}$nl" +
+                    "$nl############################ End GoPrtg Servers ############################$nl").Replace("``", "````")
 
     BeforeAll { GoPrtgBeforeAll    }
 
@@ -28,7 +30,7 @@ Describe "Uninstall-GoPrtgServer" -Tag @("PowerShell", "UnitTest") {
 
         $content = gc $Profile -Raw
 
-        $content | Should Be "Write-Host `"hello`"`r`n"
+        $content | Should Be "Write-Host `"hello`"$nl"
     }
 
     It "uninstalls correctly in profile with multiple existing lines" {
@@ -38,7 +40,7 @@ Describe "Uninstall-GoPrtgServer" -Tag @("PowerShell", "UnitTest") {
 
         $content = gc $Profile -Raw
 
-        $content | Should Be "Write-Host `"hello`"`r`nWrite-Host `"`what what?`"`r`n"
+        $content | Should Be "Write-Host `"hello`"$($nl)Write-Host `"`what what?`"$nl"
     }
 
     It "uninstalls correctly in profile between lines" {
@@ -50,7 +52,7 @@ Describe "Uninstall-GoPrtgServer" -Tag @("PowerShell", "UnitTest") {
 
         $content = gc $Profile -Raw
 
-        $content | Should Be "Write-Host `"hello`"`r`nWrite-Host `"`what what?`"`r`nWrite-Host `"test1`"`r`n"
+        $content | Should Be "Write-Host `"hello`"$($nl)Write-Host `"`what what?`"$($nl)Write-Host `"test1`"$nl"
     }
 
     It "uninstalls single entry when server specified" {
@@ -60,11 +62,11 @@ Describe "Uninstall-GoPrtgServer" -Tag @("PowerShell", "UnitTest") {
 
         $content = gc $Profile -Raw
 
-        $expected = "########################### Start GoPrtg Servers ###########################`r`n`r`n"
-        $expected += "function __goPrtgGetServers {@(`r`n"
-        $expected += "    `"```"prtg.example2.com```",,```"username2```",```"*```"`"`r`n"
-        $expected += ")}`r`n`r`n"
-        $expected += "############################ End GoPrtg Servers ############################`r`n"
+        $expected = "########################### Start GoPrtg Servers ###########################$nl$nl"
+        $expected += "function __goPrtgGetServers {@($nl"
+        $expected += "    `"```"prtg.example2.com```",,```"username2```",```"*```"`"$nl"
+        $expected += ")}$nl$nl"
+        $expected += "############################ End GoPrtg Servers ############################$nl"
 
         $expected = $expected.Replace("``", "````")
 
@@ -92,13 +94,13 @@ Describe "Uninstall-GoPrtgServer" -Tag @("PowerShell", "UnitTest") {
 
         $content = gc $Profile -Raw
 
-        $expected = "########################### Start GoPrtg Servers ###########################`r`n`r`n"
-        $expected += "function __goPrtgGetServers {@(`r`n"
-        $expected += "    `"```"prtg.example.com```",,```"username```",```"*```"`",`r`n"
-        $expected += "    `"```"prtg3.example.com```",,```"username3```",```"*```"`",`r`n"
-        $expected += "    `"```"prtg.example2.com```",,```"username2```",```"*```"`"`r`n"
-        $expected += ")}`r`n`r`n"
-        $expected += "############################ End GoPrtg Servers ############################`r`n"
+        $expected = "########################### Start GoPrtg Servers ###########################$nl$nl"
+        $expected += "function __goPrtgGetServers {@($nl"
+        $expected += "    `"```"prtg.example.com```",,```"username```",```"*```"`",$nl"
+        $expected += "    `"```"prtg3.example.com```",,```"username3```",```"*```"`",$nl"
+        $expected += "    `"```"prtg.example2.com```",,```"username2```",```"*```"`"$nl"
+        $expected += ")}$nl$nl"
+        $expected += "############################ End GoPrtg Servers ############################$nl"
 
         $expected = $expected.Replace("``", "````")
 
@@ -108,11 +110,11 @@ Describe "Uninstall-GoPrtgServer" -Tag @("PowerShell", "UnitTest") {
 
         $finalContent = gc $Profile -Raw
 
-        $finalExpected = "########################### Start GoPrtg Servers ###########################`r`n`r`n"
-        $finalExpected += "function __goPrtgGetServers {@(`r`n"
-        $finalExpected += "    `"```"prtg3.example.com```",,```"username3```",```"*```"`"`r`n"
-        $finalExpected += ")}`r`n`r`n"
-        $finalExpected += "############################ End GoPrtg Servers ############################`r`n"
+        $finalExpected = "########################### Start GoPrtg Servers ###########################$nl$nl"
+        $finalExpected += "function __goPrtgGetServers {@($nl"
+        $finalExpected += "    `"```"prtg3.example.com```",,```"username3```",```"*```"`"$nl"
+        $finalExpected += ")}$nl$nl"
+        $finalExpected += "############################ End GoPrtg Servers ############################$nl"
 
         $finalExpected = $finalExpected.Replace("``", "````")
 
@@ -136,11 +138,11 @@ Describe "Uninstall-GoPrtgServer" -Tag @("PowerShell", "UnitTest") {
 
         $contents = gc $Profile -Raw
 
-        $expected = "########################### Start GoPrtg Servers ###########################`r`n`r`n"
-        $expected += "function __goPrtgGetServers {@(`r`n"
-        $expected += "    `"```"prtg.example2.com```",```"dev```",```"username2```",```"*```"`"`r`n"
-        $expected += ")}`r`n`r`n"
-        $expected += "############################ End GoPrtg Servers ############################`r`n"
+        $expected = "########################### Start GoPrtg Servers ###########################$nl$nl"
+        $expected += "function __goPrtgGetServers {@($nl"
+        $expected += "    `"```"prtg.example2.com```",```"dev```",```"username2```",```"*```"`"$nl"
+        $expected += ")}$nl$nl"
+        $expected += "############################ End GoPrtg Servers ############################$nl"
 
         $expected = $expected.Replace("``", "````")
 

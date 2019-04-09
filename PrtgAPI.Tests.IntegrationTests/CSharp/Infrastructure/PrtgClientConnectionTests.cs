@@ -25,7 +25,7 @@ namespace PrtgAPI.Tests.IntegrationTests.Infrastructure
 
             AssertEx.Throws<ArgumentNullException>(
                 () => new PrtgClient(server, username, password),
-                "Value cannot be null.\r\nParameter name: username"
+                $"Value cannot be null.{Environment.NewLine}Parameter name: username"
             );
         }
 
@@ -63,7 +63,7 @@ namespace PrtgAPI.Tests.IntegrationTests.Infrastructure
 
             AssertEx.Throws<ArgumentNullException>(
                 () => new PrtgClient(server, Settings.UserName, Settings.Password),
-                "Value cannot be null.\r\nParameter name: server"
+                $"Value cannot be null.{Environment.NewLine}Parameter name: server"
             );
         }
 

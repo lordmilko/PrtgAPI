@@ -106,7 +106,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             };
 
             var files = Directory.EnumerateFiles(path, "*.*", SearchOption.AllDirectories).Where(f =>
-                types.Any(f.EndsWith)
+                types.Any(f.EndsWith) && IsNotExcludedFolder(path, f)
             );
 
             var badNewLines = new List<string>();
@@ -136,6 +136,26 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
 
             if (badNewLines.Count > 0)
                 throw new Exception($"{string.Join(", ", badNewLines) } are missing CRLF");
+        }
+
+        private bool IsNotExcludedFolder(string root, string f)
+        {
+            var illegal = new[]
+            {
+                "obj"
+            };
+
+            var info = new FileInfo(new Uri(f).LocalPath);
+
+            if (root.Length > info.DirectoryName.Length)
+                return true; //File in the root
+
+            var str = info.DirectoryName.Substring(root.Length);
+
+            if (illegal.Any(n => str.Contains($"{n}{Path.DirectorySeparatorChar}")))
+                return false;
+
+            return true;
         }
 
         [TestMethod]
@@ -279,7 +299,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
 
                             var location = awaitNode.GetLocation();
 
-                            throw new Exception($"{file}: Missing ConfigureAwait with method\r\n\r\n{method.Identifier}\r\n\r\nat {location.GetLineSpan()}");
+                            throw new Exception($"{file}: Missing ConfigureAwait with method{Environment.NewLine}{Environment.NewLine}{method.Identifier}{Environment.NewLine}{Environment.NewLine}at {location.GetLineSpan()}");
                         }
                     }
                 }

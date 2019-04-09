@@ -90,7 +90,7 @@ namespace PrtgAPI.CodeGenerator.MethodBuilder.Builders
                 if (isExpression || index < nodes.Count - 1)
                     return str;
                 else
-                    return str + "\r\n";
+                    return str + Environment.NewLine;
             }
             else
                 throw new NotImplementedException($"Don't know how to handle body element '{elm.Name.LocalName}'");

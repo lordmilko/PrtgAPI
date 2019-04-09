@@ -393,7 +393,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         [TestCategory("UnitTest")]
         public void TriggerParameters_Create_FromNullTrigger()
         {
-            AssertEx.Throws<ArgumentNullException>(() => new StateTriggerParameters(1234, null), "Value cannot be null.\r\nParameter name: sourceTrigger");
+            AssertEx.Throws<ArgumentNullException>(() => new StateTriggerParameters(1234, null), $"Value cannot be null.{Environment.NewLine}Parameter name: sourceTrigger");
         }
 
         [TestMethod]

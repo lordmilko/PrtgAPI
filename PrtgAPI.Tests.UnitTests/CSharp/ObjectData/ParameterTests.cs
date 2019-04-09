@@ -93,8 +93,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         {
             var parameters = new SensorParameters();
 
-            AssertEx.Throws<ArgumentNullException>(() => parameters.AddFilters(null), "Value cannot be null.\r\nParameter name: filters");
-            AssertEx.Throws<ArgumentNullException>(() => parameters.RemoveFilters(null), "Value cannot be null.\r\nParameter name: filters");
+            AssertEx.Throws<ArgumentNullException>(() => parameters.AddFilters(null), $"Value cannot be null.{Environment.NewLine}Parameter name: filters");
+            AssertEx.Throws<ArgumentNullException>(() => parameters.RemoveFilters(null), $"Value cannot be null.{Environment.NewLine}Parameter name: filters");
         }
 
         [TestMethod]
@@ -750,10 +750,10 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         {
             var settings = new[] { new ChannelParameter(ChannelProperty.LimitsEnabled, true) };
 
-            AssertEx.Throws<ArgumentNullException>(() => new SetChannelPropertyParameters(null, 1, settings), "Value cannot be null.\r\nParameter name: sensorIds");
-            AssertEx.Throws<ArgumentException>(() => new SetChannelPropertyParameters(new int[] { }, 1, settings), "At least one Sensor ID must be specified.\r\nParameter name: sensorIds");
-            AssertEx.Throws<ArgumentNullException>(() => new SetChannelPropertyParameters(new[] { 1 }, 1, null), "Value cannot be null.\r\nParameter name: parameters");
-            AssertEx.Throws<ArgumentException>(() => new SetChannelPropertyParameters(new[] { 1 }, 1, new ChannelParameter[] { }), "At least one parameter must be specified.\r\nParameter name: parameters");
+            AssertEx.Throws<ArgumentNullException>(() => new SetChannelPropertyParameters(null, 1, settings), $"Value cannot be null.{Environment.NewLine}Parameter name: sensorIds");
+            AssertEx.Throws<ArgumentException>(() => new SetChannelPropertyParameters(new int[] { }, 1, settings), $"At least one Sensor ID must be specified.{Environment.NewLine}Parameter name: sensorIds");
+            AssertEx.Throws<ArgumentNullException>(() => new SetChannelPropertyParameters(new[] { 1 }, 1, null), $"Value cannot be null.{Environment.NewLine}Parameter name: parameters");
+            AssertEx.Throws<ArgumentException>(() => new SetChannelPropertyParameters(new[] { 1 }, 1, new ChannelParameter[] { }), $"At least one parameter must be specified.{Environment.NewLine}Parameter name: parameters");
         }
 
         #endregion

@@ -20,7 +20,7 @@ namespace PrtgAPI.CodeGenerator.MethodBuilder.Model
 
         public override string ToString()
         {
-            return string.Join("\r\n", Body);
+            return string.Join(Environment.NewLine, Body);
         }
 
         public void Write(SourceWriter writer)

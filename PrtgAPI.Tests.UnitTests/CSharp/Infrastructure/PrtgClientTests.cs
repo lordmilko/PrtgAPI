@@ -53,21 +53,21 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
         [TestCategory("UnitTest")]
         public void PrtgClient_Constructor_ServerCannotBeNull()
         {
-            AssertEx.Throws<ArgumentNullException>(() => new PrtgClient(null, "username", "password"), "Value cannot be null.\r\nParameter name: server");
+            AssertEx.Throws<ArgumentNullException>(() => new PrtgClient(null, "username", "password"), $"Value cannot be null.{Environment.NewLine}Parameter name: server");
         }
 
         [TestMethod]
         [TestCategory("UnitTest")]
         public void PrtgClient_Constructor_UsernameCannotBeNull()
         {
-            AssertEx.Throws<ArgumentNullException>(() => new PrtgClient("prtg.example.com", null, "password"), "Value cannot be null.\r\nParameter name: username");
+            AssertEx.Throws<ArgumentNullException>(() => new PrtgClient("prtg.example.com", null, "password"), $"Value cannot be null.{Environment.NewLine}Parameter name: username");
         }
 
         [TestMethod]
         [TestCategory("UnitTest")]
         public void PrtgClient_Constructor_PasswordCannotBeNull()
         {
-            AssertEx.Throws<ArgumentNullException>(() => new PrtgClient("prtg.example.com", "username", null), "Value cannot be null.\r\nParameter name: pass");
+            AssertEx.Throws<ArgumentNullException>(() => new PrtgClient("prtg.example.com", "username", null), $"Value cannot be null.{Environment.NewLine}Parameter name: password");
         }
 
         [TestMethod]

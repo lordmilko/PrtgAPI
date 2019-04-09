@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PrtgAPI.CodeGenerator;
 using PrtgAPI.CodeGenerator.MethodBuilder;
@@ -169,7 +170,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             await AcknowledgeSensorAsync(new[] {sensorOrId.GetId()}, duration, message, token).ConfigureAwait(false);
 ";
 
-            var actual = string.Join("\r\n", method.Select(m => m.Definition));
+            var actual = string.Join(Environment.NewLine, method.Select(m => m.Definition));
 
             Assert.AreEqual(expected.TrimStart('\r', '\n'), actual);
         }
@@ -209,7 +210,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
 
             var method = methodDef.Serialize(methodImpl, config, parametersRegion);
 
-            var actual = string.Join("\r\n", method.Select(m => m.Definition));
+            var actual = string.Join(Environment.NewLine, method.Select(m => m.Definition));
 
             Assert.AreEqual(expected.TrimStart('\r', '\n'), actual);
         }

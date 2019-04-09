@@ -6,6 +6,8 @@ Describe "Set-GoPrtgAlias" -Tag @("PowerShell", "UnitTest") {
     BeforeEach { GoPrtgBeforeEach }
     AfterEach { GoPrtgAfterEach }
 
+    $nl = [Environment]::NewLine
+
     It "sets an alias on a record that doesn't have one" {
         Install-GoPrtgServer
 
@@ -13,11 +15,11 @@ Describe "Set-GoPrtgAlias" -Tag @("PowerShell", "UnitTest") {
 
         $content = gc $Profile -Raw
 
-        $expected = "########################### Start GoPrtg Servers ###########################`r`n`r`n"
-        $expected += "function __goPrtgGetServers {@(`r`n"
-        $expected += "    `"```"prtg.example.com```",```"test```",```"username```",```"*```"`"`r`n"
-        $expected += ")}`r`n`r`n"
-        $expected += "############################ End GoPrtg Servers ############################`r`n"
+        $expected = "########################### Start GoPrtg Servers ###########################$nl$nl"
+        $expected += "function __goPrtgGetServers {@($nl"
+        $expected += "    `"```"prtg.example.com```",```"test```",```"username```",```"*```"`"$nl"
+        $expected += ")}$nl$nl"
+        $expected += "############################ End GoPrtg Servers ############################$nl"
 
         $expected = $expected.Replace("``", "````")
 
@@ -31,11 +33,11 @@ Describe "Set-GoPrtgAlias" -Tag @("PowerShell", "UnitTest") {
 
         $content = gc $Profile -Raw
 
-        $expected = "########################### Start GoPrtg Servers ###########################`r`n`r`n"
-        $expected += "function __goPrtgGetServers {@(`r`n"
-        $expected += "    `"```"prtg.example.com```",```"dev```",```"username```",```"*```"`"`r`n"
-        $expected += ")}`r`n`r`n"
-        $expected += "############################ End GoPrtg Servers ############################`r`n"
+        $expected = "########################### Start GoPrtg Servers ###########################$nl$nl"
+        $expected += "function __goPrtgGetServers {@($nl"
+        $expected += "    `"```"prtg.example.com```",```"dev```",```"username```",```"*```"`"$nl"
+        $expected += ")}$nl$nl"
+        $expected += "############################ End GoPrtg Servers ############################$nl"
 
         $expected = $expected.Replace("``", "````")
 
@@ -64,12 +66,12 @@ Describe "Set-GoPrtgAlias" -Tag @("PowerShell", "UnitTest") {
 
         $content = gc $Profile -Raw
 
-        $expected = "########################### Start GoPrtg Servers ###########################`r`n`r`n"
-        $expected += "function __goPrtgGetServers {@(`r`n"
-        $expected += "    `"```"prtg.example.com```",```"test```",```"username```",```"*```"`",`r`n"
-        $expected += "    `"```"prtg.example2.com```",```"dev```",```"username2```",```"*```"`"`r`n"
-        $expected += ")}`r`n`r`n"
-        $expected += "############################ End GoPrtg Servers ############################`r`n"
+        $expected = "########################### Start GoPrtg Servers ###########################$nl$nl"
+        $expected += "function __goPrtgGetServers {@($nl"
+        $expected += "    `"```"prtg.example.com```",```"test```",```"username```",```"*```"`",$nl"
+        $expected += "    `"```"prtg.example2.com```",```"dev```",```"username2```",```"*```"`"$nl"
+        $expected += ")}$nl$nl"
+        $expected += "############################ End GoPrtg Servers ############################$nl"
 
         $expected = $expected.Replace("``", "````")
 
@@ -98,12 +100,12 @@ Describe "Set-GoPrtgAlias" -Tag @("PowerShell", "UnitTest") {
 
         $content = gc $Profile -Raw
 
-        $expected = "########################### Start GoPrtg Servers ###########################`r`n`r`n"
-        $expected += "function __goPrtgGetServers {@(`r`n"
-        $expected += "    `"```"prtg.example.com```",```"prod```",```"username```",```"*```"`",`r`n"
-        $expected += "    `"```"prtg.example2.com```",```"test```",```"username2```",```"*```"`"`r`n"
-        $expected += ")}`r`n`r`n"
-        $expected += "############################ End GoPrtg Servers ############################`r`n"
+        $expected = "########################### Start GoPrtg Servers ###########################$nl$nl"
+        $expected += "function __goPrtgGetServers {@($nl"
+        $expected += "    `"```"prtg.example.com```",```"prod```",```"username```",```"*```"`",$nl"
+        $expected += "    `"```"prtg.example2.com```",```"test```",```"username2```",```"*```"`"$nl"
+        $expected += ")}$nl$nl"
+        $expected += "############################ End GoPrtg Servers ############################$nl"
 
         $expected = $expected.Replace("``", "````")
 
@@ -119,12 +121,12 @@ Describe "Set-GoPrtgAlias" -Tag @("PowerShell", "UnitTest") {
 
         $content = gc $Profile -Raw
 
-        $expected = "Write-Host `"hello`"`r`n"
-        $expected += "########################### Start GoPrtg Servers ###########################`r`n`r`n"
-        $expected += "function __goPrtgGetServers {@(`r`n"
-        $expected += "    `"```"prtg.example.com```",```"test```",```"username```",```"*```"`"`r`n"
-        $expected += ")}`r`n`r`n"
-        $expected += "############################ End GoPrtg Servers ############################`r`n"
+        $expected = "Write-Host `"hello`"$nl"
+        $expected += "########################### Start GoPrtg Servers ###########################$nl$nl"
+        $expected += "function __goPrtgGetServers {@($nl"
+        $expected += "    `"```"prtg.example.com```",```"test```",```"username```",```"*```"`"$nl"
+        $expected += ")}$nl$nl"
+        $expected += "############################ End GoPrtg Servers ############################$nl"
 
         $expected = $expected.Replace("``", "````")
 
@@ -142,13 +144,13 @@ Describe "Set-GoPrtgAlias" -Tag @("PowerShell", "UnitTest") {
 
         $content = gc $Profile -Raw
 
-        $expected = "Write-Host `"hello`"`r`n"
-        $expected += "########################### Start GoPrtg Servers ###########################`r`n`r`n"
-        $expected += "function __goPrtgGetServers {@(`r`n"
-        $expected += "    `"```"prtg.example.com```",```"test```",```"username```",```"*```"`"`r`n"
-        $expected += ")}`r`n`r`n"
-        $expected += "############################ End GoPrtg Servers ############################`r`n"
-        $expected += "Write-Host `"goodbye`"`r`n"
+        $expected = "Write-Host `"hello`"$nl"
+        $expected += "########################### Start GoPrtg Servers ###########################$nl$nl"
+        $expected += "function __goPrtgGetServers {@($nl"
+        $expected += "    `"```"prtg.example.com```",```"test```",```"username```",```"*```"`"$nl"
+        $expected += ")}$nl$nl"
+        $expected += "############################ End GoPrtg Servers ############################$nl"
+        $expected += "Write-Host `"goodbye`"$nl"
 
         $expected = $expected.Replace("``", "````")
 
@@ -162,11 +164,11 @@ Describe "Set-GoPrtgAlias" -Tag @("PowerShell", "UnitTest") {
 
         $content = gc $Profile -Raw
 
-        $expected = "########################### Start GoPrtg Servers ###########################`r`n`r`n"
-        $expected += "function __goPrtgGetServers {@(`r`n"
-        $expected += "    `"```"prtg.example.com```",,```"username```",```"*```"`"`r`n"
-        $expected += ")}`r`n`r`n"
-        $expected += "############################ End GoPrtg Servers ############################`r`n"
+        $expected = "########################### Start GoPrtg Servers ###########################$nl$nl"
+        $expected += "function __goPrtgGetServers {@($nl"
+        $expected += "    `"```"prtg.example.com```",,```"username```",```"*```"`"$nl"
+        $expected += ")}$nl$nl"
+        $expected += "############################ End GoPrtg Servers ############################$nl"
 
         $expected = $expected.Replace("``", "````")
 
@@ -180,11 +182,11 @@ Describe "Set-GoPrtgAlias" -Tag @("PowerShell", "UnitTest") {
 
         $content = gc $Profile -Raw
 
-        $expected = "########################### Start GoPrtg Servers ###########################`r`n`r`n"
-        $expected += "function __goPrtgGetServers {@(`r`n"
-        $expected += "    `"```"prtg.example.com```",,```"username```",```"*```"`"`r`n"
-        $expected += ")}`r`n`r`n"
-        $expected += "############################ End GoPrtg Servers ############################`r`n"
+        $expected = "########################### Start GoPrtg Servers ###########################$nl$nl"
+        $expected += "function __goPrtgGetServers {@($nl"
+        $expected += "    `"```"prtg.example.com```",,```"username```",```"*```"`"$nl"
+        $expected += ")}$nl$nl"
+        $expected += "############################ End GoPrtg Servers ############################$nl"
 
         $expected = $expected.Replace("``", "````")
 

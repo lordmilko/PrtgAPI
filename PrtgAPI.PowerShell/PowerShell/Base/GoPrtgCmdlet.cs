@@ -182,7 +182,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
 
             UpdateGoPrtgFunctionBody(final);
 
-            LoadFunction(string.Join("\r\n", final));
+            LoadFunction(string.Join(Environment.NewLine, final));
         }
 
         internal List<PSObject> FormatOutput(List<GoPrtgServer> servers)
@@ -227,14 +227,14 @@ namespace PrtgAPI.PowerShell.Cmdlets
 
             newContent.AddRange(GoPrtgProfile.BelowFooter.Value);
 
-            var str = string.Join("\r\n", newContent);
+            var str = string.Join(Environment.NewLine, newContent);
 
             if (str == string.Empty)
             {
                 File.WriteAllText(profile, str);
             }
             else
-                File.WriteAllText(profile, str + "\r\n");
+                File.WriteAllText(profile, str + Environment.NewLine);
         }
 
         private List<string> AddGoPrtgHeaderAndFooter(List<string> funcBody)

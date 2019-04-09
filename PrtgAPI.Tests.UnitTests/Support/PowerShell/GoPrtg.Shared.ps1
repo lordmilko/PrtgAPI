@@ -28,11 +28,11 @@ function InstallInProfileWithContent($baseExpected, $multiLine)
 
     $content = gc $Profile -Raw
 
-    $expected = "Write-Host `"hello`"`r`n$baseExpected"
+    $expected = "Write-Host `"hello`"$nl$baseExpected"
 
     if($multiLine)
     {
-        $expected = "Write-Host `"hello`"`r`nWrite-Host `"what what?`"`r`n$baseExpected"
+        $expected = "Write-Host `"hello`"$($nl)Write-Host `"what what?`"$nl$baseExpected"
     }
 
     $content | Should BeLike $expected
@@ -55,12 +55,14 @@ function InstallMultipleInProfile
 
     $content = gc $Profile -Raw
 
-    $expected = "########################### Start GoPrtg Servers ###########################`r`n`r`n"
-    $expected += "function __goPrtgGetServers {@(`r`n"
-    $expected += "    `"```"prtg.example.com```",,```"username```",```"*```"`",`r`n"
-    $expected += "    `"```"prtg.example2.com```",,```"username2```",```"*```"`"`r`n"
-    $expected += ")}`r`n`r`n"
-    $expected += "############################ End GoPrtg Servers ############################`r`n"
+    $nl = [Environment]::NewLine
+
+    $expected = "########################### Start GoPrtg Servers ###########################$nl$nl"
+    $expected += "function __goPrtgGetServers {@($nl"
+    $expected += "    `"```"prtg.example.com```",,```"username```",```"*```"`",$nl"
+    $expected += "    `"```"prtg.example2.com```",,```"username2```",```"*```"`"$nl"
+    $expected += ")}$nl$nl"
+    $expected += "############################ End GoPrtg Servers ############################$nl"
 
     $expected = $expected.Replace("``", "````")
 
@@ -84,12 +86,14 @@ function InstallMultipleWithAlias
 
     $content = gc $Profile -Raw
 
-    $expected = "########################### Start GoPrtg Servers ###########################`r`n`r`n"
-    $expected += "function __goPrtgGetServers {@(`r`n"
-    $expected += "    `"```"prtg.example.com```",```"prod```",```"username```",```"*```"`",`r`n"
-    $expected += "    `"```"prtg.example2.com```",```"dev```",```"username2```",```"*```"`"`r`n"
-    $expected += ")}`r`n`r`n"
-    $expected += "############################ End GoPrtg Servers ############################`r`n"
+    $nl = [Environment]::NewLine
+
+    $expected = "########################### Start GoPrtg Servers ###########################$nl$nl"
+    $expected += "function __goPrtgGetServers {@($nl"
+    $expected += "    `"```"prtg.example.com```",```"prod```",```"username```",```"*```"`",$nl"
+    $expected += "    `"```"prtg.example2.com```",```"dev```",```"username2```",```"*```"`"$nl"
+    $expected += ")}$nl$nl"
+    $expected += "############################ End GoPrtg Servers ############################$nl"
 
     $expected = $expected.Replace("``", "````")
 

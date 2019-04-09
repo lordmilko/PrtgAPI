@@ -2,9 +2,11 @@
 
 Describe "Update-GoPrtgCredential" -Tag @("PowerShell", "UnitTest") {
 
-    $baseExpected = ("########################### Start GoPrtg Servers ###########################`r`n`r`n" + 
-                    "function __goPrtgGetServers {@(`r`n    `"```"prtg.example.com```",,```"username```",```"*```"`"`r`n)}`r`n`r`n" + 
-                    "############################ End GoPrtg Servers ############################`r`n").Replace("``","````")
+    $nl = [Environment]::NewLine
+
+    $baseExpected = ("########################### Start GoPrtg Servers ###########################$nl$nl" + 
+                    "function __goPrtgGetServers {@($nl    `"```"prtg.example.com```",,```"username```",```"*```"`"$nl)}$nl$nl" + 
+                    "############################ End GoPrtg Servers ############################$nl").Replace("``","````")
 
     BeforeAll { GoPrtgBeforeAll    }
 

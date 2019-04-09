@@ -99,7 +99,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
                 File.WriteAllText(profile, profileContent);
             }
 
-            LoadFunction(string.Join("\r\n", newContents.Func));
+            LoadFunction(string.Join(Environment.NewLine, newContents.Func));
         }
 
         private GoPrtgProfileContents GetNewContents()
@@ -133,15 +133,21 @@ namespace PrtgAPI.PowerShell.Cmdlets
             var builder = new StringBuilder();
 
             if (profileContents.Pre != null && profileContents.Pre.Count > 0)
-                builder.Append(string.Join("\r\n", profileContents.Pre)).Append("\r\n");
+                builder.Append(string.Join(Environment.NewLine, profileContents.Pre)).Append(Environment.NewLine);
 
-            builder.Append(GoPrtgProfile.GoPrtgHeader).Append("\r\n\r\n").Append(string.Join("\r\n", profileContents.Func)).Append("\r\n\r\n").Append(GoPrtgProfile.GoPrtgFooter);
+            builder.Append(GoPrtgProfile.GoPrtgHeader)
+                   .Append(Environment.NewLine)
+                   .Append(Environment.NewLine)
+                   .Append(string.Join(Environment.NewLine, profileContents.Func))
+                   .Append(Environment.NewLine)
+                   .Append(Environment.NewLine)
+                   .Append(GoPrtgProfile.GoPrtgFooter);
 
             if (profileContents.Post != null && profileContents.Post.Count > 0)
-                builder.Append("\r\n").Append(string.Join("\r\n", profileContents.Post));
+                builder.Append(Environment.NewLine).Append(string.Join(Environment.NewLine, profileContents.Post));
 
             //Final trailing newline. Would be automatically entered by Add-Content / Set-Content
-            builder.Append("\r\n");
+            builder.Append(Environment.NewLine);
 
             return builder.ToString();
         }

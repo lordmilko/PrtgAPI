@@ -75,7 +75,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
 
                 if (newContent != null && newContent.Count > 0)
                 {
-                    LoadFunction(string.Join("\r\n", newContent));
+                    LoadFunction(string.Join(Environment.NewLine, newContent));
                 }
                 else
                     RemoveFunction();

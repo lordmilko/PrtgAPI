@@ -109,7 +109,7 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
                 var actualVal = actualParts[part];
 
                 if (expectedVal != actualVal)
-                    Assert.Fail($"{part} was different. Expected: {expectedVal}. Actual: {actualVal}.\r\n\r\n{originalException.Message}");
+                    Assert.Fail($"{part} was different. Expected: {expectedVal}. Actual: {actualVal}.{Environment.NewLine}{Environment.NewLine}{originalException.Message}");
             }
 
             return originalException;
