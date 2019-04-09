@@ -21,7 +21,7 @@ namespace PrtgAPI.Tests.IntegrationTests
 
         public static void Log(string message, bool error = false, string engine = "C#")
         {
-            var path = Environment.GetEnvironmentVariable("temp") + "\\PrtgAPI.IntegrationTests.log";
+            var path = Path.Combine(Path.GetTempPath(), "PrtgAPI.IntegrationTests.log");
 
             if (newFile == false)
             {

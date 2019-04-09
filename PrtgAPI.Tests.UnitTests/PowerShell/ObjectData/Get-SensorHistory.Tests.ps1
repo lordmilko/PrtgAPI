@@ -70,10 +70,12 @@ Describe "Get-SensorHistory" -Tag @("PowerShell", "UnitTest") {
     
     $sensor = Run Sensor { Get-Sensor }
 
+    $temp = [IO.Path]::GetTempPath()
+
     $format = "yyyy-MM-dd-HH-mm-ss"
 
     It "creates a custom format" {
-        $path = "$env:temp\PrtgAPIFormats"
+        $path = "$temp\PrtgAPIFormats"
 
         $sensor | Get-SensorHistory
 
@@ -264,7 +266,7 @@ Describe "Get-SensorHistory" -Tag @("PowerShell", "UnitTest") {
     }
 
     It "replaces impure formats" {
-        $dir = "$env:temp\PrtgAPIFormats"
+        $dir = "$temp\PrtgAPIFormats"
         $pre = gci $dir
 
         # Use a random name to allow running test multiple times within the same process
@@ -301,19 +303,19 @@ Describe "Get-SensorHistory" -Tag @("PowerShell", "UnitTest") {
 
         Get-SensorHistory -Id 1001
 
-        $dir = gci $env:temp\PrtgAPIFormats
+        $dir = gci $temp\PrtgAPIFormats
 
         $dir.Count | Should BeGreaterThan 0
 
         $dir | Remove-Item -Force
 
-        $dir = gci $env:temp\PrtgAPIFormats
+        $dir = gci $temp\PrtgAPIFormats
 
         $dir.Count | Should Be 0
 
         Get-SensorHistory -Id 1001
 
-        $dir = gci $env:temp\PrtgAPIFormats
+        $dir = gci $temp\PrtgAPIFormats
 
         $dir.Count | Should BeGreaterThan 1
     }

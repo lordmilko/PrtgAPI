@@ -74,7 +74,7 @@ namespace PrtgAPI.Request.Serialization.CodeGen
 
         public static Delegate Generate(string typeName, LambdaExpression lambda, out TypeBuilder typeBuilder)
         {
-            var temp = Environment.GetEnvironmentVariable("temp");
+            var temp = Path.GetTempPath();
 
             var file = $"{temp}\\{typeName}.cs";
 
