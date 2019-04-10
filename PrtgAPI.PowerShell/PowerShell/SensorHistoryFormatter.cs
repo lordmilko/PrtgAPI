@@ -262,7 +262,7 @@ namespace PrtgAPI.PowerShell
             {
                 var val = channelUnitMap[column];
 
-                if (val != null)
+                if (!string.IsNullOrEmpty(val))
                 {
                     return $"{column}({val})";
                 }

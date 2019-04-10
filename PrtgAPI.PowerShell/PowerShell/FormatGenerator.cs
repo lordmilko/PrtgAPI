@@ -133,7 +133,7 @@ namespace PrtgAPI.PowerShell
         {
             RepairMissing();
 
-            var command = $"Update-FormatData -AppendPath {string.Join(",", Formats.Select(f => f.Item1))}";
+            var command = $"Update-FormatData -AppendPath {string.Join(",", Formats.Select(f => $"'{f.Item1}'"))}";
 
             cmdlet.InvokeCommand.InvokeScript(command);
         }
