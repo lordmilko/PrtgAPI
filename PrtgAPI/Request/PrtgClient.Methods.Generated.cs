@@ -2323,7 +2323,7 @@ namespace PrtgAPI
         /// <param name="endDate">The end date and time to retrieve data to. If this value is null, records will be retrieved from one hour prior to <paramref name="startDate"/>.</param>
         /// <param name="count">Limit results to the specified number of items within the specified time period.</param>
         /// <returns>Historical data for the specified sensor within the desired date range.</returns>
-        public List<SensorHistoryData> GetSensorHistory(Either<Sensor, int> sensorOrId, int average = 300, DateTime? startDate = null, DateTime? endDate = null, int? count = null)
+        public List<SensorHistoryRecord> GetSensorHistory(Either<Sensor, int> sensorOrId, int average = 300, DateTime? startDate = null, DateTime? endDate = null, int? count = null)
         {
             var parameters = new SensorHistoryParameters(sensorOrId, average, startDate, endDate, count);
 
@@ -2343,7 +2343,7 @@ namespace PrtgAPI
         /// <param name="count">Limit results to the specified number of items within the specified time period.</param>
         /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Historical data for the specified sensor within the desired date range.</returns>
-        public async Task<List<SensorHistoryData>> GetSensorHistoryAsync(Either<Sensor, int> sensorOrId, int average = 300, DateTime? startDate = null, DateTime? endDate = null, int? count = null, CancellationToken token = default(CancellationToken))
+        public async Task<List<SensorHistoryRecord>> GetSensorHistoryAsync(Either<Sensor, int> sensorOrId, int average = 300, DateTime? startDate = null, DateTime? endDate = null, int? count = null, CancellationToken token = default(CancellationToken))
         {
             var parameters = new SensorHistoryParameters(sensorOrId, average, startDate, endDate, count);
 
@@ -2362,7 +2362,7 @@ namespace PrtgAPI
         /// <param name="startDate">The start date and time to retrieve data from. If this value is null, records will be retrieved from the current date and time.</param>
         /// <param name="endDate">The end date and time to retrieve data to. If this value is null, records will be retrieved from one hour prior to <paramref name="startDate"/>.</param>
         /// <returns>A generator encapsulating a series of requests capable of streaming a response from a PRTG Server.</returns>
-        public IEnumerable<SensorHistoryData> StreamSensorHistory(Either<Sensor, int> sensorOrId, int average = 300, DateTime? startDate = null, DateTime? endDate = null)
+        public IEnumerable<SensorHistoryRecord> StreamSensorHistory(Either<Sensor, int> sensorOrId, int average = 300, DateTime? startDate = null, DateTime? endDate = null)
         {
             var parameters = new SensorHistoryParameters(sensorOrId, average, startDate, endDate, null);
 

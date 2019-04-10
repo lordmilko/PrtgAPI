@@ -749,7 +749,7 @@
                     <ReturnDescription>A list of all monitoring schedules supported by a PRTG Server.</ReturnDescription>
                 </MethodDef>
             </MethodImpl>
-            <MethodImpl name="SensorHistory" type="SensorHistoryData" description="Sensor History" template="SensorHistory" stream="true" query="false" region="true" pluralRegion="false"/>
+            <MethodImpl name="SensorHistory" type="SensorHistoryRecord" description="Sensor History" template="SensorHistory" stream="true" query="false" region="true" pluralRegion="false"/>
             <MethodImpl name="ModificationHistory" type="ModificationEvent" description="Modification History" template="ModificationHistory" region="true" pluralRegion="false"/>
             <MethodImpl name="ServerStatus" type="ServerStatus" description="Server Status" template="ServerStatus" region="true" pluralRegion="false"/>
             <MethodImpl name="SystemInfo" type="SystemInfo" description="System Information" template="SystemInfo" region="true"/>

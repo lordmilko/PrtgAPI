@@ -374,7 +374,7 @@ namespace PrtgAPI.Request
             return new PrtgResponse(new SensorHistoryStream(await responseMessage.Content.ReadAsStreamAsync().ConfigureAwait(false)));
         }
 
-        internal static List<SensorHistoryData> ParseSensorHistoryResponse(List<SensorHistoryData> items, int sensorId)
+        internal static List<SensorHistoryRecord> ParseSensorHistoryResponse(List<SensorHistoryRecord> items, int sensorId)
         {
             foreach (var history in items)
             {

@@ -11,7 +11,7 @@ namespace PrtgAPI
     /// Represents historical monitoring data for a sensor at a specified time period.
     /// </summary>
     [Description("Sensor History")]
-    public class SensorHistoryData : IEventObject
+    public class SensorHistoryRecord : IEventObject
     {
         [ExcludeFromCodeCoverage]
         string IObject.Name

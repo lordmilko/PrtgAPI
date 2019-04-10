@@ -446,7 +446,7 @@
     <Compile Include="Request\Serialization\XmlAttributeType.cs" />
     <Compile Include="Objects\PrtgObjects\NotificationAction\NotificationAction.cs" />
     <Compile Include="Objects\SubObjects\NotificationTrigger.cs" />
-    <Compile Include="Objects\EventObjects\SensorHistoryData.cs" />
+    <Compile Include="Objects\EventObjects\SensorHistoryRecord.cs" />
     <Compile Include="Objects\EventObjects\ModificationEvent.cs" />
     <Compile Include="Parameters\ObjectManipulation\DeleteParameters.cs" />
     <Compile Include="Parameters\ObjectManipulation\Triggers\ChangeTriggerParameters.cs" />

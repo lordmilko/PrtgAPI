@@ -24,7 +24,7 @@ namespace PrtgAPI.PowerShell
             this.cmdlet = cmdlet;
         }
 
-        private PSObject PrepareObject(SensorHistoryData data, bool isNew = false)
+        private PSObject PrepareObject(SensorHistoryRecord data, bool isNew = false)
         {
             var ps = CreateObject(data);
 
@@ -37,9 +37,9 @@ namespace PrtgAPI.PowerShell
             return ps;
         }
 
-        public IEnumerable<PSObject> Format(IEnumerable<SensorHistoryData> response, bool lazy, int? count)
+        public IEnumerable<PSObject> Format(IEnumerable<SensorHistoryRecord> response, bool lazy, int? count)
         {
-            var firstResponse = new List<SensorHistoryData>();
+            var firstResponse = new List<SensorHistoryRecord>();
 
             foreach (var record in response)
             {
@@ -72,7 +72,7 @@ namespace PrtgAPI.PowerShell
             }
         }
 
-        private IEnumerable<PSObject> Init(List<SensorHistoryData> firstResponse)
+        private IEnumerable<PSObject> Init(List<SensorHistoryRecord> firstResponse)
         {
             //Determine the channel to use for each column
             GetChannelUnitMap(firstResponse);
@@ -84,7 +84,7 @@ namespace PrtgAPI.PowerShell
                 yield return PrepareObject(obj, isNew);
         }
 
-        private void GetChannelUnitMap(List<SensorHistoryData> firstResponse)
+        private void GetChannelUnitMap(List<SensorHistoryRecord> firstResponse)
         {
             channelUnitMap = new ChannelUnitMap();
 
@@ -178,7 +178,7 @@ namespace PrtgAPI.PowerShell
             return true;
         }
 
-        private PSObject CreateObject(SensorHistoryData date)
+        private PSObject CreateObject(SensorHistoryRecord date)
         {
             var obj = new PSObject();
 

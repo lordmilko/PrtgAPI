@@ -543,23 +543,23 @@ namespace PrtgAPI
         #endregion
         #region Sensor History
 
-        internal Tuple<List<SensorHistoryData>, int> GetSensorHistoryInternal(SensorHistoryParameters parameters)
+        internal Tuple<List<SensorHistoryRecord>, int> GetSensorHistoryInternal(SensorHistoryParameters parameters)
         {
-            var raw = ObjectEngine.GetObjectsRaw<SensorHistoryData>(parameters, responseParser: m => ResponseParser.GetSensorHistoryResponse(m, LogLevel, RequestEngine.IsDirty));
+            var raw = ObjectEngine.GetObjectsRaw<SensorHistoryRecord>(parameters, responseParser: m => ResponseParser.GetSensorHistoryResponse(m, LogLevel, RequestEngine.IsDirty));
 
             var data = ResponseParser.ParseSensorHistoryResponse(raw.Items, parameters.SensorId);
 
             return Tuple.Create(data, raw.TotalCount);
         }
 
-        internal async Task<List<SensorHistoryData>> GetSensorHistoryInternalAsync(SensorHistoryParameters parameters, CancellationToken token)
+        internal async Task<List<SensorHistoryRecord>> GetSensorHistoryInternalAsync(SensorHistoryParameters parameters, CancellationToken token)
         {
-            var items = await ObjectEngine.GetObjectsAsync<SensorHistoryData>(parameters, responseParser: m => ResponseParser.GetSensorHistoryResponseAsync(m, LogLevel, RequestEngine.IsDirty), token: token).ConfigureAwait(false);
+            var items = await ObjectEngine.GetObjectsAsync<SensorHistoryRecord>(parameters, responseParser: m => ResponseParser.GetSensorHistoryResponseAsync(m, LogLevel, RequestEngine.IsDirty), token: token).ConfigureAwait(false);
 
             return ResponseParser.ParseSensorHistoryResponse(items, parameters.SensorId);
         }
 
-        private IEnumerable<SensorHistoryData> StreamSensorHistoryInternal(SensorHistoryParameters parameters, bool serial)
+        private IEnumerable<SensorHistoryRecord> StreamSensorHistoryInternal(SensorHistoryParameters parameters, bool serial)
         {
             return ObjectEngine.StreamObjects(
                 parameters,
@@ -574,7 +574,7 @@ namespace PrtgAPI
         {
             parameters.Count = 0;
 
-            var data = ObjectEngine.GetObjectsRaw<SensorHistoryData>(parameters, responseParser: m => ResponseParser.GetSensorHistoryResponse(m, LogLevel, RequestEngine.IsDirty));
+            var data = ObjectEngine.GetObjectsRaw<SensorHistoryRecord>(parameters, responseParser: m => ResponseParser.GetSensorHistoryResponse(m, LogLevel, RequestEngine.IsDirty));
 
             parameters.GetParameters().Remove(Parameter.Count);
 
