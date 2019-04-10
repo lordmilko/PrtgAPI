@@ -14,10 +14,18 @@
         [int]$Lines = 10,
 
         [Parameter(Mandatory=$false)]
+        [switch]$Build = $false,
+
+        [Parameter(Mandatory=$false)]
         [Switch]$Clear = $false
     )
     
     $log = "$env:temp\PrtgAPI.IntegrationTests.log"
+
+    if($Build)
+    {
+        $log = "$env:temp\PrtgAPI.Build.log"
+    }
 
     if(Test-Path $log)
     {
