@@ -156,7 +156,8 @@ Describe "Set-ChannelProperty" -Tag @("PowerShell", "UnitTest") {
         }
 
         It "doesn't specify any dynamic parameters" {
-            { $channel | Set-ObjectProperty } | Should Throw "Cannot process command because of one or more missing mandatory parameters: Property"
+
+            { $channel | Set-ChannelProperty } | Should Throw "At least one dynamic property or -Property and -Value must be specified."
         }
 
         It "splats dynamic properties" {

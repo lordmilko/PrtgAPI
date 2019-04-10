@@ -114,7 +114,12 @@ namespace PrtgAPI.PowerShell.Cmdlets
             Value = PSObjectUtilities.CleanPSObject(Value);
 
             if (DynamicSet())
+            {
                 dynamicParameters = dynamicParams.GetBoundParameters(this, (p, v) => new ChannelParameter(p, PSObjectUtilities.CleanPSObject(v)));
+
+                if (dynamicParameters.Count == 0)
+                    throw new ParameterBindingException($"At least one dynamic property or -{nameof(Property)} and -{nameof(Value)} must be specified.");
+            }
 
             base.BeginProcessingEx();
         }
