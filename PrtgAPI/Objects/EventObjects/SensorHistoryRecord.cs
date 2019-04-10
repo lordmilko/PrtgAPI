@@ -44,6 +44,9 @@ namespace PrtgAPI
         [XmlElement("value")]
         public List<ChannelHistoryRecord> ChannelRecords { get; set; }
 
+        [XmlElement("value_raw")]
+        internal List<ChannelHistoryRecordRaw> ChannelRecordsRaw { get; set; }
+
         [XmlElement("coverage_raw")]
         internal int coverage { get; set; }
 

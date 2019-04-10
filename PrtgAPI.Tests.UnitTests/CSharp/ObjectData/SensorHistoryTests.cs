@@ -44,6 +44,18 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
 
         [TestMethod]
         [TestCategory("UnitTest")]
+        public void SensorHistory_SetsRawValues()
+        {
+            var client = Initialize_Client(new MultiTypeResponse());
+
+            var records = client.GetSensorHistory(1001);
+
+            Assert.AreEqual(51, records[0].ChannelRecords[0].Value);
+            Assert.AreEqual(1104646144, records[0].ChannelRecords[1].Value);
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
         public void SensorHistory_CanProcess_TrafficSensorsWithDuplicateChannelNames()
         {
             var channels = new[]

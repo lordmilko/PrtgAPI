@@ -71,6 +71,7 @@
     <Compile Include="CSharp\ObjectData\Query\SkipTests.cs" />
     <Compile Include="CSharp\ObjectData\Query\TakeTests.cs" />
     <Compile Include="CSharp\ObjectData\ScheduleTests.cs" />
+    <Compile Include="CSharp\ObjectData\SensorHistoryTests.cs" />
     <Compile Include="CSharp\ObjectData\StreamTests.cs" />
     <Compile Include="CSharp\ObjectData\SystemInfoTests.cs" />
     <Compile Include="CSharp\ObjectManipulation\AddObjectTests.cs" />

@@ -4,6 +4,15 @@ using System.Xml.Serialization;
 
 namespace PrtgAPI
 {
+    class ChannelHistoryRecordRaw
+    {
+        [XmlAttribute("channelid")]
+        public int ChannelId { get; set; }
+
+        [XmlText]
+        public double Value { get; set; }
+    }
+
     /// <summary>
     /// Represents the value of a channel at a given date and time.
     /// </summary>
@@ -39,10 +48,19 @@ namespace PrtgAPI
         public int ChannelId { get; set; }
 
         /// <summary>
-        /// Average value of the channel during the specified time period. This value can change based on the time span to use for the averaging interval.
+        /// Average display value of the channel during the specified time period. This value can change based on the time span to use for the averaging interval.
         /// </summary>
         [XmlText]
-        public string Value { get; set; }
+        public string DisplayValue { get; set; }
+
+        /// <summary>
+        /// Average value of the channel during the specified time period. If no data was collected during the specified time period
+        /// (such as if the sensor was in error) this value will be null.<para/>
+        /// If this channel's unit can be expressed in one of several multiples, the lowest possible multiple will be used (e.g. megabytes -> bytes).<para/>
+        /// This value can change based on the time span to use for the averaging interval.
+        /// </summary>
+        [XmlIgnore]
+        public double? Value { get; set; }
 
         /// <summary>
         /// Returns a string that represents the current object.
@@ -50,7 +68,7 @@ namespace PrtgAPI
         /// <returns>A string that represents the current object.</returns>
         public override string ToString()
         {
-            return $"{Name}: {Value}";
+            return $"{Name}: {DisplayValue}";
         }
     }
 }

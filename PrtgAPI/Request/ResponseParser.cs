@@ -380,38 +380,44 @@ namespace PrtgAPI.Request
             {
                 history.SensorId = sensorId;
 
-                foreach (var value in history.ChannelRecords)
+                foreach (var record in history.ChannelRecords)
                 {
-                    value.Name = value.Name.Replace(" ", "");
+                    SetNewSensorHistoryChannelName(history, record);
 
-                    string newName;
-
-                    if (GetNewSensorHistoryChannelName(value.Name, out newName))
-                    {
-                        if (history.ChannelRecords.Where(r => r != value).All(r =>
-                        {
-                            //Is this new name unique amongst all the other channel names (after updating their names)?
-                            string other;
-
-                            if (!GetNewSensorHistoryChannelName(r.Name.Replace(" ", ""), out other))
-                                other = r.Name;
-
-                            return other != newName;
-                        }))
-                        {
-                            value.Name = newName;
-                        }
-                    }
-
-                    value.DateTime = history.DateTime;
-                    value.SensorId = sensorId;
+                    record.Value = GetSensorHistoryChannelValue(history, record);
+                    record.DateTime = history.DateTime;
+                    record.SensorId = sensorId;
                 }
             }
 
             return items;
         }
 
-        private static bool GetNewSensorHistoryChannelName(string oldName, out string newName)
+        private static void SetNewSensorHistoryChannelName(SensorHistoryRecord history, ChannelHistoryRecord record)
+        {
+            record.Name = record.Name.Replace(" ", "");
+
+            string newName;
+
+            if (TryGetNewSensorHistoryChannelName(record.Name, out newName))
+            {
+                if (history.ChannelRecords.Where(r => r != record).All(r =>
+                {
+                    //Is this new name unique amongst all the other channel names (after updating their names)?
+                    string other;
+
+                    if (!TryGetNewSensorHistoryChannelName(r.Name.Replace(" ", ""), out other))
+                        other = r.Name;
+
+                    return other != newName;
+                }))
+                {
+                    record.Name = newName;
+                }
+            }
+        }
+
+        private static bool TryGetNewSensorHistoryChannelName(string oldName, out string newName)
         {
             var regex = new Regex("^(.+)(\\(.+\\))$");
 
@@ -424,6 +430,15 @@ namespace PrtgAPI.Request
 
             newName = null;
             return false;
+        }
+
+        private static double? GetSensorHistoryChannelValue(SensorHistoryRecord history, ChannelHistoryRecord record)
+        {
+            //PRTG does not return a raw record if the sensor did not return a value
+            //(such as because it was in an error state)
+            var rawRecord = history.ChannelRecordsRaw.FirstOrDefault(r => r.ChannelId == record.ChannelId);
+
+            return rawRecord?.Value;
         }
 
         #endregion

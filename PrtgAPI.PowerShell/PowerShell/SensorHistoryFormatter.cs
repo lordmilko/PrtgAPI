@@ -96,8 +96,8 @@ namespace PrtgAPI.PowerShell
                 {
                     var unitValue = firstResponse
                         .SelectMany(r => r.ChannelRecords
-                            .Where(v => v.Name == channel.Name && !string.IsNullOrEmpty(v.Value))
-                            .Select(v2 => v2.Value)
+                            .Where(v => v.Name == channel.Name && !string.IsNullOrEmpty(v.DisplayValue))
+                            .Select(v2 => v2.DisplayValue)
                         ).FirstOrDefault();
 
                     if (unitValue != null)
@@ -195,7 +195,7 @@ namespace PrtgAPI.PowerShell
                 }
                 else
                 {
-                    obj.Properties.Add(new PSNoteProperty(channel.Name, channel.Value));
+                    obj.Properties.Add(new PSNoteProperty(channel.Name, channel.DisplayValue));
                 }
             }
 
@@ -210,17 +210,17 @@ namespace PrtgAPI.PowerShell
         {
             double? value = null;
 
-            if (channel.Value != null)
+            if (channel.DisplayValue != null)
             {
-                if (IsValueLookup(channel.Value))
-                    return channel.Value;
+                if (IsValueLookup(channel.DisplayValue))
+                    return channel.DisplayValue;
 
-                var space = channel.Value.IndexOf(' ');
+                var space = channel.DisplayValue.IndexOf(' ');
 
-                var valueStr = channel.Value;
+                var valueStr = channel.DisplayValue;
 
                 if (space > 0)
-                    valueStr = channel.Value.Substring(0, space);
+                    valueStr = channel.DisplayValue.Substring(0, space);
 
                 if (valueStr == "<1")
                     valueStr = "0";
@@ -228,10 +228,10 @@ namespace PrtgAPI.PowerShell
                     valueStr = "100";
                 else if (valueStr == "<" || valueStr == ">")
                 {
-                    var first = channel.Value.IndexOf(' ') + 1;
-                    var second = channel.Value.IndexOf(' ', first);
+                    var first = channel.DisplayValue.IndexOf(' ') + 1;
+                    var second = channel.DisplayValue.IndexOf(' ', first);
 
-                    valueStr = channel.Value.Substring(first, second - first);
+                    valueStr = channel.DisplayValue.Substring(first, second - first);
                 }
 
                 value = Convert.ToDouble(valueStr);

@@ -90,7 +90,7 @@ Describe "Get-SensorHistory" -Tag @("PowerShell", "UnitTest") {
     It "processes a ValueLookup" {
         try
         {
-            $channel = New-Object PrtgAPI.Tests.UnitTests.Support.TestItems.SensorHistoryChannelItem -ArgumentList @("0", "Backup State", "Success", "Success")
+            $channel = New-Object PrtgAPI.Tests.UnitTests.Support.TestItems.SensorHistoryChannelItem -ArgumentList @("0", "Backup State", "Success", "1")
             $item = New-Object PrtgAPI.Tests.UnitTests.Support.TestItems.SensorHistoryItem -ArgumentList @("22/10/2017 3:19:54 PM", "43030.1804871528", $channel, "100 %", "0000010000")
 
             SetResponseAndClientWithArguments "SensorHistoryResponse" $item
