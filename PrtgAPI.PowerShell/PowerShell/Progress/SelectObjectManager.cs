@@ -93,7 +93,7 @@ namespace PrtgAPI.PowerShell.Progress
 
         public bool Wait => HasParam(c => c.Wait);
 
-        public SelectObjectManager(ReflectionCacheManager manager, PSCmdlet cmdlet, Direction direction)
+        public SelectObjectManager(PSReflectionCacheManager manager, PSCmdlet cmdlet, Direction direction)
         {
             var cmds = manager.GetPipelineCommands();
 

@@ -633,7 +633,7 @@ namespace PrtgAPI.PowerShell.Progress
 
         private bool sourceIdUpdated;
 
-        internal ReflectionCacheManager CacheManager { get; set; }
+        internal PSReflectionCacheManager CacheManager { get; set; }
 
         public bool WatchStream => cmdlet is IWatchableCmdlet && ((IWatchableCmdlet) cmdlet).WatchStream;
 
@@ -646,7 +646,7 @@ namespace PrtgAPI.PowerShell.Progress
         public ProgressManager(PrtgCmdlet cmdlet)
         {
             this.cmdlet = cmdlet;
-            CacheManager = new ReflectionCacheManager(cmdlet);
+            CacheManager = new PSReflectionCacheManager(cmdlet);
 
             var sourceId = GetLastSourceId();
             progressPipelines.Push(this, sourceId);

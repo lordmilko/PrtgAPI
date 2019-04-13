@@ -30,11 +30,11 @@ namespace PrtgAPI.Tests.UnitTests.PowerShell.Cmdlets
         [Parameter(Mandatory = false, ValueFromPipeline = true)]
         public object Object { get; set; }
 
-        private ReflectionCacheManager cacheManager;
+        private PSReflectionCacheManager cacheManager;
 
         public TestReflection1()
         {
-            cacheManager = new ReflectionCacheManager(this);
+            cacheManager = new PSReflectionCacheManager(this);
         }
 
         protected override void ProcessRecord()

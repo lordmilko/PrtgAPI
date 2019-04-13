@@ -145,6 +145,7 @@
     <Compile Include="PowerShell\NewSensorDynamicParameterCategory.cs" />
     <Compile Include="PowerShell\NewSensorDynamicParameterContainer.cs" />
     <Compile Include="PowerShell\ParameterSetDescriptor.cs" />
+    <Compile Include="PowerShell\Progress\PSReflectionCacheManager.cs" />
     <Compile Include="PowerShell\PropertyDynamicParameterSet.cs" />
     <Compile Include="PowerShell\Either\Either.cs" />
     <Compile Include="PowerShell\EventManager.cs" />
@@ -172,7 +173,6 @@
     <Compile Include="PowerShell\Progress\ProgressWriter.cs" />
     <Compile Include="PowerShell\Progress\ReadyParser.cs" />
     <Compile Include="PowerShell\Progress\RecordAnalyzer.cs" />
-    <Compile Include="PowerShell\Progress\ReflectionCacheManager.cs" />
     <Compile Include="PowerShell\Progress\SelectObjectManager.cs" />
     <Compile Include="PowerShell\PrtgSessionState.cs" />
     <Compile Include="PowerShell\PSEdition.cs" />

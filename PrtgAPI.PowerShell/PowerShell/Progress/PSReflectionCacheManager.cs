@@ -12,7 +12,7 @@ using PrtgAPI.Utilities;
 namespace PrtgAPI.PowerShell.Progress
 {
     [ExcludeFromCodeCoverage]
-    class ReflectionCacheManager
+    class PSReflectionCacheManager
     {
         private PSCmdlet cmdlet;
 
@@ -37,7 +37,7 @@ namespace PrtgAPI.PowerShell.Progress
 
         #endregion
 
-        public ReflectionCacheManager(PSCmdlet cmdlet)
+        public PSReflectionCacheManager(PSCmdlet cmdlet)
         {
             this.cmdlet = cmdlet;
 
