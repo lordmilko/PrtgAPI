@@ -452,14 +452,19 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
                 case nameof(NotificationTrigger.Latency):
                 case nameof(NotificationTrigger.Channel):
                 case nameof(NotificationTrigger.Unit):
+                case nameof(NotificationTrigger.UnitSize):
+                case nameof(NotificationTrigger.UnitTime):
+                case nameof(NotificationTrigger.Period):
                 case nameof(NotificationTrigger.OffNotificationAction):
                 case nameof(NotificationTrigger.EscalationLatency):
                 case nameof(NotificationTrigger.EscalationNotificationAction):
                 case nameof(NotificationTrigger.RepeatInterval):
+                case nameof(NotificationTrigger.State):
                 case nameof(NotificationTrigger.Threshold):
+                case nameof(NotificationTrigger.DisplayThreshold):
                     break;
                 default:
-                    Assert.IsTrue(val != null, $"Property '{propertyName}' of trigger type '{TriggerType.Change}' had value did not have a value."); //is threshold null or an empty string?
+                    Assert.IsTrue(val != null, $"Property '{propertyName}' of trigger type '{TriggerType.Change}' did not have a value."); //is threshold null or an empty string?
                     break;
             }
         }
@@ -470,9 +475,13 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             {
                 case nameof(NotificationTrigger.Channel):
                 case nameof(NotificationTrigger.Unit):
+                case nameof(NotificationTrigger.UnitSize):
+                case nameof(NotificationTrigger.UnitTime):
+                case nameof(NotificationTrigger.Period):
+                case nameof(NotificationTrigger.Threshold):
                     break;
                 default:
-                    Assert.IsTrue(val != null, $"Property '{propertyName}' of trigger type '{TriggerType.State}' had value did not have a value.");
+                    Assert.IsTrue(val != null, $"Property '{propertyName}' of trigger type '{TriggerType.State}' did not have a value.");
                     break;
             }
         }
@@ -485,9 +494,13 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
                 case nameof(NotificationTrigger.EscalationLatency):
                 case nameof(NotificationTrigger.EscalationNotificationAction):
                 case nameof(NotificationTrigger.RepeatInterval):
+                case nameof(NotificationTrigger.State):
+                case nameof(NotificationTrigger.UnitSize):
+                case nameof(NotificationTrigger.UnitTime):
+                case nameof(NotificationTrigger.Period):
                     break;
                 default:
-                    Assert.IsTrue(val != null, $"Property '{propertyName}' of trigger type '{TriggerType.Threshold}' had value did not have a value.");
+                    Assert.IsTrue(val != null, $"Property '{propertyName}' of trigger type '{TriggerType.Threshold}' did not have a value.");
                     break;
             }
         }
@@ -499,9 +512,11 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
                 case nameof(NotificationTrigger.EscalationLatency):
                 case nameof(NotificationTrigger.EscalationNotificationAction):
                 case nameof(NotificationTrigger.RepeatInterval):
+                case nameof(NotificationTrigger.State):
+                case nameof(NotificationTrigger.Period):
                     break;
                 default:
-                    Assert.IsTrue(val != null, $"Property '{propertyName}' of trigger type '{TriggerType.Speed}' had value did not have a value.");
+                    Assert.IsTrue(val != null, $"Property '{propertyName}' of trigger type '{TriggerType.Speed}' did not have a value.");
                     break;
             }
         }
@@ -515,9 +530,11 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
                 case nameof(NotificationTrigger.EscalationLatency):
                 case nameof(NotificationTrigger.EscalationNotificationAction):
                 case nameof(NotificationTrigger.RepeatInterval):
+                case nameof(NotificationTrigger.State):
+                case nameof(NotificationTrigger.UnitTime):
                     break;
                 default:
-                    Assert.IsTrue(val != null, $"Property '{propertyName}' of trigger type '{TriggerType.Volume}' had value did not have a value.");
+                    Assert.IsTrue(val != null, $"Property '{propertyName}' of trigger type '{TriggerType.Volume}' did not have a value.");
                     break;
             }
         }

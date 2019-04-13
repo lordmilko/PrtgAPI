@@ -119,7 +119,7 @@ namespace PrtgAPI.Parameters
             Channel = sourceTrigger.Channel;
             Latency = sourceTrigger.Latency;
             Condition = sourceTrigger.Condition;
-            Threshold = sourceTrigger.ThresholdInternal;
+            Threshold = sourceTrigger.Threshold;
             UnitTime = sourceTrigger.UnitTime;
             UnitSize = sourceTrigger.UnitSize;
         }

@@ -364,6 +364,7 @@
                     </TableColumnHeader>
                     <TableColumnHeader> <!-- Threshold -->
                         <Width>9</Width>
+                        <Label>Threshold</Label>
                     </TableColumnHeader>
                     <TableColumnHeader> <!-- Units -->
                         <Width>10</Width>
@@ -395,7 +396,7 @@
                                 <PropertyName>Condition</PropertyName>
                             </TableColumnItem>
                             <TableColumnItem>
-                                <PropertyName>Threshold</PropertyName>
+                                <PropertyName>DisplayThreshold</PropertyName>
                             </TableColumnItem>
                             <TableColumnItem>
                                 <PropertyName>Unit</PropertyName>

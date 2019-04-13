@@ -88,14 +88,15 @@ namespace PrtgAPI
         [DataMember(Name = "subid")]
         public int SubId { get; set; }
 
+        [DataMember(Name = "nodest")]
+        private string stateTrigger;
+
         /// <summary>
         /// State that will cause this notification to trigger.
         /// Applies to: State Triggers
         /// </summary>
-        [DataMember(Name = "nodest")]
-        private string stateTrigger;
 
-        internal TriggerSensorState? StateTrigger => stateTrigger == null ? null : (TriggerSensorState?)EnumExtensions.XmlToEnumAnyAttrib(stateTrigger, typeof(TriggerSensorState));
+        public TriggerSensorState? State => stateTrigger == null ? null : (TriggerSensorState?)EnumExtensions.XmlToEnumAnyAttrib(stateTrigger, typeof(TriggerSensorState));
 
         /// <summary>
         /// Delay (in seconds) before this notification is activated after activation requirements have been met.
@@ -137,19 +138,31 @@ namespace PrtgAPI
         }
 
         [DataMember(Name = "unitsize")]
-        private string unitSizeStr; //volume, speed
+        private string unitSizeStr;
 
-        internal DataUnit? UnitSize => unitSizeStr?.DescriptionToEnum<DataUnit>();
+        /// <summary>
+        /// The unit the trigger considers when determining whether its <see cref="Threshold"/> has been reached.
+        /// Applies to: Volume, Speed Triggers
+        /// </summary>
+        public DataUnit? UnitSize => unitSizeStr?.DescriptionToEnum<DataUnit>();
 
         [DataMember(Name = "unittime")]
-        private string unitTimeStr; //speed
+        private string unitTimeStr;
 
-        internal TimeUnit? UnitTime => unitTimeStr?.DescriptionToEnum<TimeUnit>();
+        /// <summary>
+        /// Time component of the data rate that causes this trigger to activate.
+        /// Applies to: Speed Triggers
+        /// </summary>
+        public TimeUnit? UnitTime => unitTimeStr?.DescriptionToEnum<TimeUnit>();
 
         [DataMember(Name = "period")]
-        private string periodStr; //volume
+        private string periodStr;
 
-        internal TriggerPeriod? Period => periodStr?.DescriptionToEnum<TriggerPeriod>();
+        /// <summary>
+        /// The period the trigger looks at when determining whether its <see cref="Threshold"/> has been reached.
+        /// Applies to: Volume Triggers
+        /// </summary>
+        public TriggerPeriod? Period => periodStr?.DescriptionToEnum<TriggerPeriod>();
 
         [DataMember(Name = "onnotificationid")]
         private string onNotificationActionStr;
@@ -173,26 +186,26 @@ namespace PrtgAPI
         /// </summary>
         public NotificationAction OffNotificationAction => offNotificationActionStr == null ? null : offNotificationAction ?? (offNotificationAction = new NotificationAction(offNotificationActionStr));
 
-        private int? threshold;
-
         /// <summary>
-        /// Value threshold or object state required before this notification is activated.
-        /// Applies to: Threshold, Speed, Volume Triggers
+        /// Threshold or object state required before this notification is activated.
         /// </summary>
-        [DataMember(Name = "threshold")]
-        public string Threshold
+        public string DisplayThreshold
         {
             get
             {
                 if (stateTrigger != null)
                     return stateTrigger;
 
-                return threshold?.ToString();
+                return Threshold?.ToString();
             }
-            set { threshold = Convert.ToInt32(value); }
         }
 
-        internal int? ThresholdInternal => threshold;
+        /// <summary>
+        /// Threshold the <see cref="Channel"/> must meet before this notification is activated.
+        /// Applies to: Threshold, Speed, Volume Triggers
+        /// </summary>
+        [DataMember(Name = "threshold")]
+        public int? Threshold { get; set; }
 
         [DataMember(Name = "condition")]
         private string conditionStr;

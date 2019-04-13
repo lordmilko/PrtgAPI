@@ -102,7 +102,7 @@ namespace PrtgAPI.Parameters
         {
             OffNotificationAction = sourceTrigger.OffNotificationAction;
             Latency = sourceTrigger.Latency;
-            Threshold = sourceTrigger.ThresholdInternal;
+            Threshold = sourceTrigger.Threshold;
             Condition = sourceTrigger.Condition;
             Channel = sourceTrigger.Channel;
         }

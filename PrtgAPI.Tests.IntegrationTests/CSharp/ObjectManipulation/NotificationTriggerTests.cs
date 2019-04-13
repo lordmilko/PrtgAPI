@@ -107,7 +107,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
                 OnNotificationAction = actions.First(),
                 Channel = TriggerChannel.Total,
                 Period = TriggerPeriod.Month,
-                UnitSize = DataVolumeUnit.GByte,
+                UnitSize = DataUnit.GByte,
             };
 
             AddRemoveTrigger(parameters, false);
@@ -440,7 +440,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
                                 case nameof(NotificationTrigger.EscalationLatency):
                                     paramValue = "300";
                                     break;
-                                case nameof(NotificationTrigger.Threshold):
+                                case nameof(NotificationTrigger.DisplayThreshold):
                                     paramValue = "0";
                                     break;
                                 case nameof(NotificationTrigger.RepeatInterval):

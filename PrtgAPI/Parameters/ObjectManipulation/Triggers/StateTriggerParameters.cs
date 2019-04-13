@@ -107,7 +107,7 @@ namespace PrtgAPI.Parameters
             Latency = sourceTrigger.Latency;
             EscalationLatency = sourceTrigger.EscalationLatency;
             RepeatInterval = sourceTrigger.RepeatInterval;
-            State = sourceTrigger.StateTrigger;
+            State = sourceTrigger.State;
         }
 
         /// <summary>
