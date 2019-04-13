@@ -309,7 +309,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
             if (dynamicParams == null)
                 dynamicParams = new PropertyDynamicParameterSet<ObjectProperty>(
                     ParameterSet.Dynamic,
-                    e => ObjectPropertyParser.GetPropertyInfoViaTypeLookup(e).Property
+                    e => ObjectPropertyParser.GetPropertyInfoViaTypeLookup(e).Property.PropertyType
                 );
 
             return dynamicParams.Parameters;

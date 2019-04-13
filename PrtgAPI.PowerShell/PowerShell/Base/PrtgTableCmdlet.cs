@@ -306,7 +306,7 @@ namespace PrtgAPI.PowerShell.Base
 
                 dynamicParameterSet = new PropertyDynamicParameterSet<Property>(
                     parameterSets,
-                    e => ReflectionCacheManager.GetArrayPropertyInfo(properties.FirstOrDefault(p => p.Item1 == e)?.Item2.Property.PropertyType),
+                    e => ReflectionCacheManager.GetArrayPropertyType(properties.FirstOrDefault(p => p.Item1 == e)?.Item2.Property.PropertyType),
                     this
                 );
             }

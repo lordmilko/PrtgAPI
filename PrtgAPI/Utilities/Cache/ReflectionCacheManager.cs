@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using PrtgAPI.Request.Serialization;
 using PrtgAPI.Utilities;
 
@@ -27,7 +26,7 @@ namespace PrtgAPI.Reflection.Cache
         private static readonly Dictionary<Type, CacheValue<EnumXmlCache>> enumXmlCache = new Dictionary<Type, CacheValue<EnumXmlCache>>();
         private static readonly Dictionary<Type, CacheValue<EnumNameCache>> enumNameCache = new Dictionary<Type, CacheValue<EnumNameCache>>();
         private static readonly Dictionary<Type, CacheValue<List<XmlMapping>>> mappingCache = new Dictionary<Type, CacheValue<List<XmlMapping>>>();
-        private static readonly Dictionary<Type, CacheValue<PropertyInfo>> arrayPropertyCache = new Dictionary<Type, CacheValue<PropertyInfo>>();
+        private static readonly Dictionary<Type, CacheValue<Type>> arrayPropertyCache = new Dictionary<Type, CacheValue<Type>>();
 
         private static readonly object lockTypeCache = new object();
         private static readonly object lockEnumCache = new object();
@@ -57,7 +56,7 @@ namespace PrtgAPI.Reflection.Cache
             return GetValue(lockEnumCache, type, enumCache, t => new EnumCache(t));
         }
 
-        public static PropertyInfo GetArrayPropertyInfo(Type type)
+        public static Type GetArrayPropertyType(Type type)
         {
             if (type == null)
                 return null;
@@ -65,16 +64,25 @@ namespace PrtgAPI.Reflection.Cache
             return GetValue(lockArrayPropertyCache, type, arrayPropertyCache, t =>
             {
                 if (t.IsArray)
-                    return GetArrayPropertyInfo(t.GetElementType());
+                    return GetArrayPropertyType(t.GetElementType());
 
                 var underlying = Nullable.GetUnderlyingType(t);
 
                 if (underlying != null)
-                    return GetArrayPropertyInfo(underlying);
+                    return GetArrayPropertyType(underlying);
 
                 var arrayProperties = Get(typeof(DynamicParameterPropertyTypes)).Properties;
 
-                return arrayProperties.FirstOrDefault(p => p.Property.PropertyType.GetElementType().Name == t.Name)?.Property;
+                var info = arrayProperties.FirstOrDefault(p => p.Property.PropertyType.GetElementType().Name == t.Name)?.Property;
+
+                if (t.IsEnum || underlying?.IsEnum == true)
+                {
+                    var t2 = underlying ?? t;
+
+                    return t2.MakeArrayType();
+                }
+
+                return info?.PropertyType;
             }).Cache;
         }
 

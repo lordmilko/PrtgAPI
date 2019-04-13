@@ -24,11 +24,11 @@ namespace PrtgAPI.PowerShell
 
         private string[] staticParameters;
 
-        public PropertyDynamicParameterSet(string parameterSet, Func<T, PropertyInfo> getPropertyInfo, Cmdlet excludeStaticParameters = null) : this(new[] {parameterSet}, getPropertyInfo, excludeStaticParameters)
+        public PropertyDynamicParameterSet(string parameterSet, Func<T, Type> getPropertyType, Cmdlet excludeStaticParameters = null) : this(new[] {parameterSet}, getPropertyType, excludeStaticParameters)
         {
         }
 
-        public PropertyDynamicParameterSet(string[] parameterSets, Func<T, PropertyInfo> getPropertyInfo, Cmdlet excludeStaticParameters = null)
+        public PropertyDynamicParameterSet(string[] parameterSets, Func<T, Type> getPropertyType, Cmdlet excludeStaticParameters = null)
         {
             ParameterSetNames = parameterSets;
             this.excludeStaticParameters = excludeStaticParameters;
@@ -37,10 +37,10 @@ namespace PrtgAPI.PowerShell
 
             foreach (T value in values)
             {
-                var cache = getPropertyInfo(value);
+                var type = getPropertyType(value);
 
-                if (cache != null)
-                    AddParameter(value.ToString(), cache.PropertyType);
+                if (type != null)
+                    AddParameter(value.ToString(), type);
             }
         }
 
