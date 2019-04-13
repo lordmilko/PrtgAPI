@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Management.Automation;
+﻿using System.Management.Automation;
 using PrtgAPI.Parameters;
 using PrtgAPI.Parameters.Helpers;
 using PrtgAPI.PowerShell.Base;
-using PrtgAPI.Utilities;
 using IDynamicParameters = System.Management.Automation.IDynamicParameters;
 
 namespace PrtgAPI.PowerShell.Cmdlets
@@ -69,28 +65,44 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// </summary>
         [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = ParameterSet.Default)]
         [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = ParameterSet.Dynamic)]
-        public Channel Channel { get; set; }
+        public Channel Channel
+        {
+            get { return implementation.Object; }
+            set { implementation.Object = value; }
+        }
 
         /// <summary>
         /// <para type="description">ID of the channel's parent sensor.</para>
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = ParameterSet.Manual)]
         [Parameter(Mandatory = true, ParameterSetName = ParameterSet.DynamicManual)]
-        public int SensorId { get; set; }
+        public int SensorId
+        {
+            get { return implementation.ObjectId; }
+            set { implementation.ObjectId = value; }
+        }
 
         /// <summary>
         /// <para type="description">ID of the channel to set the properties of.</para>
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = ParameterSet.Manual)]
         [Parameter(Mandatory = true, ParameterSetName = ParameterSet.DynamicManual)]
-        public int ChannelId { get; set; }
+        public int ChannelId
+        {
+            get { return implementation.SubId; }
+            set { implementation.SubId = value; }
+        }
 
         /// <summary>
         /// <para type="description">Property of the channel to set.</para>
         /// </summary>
         [Parameter(Mandatory = true, Position = 0, ParameterSetName = ParameterSet.Default)]
         [Parameter(Mandatory = true, Position = 2, ParameterSetName = ParameterSet.Manual)]
-        public ChannelProperty Property { get; set; }
+        public ChannelProperty Property
+        {
+            get { return implementation.Property; }
+            set { implementation.Property = value; }
+        }
 
         /// <summary>
         /// <para type="description">Value to set the property to.</para>
@@ -98,28 +110,37 @@ namespace PrtgAPI.PowerShell.Cmdlets
         [Parameter(Mandatory = false, Position = 1, ParameterSetName = ParameterSet.Default)]
         [Parameter(Mandatory = false, Position = 3, ParameterSetName = ParameterSet.Manual)]
         [AllowEmptyString]
-        public object Value { get; set; }
+        public object Value
+        {
+            get { return implementation.Value; }
+            set { implementation.Value = value; }
+        }
 
-        internal override string ProgressActivity => "Modify PRTG Channel Settings";
+        private InternalSetSubObjectPropertyCmdlet<Channel, ChannelParameter, ChannelProperty> implementation;
 
-        private PropertyDynamicParameterSet<ChannelProperty> dynamicParams;
-
-        private List<ChannelParameter> dynamicParameters;
+        /// <summary>
+        /// Initializes a new instance of the <see cref="SetChannelProperty"/> class.
+        /// </summary>
+        public SetChannelProperty()
+        {
+            implementation = new InternalSetSubObjectPropertyCmdlet<Channel, ChannelParameter, ChannelProperty>(
+                this,
+                "Sensor",
+                "Channel",
+                (p, v) => new ChannelParameter(p, v),
+                (c, p) => client.SetChannelProperty(c, p),
+                (c, p) => client.SetChannelProperty(c, p),
+                (o, s, p) => client.SetChannelProperty(o, s, p),
+                ObjectPropertyParser.GetPropertyInfoViaPropertyParameter<Channel>
+            );
+        }
 
         /// <summary>
         /// Provides an enhanced one-time, preprocessing functionality for the cmdlet.
         /// </summary>
         protected override void BeginProcessingEx()
         {
-            Value = PSObjectUtilities.CleanPSObject(Value);
-
-            if (DynamicSet())
-            {
-                dynamicParameters = dynamicParams.GetBoundParameters(this, (p, v) => new ChannelParameter(p, PSObjectUtilities.CleanPSObject(v)));
-
-                if (dynamicParameters.Count == 0)
-                    throw new ParameterBindingException($"At least one dynamic property or -{nameof(Property)} and -{nameof(Value)} must be specified.");
-            }
+            implementation.BeginProcessing();
 
             base.BeginProcessingEx();
         }
@@ -127,163 +148,29 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// <summary>
         /// Performs enhanced record-by-record processing functionality for the cmdlet.
         /// </summary>
-        protected override void ProcessRecordEx()
-        {
-            var str = Channel != null ? $"'{Channel.Name}' (Channel ID: {Channel.Id}, Sensor ID: {Channel.SensorId})" : $"Channel ID: {ChannelId} (Sensor ID: {SensorId})";
+        protected override void ProcessRecordEx() => implementation.ProcessRecord();
 
-            if (!MyInvocation.BoundParameters.ContainsKey("Value") && !DynamicSet())
-                throw new ParameterBindingException("Value parameter is mandatory, however a value was not specified. If Value should be empty, specify $null.");
-
-            if (Channel != null)
-            {
-                SensorId = Channel.SensorId;
-                ChannelId = Channel.Id;
-            }
-
-            if (ShouldProcess(str, $"Set-ChannelProperty {GetShouldProcessMessage()}"))
-            {
-                var desc = Channel != null ? Channel.Name : $"ID {ChannelId}";
-
-                //Can't batch something if there's no pipeline input
-                if (Channel == null)
-                    Batch = false;
-
-                ExecuteOrQueue(Channel, $"Queuing channel '{desc}'");
-            }
-        }
-
-        private string GetShouldProcessMessage()
-        {
-            if (DynamicSet())
-            {
-                var strActions = dynamicParameters.Select(p => $"{p.Property} = '{p.Value}'");
-                var str = string.Join(", ", strActions);
-
-                return str;
-            }
-
-            return $"{Property} = '{Value}'";
-        }
+        internal override string ProgressActivity => implementation.ProgressActivity;
 
         /// <summary>
         /// Invokes this cmdlet's action against the current object in the pipeline.
         /// </summary>
-        protected override void PerformSingleOperation()
-        {
-            string message;
-
-            Action action;
-
-            if (ParameterSetName == ParameterSet.Default)
-            {
-                message = $"Setting channel '{Channel.Name}' (Sensor ID: {Channel.SensorId}) setting '{Property}' to '{Value}'";
-
-                action = () => client.SetChannelProperty(Channel, Property, Value);
-            }
-            else if (DynamicSet())
-            {
-                var strActions = dynamicParameters.Select(p => $"'{p.Property}' to '{p.Value}'");
-                var str = string.Join(", ", strActions);
-
-                var name = Channel != null ? $"channel '{Channel.Name}'" : $"ID {ChannelId}";
-
-                message = $"Setting channel {name} (Sensor ID: {SensorId}) setting {str}";
-
-                switch (ParameterSetName)
-                {
-                    case ParameterSet.Dynamic:
-                        action = () => client.SetChannelProperty(Channel, dynamicParameters.ToArray());
-                        break;
-                    case ParameterSet.DynamicManual:
-                        action = () => client.SetChannelProperty(SensorId, ChannelId, dynamicParameters.ToArray());
-                        break;
-                    default:
-                        throw new UnknownParameterSetException(ParameterSetName);
-                }
-            }
-            else
-            {
-                message = $"Setting channel ID {ChannelId} (Sensor ID: {SensorId} setting {Property} to '{Value}'";
-
-                action = () => client.SetChannelProperty(SensorId, ChannelId, Property, Value);
-            }
-
-            ExecuteOperation(action, message);
-        }
+        protected override void PerformSingleOperation() => implementation.PerformSingleOperation();
 
         /// <summary>
         /// Invokes this cmdlet's action against the current object in the pipeline.
         /// </summary>
-        protected override void PerformMultiOperation(int[] ids)
-        {
-            var groups = objects.Cast<Channel>().GroupBy(o => o.Id).ToList();
-
-            for (int i = 0; i < groups.Count; i++)
-            {
-                var complete = groups.Count == i + 1;
-
-                var sensorIds = groups[i].Select(j => j.SensorId).ToArray();
-
-                var nameGroups = groups[i].GroupBy(g => g.Name).ToList();
-
-                var summary = GetListSummary(nameGroups, g =>
-                {
-                    var t = "Sensor ID";
-
-                    if (g.Count() > 1)
-                        t += "s";
-
-                    var strId = g.Select(a => a.SensorId.ToString());
-
-                    return $"'{g.Key}' ({t}: {string.Join(", ", strId)})";
-                });
-
-                var type = "channel";
-
-                if (nameGroups.Count() > 1)
-                    type += "s";
-
-                string message;
-
-                if (DynamicSet())
-                {
-                    var strActions = dynamicParameters.Select(p => $"'{p.Property}' to '{p.Value}'");
-                    var str = string.Join(", ", strActions);
-                    message = $"Setting {type} {summary} setting {str}";
-                }
-                else
-                {
-                    message = $"Setting {type} {summary} setting '{Property}' to '{Value}'";
-                    dynamicParameters = new[] {new ChannelParameter(Property, Value)}.ToList();
-                }
-
-                ExecuteMultiOperation(() => client.SetChannelProperty(groups[i].ToList(), dynamicParameters.ToArray()), message, complete);
-            }
-        }
+        protected override void PerformMultiOperation(int[] ids) => implementation.PerformMultiOperation(ids);
 
         /// <summary>
         /// Returns the current object that should be passed through this cmdlet.
         /// </summary>
-        public override object PassThruObject => Channel;
+        public override object PassThruObject => implementation.PassThruObject;
 
         /// <summary>
         /// Retrieves an object that defines the dynamic parameters of this cmdlet.
         /// </summary>
         /// <returns>An object that defines the dynamic parameters of this cmdlet.</returns>
-        public object GetDynamicParameters()
-        {
-            if (dynamicParams == null)
-                dynamicParams = new PropertyDynamicParameterSet<ChannelProperty>(
-                    new[] { ParameterSet.Dynamic, ParameterSet.DynamicManual },
-                    e => ObjectPropertyParser.GetPropertyInfoViaPropertyParameter<Channel>(e).Property
-                );
-
-            return dynamicParams.Parameters;
-        }
-
-        private bool DynamicSet()
-        {
-            return ParameterSetName == ParameterSet.Dynamic || ParameterSetName == ParameterSet.DynamicManual;
-        }
+        public object GetDynamicParameters() => implementation.GetDynamicParameters();
     }
 }

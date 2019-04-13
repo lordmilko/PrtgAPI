@@ -43,6 +43,7 @@
   <ItemGroup>
     <Compile Include="PowerShell\AlternateParameterSet.cs" />
     <Compile Include="PowerShell\AlternateSensorTargetParameter.cs" />
+    <Compile Include="PowerShell\Base\InternalSetSubObjectPropertyCmdlet.cs" />
     <Compile Include="PowerShell\Base\IPSCmdletEx.cs" />
     <Compile Include="PowerShell\EventStack.cs" />
     <Compile Include="PowerShell\EventState.cs" />
