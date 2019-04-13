@@ -6,6 +6,11 @@
     public interface ISubObject : IObject
     {
         /// <summary>
+        /// The identifier of the object this object is a child of.
+        /// </summary>
+        int ObjectId { get; set; }
+
+        /// <summary>
         /// The identifier of this object under its parent object.
         /// </summary>
         int SubId { get; set; }

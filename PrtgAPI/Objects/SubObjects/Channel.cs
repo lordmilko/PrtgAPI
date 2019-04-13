@@ -18,6 +18,13 @@ namespace PrtgAPI
         public int Id { get; set; }
 
         [ExcludeFromCodeCoverage]
+        int ISubObject.ObjectId
+        {
+            get { return SensorId; }
+            set { SensorId = value; }
+        }
+
+        [ExcludeFromCodeCoverage]
         int ISubObject.SubId
         {
             get { return Id; }
