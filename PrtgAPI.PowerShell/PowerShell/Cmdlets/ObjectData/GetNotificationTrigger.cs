@@ -2,7 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Management.Automation;
+using PrtgAPI.Attributes;
 using PrtgAPI.PowerShell.Base;
+using PrtgAPI.Reflection.Cache;
+using PrtgAPI.Utilities;
+using IDynamicParameters = System.Management.Automation.IDynamicParameters;
 
 namespace PrtgAPI.PowerShell.Cmdlets
 {
@@ -14,11 +18,14 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// of its channels, should result in the firing of a notification action. When notification triggers are defined on a device,
     /// group, or probe, the triggers are inherited by all nodes under the object. Individual objects can choose to block inheritance
     /// of notification triggers, preventing those triggers from trickling down.</para>
+    /// 
     /// <para type="description">When looking at notification triggers defined on a single object, Get-NotificationTrigger can be invoked with no arguments.
     /// When looking at notification triggers across multiple objects, it is often useful to filter out notification triggers inherited from a parent object via
     /// the -Inherited parameter.</para>
+    /// 
     /// <para type="description"><see cref="NotificationTrigger"/> objects returned from Get-NotificationTrigger can be passed to Edit-NotificationTriggerProperty
     /// or  New-NotificationTriggerParameters, to allow cloning or editing the trigger's properties.</para>
+    /// 
     /// <para type="description">Notification trigger types that are supported by a specified object can be determined using the -Types parameter.
     /// While there is no restriction on the types of triggers assignable to container-like objects (including devices, groups and probes)
     /// each sensor can only be assigned specific types based on the types of channels it contains. When adding a new trigger,
@@ -57,8 +64,8 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <para type="link">Edit-NotificationTriggerProperty</para>
     /// </summary>
     [OutputType(typeof(NotificationTrigger))]
-    [Cmdlet(VerbsCommon.Get, "NotificationTrigger", DefaultParameterSetName = ParameterSet.Default)]
-    public class GetNotificationTrigger : PrtgObjectCmdlet<NotificationTrigger>
+    [Cmdlet(VerbsCommon.Get, "NotificationTrigger", DefaultParameterSetName = ParameterSet.Dynamic)]
+    public class GetNotificationTrigger : PrtgObjectCmdlet<NotificationTrigger>, IDynamicParameters
     {
         /// <summary>
         /// <para type="description">The object to retrieve notification triggers for.</para>
@@ -67,16 +74,48 @@ namespace PrtgAPI.PowerShell.Cmdlets
         public SensorOrDeviceOrGroupOrProbe Object { get; set; }
 
         /// <summary>
-        /// <para type="description">Filter the response to objects with a certain OnNotificationAction. Can include wildcards.</para>
+        /// <para type="description">Filter the response to objects with a certain <see cref="TriggerProperty.OnNotificationAction"/>. Can include wildcards.</para>
         /// </summary>
-        [Parameter(Mandatory = false, Position = 0, ParameterSetName = ParameterSet.Default)]
-        public string[] OnNotificationAction { get; set; }
+        [Parameter(Mandatory = false, Position = 0, ParameterSetName = ParameterSet.Dynamic)]
+        public NameOrObject<NotificationAction>[] OnNotificationAction { get; set; }
+
+        /// <summary>
+        /// <para type="description">Filter the response to objects with a certain <see cref="TriggerProperty.OffNotificationAction"/>. Can include wildcards.</para>
+        /// </summary>
+        [Parameter(Mandatory = false, ParameterSetName = ParameterSet.Dynamic)]
+        public NameOrObject<NotificationAction>[] OffNotificationAction { get; set; }
+
+        /// <summary>
+        /// <para type="description">Filter the response to objects with a certain <see cref="TriggerProperty.EscalationNotificationAction"/>. Can include wildcards.</para>
+        /// </summary>
+        [Parameter(Mandatory = false, ParameterSetName = ParameterSet.Dynamic)]
+        public NameOrObject<NotificationAction>[] EscalationNotificationAction { get; set; }
 
         /// <summary>
         /// <para type="description">Filter the response to objects of a certain type.</para>
         /// </summary>
-        [Parameter(Mandatory = false, ParameterSetName = ParameterSet.Default)]
+        [Parameter(Mandatory = false, ParameterSetName = ParameterSet.Dynamic)]
         public TriggerType[] Type { get; set; }
+
+        /// <summary>
+        /// <para type="description">Filter the reponse to objects with a specified SubId.</para>
+        /// </summary>
+        [Alias("Id")]
+        [Parameter(Mandatory = false, ParameterSetName = ParameterSet.Dynamic)]
+        public int[] SubId { get; set; }
+
+        /// <summary>
+        /// <para type="description">Filter the reponse to objects with a specified ParentId.</para>
+        /// </summary>
+        [Parameter(Mandatory = false, ParameterSetName = ParameterSet.Dynamic)]
+        public int[] ParentId { get; set; }
+
+        /// <summary>
+        /// <para type="description">Filter the reponse to objects with a specified Channel.
+        /// Can refer to an object capable of being used as the source of a <see cref="TriggerChannel"/> or a wildcard indicating the name of the channel.</para>
+        /// </summary>
+        [Parameter(Mandatory = false, ParameterSetName = ParameterSet.Dynamic)]
+        public object[] Channel { get; set; }
 
         /// <summary>
         /// <para type="description">List all notification trigger types compatible with the specified object.</para> 
@@ -87,15 +126,17 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// <summary>
         /// <para type="description">Indicates whether to include inherited triggers in the response.</para>
         /// </summary>
-        [Parameter(Mandatory = false, ParameterSetName = ParameterSet.Default, HelpMessage = "Indicates whether to include inherited triggers in the response. If this value is not specified, inherited triggers are included.")]
+        [Parameter(Mandatory = false, ParameterSetName = ParameterSet.Dynamic, HelpMessage = "Indicates whether to include inherited triggers in the response. If this value is not specified, inherited triggers are included.")]
         public bool? Inherited { get; set; }
+
+        private PropertyDynamicParameterSet<TriggerProperty> dynamicParameterSet;
 
         /// <summary>
         /// Performs enhanced record-by-record processing functionality for the cmdlet.
         /// </summary>
         protected override void ProcessRecordEx()
         {
-            if (ParameterSetName == ParameterSet.Default)
+            if (ParameterSetName == ParameterSet.Dynamic)
                 base.ProcessRecordEx();
             else
             {
@@ -135,12 +176,102 @@ namespace PrtgAPI.PowerShell.Cmdlets
             if (Inherited == false)
                 triggers = triggers.Where(a => a.Inherited == false);
 
-            triggers = FilterResponseRecordsByWildcardArray(OnNotificationAction, t => t.OnNotificationAction.Name, triggers);
+            triggers = FilterResponseRecordsByPropertyNameOrObjectId(OnNotificationAction, t => t.OnNotificationAction, triggers);
+            triggers = FilterResponseRecordsByPropertyNameOrObjectId(OffNotificationAction, t => t.OffNotificationAction, triggers);
+            triggers = FilterResponseRecordsByPropertyNameOrObjectId(EscalationNotificationAction, t => t.EscalationNotificationAction, triggers);
 
-            if (Type != null)
-                triggers = triggers.Where(t => Type.Contains(t.Type));
+            triggers = FilterResponseRecords(ParentId, t => t.ParentId, triggers);
+            triggers = FilterResponseRecords(SubId, t => t.SubId, triggers);
+            triggers = FilterResponseRecords(Type, t => t.Type, triggers);
+
+            if (Channel != null)
+                triggers = FilterResponseRecordsByChannel(Channel, t => t.Channel, triggers);
+
+            triggers = FilterByDynamicParameters(triggers);
 
             return triggers;
+        }
+
+        private IEnumerable<NotificationTrigger> FilterResponseRecordsByChannel(object[] channel, Func<NotificationTrigger, object> func, IEnumerable<NotificationTrigger> triggers)
+        {
+            foreach (var trigger in triggers)
+            {
+                if (trigger.Channel != null)
+                {
+                    foreach (var obj in channel)
+                    {
+                        TriggerChannel result;
+
+                        if (TriggerChannel.TryParse(obj, out result) && trigger.Channel.Equals(result))
+                        {
+                            yield return trigger;
+                            break;
+                        }
+                        else
+                        {
+                            if (Object is Sensor)
+                            {
+                                var channels = client.GetChannels(Object.Id);
+
+                                var wildcard = new WildcardPattern(obj?.ToString(), WildcardOptions.IgnoreCase);
+
+                                var match = channels.Any(c => wildcard.IsMatch(trigger.Channel.ToString()));
+
+                                if (match)
+                                {
+                                    yield return trigger;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        private IEnumerable<NotificationTrigger> FilterByDynamicParameters(IEnumerable<NotificationTrigger> triggers)
+        {
+            if (dynamicParameterSet != null)
+            {
+                var boundParameters = dynamicParameterSet.GetBoundParameters(this, Tuple.Create);
+
+                foreach (var parameter in boundParameters)
+                {
+                    //Get the PropertyInfo the filter Property corresponds to.
+                    var property = ReflectionCacheManager.Get(typeof(NotificationTrigger)).Properties.First(p => p.GetAttribute<PropertyParameterAttribute>()?.Property.Equals(parameter.Item1) == true);
+
+                    if (property.Property.PropertyType.IsArray)
+                        throw new NotImplementedException("Cannot filter array properties dynamically.");
+
+                    var items = parameter.Item2.ToIEnumerable().ToList();
+
+                    triggers = triggers.Where(t => items.Any(i => Equals(property.GetValue(t), i)));
+                }
+            }
+
+            return triggers;
+        }
+
+        /// <summary>
+        /// Retrieves an object that defines the dynamic parameters of this cmdlet.
+        /// </summary>
+        /// <returns>An object that defines the dynamic parameters of this cmdlet.</returns>
+        public object GetDynamicParameters()
+        {
+            if (dynamicParameterSet == null)
+            {
+                var properties = ReflectionCacheManager.Get(typeof(NotificationTrigger)).Properties.
+                    Where(p => p.GetAttribute<PropertyParameterAttribute>() != null).
+                    Select(p => Tuple.Create((TriggerProperty)p.GetAttribute<PropertyParameterAttribute>().Property, p)).ToList();
+
+                dynamicParameterSet = new PropertyDynamicParameterSet<TriggerProperty>(
+                    new[] {ParameterSet.Dynamic},
+                    e => ReflectionCacheManager.GetArrayPropertyType(properties.FirstOrDefault(p => p.Item1 == e)?.Item2.Property.PropertyType),
+                    this
+                );
+            }
+
+            return dynamicParameterSet.Parameters;
         }
     }
 }

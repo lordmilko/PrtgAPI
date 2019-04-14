@@ -63,7 +63,7 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestItems
             string offNotificationAction = "301|Email to all members of group PRTG Users Group",
             string channel = "Primary",
             string condition = "Not Equal to", string threshold = "5",
-            string onNotificationAction = "301|Email and push notification to admin", string parentId = "1",
+            string onNotificationAction = "303|Email and push notification to admin", string parentId = "1",
             string subId = "7")
         {
             ArgumentNullThrower(latency, nameof(latency));
@@ -89,9 +89,9 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestItems
             return item;
         }
 
-        public static NotificationTriggerItem SpeedTrigger(string latency = "60", string offNotificationAction = "301|Ticket Notification",
+        public static NotificationTriggerItem SpeedTrigger(string latency = "60", string offNotificationAction = "302|Ticket Notification",
             string channel = "Primary", string condition = "Above",
-            string threshold = "3", string unitsize = "TByte", string unittime = "d", string onNotificationAction = "301|Email and push notification to admin",
+            string threshold = "3", string unitsize = "TByte", string unittime = "d", string onNotificationAction = "303|Email and push notification to admin",
             string parentId = "1", string subId = "5")
         {
             ArgumentNullThrower(latency, nameof(latency));

@@ -95,13 +95,14 @@ namespace PrtgAPI
         /// State that will cause this notification to trigger.
         /// Applies to: State Triggers
         /// </summary>
-
+        [PropertyParameter(TriggerProperty.State)]
         public TriggerSensorState? State => stateTrigger == null ? null : (TriggerSensorState?)EnumExtensions.XmlToEnumAnyAttrib(stateTrigger, typeof(TriggerSensorState));
 
         /// <summary>
         /// Delay (in seconds) before this notification is activated after activation requirements have been met.
         /// Applies to: State, Threshold, Speed Triggers
         /// </summary>
+        [PropertyParameter(TriggerProperty.Latency)]
         [DataMember(Name = "latency")]
         public int? Latency { get; set; }
 
@@ -117,6 +118,7 @@ namespace PrtgAPI
         /// The channel the trigger should apply to.
         /// Applies to: Speed, Threshold, Volume Triggers
         /// </summary>
+        [PropertyParameter(TriggerProperty.Channel)]
         public TriggerChannel Channel => channel ?? (channel = TriggerChannel.ParseFromResponse(channelObj));
 
         /// <summary>
@@ -144,6 +146,7 @@ namespace PrtgAPI
         /// The unit the trigger considers when determining whether its <see cref="Threshold"/> has been reached.
         /// Applies to: Volume, Speed Triggers
         /// </summary>
+        [PropertyParameter(TriggerProperty.UnitSize)]
         public DataUnit? UnitSize => unitSizeStr?.DescriptionToEnum<DataUnit>();
 
         [DataMember(Name = "unittime")]
@@ -153,6 +156,7 @@ namespace PrtgAPI
         /// Time component of the data rate that causes this trigger to activate.
         /// Applies to: Speed Triggers
         /// </summary>
+        [PropertyParameter(TriggerProperty.UnitTime)]
         public TimeUnit? UnitTime => unitTimeStr?.DescriptionToEnum<TimeUnit>();
 
         [DataMember(Name = "period")]
@@ -162,6 +166,7 @@ namespace PrtgAPI
         /// The period the trigger looks at when determining whether its <see cref="Threshold"/> has been reached.
         /// Applies to: Volume Triggers
         /// </summary>
+        [PropertyParameter(TriggerProperty.Period)]
         public TriggerPeriod? Period => periodStr?.DescriptionToEnum<TriggerPeriod>();
 
         [DataMember(Name = "onnotificationid")]
@@ -173,6 +178,7 @@ namespace PrtgAPI
         /// Notification action that will occur when trigger is activated.
         /// Applies to: State, Volume, Threshold, Change, Speed Triggers
         /// </summary>
+        [PropertyParameter(TriggerProperty.OnNotificationAction)]
         public NotificationAction OnNotificationAction => onNotificationAction ?? (onNotificationAction = new NotificationAction(onNotificationActionStr));
 
         [DataMember(Name = "offnotificationid")]
@@ -184,6 +190,7 @@ namespace PrtgAPI
         /// Notification action that will occur when trigger is deactivated.
         /// Applies to: State, Threshold, Speed Triggers
         /// </summary>
+        [PropertyParameter(TriggerProperty.OffNotificationAction)]
         public NotificationAction OffNotificationAction => offNotificationActionStr == null ? null : offNotificationAction ?? (offNotificationAction = new NotificationAction(offNotificationActionStr));
 
         /// <summary>
@@ -204,6 +211,7 @@ namespace PrtgAPI
         /// Threshold the <see cref="Channel"/> must meet before this notification is activated.
         /// Applies to: Threshold, Speed, Volume Triggers
         /// </summary>
+        [PropertyParameter(TriggerProperty.Threshold)]
         [DataMember(Name = "threshold")]
         public int? Threshold { get; set; }
 
@@ -214,12 +222,14 @@ namespace PrtgAPI
         /// Condition that must be true for the trigger to activate.
         /// Applies to: Speed, Threshold Triggers
         /// </summary>
+        [PropertyParameter(TriggerProperty.Condition)]
         public TriggerCondition? Condition => conditionStr?.DescriptionToEnum<TriggerCondition>() ?? TriggerCondition.Equals;
 
         /// <summary>
         /// Delay (in seconds) before the <see cref="EscalationNotificationAction"/> occurs after this trigger has been activated.
         /// Applies to: State Triggers
         /// </summary>
+        [PropertyParameter(TriggerProperty.EscalationLatency)]
         [DataMember(Name = "esclatency")]
         public int? EscalationLatency { get; set; }
 
@@ -232,12 +242,14 @@ namespace PrtgAPI
         /// Notification action that will occur when the trigger condition has been remained active for an extended period of time. Repeats every <see cref="EscalationLatency"/> seconds.
         /// Applies to: State Triggers
         /// </summary>
+        [PropertyParameter(TriggerProperty.EscalationNotificationAction)]
         public NotificationAction EscalationNotificationAction => escalationNotificationActionStr == null ? null : escalationNotificationAction ?? (escalationNotificationAction = new NotificationAction(escalationNotificationActionStr));
 
         /// <summary>
         /// Interval to repeat the <see cref="EscalationNotificationAction"/>, in minutes.
         /// Applies to: State Triggers
         /// </summary>
+        [PropertyParameter(TriggerProperty.RepeatInterval)]
         [DataMember(Name = "repeatival")]
         public int? RepeatInterval { get; set; } //what if theres no interval?
 

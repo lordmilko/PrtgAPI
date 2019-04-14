@@ -30,7 +30,7 @@
         public string Name { get; set; }
         public string Type { get; set; }
 
-        internal ChannelItem(string lastValue = "26 %", string lastValueRaw = "0000000000000260.0000",
+        public ChannelItem(string lastValue = "26 %", string lastValueRaw = "0000000000000260.0000",
             string objId = "1",
             string objIdRaw = "0000000001", string name = "Percent Available Memory", string type = null)
         {

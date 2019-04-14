@@ -156,6 +156,62 @@ namespace PrtgAPI.PowerShell.Base
         }
 
         /// <summary>
+        /// Filter a response on a specified property.
+        /// </summary>
+        /// <typeparam name="TObject">The type of object to filter.</typeparam>
+        /// <typeparam name="TProperty">The type of property to filter on.</typeparam>
+        /// <param name="filters">A list of values to filter based on.</param>
+        /// <param name="getProperty">A function that yields the property to filter by.</param>
+        /// <param name="records">The records to filter.</param>
+        /// <returns>A list of records that matched any of the specified filters.</returns>
+        protected IEnumerable<TObject> FilterResponseRecords<TObject, TProperty>(TProperty[] filters, Func<TObject, TProperty> getProperty, IEnumerable<TObject> records)
+        {
+            if (filters != null)
+                records = records.Where(r => filters.Contains(getProperty(r)));
+
+            return records;
+        }
+
+        /// <summary>
+        /// Filter a response by either a wildcard expression or an object contained in a <see cref="NameOrObject{T}"/> value.
+        /// </summary>
+        /// <typeparam name="TProperty">The type of property to filter on.</typeparam>
+        /// <param name="filters">A list of values to filter based on.</param>
+        /// <param name="getProperty">A function that yields the property to filter by.</param>
+        /// <param name="records">The records to filter.</param>
+        /// <returns>A list of records that matched any of the specified filters.</returns>
+        protected IEnumerable<T> FilterResponseRecordsByPropertyNameOrObjectId<TProperty>(
+            NameOrObject<TProperty>[] filters,
+            Func<T, TProperty> getProperty,
+            IEnumerable<T> records) where TProperty : PrtgObject
+        {
+            if (filters == null)
+                return records;
+
+            return records.Where(
+                record =>
+                {
+                    return filters.Any(filter =>
+                    {
+                        var action = getProperty(record);
+
+                        if (action == null)
+                            return false;
+
+                        if (filter.IsObject)
+                            return action.Id == filter.Object.Id;
+                        else
+                        {
+                            var wildcard = new WildcardPattern(filter.Name, WildcardOptions.IgnoreCase);
+
+                            return wildcard.IsMatch(action.Name);
+                        }
+                    });
+                }
+            );
+        }
+
+        /// <summary>
         /// Filter records returned from PRTG by one or more wildcards.
         /// </summary>
         /// <param name="arr">The array of wildcards to filter against.</param>

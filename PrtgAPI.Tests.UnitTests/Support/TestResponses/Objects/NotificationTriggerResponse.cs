@@ -18,7 +18,7 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
             channels = new[] {new ChannelItem()};
         }
 
-        internal NotificationTriggerResponse(NotificationTriggerItem[] triggers, ChannelItem[] channels) : this(triggers)
+        public NotificationTriggerResponse(NotificationTriggerItem[] triggers, ChannelItem[] channels) : this(triggers)
         {
             this.channels = channels;
         }
