@@ -32,7 +32,7 @@ Describe "Rename-Object" -Tag @("PowerShell", "UnitTest") {
         $sensors = Get-Sensor -Count 2
 
         SetAddressValidatorResponse @(
-            "editsettings?id=4000,4001&name_=newName&"
+            [Request]::EditSettings("id=4000,4001&name_=newName")
         )
 
         $sensors | Rename-Object newName -Batch:$true
@@ -45,8 +45,8 @@ Describe "Rename-Object" -Tag @("PowerShell", "UnitTest") {
         $sensors = Get-Sensor -Count 2
 
         SetAddressValidatorResponse @(
-            "api/rename.htm?id=4000&value=newName&"
-            "api/rename.htm?id=4001&value=newName&"
+            [Request]::Get("api/rename.htm?id=4000&value=newName")
+            [Request]::Get("api/rename.htm?id=4001&value=newName")
         )
 
         $sensors | Rename-Object newName -Batch:$false

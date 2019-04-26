@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using PrtgAPI.Tests.UnitTests.Support;
 using PrtgAPI.Tests.UnitTests.Support.TestItems;
 using PrtgAPI.Tests.UnitTests.Support.TestResponses;
 
@@ -71,8 +72,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         {
             var urls = new[]
             {
-                "https://prtg.example.com/api/table.xml?content=notifications&columns=objid,name,baselink,tags,type,active,basetype&count=*&filter_name=ticket&username=username&passhash=12345678",
-                "https://prtg.example.com/controls/objectdata.htm?id=300&objecttype=notification&username=username&passhash=12345678"
+                UnitRequest.Notifications("filter_name=ticket"),
+                UnitRequest.NotificationProperties(300)
             };
 
             var countOverride = new Dictionary<Content, int>
@@ -93,10 +94,10 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         {
             var urls = new[]
             {
-                "https://prtg.example.com/api/table.xml?content=notifications&columns=objid,name,baselink,tags,type,active,basetype&count=*&filter_name=ticket&username=username&passhash=12345678",
-                "https://prtg.example.com/controls/objectdata.htm?id=300&objecttype=notification&username=username&passhash=12345678",
-                "https://prtg.example.com/api/table.xml?content=schedules&columns=objid,name,baselink,tags,type,active,basetype&count=*&filter_objid=623&username=username&passhash=12345678",
-                "https://prtg.example.com/controls/objectdata.htm?id=623&objecttype=schedule&username=username&passhash=12345678"
+                UnitRequest.Notifications("filter_name=ticket"),
+                UnitRequest.NotificationProperties(300),
+                UnitRequest.Schedules("filter_objid=623"),
+                UnitRequest.ScheduleProperties(623)
             };
 
             var countOverride = new Dictionary<Content, int>

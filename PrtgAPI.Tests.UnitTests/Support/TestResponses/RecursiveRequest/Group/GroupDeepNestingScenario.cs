@@ -180,7 +180,7 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
 
         private GroupResponse GetChildren(List<GroupNode> groupChildren, int parentId, string address)
         {
-            Assert.AreEqual(UnitRequest.Groups($"count=*&filter_parentid={parentId}", UrlFlag.Columns), address);
+            Assert.AreEqual(UnitRequest.Groups($"filter_parentid={parentId}"), address);
             return new GroupResponse(groupChildren.Select(g => g.GetTestItem()).ToArray());
         }
     }

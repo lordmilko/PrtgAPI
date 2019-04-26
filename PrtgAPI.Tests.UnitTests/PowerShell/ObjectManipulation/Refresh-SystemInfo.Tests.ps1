@@ -7,12 +7,12 @@ Describe "Refresh-SystemInfo" -Tag @("PowerShell", "UnitTest") {
         $device = Run Device { Get-Device -Count 1 }
 
         SetAddressValidatorResponse @(
-            "api/sysinfochecknow.json?id=40&kind=system&"
-            "api/sysinfochecknow.json?id=40&kind=software&"
-            "api/sysinfochecknow.json?id=40&kind=hardware&"
-            "api/sysinfochecknow.json?id=40&kind=loggedonusers&"
-            "api/sysinfochecknow.json?id=40&kind=processes&"
-            "api/sysinfochecknow.json?id=40&kind=services&"
+            [Request]::Get("api/sysinfochecknow.json?id=40&kind=system")
+            [Request]::Get("api/sysinfochecknow.json?id=40&kind=software")
+            [Request]::Get("api/sysinfochecknow.json?id=40&kind=hardware")
+            [Request]::Get("api/sysinfochecknow.json?id=40&kind=loggedonusers")
+            [Request]::Get("api/sysinfochecknow.json?id=40&kind=processes")
+            [Request]::Get("api/sysinfochecknow.json?id=40&kind=services")
         )
 
         $device | Refresh-SystemInfo
@@ -21,12 +21,12 @@ Describe "Refresh-SystemInfo" -Tag @("PowerShell", "UnitTest") {
     It "processes an id" {
 
         SetAddressValidatorResponse @(
-            "api/sysinfochecknow.json?id=1001&kind=system&"
-            "api/sysinfochecknow.json?id=1001&kind=software&"
-            "api/sysinfochecknow.json?id=1001&kind=hardware&"
-            "api/sysinfochecknow.json?id=1001&kind=loggedonusers&"
-            "api/sysinfochecknow.json?id=1001&kind=processes&"
-            "api/sysinfochecknow.json?id=1001&kind=services&"
+            [Request]::Get("api/sysinfochecknow.json?id=1001&kind=system")
+            [Request]::Get("api/sysinfochecknow.json?id=1001&kind=software")
+            [Request]::Get("api/sysinfochecknow.json?id=1001&kind=hardware")
+            [Request]::Get("api/sysinfochecknow.json?id=1001&kind=loggedonusers")
+            [Request]::Get("api/sysinfochecknow.json?id=1001&kind=processes")
+            [Request]::Get("api/sysinfochecknow.json?id=1001&kind=services")
         )
 
         Refresh-SystemInfo -Id 1001
@@ -45,8 +45,8 @@ Describe "Refresh-SystemInfo" -Tag @("PowerShell", "UnitTest") {
 
     It "processes only specified types" {
         SetAddressValidatorResponse @(
-            "api/sysinfochecknow.json?id=1001&kind=loggedonusers&"
-            "api/sysinfochecknow.json?id=1001&kind=services&"
+            [Request]::Get("api/sysinfochecknow.json?id=1001&kind=loggedonusers")
+            [Request]::Get("api/sysinfochecknow.json?id=1001&kind=services")
         )
 
         Refresh-SystemInfo -Id 1001 -Type Users,Services

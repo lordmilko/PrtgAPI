@@ -30,8 +30,8 @@ Describe "Start-AutoDiscovery" -Tag @("PowerShell", "UnitTest") {
         $device = Get-Device -Count 1
 
         SetAddressValidatorResponse @(
-            "controls/objectdata.htm?id=3000&objecttype=device&"
-            "api/discovernow.htm?id=3000&template=%22windows+advanced.odt%22,%22windows+generic.odt%22&"
+            [Request]::DeviceProperties(3000),
+            [Request]::Get("api/discovernow.htm?id=3000&template=%22windows+advanced.odt%22,%22windows+generic.odt%22")
         )
 
         $device | Start-AutoDiscovery *wmi*

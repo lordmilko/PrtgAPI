@@ -145,8 +145,8 @@ Describe "Get-ObjectProperty" -Tag @("PowerShell", "UnitTest") {
         It "retrieves a sub object property" {
 
             SetAddressValidatorResponse @(
-                "api/getobjectproperty.htm?id=1001&name=limitmaxerror&subid=5&subtype=channel&show=nohtmlencode&"
-                "api/getobjectproperty.htm?id=1001&name=limitminerror&subid=5&subtype=channel&show=nohtmlencode&"
+                [Request]::GetObjectProperty(1001, "limitmaxerror&subid=5&subtype=channel&show=nohtmlencode")
+                [Request]::GetObjectProperty(1001, "limitminerror&subid=5&subtype=channel&show=nohtmlencode")
             )
 
             $response = Get-ObjectProperty -Id 1001 -SubId 5 -RawSubType channel -RawProperty limitmaxerror,limitminerror

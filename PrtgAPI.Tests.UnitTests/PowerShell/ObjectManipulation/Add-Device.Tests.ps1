@@ -54,8 +54,8 @@ Describe "Add-Device" -Tag @("PowerShell", "UnitTest") {
 
     It "adds a device and auto-discovers with specified templates" {
         SetAddressValidatorResponse @(
-            "controls/objectdata.htm?id=40&objecttype=device&"
-            "adddevice2.htm?name_=dc-1&host_=dc-1&ipversion_=0&discoverytype_=2&discoveryschedule_=0&devicetemplate_=1&devicetemplate__check=Server+RDP.odt%7CRDP+Server%7C%7C&devicetemplate__check=Windows+Advanced.odt%7CWindows+(Detailed+via+WMI)%7C%7C&devicetemplate__check=Windows+Generic.odt%7CWindows+(via+WMI)%7C%7C&id=2211&"
+            [Request]::DeviceProperties(40),
+            [Request]::Get("adddevice2.htm?name_=dc-1&host_=dc-1&ipversion_=0&discoverytype_=2&discoveryschedule_=0&devicetemplate_=1&devicetemplate__check=Server+RDP.odt%7CRDP+Server%7C%7C&devicetemplate__check=Windows+Advanced.odt%7CWindows+(Detailed+via+WMI)%7C%7C&devicetemplate__check=Windows+Generic.odt%7CWindows+(via+WMI)%7C%7C&id=2211")
         )
 
         $group = Run Group { Get-Group }

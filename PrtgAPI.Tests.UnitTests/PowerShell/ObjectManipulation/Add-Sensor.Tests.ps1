@@ -68,8 +68,8 @@ Describe "Add-Sensor" -Tag @("PowerShell", "UnitTest") {
 
         $params = New-SensorParameters WmiService $services
 
-        $base = "addsensor5.htm?name_=Service&priority_=3&inherittriggers_=1&intervalgroup=1&interval_=60%7C60+seconds&errorintervalsdown_=1&tags_=wmiservicesensor+servicesensor&restart_=0&monitorchange_=1&monitorextended_=0&service_=1&sensortype=wmiservice&"
-        $end = "&id=40&"
+        $base = "name_=Service&priority_=3&inherittriggers_=1&intervalgroup=1&interval_=60%7C60+seconds&errorintervalsdown_=1&tags_=wmiservicesensor+servicesensor&restart_=0&monitorchange_=1&monitorextended_=0&service_=1&sensortype=wmiservice&"
+        $end = "&id=40"
 
         $first =   GetItemSubset 0   30
         $second =  GetItemSubset 30  30
@@ -80,15 +80,15 @@ Describe "Add-Sensor" -Tag @("PowerShell", "UnitTest") {
         $seventh = GetItemSubset 180 30
 
         SetAddressValidatorResponse @(
-            "api/getstatus.htm?id=0&"
-            "controls/addsensor2.htm?id=40&sensortype=wmiservice&"
-            "$base$first$end"
-            "$base$second$end"
-            "$base$third$end"
-            "$base$fourth$end"
-            "$base$fifth$end"
-            "$base$sixth$end"
-            "$base$seventh$end"
+            [Request]::Status()
+            [Request]::BeginAddSensorQuery(40, "wmiservice")
+            [Request]::AddSensor("$base$first$end")
+            [Request]::AddSensor("$base$second$end")
+            [Request]::AddSensor("$base$third$end")
+            [Request]::AddSensor("$base$fourth$end")
+            [Request]::AddSensor("$base$fifth$end")
+            [Request]::AddSensor("$base$sixth$end")
+            [Request]::AddSensor("$base$seventh$end")
         )
 
         $device | Add-Sensor $params -Resolve:$false
@@ -106,9 +106,9 @@ Describe "Add-Sensor" -Tag @("PowerShell", "UnitTest") {
         $params = New-SensorParameters WmiService $services
 
         SetAddressValidatorResponse @(
-            "api/getstatus.htm?id=0&"
-            "controls/addsensor2.htm?id=40&sensortype=wmiservice&"
-            "addsensor5.htm?name_=Service&priority_=3&inherittriggers_=1&intervalgroup=1&interval_=60%7C60+seconds&errorintervalsdown_=1&tags_=wmiservicesensor+servicesensor&restart_=0&monitorchange_=1&monitorextended_=0&service_=1&sensortype=wmiservice&service__check=AxInstSV%7CActiveX+Installer+(AxInstSV)%7CProvides+User+Account+Control+validation+for+the+installation+of+ActiveX+controls+from+the+Internet+and+enables+management+of+ActiveX+control+installation+based+on+Group+Policy+settings.+This+service+is+started+on+demand+and+if+disabled+the+installation+of+ActiveX+controls+will+behave+according+to+default+browser+settings.%7CStopped%7C%7C&id=40&"
+            [Request]::Status()
+            [Request]::BeginAddSensorQuery(40, "wmiservice")
+            [Request]::AddSensor("name_=Service&priority_=3&inherittriggers_=1&intervalgroup=1&interval_=60%7C60+seconds&errorintervalsdown_=1&tags_=wmiservicesensor+servicesensor&restart_=0&monitorchange_=1&monitorextended_=0&service_=1&sensortype=wmiservice&service__check=AxInstSV%7CActiveX+Installer+(AxInstSV)%7CProvides+User+Account+Control+validation+for+the+installation+of+ActiveX+controls+from+the+Internet+and+enables+management+of+ActiveX+control+installation+based+on+Group+Policy+settings.+This+service+is+started+on+demand+and+if+disabled+the+installation+of+ActiveX+controls+will+behave+according+to+default+browser+settings.%7CStopped%7C%7C&id=40")
         )
 
         $device | Add-Sensor $params -Resolve:$false

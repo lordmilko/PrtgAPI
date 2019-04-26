@@ -52,6 +52,10 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
 
         [TestMethod]
         [TestCategory("UnitTest")]
+        public void QueryFilter_PrtgObjectProperties_ParentId() => QuerySensor(s => s.ParentId == 3, "filter_parentid=3");
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
         public void QueryFilter_PrtgObjectProperties_Active() => QuerySensor(s => s.Active, "filter_active=-1");
 
         [TestMethod]
@@ -112,10 +116,6 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         [TestMethod]
         [TestCategory("UnitTest")]
         public void QueryFilter_SensorOrDeviceOrGroupOrProbeProperties_NotificationTypes() => QuerySensor(s => s.NotificationTypes.ToString() == "test", string.Empty);
-
-        [TestMethod]
-        [TestCategory("UnitTest")]
-        public void QueryFilter_SensorOrDeviceOrGroupOrProbeProperties_ParentId() => QuerySensor(s => s.ParentId == 3, "filter_parentid=3");
 
         [TestMethod]
         [TestCategory("UnitTest")]
@@ -327,7 +327,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         [TestCategory("UnitTest")]
         public void QueryFilter_LogProperties_DateTime_BackwardsAndForwards()
         {
-            var url = new[] { UnitRequest.Logs($"start=1&filter_dend={Time.TodayStr}")};
+            var url = new[] { UnitRequest.Logs($"count=500&start=1&filter_dend={Time.TodayStr}", UrlFlag.Columns)};
 
             ExecuteClient(c => c.QueryLogs().Where(l => l.DateTime < Time.Today), url, l => l.ToList());
             ExecuteClient(c => c.QueryLogs().Where(l => Time.Today > l.DateTime), url, l => l.ToList());
@@ -552,7 +552,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         [TestCategory("UnitTest")]
         public void QueryFilter_Log_WithTake()
         {
-            ExecuteClient(c => c.QueryLogs(), new[] { UnitRequest.Logs("start=1")}, s => s.ToList());
+            ExecuteClient(c => c.QueryLogs(), new[] { UnitRequest.Logs("count=500&start=1", UrlFlag.Columns)}, s => s.ToList());
             ExecuteClient(c => c.QueryLogs().Take(3), new[] { UnitRequest.Logs("count=3&start=1", UrlFlag.Columns)}, s => s.ToList());
         }
 
@@ -567,7 +567,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         {
             ExecuteClient(c => c.QueryDevices(predicate), new[]
             {
-                UnitRequest.Devices(url)
+                UnitRequest.Devices($"count=500" + (string.IsNullOrEmpty(url) ? url : $"&{url}"), UrlFlag.Columns)
             }, s => s.ToList());
         }
 
@@ -575,7 +575,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         {
             ExecuteClient(c => c.QueryGroups(predicate), new[]
             {
-                UnitRequest.Groups(url)
+                UnitRequest.Groups($"count=500" + (string.IsNullOrEmpty(url) ? url : $"&{url}"), UrlFlag.Columns)
             }, s => s.ToList());
         }
 
@@ -583,7 +583,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         {
             ExecuteClient(c => c.QueryProbes(predicate), new[]
             {
-                UnitRequest.Probes(url + "&filter_parentid=0")
+                UnitRequest.Probes($"count=500" + (string.IsNullOrEmpty(url) ? url : $"&{url}") + "&filter_parentid=0", UrlFlag.Columns)
             }, s => s.ToList());
         }
 
@@ -607,9 +607,15 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
             string[] url,
             Enum[] streamOrder = null)
         {
-            var urls = url.SelectMany(s => new[]
+            var urls = url.SelectMany(s =>
             {
-                UnitRequest.Logs(s)
+                if (!s.Contains("count"))
+                    s = $"count=500&{s}";
+
+                return new[]
+                {
+                    UnitRequest.Logs(s, UrlFlag.Columns)
+                };
             }).ToArray();
 
             ExecuteClient(c => c.QueryLogs(predicate), urls, s => s.ToList());

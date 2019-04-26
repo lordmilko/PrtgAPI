@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using PrtgAPI.Tests.UnitTests.Support;
 using PrtgAPI.Tests.UnitTests.Support.TestResponses;
 
 namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
@@ -190,8 +191,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             {
                 var urls = new[]
                 {
-                    $"https://prtg.example.com/api/getobjectproperty.htm?id={id}&name=authorized&username=username&passhash=12345678",
-                    $"https://prtg.example.com/api/probestate.htm?id={id}&action={str}&username=username&passhash=12345678"
+                    UnitRequest.GetObjectProperty(id, "authorized"),
+                    UnitRequest.Get($"api/probestate.htm?id={id}&action={str}")
                 };
 
                 Execute(c => c.ApproveProbe(id, action), urls);
@@ -210,8 +211,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             {
                 var urls = new[]
                 {
-                    $"https://prtg.example.com/api/getobjectproperty.htm?id={id}&name=authorized&username=username&passhash=12345678",
-                    $"https://prtg.example.com/api/probestate.htm?id={id}&action={str}&username=username&passhash=12345678"
+                    UnitRequest.GetObjectProperty(id, "authorized"),
+                    UnitRequest.Get($"api/probestate.htm?id={id}&action={str}")
                 };
 
                 await ExecuteAsync(async c => await c.ApproveProbeAsync(id, action), urls);

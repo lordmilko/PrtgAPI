@@ -22,7 +22,7 @@ Describe "Simulate-ErrorStatus" -Tag @("PowerShell", "UnitTest") {
         $sensors = Get-Sensor -Count 2
 
         SetAddressValidatorResponse @(
-            "api/simulate.htm?id=4000,4001&action=1&"
+            [Request]::Get("api/simulate.htm?id=4000,4001&action=1")
         )
 
         $sensors | Simulate-ErrorStatus -Batch:$true
@@ -35,8 +35,8 @@ Describe "Simulate-ErrorStatus" -Tag @("PowerShell", "UnitTest") {
         $sensors = Get-Sensor -Count 2
 
         SetAddressValidatorResponse @(
-            "api/simulate.htm?id=4000&action=1&"
-            "api/simulate.htm?id=4001&action=1&"
+            [Request]::Get("api/simulate.htm?id=4000&action=1")
+            [Request]::Get("api/simulate.htm?id=4001&action=1")
         )
 
         $sensors | Simulate-ErrorStatus -Batch:$false

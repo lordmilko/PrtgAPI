@@ -9,8 +9,8 @@ Describe "Approve-Probe" -Tag @("PowerShell", "UnitTest") {
 
         It "approves a probe" {
             SetAddressValidatorResponse @(
-                "api/getobjectproperty.htm?id=1001&name=authorized&"
-                "api/probestate.htm?id=1001&action=allow&"
+                [Request]::GetObjectProperty(1001, "authorized")
+                [Request]::Get("api/probestate.htm?id=1001&action=allow")
             )
 
             $probe | Approve-Probe
@@ -18,8 +18,8 @@ Describe "Approve-Probe" -Tag @("PowerShell", "UnitTest") {
 
         It "denies a probe" {
             SetAddressValidatorResponse @(
-                "api/getobjectproperty.htm?id=1001&name=authorized&"
-                "api/probestate.htm?id=1001&action=deny&"
+                [Request]::GetObjectProperty(1001, "authorized")
+                [Request]::Get("api/probestate.htm?id=1001&action=deny")
             )
 
             $probe | Approve-Probe -Deny
@@ -27,8 +27,8 @@ Describe "Approve-Probe" -Tag @("PowerShell", "UnitTest") {
 
         It "approves and auto-discovers a probe" {
             SetAddressValidatorResponse @(
-                "api/getobjectproperty.htm?id=1001&name=authorized&"
-                "api/probestate.htm?id=1001&action=allowanddiscover&"
+                [Request]::GetObjectProperty(1001, "authorized")
+                [Request]::Get("api/probestate.htm?id=1001&action=allowanddiscover")
             )
 
             $probe | Approve-Probe -AutoDiscover
@@ -38,8 +38,8 @@ Describe "Approve-Probe" -Tag @("PowerShell", "UnitTest") {
     Context "Manual" {
         It "approves a probe" {
             SetAddressValidatorResponse @(
-                "api/getobjectproperty.htm?id=1001&name=authorized&"
-                "api/probestate.htm?id=1001&action=allow&"
+                [Request]::GetObjectProperty(1001, "authorized")
+                [Request]::Get("api/probestate.htm?id=1001&action=allow")
             )
 
             Approve-Probe -Id 1001
@@ -47,8 +47,8 @@ Describe "Approve-Probe" -Tag @("PowerShell", "UnitTest") {
 
         It "denies a probe" {
             SetAddressValidatorResponse @(
-                "api/getobjectproperty.htm?id=1001&name=authorized&"
-                "api/probestate.htm?id=1001&action=deny&"
+                [Request]::GetObjectProperty(1001, "authorized")
+                [Request]::Get("api/probestate.htm?id=1001&action=deny")
             )
 
             Approve-Probe -Id 1001 -Deny
@@ -56,8 +56,8 @@ Describe "Approve-Probe" -Tag @("PowerShell", "UnitTest") {
 
         It "approves and auto-discovers a probe" {
             SetAddressValidatorResponse @(
-                "api/getobjectproperty.htm?id=1001&name=authorized&"
-                "api/probestate.htm?id=1001&action=allowanddiscover&"
+                [Request]::GetObjectProperty(1001, "authorized")
+                [Request]::Get("api/probestate.htm?id=1001&action=allowanddiscover")
             )
 
             Approve-Probe -Id 1001 -AutoDiscover
@@ -77,7 +77,7 @@ Describe "Approve-Probe" -Tag @("PowerShell", "UnitTest") {
 
     It "skips a probe that is already approved" {
         SetAddressValidatorResponse @(
-            "api/getobjectproperty.htm?id=1002&name=authorized&"
+            [Request]::GetObjectProperty(1002, "authorized")
         )
 
         $output = [string]::Join("`n",(&{try { Approve-Probe -Id 1002 3>&1 | %{$_.Message} } catch [exception] { }}))

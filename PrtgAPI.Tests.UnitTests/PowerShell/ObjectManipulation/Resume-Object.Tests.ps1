@@ -22,7 +22,7 @@ Describe "Resume-Object" -Tag @("PowerShell", "UnitTest") {
         $sensors = Get-Sensor -Count 2
 
         SetAddressValidatorResponse @(
-            "api/pause.htm?id=4000,4001&action=1&"
+            [Request]::Get("api/pause.htm?id=4000,4001&action=1")
         )
 
         $sensors | Resume-Object -Batch:$true
@@ -35,8 +35,8 @@ Describe "Resume-Object" -Tag @("PowerShell", "UnitTest") {
         $sensors = Get-Sensor -Count 2
 
         SetAddressValidatorResponse @(
-            "api/pause.htm?id=4000&action=1&"
-            "api/pause.htm?id=4001&action=1&"
+            [Request]::Get("api/pause.htm?id=4000&action=1")
+            [Request]::Get("api/pause.htm?id=4001&action=1")
         )
 
         $sensors | Resume-Object -Batch:$false

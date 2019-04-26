@@ -17,30 +17,53 @@ namespace PrtgAPI.Tests.UnitTests.Support
     {
         #region Objects
 
-        internal static string SensorCount => Count("sensors");
-        internal static string Sensors(string url = "", UrlFlag? flags = UrlFlag.Columns | UrlFlag.Count) =>
+        public const UrlFlag DefaultObjectFlags = UrlFlag.Columns | UrlFlag.Count;
+
+        public static string SensorCount => Count("sensors");
+        public static string Sensors(string url = "", UrlFlag? flags = DefaultObjectFlags) =>
             RequestObject(url, flags, "sensors", DefaultSensorProperties);
 
-        internal static string DeviceCount => Count("devices");
-        internal static string Devices(string url = "", UrlFlag? flags = UrlFlag.Columns | UrlFlag.Count) =>
+        public static string DeviceCount => Count("devices");
+        public static string Devices(string url = "", UrlFlag? flags = DefaultObjectFlags) =>
             RequestObject(url, flags, "devices", DefaultDeviceProperties);
 
-        internal static string GroupCount => Count("groups");
-        internal static string Groups(string url = "", UrlFlag? flags = UrlFlag.Columns | UrlFlag.Count) =>
+        public static string DeviceProperties(int id) => RequestObjectData(id, "device");
+
+        public static string GroupCount => Count("groups");
+        public static string Groups(string url = "", UrlFlag? flags = DefaultObjectFlags) =>
             RequestObject(url, flags, "groups", DefaultGroupProperties);
 
-        internal static string ProbeCount => Get("api/table.xml?content=probenode&count=0&filter_parentid=0");
-        internal static string Probes(string url = "", UrlFlag? flags = UrlFlag.Columns | UrlFlag.Count) =>
+        public static string ProbeCount => Get("api/table.xml?content=probenode&count=0&filter_parentid=0");
+        public static string Probes(string url = "", UrlFlag? flags = DefaultObjectFlags) =>
             RequestObject(url, flags, "probenode", DefaultProbeProperties);
 
-        internal static string LogCount => Get("api/table.xml?content=messages&count=1&columns=objid,name");
-        internal static string Logs(string url = "", UrlFlag? flags = UrlFlag.Columns | UrlFlag.Count) =>
+        public static string LogCount => Get("api/table.xml?content=messages&count=1&columns=objid,name");
+        public static string Logs(string url = "", UrlFlag? flags = DefaultObjectFlags) =>
             RequestObject(url, flags, "messages", DefaultLogProperties);
 
-        internal static string Channels(int sensorId) =>
-            RequestObject($"count=*&id={sensorId}", UrlFlag.Columns, "channels", DefaultChannelProperties);
-        internal static string ChannelProperties(int sensorId, int channelId) =>
+        public static string Channels(int sensorId) =>
+            RequestObject($"id={sensorId}", DefaultObjectFlags, "channels", DefaultChannelProperties);
+        public static string ChannelProperties(int sensorId, int channelId) =>
             Get($"controls/channeledit.htm?id={sensorId}&channel={channelId}");
+
+        public static string Notifications(string url = "", UrlFlag? flags = DefaultObjectFlags) =>
+            RequestObject(url, flags, "notifications", DefaultNotificationProperties);
+
+        public static string NotificationProperties(int id) => RequestObjectData(id, "notification");
+
+        public static string Objects(string url = "", UrlFlag? flags = DefaultObjectFlags) =>
+            RequestObject(url, flags, "objects", DefaultObjectProperties);
+
+        public static string Schedules(string url = "", UrlFlag? flags = DefaultObjectFlags) =>
+            RequestObject(url, flags, "schedules", DefaultScheduleProperties);
+
+        public static string ScheduleProperties(int id) => RequestObjectData(id, "schedule");
+
+        public static string Triggers(int id) =>
+            Get($"api/table.xml?id={id}&content=triggers&columns=content,objid");
+
+        public static string TriggerTypes(int objectId) =>
+            Get($"api/triggers.json?id={objectId}");
 
         public static string Status() =>
             Get("api/getstatus.htm?id=0");
@@ -59,12 +82,15 @@ namespace PrtgAPI.Tests.UnitTests.Support
                 builder.Append($"&columns={defaultProperties()}");
 
             if ((flags & UrlFlag.Count) == UrlFlag.Count)
-                builder.Append("&count=500");
+                builder.Append("&count=*");
 
             builder.Append($"{getDelim(url)}{url}");
 
             return $"https://prtg.example.com/api/table.xml?{builder}&username=username&passhash=12345678";
         }
+
+        static string RequestObjectData(int id, string objectType) =>
+            Get($"controls/objectdata.htm?id={id}&objecttype={objectType}");
 
         #region Columns
 
@@ -93,13 +119,31 @@ namespace PrtgAPI.Tests.UnitTests.Support
             return "objid,name,datetime,parent,status,sensor,device,group,probe,message,priority,type,tags,active";
         }
 
+        internal static string DefaultObjectProperties()
+        {
+            return "objid,name,parentid,tags,type,active,basetype";
+        }
+
         internal static string DefaultChannelProperties()
         {
             return "objid,name,lastvalue";
         }
 
+        private static string DefaultNotificationProperties()
+        {
+            return "objid,name,baselink,parentid,tags,type,active,basetype";
+        }
+
+        private static string DefaultScheduleProperties()
+        {
+            return "objid,name,baselink,parentid,tags,type,active,basetype";
+        }
+
         #endregion
         #endregion
+
+        public static string GetObjectProperty(int id, string property) =>
+            Get($"api/getobjectproperty.htm?id={id}&name={property}");
 
         public static string AddSensor(string url) =>
             Get($"addsensor5.htm?{url}");
@@ -113,9 +157,9 @@ namespace PrtgAPI.Tests.UnitTests.Support
         public static string EndAddSensorQuery(int deviceId, int tmpId) =>
             $"https://prtg.example.com/addsensor4.htm?id={deviceId}&tmpid={tmpId}";
 
-        internal static string SetChannelProperty(string url) =>
+        public static string EditSettings(string url) =>
             Get($"editsettings?{url}");
 
-        internal static string Get(string url) => $"https://prtg.example.com/{url}&username=username&passhash=12345678";
+        public static string Get(string url) => $"https://prtg.example.com/{url}{(url.EndsWith("?") ? "" : "&")}username=username&passhash=12345678";
     }
 }

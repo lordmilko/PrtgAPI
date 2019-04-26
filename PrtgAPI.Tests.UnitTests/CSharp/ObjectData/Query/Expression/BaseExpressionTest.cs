@@ -19,7 +19,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
 
             var urls = new[]
             {
-                UnitRequest.Sensors(url)
+                UnitRequest.Sensors($"count=500" + (string.IsNullOrEmpty(url) ? url : $"&{url}"), UrlFlag.Columns)
             };
 
             var client = GetClient(urls.ToArray());

@@ -63,7 +63,7 @@ Describe "Pause-Object" -Tag @("PowerShell", "UnitTest") {
         $sensors = Get-Sensor -Count 2
 
         SetAddressValidatorResponse @(
-            "api/pauseobjectfor.htm?id=4000,4001&duration=5&"
+            [Request]::Get("api/pauseobjectfor.htm?id=4000,4001&duration=5")
         )
 
         $sensors | Pause-Object -Duration 5 -Batch:$true
@@ -76,8 +76,8 @@ Describe "Pause-Object" -Tag @("PowerShell", "UnitTest") {
         $sensors = Get-Sensor -Count 2
 
         SetAddressValidatorResponse @(
-            "api/pauseobjectfor.htm?id=4000&duration=5&"
-            "api/pauseobjectfor.htm?id=4001&duration=5&"
+            [Request]::Get("api/pauseobjectfor.htm?id=4000&duration=5")
+            [Request]::Get("api/pauseobjectfor.htm?id=4001&duration=5")
         )
 
         $sensors | Pause-Object -Duration 5 -Batch:$false

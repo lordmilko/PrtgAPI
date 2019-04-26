@@ -53,8 +53,8 @@ Describe "Acknowledge-Sensor" -Tag @("PowerShell", "UnitTest") {
         $sensors = Get-Sensor -Count 2
 
         SetAddressValidatorResponse @(
-            "api/acknowledgealarm.htm?id=4000&duration=5&"
-            "api/acknowledgealarm.htm?id=4001&duration=5&"
+            [Request]::Get("api/acknowledgealarm.htm?id=4000&duration=5")
+            [Request]::Get("api/acknowledgealarm.htm?id=4001&duration=5")
         )
 
         $sensors | Acknowledge-Sensor -Duration 5 -Batch:$false

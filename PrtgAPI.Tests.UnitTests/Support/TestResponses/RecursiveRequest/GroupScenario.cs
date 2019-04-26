@@ -54,13 +54,13 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
         protected void AssertSensorRequest(string address, Content content, string request)
         {
             Assert.AreEqual(Content.Sensors, content);
-            Assert.AreEqual(UnitRequest.Sensors("count=*&" + request, UrlFlag.Columns), address);
+            Assert.AreEqual(UnitRequest.Sensors(request), address);
         }
 
         protected void AssertDeviceRequest(string address, Content content, string request)
         {
             Assert.AreEqual(Content.Devices, content);
-            Assert.AreEqual(UnitRequest.Devices("count=*&" + request, UrlFlag.Columns), address);
+            Assert.AreEqual(UnitRequest.Devices(request), address);
         }
 
         protected void AssertGroupRequest(string address, Content content, string request, UrlFlag? flags = null)
@@ -68,7 +68,7 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
             Assert.AreEqual(Content.Groups, content);
 
             if (flags == null)
-                Assert.AreEqual(UnitRequest.Groups("count=*&" + request, UrlFlag.Columns), address);
+                Assert.AreEqual(UnitRequest.Groups(request), address);
             else
                 Assert.AreEqual(UnitRequest.Groups(request, flags), address);
         }

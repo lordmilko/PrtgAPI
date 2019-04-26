@@ -108,8 +108,8 @@ Describe "Set-ObjectProperty" -Tag @("PowerShell", "UnitTest") {
             $sensors = Get-Sensor -Count 2
 
             SetAddressValidatorResponse @(
-                "editsettings?id=4000&interval_=300%7C5+minutes&intervalgroup=0&"
-                "editsettings?id=4001&interval_=300%7C5+minutes&intervalgroup=0&"
+                [Request]::EditSettings("id=4000&interval_=300%7C5+minutes&intervalgroup=0")
+                [Request]::EditSettings("id=4001&interval_=300%7C5+minutes&intervalgroup=0")
             )
 
             $sensors | Set-ObjectProperty Interval 00:05:00 -Batch:$false
@@ -224,8 +224,8 @@ Describe "Set-ObjectProperty" -Tag @("PowerShell", "UnitTest") {
             $schedule = Get-PrtgSchedule | Select -First 1
 
             SetAddressValidatorResponse @(
-                "editsettings?id=3000&scheduledependency=0&schedule_=623%7CWeekdays+%5BGMT%2B0800%5D%7C&"
-                "editsettings?id=3001&scheduledependency=0&schedule_=623%7CWeekdays+%5BGMT%2B0800%5D%7C&"
+                [Request]::EditSettings("id=3000&scheduledependency=0&schedule_=623%7CWeekdays+%5BGMT%2B0800%5D%7C")
+                [Request]::EditSettings("id=3001&scheduledependency=0&schedule_=623%7CWeekdays+%5BGMT%2B0800%5D%7C")
             )
 
             $table = @{
@@ -264,8 +264,8 @@ Describe "Set-ObjectProperty" -Tag @("PowerShell", "UnitTest") {
             $devices = Get-Device -Count 2
 
             SetAddressValidatorResponse @(
-                "editsettings?id=3000&esxuser_=root&vmwareconnection=0&esxpassword_=topsecret&"
-                "editsettings?id=3001&esxuser_=root&vmwareconnection=0&esxpassword_=topsecret&"
+                [Request]::EditSettings("id=3000&esxuser_=root&vmwareconnection=0&esxpassword_=topsecret")
+                [Request]::EditSettings("id=3001&esxuser_=root&vmwareconnection=0&esxpassword_=topsecret")
             )
 
             $devices | Set-ObjectProperty -VMwareUserName root -VMwarePassword topsecret -Batch:$false

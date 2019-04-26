@@ -130,6 +130,11 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
 
         [TestMethod]
         [TestCategory("UnitTest")]
+        public void SearchFilterExpression_PrtgObjectProperties_ParentId() =>
+            Execute(new Sensor { ParentId = 1000 }, new Sensor { ParentId = 2000 }, null, Property.ParentId, 1000);
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
         public void SearchFilterExpression_PrtgObjectProperties_Active() =>
             Execute(new Sensor { Active = true }, new Sensor { Active = false }, null, Property.Active, true);
 
@@ -176,11 +181,6 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         [TestCategory("UnitTest")]
         public void SearchFilterExpression_SensorOrDeviceOrGroupOrProbeProperties_Interval() =>
             Execute(new Sensor { Interval = new TimeSpan(1, 0, 0) }, new Sensor { Interval = new TimeSpan(2, 0, 0) }, null, Property.Interval, new TimeSpan(1, 0, 0));
-
-        [TestMethod]
-        [TestCategory("UnitTest")]
-        public void SearchFilterExpression_SensorOrDeviceOrGroupOrProbeProperties_ParentId() =>
-            Execute(new Sensor { ParentId = 1000 }, new Sensor { ParentId = 2000 }, null, Property.ParentId, 1000);
 
         [TestMethod]
         [TestCategory("UnitTest")]

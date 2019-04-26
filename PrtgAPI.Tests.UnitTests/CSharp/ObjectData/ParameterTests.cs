@@ -664,7 +664,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
 
             var url = PrtgRequestMessageTests.CreateUrl(parameters, false);
 
-            Assert.AreEqual(UnitRequest.Probes("count=*&filter_parentid=0", UrlFlag.Columns), url);
+            Assert.AreEqual(UnitRequest.Probes("filter_parentid=0"), url);
         }
 
         [TestMethod]
@@ -695,7 +695,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
 
             var url = PrtgRequestMessageTests.CreateUrl(parameters, false);
 
-            Assert.AreEqual(UnitRequest.Probes("count=*&filter_parentid=0", UrlFlag.Columns), url);
+            Assert.AreEqual(UnitRequest.Probes("filter_parentid=0"), url);
         }
 
         [TestMethod]

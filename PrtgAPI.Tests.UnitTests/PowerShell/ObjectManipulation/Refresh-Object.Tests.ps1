@@ -23,7 +23,7 @@ Describe "Refresh-Object" -Tag @("PowerShell", "UnitTest") {
         $sensors = Get-Sensor -Count 2
 
         SetAddressValidatorResponse @(
-            "api/scannow.htm?id=4000,4001&"
+            [Request]::Get("api/scannow.htm?id=4000,4001")
         )
 
         $sensors | Refresh-Object -Batch:$true
@@ -36,8 +36,8 @@ Describe "Refresh-Object" -Tag @("PowerShell", "UnitTest") {
         $sensors = Get-Sensor -Count 2
 
         SetAddressValidatorResponse @(
-            "api/scannow.htm?id=4000&"
-            "api/scannow.htm?id=4001&"
+            [Request]::Get("api/scannow.htm?id=4000")
+            [Request]::Get("api/scannow.htm?id=4001")
         )
 
         $sensors | Refresh-Object -Batch:$false

@@ -160,14 +160,14 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             var validator = new EventValidator<string>(new[]
             {
                 //First - get all triggers
-                "https://prtg.example.com/api/table.xml?id=1001&content=triggers&columns=content,objid&username=username&passhash=12345678",
+                UnitRequest.Triggers(1001),
 
                 //Second - touch a trigger's action's unsupported property
-                "https://prtg.example.com/api/table.xml?content=notifications&columns=objid,name,baselink,tags,type,active,basetype&count=*&filter_objid=301&filter_objid=302&username=username&passhash=12345678",
-                "https://prtg.example.com/controls/objectdata.htm?id=301&objecttype=notification&username=username&passhash=12345678",
+                UnitRequest.Notifications("filter_objid=301&filter_objid=302"),
+                UnitRequest.NotificationProperties(301),
 
                 //Third - touch an unsupported property of another action
-                "https://prtg.example.com/controls/objectdata.htm?id=302&objecttype=notification&username=username&passhash=12345678"
+                UnitRequest.NotificationProperties(302)
             });
 
             client.LogVerbose += (s, e) =>
@@ -200,12 +200,12 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             var validator = new EventValidator<string>(new[]
             {
                 //First
-                "https://prtg.example.com/api/table.xml?id=1001&content=triggers&columns=content,objid&username=username&passhash=12345678",
-                "https://prtg.example.com/api/table.xml?content=notifications&columns=objid,name,baselink,tags,type,active,basetype&count=*&filter_objid=301&filter_objid=302&username=username&passhash=12345678",
-                "https://prtg.example.com/controls/objectdata.htm?id=301&objecttype=notification&username=username&passhash=12345678",
-                "https://prtg.example.com/controls/objectdata.htm?id=302&objecttype=notification&username=username&passhash=12345678",
-                "https://prtg.example.com/api/table.xml?content=schedules&columns=objid,name,baselink,tags,type,active,basetype&count=*&filter_objid=623&username=username&passhash=12345678",
-                "https://prtg.example.com/controls/objectdata.htm?id=623&objecttype=schedule&username=username&passhash=12345678"
+                UnitRequest.Triggers(1001),
+                UnitRequest.Notifications("filter_objid=301&filter_objid=302"),
+                UnitRequest.NotificationProperties(301),
+                UnitRequest.NotificationProperties(302),
+                UnitRequest.Schedules("filter_objid=623"),
+                UnitRequest.ScheduleProperties(623)
             });
 
             client.LogVerbose += (s, e) =>
@@ -238,23 +238,23 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             var validator = new EventValidator<string>(new[]
             {
                 //First - get all triggers
-                "https://prtg.example.com/api/table.xml?id=1001&content=triggers&columns=content,objid&username=username&passhash=12345678",
+                UnitRequest.Triggers(1001),
 
                 //Second - touch a trigger's action's schedule
-                "https://prtg.example.com/api/table.xml?content=notifications&columns=objid,name,baselink,tags,type,active,basetype&count=*&filter_objid=301&filter_objid=302&filter_objid=303&username=username&passhash=12345678",
-                "https://prtg.example.com/controls/objectdata.htm?id=301&objecttype=notification&username=username&passhash=12345678",
-                "https://prtg.example.com/api/table.xml?content=schedules&columns=objid,name,baselink,tags,type,active,basetype&count=*&filter_objid=623&username=username&passhash=12345678",
-                "https://prtg.example.com/controls/objectdata.htm?id=623&objecttype=schedule&username=username&passhash=12345678",
+                UnitRequest.Notifications("filter_objid=301&filter_objid=302&filter_objid=303"),
+                UnitRequest.NotificationProperties(301),
+                UnitRequest.Schedules("filter_objid=623"),
+                UnitRequest.ScheduleProperties(623),
 
                 //Third - touch the same schedule on another action
-                "https://prtg.example.com/controls/objectdata.htm?id=302&objecttype=notification&username=username&passhash=12345678",
-                "https://prtg.example.com/api/table.xml?content=schedules&columns=objid,name,baselink,tags,type,active,basetype&count=*&filter_objid=623&username=username&passhash=12345678",
-                "https://prtg.example.com/controls/objectdata.htm?id=623&objecttype=schedule&username=username&passhash=12345678",
+                UnitRequest.NotificationProperties(302),
+                UnitRequest.Schedules("filter_objid=623"),
+                UnitRequest.ScheduleProperties(623),
 
                 //Fourth - touch a different schedule on another action
-                "https://prtg.example.com/controls/objectdata.htm?id=303&objecttype=notification&username=username&passhash=12345678",
-                "https://prtg.example.com/api/table.xml?content=schedules&columns=objid,name,baselink,tags,type,active,basetype&count=*&filter_objid=623&username=username&passhash=12345678",
-                "https://prtg.example.com/controls/objectdata.htm?id=623&objecttype=schedule&username=username&passhash=12345678"
+                UnitRequest.NotificationProperties(303),
+                UnitRequest.Schedules("filter_objid=623"),
+                UnitRequest.ScheduleProperties(623),
             });
 
             client.LogVerbose += (s, e) =>
@@ -301,15 +301,15 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             {
                 //First - get all triggers. Automatically retrieves all notifications, and their properties.
                 //All of the schedules of the notifications are retrieved, as well as each schedule's properties
-                "https://prtg.example.com/api/table.xml?id=1001&content=triggers&columns=content,objid&username=username&passhash=12345678",
+                UnitRequest.Triggers(1001),
 
-                "https://prtg.example.com/api/table.xml?content=notifications&columns=objid,name,baselink,tags,type,active,basetype&count=*&filter_objid=301&filter_objid=302&filter_objid=303&username=username&passhash=12345678",
-                "https://prtg.example.com/controls/objectdata.htm?id=301&objecttype=notification&username=username&passhash=12345678",
-                "https://prtg.example.com/controls/objectdata.htm?id=302&objecttype=notification&username=username&passhash=12345678",
-                "https://prtg.example.com/controls/objectdata.htm?id=303&objecttype=notification&username=username&passhash=12345678",
+                UnitRequest.Notifications("filter_objid=301&filter_objid=302&filter_objid=303"),
+                UnitRequest.NotificationProperties(301),
+                UnitRequest.NotificationProperties(302),
+                UnitRequest.NotificationProperties(303),
 
-                "https://prtg.example.com/api/table.xml?content=schedules&columns=objid,name,baselink,tags,type,active,basetype&count=*&filter_objid=623&username=username&passhash=12345678",
-                "https://prtg.example.com/controls/objectdata.htm?id=623&objecttype=schedule&username=username&passhash=12345678",
+                UnitRequest.Schedules("filter_objid=623"),
+                UnitRequest.ScheduleProperties(623),
             });
 
             client.LogVerbose += (s, e) =>

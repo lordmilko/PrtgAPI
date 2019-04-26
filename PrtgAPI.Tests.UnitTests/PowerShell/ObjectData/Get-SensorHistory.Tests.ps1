@@ -124,8 +124,8 @@ Describe "Get-SensorHistory" -Tag @("PowerShell", "UnitTest") {
         $end = $start.AddDays(-1)
 
         SetAddressValidatorResponse @(
-            "api/historicdata.xml?id=2203&edate=$($start.ToString($format))&sdate=$($end.ToString($format))&avg=0&sortby=-datetime&count=0&"
-            "api/historicdata.xml?id=2203&edate=$($start.ToString($format))&sdate=$($end.ToString($format))&avg=0&sortby=-datetime&count=500&"
+            [Request]::Get("api/historicdata.xml?id=2203&edate=$($start.ToString($format))&sdate=$($end.ToString($format))&avg=0&sortby=-datetime&count=0")
+            [Request]::Get("api/historicdata.xml?id=2203&edate=$($start.ToString($format))&sdate=$($end.ToString($format))&avg=0&sortby=-datetime&count=500")
         )
 
         $items = $sensor | Get-SensorHistory -StartDate $start -EndDate $end
@@ -152,8 +152,8 @@ Describe "Get-SensorHistory" -Tag @("PowerShell", "UnitTest") {
             $end = $start.AddDays(-1)
 
             SetAddressValidatorResponse @(
-                "api/historicdata.xml?id=2203&edate=$($start.ToString($format))&sdate=$($end.ToString($format))&avg=0&count=0&sortby=-datetime&"
-                "api/historicdata.xml?id=2203&edate=$($start.ToString($format))&sdate=$($end.ToString($format))&avg=0&sortby=-datetime&count=500&"
+                [Request]::Get("api/historicdata.xml?id=2203&edate=$($start.ToString($format))&sdate=$($end.ToString($format))&avg=0&count=0&sortby=-datetime")
+                [Request]::Get("api/historicdata.xml?id=2203&edate=$($start.ToString($format))&sdate=$($end.ToString($format))&avg=0&sortby=-datetime&count=500")
             )
 
             $items = @($sensor | Get-SensorHistory -StartDate $start -EndDate $end -Count 1)
@@ -170,7 +170,7 @@ Describe "Get-SensorHistory" -Tag @("PowerShell", "UnitTest") {
             $s.Interval | Should Be "00:01:00"
 
             SetAddressValidatorResponse @(
-                "api/historicdata.xml?id=2203&edate=$($start.ToString($format))&sdate=$($end.ToString($format))&avg=0&count=120&sortby=-datetime&"
+                [Request]::Get("api/historicdata.xml?id=2203&edate=$($start.ToString($format))&sdate=$($end.ToString($format))&avg=0&count=120&sortby=-datetime")
             )
 
             $s | Get-SensorHistory -Count 120
@@ -185,8 +185,8 @@ Describe "Get-SensorHistory" -Tag @("PowerShell", "UnitTest") {
             $s.Interval | Should Be "00:01:00"
 
             SetAddressValidatorResponse @(
-                "api/historicdata.xml?id=2203&edate=$($start.ToString($format))&sdate=$($end.ToString($format))&avg=0&count=0&sortby=-datetime&"
-                "api/historicdata.xml?id=2203&edate=$($start.ToString($format))&sdate=$($end.ToString($format))&avg=0&sortby=-datetime&count=500&"
+                [Request]::Get("api/historicdata.xml?id=2203&edate=$($start.ToString($format))&sdate=$($end.ToString($format))&avg=0&count=0&sortby=-datetime")
+                [Request]::Get("api/historicdata.xml?id=2203&edate=$($start.ToString($format))&sdate=$($end.ToString($format))&avg=0&sortby=-datetime&count=500")
             )
 
             $s | Get-SensorHistory -Count 120 -StartDate $start -EndDate $end
@@ -197,7 +197,7 @@ Describe "Get-SensorHistory" -Tag @("PowerShell", "UnitTest") {
             $end = $start.AddDays(-20).AddHours(-1)
             
             SetAddressValidatorResponse @(
-                "api/historicdata.xml?id=2203&edate=$($start.ToString($format))&sdate=$($end.ToString($format))&avg=0&count=20&sortby=-datetime&"
+                [Request]::Get("api/historicdata.xml?id=2203&edate=$($start.ToString($format))&sdate=$($end.ToString($format))&avg=0&count=20&sortby=-datetime")
             )
 
             $s = Run Sensor { Get-Sensor }
@@ -213,8 +213,8 @@ Describe "Get-SensorHistory" -Tag @("PowerShell", "UnitTest") {
             $end = $start.AddHours(-2).AddMinutes(-10)
             
             SetAddressValidatorResponse @(
-                "api/table.xml?content=sensors&columns=objid,name,probe,group,favorite,lastvalue,device,downtime,downtimetime,downtimesince,uptime,uptimetime,uptimesince,knowntime,cumsince,lastcheck,lastup,lastdown,minigraph,schedule,basetype,baselink,parentid,notifiesx,intervalx,access,dependency,position,status,comments,priority,message,tags,type,active&count=*&filter_objid=4000&"
-                "api/historicdata.xml?id=4000&edate=$($start.ToString($format))&sdate=$($end.ToString($format))&avg=0&count=70&sortby=-datetime&"
+                [Request]::Sensors("filter_objid=4000", [Request]::DefaultObjectFlags)
+                [Request]::Get("api/historicdata.xml?id=4000&edate=$($start.ToString($format))&sdate=$($end.ToString($format))&avg=0&count=70&sortby=-datetime")
             )
 
             Get-SensorHistory -Id 4000 -Count 70 -StartDate $start
@@ -226,7 +226,7 @@ Describe "Get-SensorHistory" -Tag @("PowerShell", "UnitTest") {
             $end = $start.AddHours(-7).AddMinutes(-40)
             
             SetAddressValidatorResponse @(
-                "api/historicdata.xml?id=2203&edate=$($start.ToString($format))&sdate=$($end.ToString($format))&avg=300&count=80&sortby=-datetime&"
+                [Request]::Get("api/historicdata.xml?id=2203&edate=$($start.ToString($format))&sdate=$($end.ToString($format))&avg=300&count=80&sortby=-datetime")
             )
 
             $s = Run Sensor { Get-Sensor }
@@ -241,7 +241,7 @@ Describe "Get-SensorHistory" -Tag @("PowerShell", "UnitTest") {
             $end = $start.AddHours(-6).AddMinutes(-50)
 
             SetAddressValidatorResponse @(
-                "api/historicdata.xml?id=4000&edate=$($start.ToString($format))&sdate=$($end.ToString($format))&avg=300&count=70&sortby=-datetime&"
+                [Request]::Get("api/historicdata.xml?id=4000&edate=$($start.ToString($format))&sdate=$($end.ToString($format))&avg=300&count=70&sortby=-datetime")
             )
 
             Get-SensorHistory -Id 4000 -Count 70 -Average 300
@@ -253,9 +253,9 @@ Describe "Get-SensorHistory" -Tag @("PowerShell", "UnitTest") {
         $end = $start.AddDays(-1)
 
         $response = SetAddressValidatorResponse @(
-            "api/historicdata.xml?id=2203&edate=$($start.ToString($format))&sdate=$($end.ToString($format))&avg=0&count=0&sortby=-datetime&"
-            "api/historicdata.xml?id=2203&edate=$($start.ToString($format))&sdate=$($end.ToString($format))&avg=0&sortby=-datetime&count=500&"
-            "api/historicdata.xml?id=2203&edate=$($start.ToString($format))&sdate=$($end.ToString($format))&avg=0&sortby=-datetime&count=500&start=500&"
+            [Request]::Get("api/historicdata.xml?id=2203&edate=$($start.ToString($format))&sdate=$($end.ToString($format))&avg=0&count=0&sortby=-datetime")
+            [Request]::Get("api/historicdata.xml?id=2203&edate=$($start.ToString($format))&sdate=$($end.ToString($format))&avg=0&sortby=-datetime&count=500")
+            [Request]::Get("api/historicdata.xml?id=2203&edate=$($start.ToString($format))&sdate=$($end.ToString($format))&avg=0&sortby=-datetime&count=500&start=500")
         )
 
         $response.FixedCountOverride = 1000

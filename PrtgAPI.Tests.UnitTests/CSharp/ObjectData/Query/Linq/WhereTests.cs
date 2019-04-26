@@ -347,7 +347,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         {
             ExecuteClient(
                 c => c.QuerySensors(s => s.Name.StartsWith("Vol")).Take(2),
-                new[] { UnitRequest.Sensors("filter_name=@sub(Vol)"), },
+                new[] { UnitRequest.Sensors("count=500&filter_name=@sub(Vol)", UrlFlag.Columns), },
                 s => Assert.AreEqual(2, s.Count())
             );
         }
@@ -358,7 +358,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         {
             ExecuteClient(
                 c => c.QuerySensors(s => s.Name.EndsWith("0")).Take(2),
-                new[] { UnitRequest.Sensors("filter_name=@sub(0)") },
+                new[] { UnitRequest.Sensors("count=500&filter_name=@sub(0)", UrlFlag.Columns) },
                 s => Assert.AreEqual(1, s.Count())
             );
         }
@@ -856,7 +856,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         {
             var urls = new List<string>
             {
-                UnitRequest.Sensors()
+                UnitRequest.Sensors("count=500", UrlFlag.Columns)
             };
 
             var filters = new[]
@@ -868,7 +868,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
 
             urls.AddRange(filters.SelectMany(f => new[]
                 {
-                    UnitRequest.Devices(f)
+                    UnitRequest.Devices($"count=500&{f}", UrlFlag.Columns)
                 }
             ));
 
@@ -1041,7 +1041,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         {
             ExecuteClient(
                 c => c.QuerySensors().Where(s => s.Id == 4000).AsEnumerable().AsQueryable(),
-                new[] { UnitRequest.Sensors("filter_objid=4000") },
+                new[] { UnitRequest.Sensors("count=500&filter_objid=4000", UrlFlag.Columns) },
                 s => Assert.AreEqual(1, s.Count())
             );
         }
@@ -1052,7 +1052,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         {
             ExecuteClient(
                 c => c.QuerySensors().Where(s => s.Id == 4000).AsEnumerable().AsQueryable().Where(n => n.Name == "Volume IO _Total0"),
-                new[] { UnitRequest.Sensors("filter_objid=4000&filter_name=Volume+IO+_Total0") },
+                new[] { UnitRequest.Sensors("count=500&filter_objid=4000&filter_name=Volume+IO+_Total0", UrlFlag.Columns) },
                 s => Assert.AreEqual(1, s.Count())
             );
         }
@@ -1063,7 +1063,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         {
             ExecuteClient(
                 c => c.QuerySensors().Where(s => s.Id == 4000).AsEnumerable().Where(s => s.Name == "Volume IO _Total0").AsQueryable(),
-                new[] { UnitRequest.Sensors("filter_objid=4000") },
+                new[] { UnitRequest.Sensors("count=500&filter_objid=4000", UrlFlag.Columns) },
                 s => Assert.AreEqual(1, s.Count())
             );
         }
@@ -1077,7 +1077,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
                     .Where(s => s.Id == 4000).AsEnumerable()
                     .Where(s => s.Name == "Volume IO _Total0").AsQueryable()
                     .Select(s => s.Name),
-                new[] { UnitRequest.Sensors("filter_objid=4000") },
+                new[] { UnitRequest.Sensors("count=500&filter_objid=4000", UrlFlag.Columns) },
                 s => Assert.AreEqual(1, s.Count())
             );
         }
@@ -1182,7 +1182,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
             ExecuteClient(c => c.QuerySensors().Where(s => new Sensor
             {
                 Message = s.Name
-            }.Message == "test").Where(s => s.Id == 4000), new[] { UnitRequest.Sensors("filter_name=test&filter_objid=4000") }, s => s.ToList());
+            }.Message == "test").Where(s => s.Id == 4000), new[] { UnitRequest.Sensors("count=500&filter_name=test&filter_objid=4000", UrlFlag.Columns) }, s => s.ToList());
         }
 
         [TestMethod]
@@ -1215,7 +1215,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         {
             ExecuteClient(
                 c => c.QueryLogs().Where(l => l.Id == 1001 || l.Id == 1002).Select(l => l.Name),
-                new[] { UnitRequest.Logs("start=1&id=1001"), UnitRequest.Logs("start=1&id=1002") },
+                new[] { UnitRequest.Logs("count=500&start=1&id=1001", UrlFlag.Columns), UnitRequest.Logs("count=500&start=1&id=1002", UrlFlag.Columns) },
                 l => l.ToList()
             );
         }

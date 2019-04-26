@@ -659,7 +659,10 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
                 message
             );
 
-            var flags = legalUrl.Contains("count") ? UrlFlag.Columns : UrlFlag.Columns | UrlFlag.Count;
+            var flags = UnitRequest.DefaultObjectFlags & ~UrlFlag.Count;
+
+            if (!legalUrl.Contains("count"))
+                legalUrl = "count=500" + (string.IsNullOrEmpty(legalUrl) ? legalUrl : $"&{legalUrl}");
 
             var urls = new[]
             {
@@ -682,7 +685,10 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
                 message
             );
 
-            var flags = legalUrl.Contains("count") ? UrlFlag.Columns : UrlFlag.Columns | UrlFlag.Count;
+            var flags = UnitRequest.DefaultObjectFlags & ~UrlFlag.Count;
+
+            if (!legalUrl.Contains("count"))
+                legalUrl = "count=500" + (string.IsNullOrEmpty(legalUrl) ? legalUrl : $"&{legalUrl}");
 
             var urls = new[]
             {

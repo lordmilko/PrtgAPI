@@ -10,6 +10,7 @@ function InitializeUnitTestModules
 
     $accelerators = [PowerShell].Assembly.GetType("System.Management.Automation.TypeAccelerators")
     $accelerators::Add("Request", [PrtgAPI.Tests.UnitTests.Support.UnitRequest])
+    $accelerators::Add("UrlFlag", [PrtgAPI.Tests.UnitTests.Support.UrlFlag])
 }
 
 function Shutdown

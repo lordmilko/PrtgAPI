@@ -86,7 +86,9 @@ Describe "Get-Object" -Tag @("PowerShell", "UnitTest") {
 
     It "filters by enum types" {
 
-        SetAddressValidatorResponse "https://prtg.example.com/api/table.xml?content=objects&columns=objid,name,tags,type,active,basetype&count=*&filter_type=Device&username=username&passhash=12345678"
+        SetAddressValidatorResponse @(
+            [Request]::Objects("filter_type=Device", [Request]::DefaultObjectFlags)
+        )
 
         $objs = Get-Object -Type Device
 
@@ -96,7 +98,9 @@ Describe "Get-Object" -Tag @("PowerShell", "UnitTest") {
 
     It "filters by string types" {
         
-        SetAddressValidatorResponse "https://prtg.example.com/api/table.xml?content=objects&columns=objid,name,tags,type,active,basetype&count=*&filter_type=wmilogicaldiskv2&username=username&passhash=12345678"
+        SetAddressValidatorResponse @(
+            [Request]::Objects("filter_type=wmilogicaldiskv2", [Request]::DefaultObjectFlags)
+        )
         
         $objs = Get-Object -Type wmilogicaldiskv2
         $objs.Count | Should Be 1
@@ -105,7 +109,10 @@ Describe "Get-Object" -Tag @("PowerShell", "UnitTest") {
     }
 
     It "filters by enum types and string types at once" {
-        SetAddressValidatorResponse "https://prtg.example.com/api/table.xml?content=objects&columns=objid,name,tags,type,active,basetype&count=*&filter_type=wmilogicaldiskv2&filter_type=device&username=username&passhash=12345678"
+
+        SetAddressValidatorResponse @(
+            [Request]::Objects("filter_type=wmilogicaldiskv2&filter_type=device", [Request]::DefaultObjectFlags)
+        )
         
         $objs = Get-Object -Type wmilogicaldiskv2,device
         $objs.Count | Should Be 2
@@ -117,8 +124,8 @@ Describe "Get-Object" -Tag @("PowerShell", "UnitTest") {
     It "doesn't filter types when specifying sensors server side" {
 
         SetAddressValidatorResponse @(
-            "api/table.xml?content=objects&count=0&"
-            "api/table.xml?content=objects&columns=objid,name,tags,type,active,basetype&count=500&"
+            [Request]::Objects("count=0", $null)
+            [Request]::Objects("count=500", [UrlFlag]::Columns)
         )
 
         $objs = Get-Object -Type Sensor,Device

@@ -5,6 +5,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PrtgAPI.Request.Serialization;
+using PrtgAPI.Tests.UnitTests.Support;
 using PrtgAPI.Tests.UnitTests.Support.TestItems;
 using PrtgAPI.Tests.UnitTests.Support.TestResponses;
 
@@ -42,12 +43,12 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             Execute(
                 c => c.GetSystemInfo(40),
                 new[] {
-                    "https://prtg.example.com/api/table.json?id=40&content=sysinfo&columns=_key,_value,_id,_adapter,_receivetime,_displayname&category=system&username=username&passhash=12345678",
-                    "https://prtg.example.com/api/table.json?id=40&content=sysinfo&columns=_name,_description,_class,_caption,_state,_serialnumber,_capacity,_receivetime,_displayname&category=hardware&username=username&passhash=12345678",
-                    "https://prtg.example.com/api/table.json?id=40&content=sysinfo&columns=_name,_vendor,_version,_date,_size,_receivetime,_displayname&category=software&username=username&passhash=12345678",
-                    "https://prtg.example.com/api/table.json?id=40&content=sysinfo&columns=_processid,_caption,_creationdate,_receivetime,_displayname&category=processes&username=username&passhash=12345678",
-                    "https://prtg.example.com/api/table.json?id=40&content=sysinfo&columns=_name,_description,_startname,_startmode,_state,_receivetime,_displayname&category=services&username=username&passhash=12345678",
-                    "https://prtg.example.com/api/table.json?id=40&content=sysinfo&columns=_domain,_user,_receivetime,_displayname&category=loggedonusers&username=username&passhash=12345678"
+                    UnitRequest.Get("api/table.json?id=40&content=sysinfo&columns=_key,_value,_id,_adapter,_receivetime,_displayname&category=system"),
+                    UnitRequest.Get("api/table.json?id=40&content=sysinfo&columns=_name,_description,_class,_caption,_state,_serialnumber,_capacity,_receivetime,_displayname&category=hardware"),
+                    UnitRequest.Get("api/table.json?id=40&content=sysinfo&columns=_name,_vendor,_version,_date,_size,_receivetime,_displayname&category=software"),
+                    UnitRequest.Get("api/table.json?id=40&content=sysinfo&columns=_processid,_caption,_creationdate,_receivetime,_displayname&category=processes"),
+                    UnitRequest.Get("api/table.json?id=40&content=sysinfo&columns=_name,_description,_startname,_startmode,_state,_receivetime,_displayname&category=services"),
+                    UnitRequest.Get("api/table.json?id=40&content=sysinfo&columns=_domain,_user,_receivetime,_displayname&category=loggedonusers")
                 }
             );
         }

@@ -207,11 +207,11 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         {
             var urls = new[]
             {
-                UnitRequest.Sensors(),
+                UnitRequest.Sensors("count=500", UrlFlag.Columns),
 
-                UnitRequest.Devices(),
-                UnitRequest.Devices(),
-                UnitRequest.Devices()
+                UnitRequest.Devices("count=500", UrlFlag.Columns),
+                UnitRequest.Devices("count=500", UrlFlag.Columns),
+                UnitRequest.Devices("count=500", UrlFlag.Columns)
             };
 
             ExecuteClient(
@@ -229,9 +229,9 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
             {
                 UnitRequest.Sensors("columns=name&count=500", null),
 
-                UnitRequest.Devices("filter_active=-1"),
-                UnitRequest.Devices("filter_active=-1"),
-                UnitRequest.Devices("filter_active=-1"),
+                UnitRequest.Devices("count=500&filter_active=-1", UrlFlag.Columns),
+                UnitRequest.Devices("count=500&filter_active=-1", UrlFlag.Columns),
+                UnitRequest.Devices("count=500&filter_active=-1", UrlFlag.Columns),
             };
 
             ExecuteClient(
@@ -251,7 +251,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         {
             var urls = new[]
             {
-                UnitRequest.Sensors(),
+                UnitRequest.Sensors("count=500", UrlFlag.Columns),
 
                 UnitRequest.Devices("columns=favorite&count=500", null),
                 UnitRequest.Devices("columns=favorite&count=500", null),
@@ -597,7 +597,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
             {
                 Id = s.ParentId,
                 Message = "hello"
-            }.Message).Where(v => v == "test"), new[] { UnitRequest.Sensors() }, s => s.ToList());
+            }.Message).Where(v => v == "test"), new[] { UnitRequest.Sensors("count=500", UrlFlag.Columns) }, s => s.ToList());
         }
 
         [TestMethod]

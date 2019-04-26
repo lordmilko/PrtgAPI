@@ -179,9 +179,7 @@ function SetAddressValidatorResponse($strArr, $exactMatch = $false)
     {
         $exactMatch  = $true
 
-        $arr = @($strArr | foreach {
-            BuildStr $_
-        })
+        $arr = $strArr
     }
     else
     {

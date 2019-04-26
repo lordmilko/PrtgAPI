@@ -186,9 +186,9 @@ Describe "Get-ObjectLog" -Tag @("PowerShell", "UnitTest") {
     It "filters by name specifying a count" {
 
         SetAddressValidatorResponse @(
-            "api/table.xml?content=messages&columns=objid,name,datetime,parent,status,sensor,device,group,probe,message,priority,type,tags,active&count=3&start=1&filter_name=WMI+Remote+Ping0&"
-            "api/table.xml?content=messages&count=1&columns=objid,name&filter_name=WMI+Remote+Ping0&"
-            "api/table.xml?content=messages&columns=objid,name,datetime,parent,status,sensor,device,group,probe,message,priority,type,tags,active&count=2&start=4&filter_name=WMI+Remote+Ping0&"
+            [Request]::Logs("count=3&start=1&filter_name=WMI+Remote+Ping0", [UrlFlag]::Columns)
+            [Request]::Logs("count=1&columns=objid,name&filter_name=WMI+Remote+Ping0", $null)
+            [Request]::Logs("count=2&start=4&filter_name=WMI+Remote+Ping0", [UrlFlag]::Columns)
         )
 
         $logs = Get-ObjectLog "WMI Remote Ping0" -Count 3

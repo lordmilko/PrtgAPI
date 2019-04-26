@@ -74,8 +74,8 @@ Describe "Set-ChannelProperty" -Tag @("PowerShell", "UnitTest") {
         It "sets a property with a valid type" {
             
             SetAddressValidatorResponse @(
-                "api/getstatus.htm?id=0&"
-                "editsettings?id=4000,4001&limiterrormsg_1=oh+no!&limitmode_1=1&"
+                [Request]::Status()
+                [Request]::EditSettings("id=4000,4001&limiterrormsg_1=oh+no!&limitmode_1=1")
             )
 
             $channel | Set-ChannelProperty ErrorLimitMessage "oh no!"
@@ -102,8 +102,8 @@ Describe "Set-ChannelProperty" -Tag @("PowerShell", "UnitTest") {
             $channel.Count | Should Be 2
 
             SetAddressValidatorResponse @(
-                "api/getstatus.htm?id=0&"
-                "editsettings?id=4000,4001&limiterrormsg_1=oh+no!&limitmode_1=1&"
+                [Request]::Status()
+                [Request]::EditSettings("id=4000,4001&limiterrormsg_1=oh+no!&limitmode_1=1")
             )
 
             $channel | Set-ChannelProperty ErrorLimitMessage "oh no!" -Batch:$true
@@ -114,9 +114,9 @@ Describe "Set-ChannelProperty" -Tag @("PowerShell", "UnitTest") {
             $channel.Count | Should Be 2
 
             SetAddressValidatorResponse @(
-                "api/getstatus.htm?id=0&"
-                "editsettings?id=4000&limiterrormsg_1=oh+no!&limitmode_1=1&"
-                "editsettings?id=4001&limiterrormsg_1=oh+no!&limitmode_1=1&"
+                [Request]::Status()
+                [Request]::EditSettings("id=4000&limiterrormsg_1=oh+no!&limitmode_1=1")
+                [Request]::EditSettings("id=4001&limiterrormsg_1=oh+no!&limitmode_1=1")
             )
 
             $channel | Set-ChannelProperty ErrorLimitMessage "oh no!" -Batch:$false
@@ -125,7 +125,7 @@ Describe "Set-ChannelProperty" -Tag @("PowerShell", "UnitTest") {
         It "sets multiple properties with -Batch:`$true" {
             $channel.Count | Should Be 2
 
-            SetAddressValidatorResponse "id=4000,4001&limitmaxerror_1=100&limitmode_1=1&limitminerror_1=20&valuelookup_1=test&limitmaxerror_1_factor=1&limitminerror_1_factor=1"
+            SetAddressValidatorResponse "id=4000,4001&limitmaxerror_1=100&limitmode_1=1&limitminerror_1=20&valuelookup_1=test%7Ctest&limitmaxerror_1_factor=1&limitminerror_1_factor=1"
 
             $channel | Set-ChannelProperty -UpperErrorLimit 100 -LowerErrorLimit 20 -ValueLookup test
         }
@@ -135,8 +135,8 @@ Describe "Set-ChannelProperty" -Tag @("PowerShell", "UnitTest") {
             $channel.Count | Should Be 2
 
             SetAddressValidatorResponse @(
-                "api/getstatus.htm?id=0&"
-                "editsettings?id=4000,4001&limitmaxerror_1=100&limitminerror_1=20&limitmode_1=0&limitmaxwarning_1=&limitminwarning_1=&limiterrormsg_1=&limitwarningmsg_1=&limitmaxerror_1_factor=1&limitminerror_1_factor=1&"
+                [Request]::Status()
+                [Request]::EditSettings("id=4000,4001&limitmaxerror_1=100&limitminerror_1=20&limitmode_1=0&limitmaxwarning_1=&limitminwarning_1=&limiterrormsg_1=&limitwarningmsg_1=&limitmaxerror_1_factor=1&limitminerror_1_factor=1")
             )
 
             $channel | Set-ChannelProperty -UpperErrorLimit 100 -LowerErrorLimit 20 -LimitsEnabled $false
@@ -147,9 +147,9 @@ Describe "Set-ChannelProperty" -Tag @("PowerShell", "UnitTest") {
             $channel.Count | Should Be 2
 
             SetAddressValidatorResponse @(
-                "api/getstatus.htm?id=0&"
-                "editsettings?id=4000&limitmaxerror_1=100&limitminerror_1=20&limitmode_1=0&limitmaxwarning_1=&limitminwarning_1=&limiterrormsg_1=&limitwarningmsg_1=&limitmaxerror_1_factor=1&limitminerror_1_factor=1&"
-                "editsettings?id=4001&limitmaxerror_1=100&limitminerror_1=20&limitmode_1=0&limitmaxwarning_1=&limitminwarning_1=&limiterrormsg_1=&limitwarningmsg_1=&limitmaxerror_1_factor=1&limitminerror_1_factor=1&"
+                [Request]::Status()
+                [Request]::EditSettings("id=4000&limitmaxerror_1=100&limitminerror_1=20&limitmode_1=0&limitmaxwarning_1=&limitminwarning_1=&limiterrormsg_1=&limitwarningmsg_1=&limitmaxerror_1_factor=1&limitminerror_1_factor=1")
+                [Request]::EditSettings("id=4001&limitmaxerror_1=100&limitminerror_1=20&limitmode_1=0&limitmaxwarning_1=&limitminwarning_1=&limiterrormsg_1=&limitwarningmsg_1=&limitmaxerror_1_factor=1&limitminerror_1_factor=1")
             )
 
             $channel | Set-ChannelProperty -UpperErrorLimit 100 -LowerErrorLimit 20 -LimitsEnabled $false -Batch:$false
@@ -164,7 +164,7 @@ Describe "Set-ChannelProperty" -Tag @("PowerShell", "UnitTest") {
 
             $channel.Count | Should Be 2
 
-            SetAddressValidatorResponse "id=4000,4001&limitmaxerror_1=100&limitmode_1=1&valuelookup_1=test&limitminerror_1=20&limitmaxerror_1_factor=1&limitminerror_1_factor=1"
+            SetAddressValidatorResponse "id=4000,4001&limitmaxerror_1=100&limitmode_1=1&valuelookup_1=test%7Ctest&limitminerror_1=20&limitmaxerror_1_factor=1&limitminerror_1_factor=1"
 
             $splat = @{
                 UpperErrorLimit = 100
@@ -180,19 +180,19 @@ Describe "Set-ChannelProperty" -Tag @("PowerShell", "UnitTest") {
         It "sets a property using the manual parameter set" {
 
             SetAddressValidatorResponse @(
-                "api/getstatus.htm?id=0&"
-                "editsettings?id=1001&limitmode_1=1&"
+                [Request]::Status()
+                [Request]::EditSettings("id=1001&limitmode_1=1")
             )
 
             Set-ChannelProperty -SensorId 1001 -ChannelId 1 LimitsEnabled $true
         }
 
         $versionCases = @(
-            @{version = "17.3"; address = "editsettings?id=1001&limiterrormsg_1=hello&limitmode_1=1"}
+            @{version = "17.3"; address = [Request]::EditSettings("id=1001&limiterrormsg_1=hello&limitmode_1=1")}
             @{version = "18.1"; address = @(
-                    "api/table.xml?content=channels&columns=objid,name,lastvalue&count=*&id=1001&"
-                    "controls/channeledit.htm?id=1001&channel=1&"
-                    "editsettings?id=1001&limiterrormsg_1=hello&limitmode_1=1&limitmaxerror_1=100&limitmaxerror_1_factor=1&"
+                    [Request]::Channels(1001)
+                    [Request]::ChannelProperties(1001, 1)
+                    [Request]::EditSettings("id=1001&limiterrormsg_1=hello&limitmode_1=1&limitmaxerror_1=100&limitmaxerror_1_factor=1")
                 )
             }
         )
@@ -220,9 +220,9 @@ Describe "Set-ChannelProperty" -Tag @("PowerShell", "UnitTest") {
         It "still retrieves channels to deal with factors when setting a version specific property and a limit is included" {
 
             SetAddressValidatorResponse @(
-                "api/table.xml?content=channels&columns=objid,name,lastvalue&count=*&id=2002&"
-                "controls/channeledit.htm?id=2002&channel=1&"
-                "editsettings?id=2002&limiterrormsg_1=hello&limitmode_1=1&limitminerror_1=5&limitminerror_1_factor=1&"
+                [Request]::Channels(2002)
+                [Request]::ChannelProperties(2002, 1)
+                [Request]::EditSettings("id=2002&limiterrormsg_1=hello&limitmode_1=1&limitminerror_1=5&limitminerror_1_factor=1")
             )
 
             SetVersion "18.1"
@@ -233,8 +233,8 @@ Describe "Set-ChannelProperty" -Tag @("PowerShell", "UnitTest") {
         It "executes with -Batch:`$true" {
             
             SetAddressValidatorResponse @(
-                "api/getstatus.htm?id=0&"
-                "editsettings?id=1001&limitmode_1=1&"
+                [Request]::Status()
+                [Request]::EditSettings("id=1001&limitmode_1=1")
             )
 
             Set-ChannelProperty -SensorId 1001 -ChannelId 1 -Batch:$true LimitsEnabled $true
@@ -242,8 +242,8 @@ Describe "Set-ChannelProperty" -Tag @("PowerShell", "UnitTest") {
 
         It "executes with -Batch:`$false" {
             SetAddressValidatorResponse @(
-                "api/getstatus.htm?id=0&"
-                "editsettings?id=1001&limitmode_1=1&"
+                [Request]::Status()
+                [Request]::EditSettings("id=1001&limitmode_1=1")
             )
 
             Set-ChannelProperty -SensorId 1001 -ChannelId 1 -Batch:$false LimitsEnabled $true
@@ -252,9 +252,9 @@ Describe "Set-ChannelProperty" -Tag @("PowerShell", "UnitTest") {
         It "sets multiple properties" {
 
             SetAddressValidatorResponse @(
-                "api/table.xml?content=channels&columns=objid,name,lastvalue&count=*&id=1001&"
-                "controls/channeledit.htm?id=1001&channel=1&"
-                "editsettings?id=1001&limitmaxerror_1=100&limitmode_1=1&limitminerror_1=20&valuelookup_1=test&limitmaxerror_1_factor=1&limitminerror_1_factor=1&"
+                [Request]::Channels(1001)
+                [Request]::ChannelProperties(1001, 1)
+                [Request]::EditSettings("id=1001&limitmaxerror_1=100&limitmode_1=1&limitminerror_1=20&valuelookup_1=test%7Ctest&limitmaxerror_1_factor=1&limitminerror_1_factor=1")
             )
 
             Set-ChannelProperty -SensorId 1001 -ChannelId 1 -UpperErrorLimit 100 -LowerErrorLimit 20 -ValueLookup test
@@ -267,9 +267,9 @@ Describe "Set-ChannelProperty" -Tag @("PowerShell", "UnitTest") {
         It "splats dynamic parameters" {
 
             SetAddressValidatorResponse @(
-                "api/table.xml?content=channels&columns=objid,name,lastvalue&count=*&id=1001&"
-                "controls/channeledit.htm?id=1001&channel=1&"
-                "editsettings?id=1001&limitminerror_1=20&limitmode_1=1&limitmaxerror_1=100&valuelookup_1=test&limitminerror_1_factor=1&limitmaxerror_1_factor=1&"
+                [Request]::Channels(1001)
+                [Request]::ChannelProperties(1001, 1)
+                [Request]::EditSettings("id=1001&limitminerror_1=20&limitmode_1=1&limitmaxerror_1=100&valuelookup_1=test%7Ctest&limitminerror_1_factor=1&limitmaxerror_1_factor=1")
             )
 
             $splat = @{

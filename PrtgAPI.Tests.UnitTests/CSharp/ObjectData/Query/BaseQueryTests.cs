@@ -20,7 +20,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         {
             Func<string, string> getDelim = f => f != string.Empty ? "&" : "";
 
-            var urls = filters.Select(f => $"content=sensors&columns={UnitRequest.DefaultSensorProperties()}&count=500{getDelim(f)}{f}").ToArray();
+            var urls = filters.Select(f => UnitRequest.Sensors($"count=500{getDelim(f)}{f}", UrlFlag.Columns)).ToArray();
 
             Execute(func, urls, validator);
         }
@@ -42,9 +42,15 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
 
         protected void Execute<TResult>(Func<IQueryable<Sensor>, IQueryable<TResult>> func, string[] url, Action<List<TResult>> validator, int count = 3, Dictionary<Content, Action<BaseItem>> propertyManipulator = null)
         {
-            var urls = url.SelectMany(u => new[]
+            var urls = url.SelectMany(u =>
             {
-                $"https://prtg.example.com/api/table.xml?{u}&username=username&passhash=12345678"
+                if (u.StartsWith("https"))
+                    return new[] {u};
+
+                return new[]
+                {
+                    $"https://prtg.example.com/api/table.xml?{u}&username=username&passhash=12345678"
+                };
             });
 
             var client = GetClient(urls.ToArray(), propertyManipulator: propertyManipulator);
@@ -58,12 +64,29 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
 
         protected void ExecuteNow<TResult>(Func<IQueryable<Sensor>, TResult> func, string url, Action<TResult> validator, UrlFlag flags = UrlFlag.Columns | UrlFlag.Count, int count = 3)
         {
+            if ((flags & UrlFlag.Count) == UrlFlag.Count)
+            {
+                url = $"count=500" + (string.IsNullOrEmpty(url) ? url : $"&{url}");
+                flags = flags & ~UrlFlag.Count;
+            }
+
             ExecuteNow(func, new[] { url }, validator, flags, count);
         }
 
         protected void ExecuteNow<TResult>(Func<IQueryable<Sensor>, TResult> func, string[] url, Action<TResult> validator, UrlFlag flags = UrlFlag.Columns | UrlFlag.Count, int count = 3)
         {
-            url = url.Select(f => UnitRequest.Sensors(f, flags)).ToArray();
+            url = url.Select(f =>
+            {
+                var innerFlags = flags;
+
+                if ((flags & UrlFlag.Count) == UrlFlag.Count)
+                {
+                    f = $"count=500" + (string.IsNullOrEmpty(f) ? f : $"&{f}");
+                    innerFlags = flags & ~UrlFlag.Count;
+                }
+
+                return UnitRequest.Sensors(f, innerFlags);
+            }).ToArray();
 
             var client = GetClient(url, count);
 

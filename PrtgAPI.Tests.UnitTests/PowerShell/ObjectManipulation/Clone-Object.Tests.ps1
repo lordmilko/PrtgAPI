@@ -18,8 +18,8 @@ function CloneSourceId($sourceId, $content, $properties, $name, $realSourceId)
         # MultiTypeResponse will respond with an object to the request for sensors, despite the fact this is a device
         SetAddressValidatorResponse @(
             (GetLookup $content $properties $sourceId)
-            "api/duplicateobject.htm?id=$realSourceId&name=$name&targetid=3000&"
-            "api/table.xml?content=$($content | Select -Last 1)&columns=$($properties|select -Last 1)&count=*&filter_objid=9999&"
+            [Request]::Get("api/duplicateobject.htm?id=$realSourceId&name=$name&targetid=3000")
+            [Request]::Get("api/table.xml?content=$($content | Select -Last 1)&columns=$($properties|select -Last 1)&count=*&filter_objid=9999")
         )
 
         $devices | Clone-Object -SourceId $sourceId
@@ -36,7 +36,7 @@ function GetLookup($content, $properties, $sourceId)
 
     for($i = 0; $i -lt $content.Length; $i++)
     {
-        $list += "api/table.xml?content=$($content[$i])&columns=$($properties[$i])&count=*&filter_objid=$sourceId&"
+        $list += [Request]::Get("api/table.xml?content=$($content[$i])&columns=$($properties[$i])&count=*&filter_objid=$sourceId")
     }
 
     $list
@@ -46,9 +46,9 @@ Describe "Clone-Object" -Tag @("PowerShell", "UnitTest") {
 
     SetCloneResponse
 
-    $sensorProperties = "objid,name,probe,group,favorite,lastvalue,device,downtime,downtimetime,downtimesince,uptime,uptimetime,uptimesince,knowntime,cumsince,lastcheck,lastup,lastdown,minigraph,schedule,basetype,baselink,parentid,notifiesx,intervalx,access,dependency,position,status,comments,priority,message,tags,type,active"
-    $deviceProperties = "objid,name,location,host,group,probe,favorite,condition,upsens,downsens,downacksens,partialdownsens,warnsens,pausedsens,unusualsens,undefinedsens,totalsens,schedule,basetype,baselink,parentid,notifiesx,intervalx,access,dependency,position,status,comments,priority,message,tags,type,active"
-    $groupProperties = "objid,name,probe,condition,fold,groupnum,devicenum,upsens,downsens,downacksens,partialdownsens,warnsens,pausedsens,unusualsens,undefinedsens,totalsens,schedule,basetype,baselink,parentid,notifiesx,intervalx,access,dependency,position,status,comments,priority,message,tags,type,active"
+    $sensorProperties = "objid,name,probe,group,favorite,lastvalue,device,downtime,downtimetime,downtimesince,uptime,uptimetime,uptimesince,knowntime,cumsince,lastcheck,lastup,lastdown,minigraph,schedule,basetype,baselink,notifiesx,intervalx,access,dependency,position,status,comments,priority,message,parentid,tags,type,active"
+    $deviceProperties = "objid,name,location,host,group,probe,favorite,condition,upsens,downsens,downacksens,partialdownsens,warnsens,pausedsens,unusualsens,undefinedsens,totalsens,schedule,basetype,baselink,notifiesx,intervalx,access,dependency,position,status,comments,priority,message,parentid,tags,type,active"
+    $groupProperties = "objid,name,probe,condition,fold,groupnum,devicenum,upsens,downsens,downacksens,partialdownsens,warnsens,pausedsens,unusualsens,undefinedsens,totalsens,schedule,basetype,baselink,notifiesx,intervalx,access,dependency,position,status,comments,priority,message,parentid,tags,type,active"
 
     It "Retries resolving an object" {
         $sensor = Run Sensor { Get-Sensor }

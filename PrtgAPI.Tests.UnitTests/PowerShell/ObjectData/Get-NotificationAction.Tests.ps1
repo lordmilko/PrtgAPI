@@ -10,8 +10,8 @@ Describe "Get-NotificationAction" -Tag @("PowerShell", "UnitTest") {
     It "can filter by Id" {
 
         $expected = @(
-            "api/table.xml?content=notifications&columns=objid,name,baselink,tags,type,active,basetype&count=*&filter_objid=301&",
-            "controls/objectdata.htm?id=300&objecttype=notification&"
+            [Request]::Notifications("filter_objid=301", [Request]::DefaultObjectFlags)
+            [Request]::NotificationProperties(300)
         )
 
         SetAddressValidatorResponse $expected
@@ -21,8 +21,8 @@ Describe "Get-NotificationAction" -Tag @("PowerShell", "UnitTest") {
 
     It "can filter by name" {
         $expected = @(
-            "api/table.xml?content=notifications&columns=objid,name,baselink,tags,type,active,basetype&count=*&filter_name=@sub(admin)&",
-            "controls/objectdata.htm?id=300&objecttype=notification&"
+            [Request]::Notifications("filter_name=@sub(admin)", [Request]::DefaultObjectFlags)
+            [Request]::NotificationProperties(300)
         )
 
         $response = SetAddressValidatorResponse $expected

@@ -332,12 +332,12 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             var validator = new EventValidator<string>(new[]
             {
                 //First - retry a dirty response
-                "https://prtg.example.com/api/table.xml?content=objects&columns=objid,name,tags,type,active,basetype&count=*&username=username&passhash=12345678",
+                UnitRequest.Objects(),
                 "XmlSerializer encountered exception ''.', hexadecimal value 0x00, is an invalid character. Line 1, position 18.' while processing request. Retrying request and flagging engine as dirty.",
-                "https://prtg.example.com/api/table.xml?content=objects&columns=objid,name,tags,type,active,basetype&count=*&username=username&passhash=12345678",
+                UnitRequest.Objects(),
 
                 //Second - engine should be already marked as dirty
-                "https://prtg.example.com/api/table.xml?content=objects&columns=objid,name,tags,type,active,basetype&count=*&username=username&passhash=12345678"
+                UnitRequest.Objects()
             });
 
             client.LogVerbose += (s, e) =>
@@ -372,12 +372,12 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             var validator = new EventValidator<string>(new[]
             {
                 //First - retry a dirty response
-                "https://prtg.example.com/api/table.xml?content=objects&columns=objid,name,tags,type,active,basetype&count=*&username=username&passhash=12345678",
+                UnitRequest.Objects(),
                 "XmlSerializer encountered exception ''.', hexadecimal value 0x00, is an invalid character. Line 1, position 18.' while processing request. Retrying request and flagging engine as dirty.",
-                "https://prtg.example.com/api/table.xml?content=objects&columns=objid,name,tags,type,active,basetype&count=*&username=username&passhash=12345678",
+                UnitRequest.Objects(),
 
                 //Second - engine should be already marked as dirty
-                "https://prtg.example.com/api/table.xml?content=objects&columns=objid,name,tags,type,active,basetype&count=*&username=username&passhash=12345678"
+                UnitRequest.Objects()
             });
 
             client.LogVerbose += (s, e) =>
@@ -531,7 +531,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
         {
             var urls = new[]
             {
-                UnitRequest.Sensors("count=*&filter_objid=4000", UrlFlag.Columns),
+                UnitRequest.Sensors("filter_objid=4000"),
                 UnitRequest.Channels(4000),
                 UnitRequest.ChannelProperties(4000, 1)
             };
