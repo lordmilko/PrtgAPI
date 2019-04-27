@@ -76,7 +76,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
                 Latency = 90,
                 EscalationLatency = 400,
                 RepeatInterval = 3,
-                State = TriggerSensorState.PartialDown
+                State = TriggerSensorState.DownPartial
             };
 
             AddRemoveTrigger(parameters, false);

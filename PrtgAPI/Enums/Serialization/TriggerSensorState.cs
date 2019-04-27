@@ -28,6 +28,6 @@ namespace PrtgAPI
         /// </summary>
         [XmlEnum("Partial Down")]
         [XmlEnumAlternateName("Down (Partial)")]
-        PartialDown = 3
+        DownPartial = 3
     }
 }

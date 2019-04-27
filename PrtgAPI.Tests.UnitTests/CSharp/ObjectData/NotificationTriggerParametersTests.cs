@@ -256,7 +256,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
                 Latency = 60,
                 EscalationLatency = 300,
                 RepeatInterval = 3,
-                State = TriggerSensorState.PartialDown
+                State = TriggerSensorState.DownPartial
             };
 
             Func<PropertyInfo, bool> additionalChecks = prop =>
