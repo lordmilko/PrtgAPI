@@ -28,8 +28,8 @@ namespace PrtgAPI
 
         /// <summary>
         /// Gets the raw string value encapsulated by this wrapper.<para/>If only a string value is provided when
-        /// this object is instantiated, the string value may be changed during construction if the <see cref="Value"/>
-        /// has a <see cref="DescriptionAttribute"/>.
+        /// this object is instantiated, the string value may be changed during construction if the string deserializes
+        /// to a <see cref="Value"/> that has a <see cref="DescriptionAttribute"/>.
         /// </summary>
         public string StringValue { get; private set; }
 
@@ -89,7 +89,22 @@ namespace PrtgAPI
         /// </summary>
         /// <param name="first">The first value to compare.</param>
         /// <param name="second">The second value to compare.</param>
-        /// <returns>True if both values have the same <see cref="Value"/> or <see cref="StringValue"/>. Otherwise, false.</returns>
+        /// <returns>If both operands are "split" values containing a custom <see cref="Value"/> and <see cref="StringValue"/>, true if both members are equal, otherwise false.
+        /// If both operands contain a <see cref="Value"/>, true if these members are equal.
+        /// If the <see cref="Value"/> of both operands was equal, or only one operand contained a <see cref="Value"/>, true if the <see cref="StringValue"/> of both operands are equal.
+        /// Otherwise, false. For examples of valid comparisons, please see the remarks.
+        /// </returns>
+        /// <remarks>
+        /// Equality Examples
+        ///     Sensor (ping) == Sensor (ping)
+        ///     Sensor (ping) != Sensor (wmiremoteping)
+        ///     Sensor (ping) == Sensor
+        ///     Sensor (ping) == ping
+        ///     ping == ping
+        ///     Device (ping) != Sensor (ping)
+        ///     Device != Sensor
+        ///     ping != wmiremoteping 
+        /// </remarks>
         public static bool operator ==(StringEnum<TEnum> first, StringEnum<TEnum> second)
         {
             return IsEqual(first, second);
@@ -100,7 +115,11 @@ namespace PrtgAPI
         /// </summary>
         /// <param name="first">The first value to compare.</param>
         /// <param name="second">The second value to compare.</param>
-        /// <returns>True if both values have a different <see cref="Value"/> and <see cref="StringValue"/>. Otherwise, false.</returns>
+        /// <returns>If both operands are "split" values containing a custom <see cref="Value"/> and <see cref="StringValue"/>, true if both members are different, otherwise false.
+        /// If both operands contain a <see cref="Value"/>, true if these members are different.
+        /// If the <see cref="Value"/> of both operands was equal, or only one operand contained a <see cref="Value"/>, true if the <see cref="StringValue"/> of both operands are different.
+        /// Otherwise, true.
+        /// </returns>
         public static bool operator !=(StringEnum<TEnum> first, StringEnum<TEnum> second)
         {
             return !IsEqual(first, second);
@@ -129,8 +148,13 @@ namespace PrtgAPI
 
         /// <summary>
         /// Returns a boolean indicating whether the specified object <paramref name="obj"/>
-        /// is equal to the current object. The specified object is equal to this if both objects
-        /// are of the same type and have the same <see cref="Value"/> or <see cref="StringValue"/> (ignoring case).
+        /// is equal to the current object.<para/>
+        /// The specified object is equal to this if both objects are of the same type and all of their information combined in either object
+        /// represents less than or the same amount of information required to describe the same "value".<para/>
+        /// More precisely, two objects are equal if they have the same <see cref="Value"/> and <see cref="StringValue"/>
+        /// (ignoring case, if both were specified during construction),<para/>have the same <see cref="Value"/> (if only the
+        /// <see cref="Value"/> was specified)<para/>or have the same <see cref="StringValue"/> (ignoring case, if the <see cref="Value"/>
+        /// was equal or wasn't specified).
         /// </summary>
         /// <param name="obj">The object to compare with the current object.</param>
         /// <returns>True if the specified object is equal to the current object; otherwise, false.</returns>
@@ -146,9 +170,14 @@ namespace PrtgAPI
         }
 
         /// <summary>
-        /// Returns a boolean indicating whetehr the specified <see cref="StringEnum{TEnum}"/> is
-        /// equal to this object. The specified object is equal if both values have the same <see cref="Value"/>
-        /// or <see cref="StringValue"/> (ignoring case).
+        /// Returns a boolean indicating whether the specified <see cref="StringEnum{TEnum}"/> is
+        /// equal to this object.<para/>
+        /// The specified object is equal to this if all of their information combined in either object
+        /// represents less than or the same amount of information required to describe the same "value".<para/>
+        /// More precisely, two objects are equal if they have the same <see cref="Value"/> and <see cref="StringValue"/>
+        /// (ignoring case, if both were specified during construction),<para/>have the same <see cref="Value"/> (if only the
+        /// <see cref="Value"/> was specified)<para/>or have the same <see cref="StringValue"/> (ignoring case, if the <see cref="Value"/>
+        /// was equal or wasn't specified).
         /// </summary>
         /// <param name="other">The object to compare with the current object.</param>
         /// <returns>True if the specified object is equal to the current object; otherwise, false.</returns>
@@ -157,10 +186,37 @@ namespace PrtgAPI
             if (ReferenceEquals(other, null))
                 return false;
 
-            if (Value != null && other.Value != null)
-                return Value.Equals(other.Value);
+            var valueEquals = false;
 
-            return string.Equals(StringValue, other.StringValue, StringComparison.OrdinalIgnoreCase);
+            if (Value != null && other.Value != null)
+            {
+                if (!Value.Equals(other.Value))
+                    return false;
+                else
+                    valueEquals = true;
+            }
+
+            var strEquals = string.Equals(StringValue, other.StringValue, StringComparison.OrdinalIgnoreCase);
+
+            if (strEquals)
+                return true;
+            else
+            {
+                if (valueEquals)
+                {
+                    //We have a matching Value (e.g. Sensor) but don't have a matching StringValue (which could just be the result of Serialize(enum).
+                    //If we are comparing Sensor (ping) == Sensor, we want to return true,
+                    //however if we are comparing Sensor (ping) == Sensor (wmiremoteping) we want to return false
+                    if (split && other.split)
+                        return false;
+                    else
+                        return split || other.split;
+                }
+                else
+                {
+                    return false;
+                }
+            }
         }
 
         private static bool IsEqual(StringEnum<TEnum> first, StringEnum<TEnum> second)
@@ -249,8 +305,6 @@ namespace PrtgAPI
             }
 
             return null;
-
-            //its either gonna be a description, xmlenum or the value itself
         }
 
         private static ArgumentException GetArgumentException(string str)
