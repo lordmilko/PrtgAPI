@@ -42,7 +42,15 @@ namespace PrtgAPI.Linq.Expressions.Serialization
         internal static MethodInfo TypeHelpers_ConvertFromPrtgDateTimeInternal = typeof(TypeHelpers).GetMethod(nameof(TypeHelpers.ConvertFromPrtgDateTimeInternal), BindingFlags.Static | BindingFlags.NonPublic);
         internal static MethodInfo TypeHelpers_ConvertFromPrtgTimeSpan = typeof(TypeHelpers).GetMethod(nameof(TypeHelpers.ConvertFromPrtgTimeSpan), BindingFlags.Static | BindingFlags.NonPublic);
 
-        internal static FieldInfo GetValueConverterInstance(Type type) => type.GetField("Instance", BindingFlags.Static | BindingFlags.NonPublic);
+        internal static FieldInfo GetValueConverterInstance(Type type)
+        {
+            var field = type.GetField("Instance", BindingFlags.Static | BindingFlags.NonPublic);
+
+            if (field == null)
+                throw new NotImplementedException($"Type '{type}' is missing a mandatory 'Instance' field.");
+
+            return field;
+        }
 
         private static MethodInfo GetMethod(string name)
         {

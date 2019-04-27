@@ -16,6 +16,9 @@ using PrtgAPI.Utilities;
 
 namespace PrtgAPI.PowerShell
 {
+    /// <summary>
+    /// Represents one or more parameter sets that pertain to a given sensor type.
+    /// </summary>
     class NewSensorDynamicParameterCategory
     {
         public SensorType Type { get; }
@@ -73,6 +76,11 @@ namespace PrtgAPI.PowerShell
             return invoker;
         }
 
+        /// <summary>
+        /// Indicates whether this category contains the parameter set that is active in a given cmdlet.
+        /// </summary>
+        /// <param name="newSensorCmdlet">The cmdlet to check parameter sets against.</param>
+        /// <returns>If any of the parameter sets in this category matched the cmdlet's parameter set, true. Otherwise, false.</returns>
         public bool HasParameterSet(NewSensor newSensorCmdlet)
         {
             GetInvoker(newSensorCmdlet); //Force initialize the invoker for the parameter sets

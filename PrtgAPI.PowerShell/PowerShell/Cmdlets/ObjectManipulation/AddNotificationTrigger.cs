@@ -1,23 +1,30 @@
-﻿using System;
+﻿using PrtgAPI.Attributes;
+using PrtgAPI.Parameters;
+using PrtgAPI.PowerShell.Base;
+using PrtgAPI.Reflection;
+using PrtgAPI.Reflection.Cache;
+using PrtgAPI.Utilities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Management.Automation;
-using PrtgAPI.Parameters;
-using PrtgAPI.PowerShell.Base;
+using IDynamicParameters = System.Management.Automation.IDynamicParameters;
 
 namespace PrtgAPI.PowerShell.Cmdlets
 {
     /// <summary>
     /// <para type="synopsis">Adds a notification trigger to a PRTG Server.</para>
     /// 
-    /// <para type="description">The Add-NotificationTrigger cmdlet adds a new notification  trigger to an object in PRTG. When adding
-    /// a notification trigger, you must first create  a <see cref="TriggerParameters"/>  object that defines the settings to use in
-    /// the trigger. <see cref="TriggerParameters"/>  can be defined from existing notification triggers or created from scratch.
+    /// <para type="description">The Add-NotificationTrigger/New-NotificationTrigger cmdlet adds a new notification  trigger to an object in PRTG.
+    /// When adding a notification trigger, you can either specify the settings for the trigger as parameters to the cmdlet (PowerShell style),
+    /// or must first create  a <see cref="TriggerParameters"/>  object that defines the settings to use (object-oriented style).
+    /// <see cref="TriggerParameters"/>  can be defined from existing notification triggers or created from scratch.
     /// Certain objects do support certain types of notification triggers (e.g. different types of sensors).</para>
+    /// 
     /// <para type="description">Attempting to add a notification trigger to an object that does not supported that trigger
     /// type will generate an <see cref="InvalidTriggerTypeException"/>. Notification triggers applied to parent objects
     /// that are not supported by their children are simply ignored within PRTG, and do not generate exceptions. For
-    /// information on viewing the trigger types supported by an object, see Get-NotificationTriggerTypes</para>
+    /// information on viewing the trigger types supported by an object, see Get-NotificationTrigger -Types</para>
     /// 
     /// <para type="description">By default, Add-NotificationTrigger will attempt to resolve the created trigger to a
     /// <see cref="NotificationTrigger"/> object. As PRTG does not return the ID of the created object, PrtgAPI
@@ -28,6 +35,12 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// disabled by specifying -Resolve:$false.</para>
     /// 
     /// <para type="description">For more information on creating <see cref="TriggerParameters"/> , see New-NotificationTriggerParameters.</para>
+    ///
+    /// <example>
+    ///     <code>C:\ Get-Probe -Id 1001 | New-Trigger -Type State -OnNotificationAction *ticket* -Latency 40</code>
+    ///     <para>Create a new state trigger on the probe with ID 1001 that activates the "Ticket Notification" action 40 seconds after being triggered.</para>
+    ///     <para/>
+    /// </example>
     /// 
     /// <example>
     ///     <code>C:\> Get-Probe | Get-NotificationTrigger | New-TriggerParameters 2001 | Add-Trigger</code>
@@ -37,24 +50,127 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <para type="link" uri="https://github.com/lordmilko/PrtgAPI/wiki/Notification-Triggers#add-1">Online version:</para>
     /// <para type="link">New-NotificationTriggerParameters</para>
     /// <para type="link">Set-NotificationTrigger</para>
-    /// <para type="link">Edit-NotificationTriggerProperty</para>
+    /// <para type="link">Set-NotificationTriggerProperty</para>
     /// </summary>
-    [Cmdlet(VerbsCommon.Add, "NotificationTrigger", SupportsShouldProcess = true)]
-    public class AddNotificationTrigger : NewObjectCmdlet
+    [Cmdlet(VerbsCommon.Add, "NotificationTrigger", SupportsShouldProcess = true, DefaultParameterSetName = ParameterSet.Default)]
+    public class AddNotificationTrigger : NewObjectCmdlet, IDynamicParameters
     {
+        /// <summary>
+        /// <para type="description">The object to create a notification trigger under.</para>
+        /// </summary>
+        [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = ParameterSet.Dynamic)]
+        public SensorOrDeviceOrGroupOrProbe Object { get; set; }
+
+        /// <summary>
+        /// <para type="description">The type of notification trigger to create.</para>
+        /// </summary>
+        [Parameter(Mandatory = true, Position = 0, ParameterSetName = ParameterSet.Dynamic)]
+        public TriggerType Type { get; set; }
+
         /// <summary>
         /// <para type="description">The parameters to use to add a <see cref="NotificationTrigger"/>.</para>
         /// </summary>
-        [Parameter(Mandatory = true, ValueFromPipeline = true, Position = 0)]
+        [Parameter(Mandatory = true, ValueFromPipeline = true, Position = 0, ParameterSetName = ParameterSet.Default)]
         public TriggerParameters Parameters { get; set; }
+
+        private PropertyDynamicParameterSet<TriggerProperty> dynamicParams;
+        private TriggerParameter[] dynamicParameters;
+
+        private TriggerParameterParser parameterParser;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AddNotificationTrigger"/> class.
+        /// </summary>
+        public AddNotificationTrigger()
+        {
+            parameterParser = new TriggerParameterParser(client);
+        }
+
+        /// <summary>
+        /// Provides an enhanced one-time, preprocessing functionality for the cmdlet.
+        /// </summary>
+        protected override void BeginProcessingEx()
+        {
+            dynamicParameters = dynamicParams.GetBoundParameters(this, (p, v) => new TriggerParameter(p, PSObjectUtilities.CleanPSObject(v))).ToArray();
+
+            base.BeginProcessingEx();
+        }
 
         /// <summary>
         /// Performs enhanced record-by-record processing functionality for the cmdlet.
         /// </summary>
         protected override void ProcessRecordEx()
         {
-            InternalNotificationTriggerCommand.ProcessRecordEx(this, (a, b) => ExecuteOperation(a, b), Parameters, Resolve ? Resolver : (Action)null);
+            if (ParameterSetName == ParameterSet.Dynamic)
+                Parameters = CreateDynamicParameters();
+
+            InternalNotificationTriggerCommand.ProcessRecordEx(
+                this,
+                (a, b) => ExecuteOperation(a, b),
+                Parameters,
+                Resolve ? Resolver : (Action)null,
+                GetWhatIfAction(),
+                GetWhatIfTarget()
+            );
         }
+
+        private string GetWhatIfAction()
+        {
+            if (ParameterSetName == ParameterSet.Dynamic)
+            {
+                var items = new List<string>();
+
+                foreach (var param in dynamicParameters.OrderBy(p => p.Property != TriggerProperty.OnNotificationAction))
+                {
+                    var val = param.Value.IsIEnumerable() == true ? string.Join(", ", param.Value.ToIEnumerable()) : param.Value?.ToString();
+
+                    items.Add($"{param.Property} = '{val}'");
+                }
+
+                return MyInvocation.MyCommand.Name + ": " + string.Join(", ", items);
+            }
+
+            return null;
+        }
+
+        private string GetWhatIfTarget()
+        {
+            if (ParameterSetName == ParameterSet.Dynamic)
+            {
+                return $"'{Object.Name}' (ID: {Object.Id})";
+            }
+
+            return null;
+        }
+
+        #region Dynamic
+
+        /// <summary>
+        /// Retrieves an object that defines the dynamic parameters of this cmdlet.
+        /// </summary>
+        /// <returns>An object that defines the dynamic parameters of this cmdlet.</returns>
+        public object GetDynamicParameters()
+        {
+            if (dynamicParams == null)
+                dynamicParams = new PropertyDynamicParameterSet<TriggerProperty>(ParameterSet.Dynamic, TriggerParameterParser.GetPropertyType, this);
+
+            return dynamicParams.Parameters;
+        }
+
+        private TriggerParameters CreateDynamicParameters()
+        {
+            UpdateDynamicParameters();
+
+            return TriggerParameters.Create(Type, Object.Id, dynamicParameters);
+        }
+
+        internal void UpdateDynamicParameters()
+        {
+            foreach (var parameter in dynamicParameters)
+                parameterParser.UpdateParameterValue(parameter, new Lazy<PrtgObject>(() => Object));
+        }
+
+        #endregion
 
         private void Resolver()
         {
@@ -70,71 +186,5 @@ namespace PrtgAPI.PowerShell.Cmdlets
         }
 
         internal override string ProgressActivity => "Adding Notification Triggers";
-    }
-
-    /// <summary>
-    /// <para type="synopsis">Modifies a notification trigger on a PRTG Server.</para>
-    /// 
-    /// <para type="description">The Set-NotificationTrigger cmdlet updates an existing notification trigger defined on an object in PRTG.
-    /// When editing a notification trigger, you must first create a <see cref="TriggerParameters"/> object that defines the settings you
-    /// wish to modify. <see cref="TriggerParameters"/> can be created from an existing notification trigger or created from scratch.</para>
-    /// <para type="description">For more information on creating <see cref="TriggerParameters"/>, see New-NotificationTriggerParameters</para>
-    /// <para type="description">For information on how to quickly edit a single trigger property, see Edit-NotificationTriggerProperty.</para>
-    /// 
-    /// <example>
-    ///     <code>
-    ///         C:\> $triggerParams = Get-Probe | Get-Trigger -Type State | New-TriggerParameters
-    ///         C:\> $triggerParams.RepeatInterval = 20
-    ///         C:\> $triggerParams.OffNotificationAction = $null
-    ///
-    ///         C:\> $triggerParams | Set-NotificationTrigger
-    ///     </code>
-    ///     <para>Set the repeat interval of the notification to trigger to every 20 minutes, and remove the off notification action. This example
-    /// assumes there is exactly one probe in the system with exactly one state notification trigger defined on it.</para>
-    /// </example>
-    ///
-    /// <para type="link" uri="https://github.com/lordmilko/PrtgAPI/wiki/Notification-Triggers#modify-1">Online version:</para>
-    /// <para type="link">New-NotificationTriggerParameters</para>
-    /// <para type="link">Edit-NotificationTriggerProperty</para>
-    /// <para type="link">Get-NotificationTrigger</para> 
-    /// </summary>
-    [Cmdlet(VerbsCommon.Set, "NotificationTrigger")]
-    public class SetNotificationTrigger : PrtgOperationCmdlet
-    {
-        /// <summary>
-        /// <para type="description">The parameters to use to modify a <see cref="NotificationTrigger"/>.</para>
-        /// </summary>
-        [Parameter(Mandatory = true, ValueFromPipeline = true, Position = 0)]
-        public TriggerParameters Parameters { get; set; }
-
-        /// <summary>
-        /// Performs enhanced record-by-record processing functionality for the cmdlet.
-        /// </summary>
-        protected override void ProcessRecordEx()
-        {
-            InternalNotificationTriggerCommand.ProcessRecordEx(this, (a, b) => ExecuteOperation(a, b), Parameters);
-        }
-
-        internal override string ProgressActivity => "Updating Notification Triggers";
-    }
-
-    internal static class InternalNotificationTriggerCommand
-    {
-        public static void ProcessRecordEx(PrtgOperationCmdlet cmdlet, Action<Action, string> executeOperation, TriggerParameters parameters, Action executeAndResolve = null)
-        {
-            if (cmdlet.ShouldProcess($"Object ID: {parameters.ObjectId} (Type: {parameters.Type}, Action: {parameters.OnNotificationAction})"))
-            {
-                if (cmdlet is AddNotificationTrigger)
-                    executeOperation(() =>
-                    {
-                        if (executeAndResolve == null)
-                            PrtgSessionState.Client.AddNotificationTrigger(parameters);
-                        else
-                            executeAndResolve();
-                    }, $"Adding notification trigger '{parameters.OnNotificationAction?.Name ?? "None"}' to object ID {parameters.ObjectId}");
-                else
-                    executeOperation(() => PrtgSessionState.Client.SetNotificationTrigger(parameters), $"Updating notification trigger with ID {parameters.ObjectId} (Sub ID: {parameters.SubId})");
-            }
-        }
     }
 }

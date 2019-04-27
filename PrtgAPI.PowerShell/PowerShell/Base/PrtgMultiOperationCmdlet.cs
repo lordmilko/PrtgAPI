@@ -51,7 +51,7 @@ namespace PrtgAPI.PowerShell.Base
         /// </summary>
         /// <param name="obj">The object to process.</param>
         /// <param name="progressMessage">The progress message to display.</param>
-        protected void ExecuteOrQueue(IObject obj, string progressMessage)
+        protected internal void ExecuteOrQueue(IObject obj, string progressMessage)
         {
             if (Batch.IsPresent)
                 ExecuteQueueOperation(obj, progressMessage);
@@ -76,7 +76,7 @@ namespace PrtgAPI.PowerShell.Base
         /// <param name="progressMessage">The progress message to display.</param>
         /// <param name="complete">Whether progress should be completed after calling this method.<para/>
         /// If the queued objects are to be split over several method calls, this value should only be true on the final call.</param>
-        protected void ExecuteMultiOperation(Action action, string progressMessage, bool complete = true)
+        protected internal void ExecuteMultiOperation(Action action, string progressMessage, bool complete = true)
         {
             progressMessage += $" ({objects.Count}/{objects.Count})";
 

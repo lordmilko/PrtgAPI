@@ -57,26 +57,134 @@ namespace PrtgAPI.Parameters.Helpers
         /// <summary>
         /// Validate and retrieve the serialized format of a value based on its type.
         /// </summary>
-        /// <returns></returns>
-        public object ParseValue()
+        /// <returns>The serialized value.</returns>
+        public object SerializeValue() => ParseValue(SerializationMode.Serialize);
+
+        public object DeserializeValue() => ParseValue(SerializationMode.Deserialize);
+        
+        private object ParseValue(SerializationMode mode)
         {
-            object val;
+            object val = null;
             bool isArray = false;
             string splittableStringChar = null;
 
             //Transform the value according to its properties' data type
 
-            if (Property.GetEnumAttribute<TypeAttribute>() != null)
-            {
-                if (Value is ISerializable)
-                {
-                    Type = TypeCategory.Other;
-                    return ((ISerializable)Value).GetSerializedFormat();
-                }
+            string serializedFormat;
 
-                throw new NotSupportedException("Serializng a TypeAttribute type that does not implement IFormattable is not currently supported.");
+            if (TrySerializeIFormattable(mode, out serializedFormat))
+                return serializedFormat;
+
+            MaybeGetArrayTypeDetails(ref isArray, ref splittableStringChar);
+
+            if (mode == SerializationMode.Deserialize)
+            {
+                //Shortcut out of deserialization mode
+                if (PropertyType == ValueType)
+                    return Value;
             }
 
+            //String, Int and Double can be used as is
+            if (PropertyType == typeof (string))
+            {
+                Type = TypeCategory.String;
+
+                if (isArray)
+                {
+                    //No need to check whether value was null; if value was null, isArray would
+                    //not have been set
+
+                    val = string.Join(splittableStringChar, ((Array)Value).Cast<object>().ToArray());
+                }
+                else
+                    val = Value?.ToString();
+            }
+            else if (PropertyType == typeof (double) || PropertyType == typeof(int))
+            {
+                val = ParseNumericValue(mode, isArray);
+            }
+            else
+            {
+                if (Value == null)
+                {
+                    if (TryParseWithValueConverter(mode, ref val))
+                        return val;
+
+                    throw new ArgumentNullException(nameof(Value), $"Value 'null' could not be assigned to property '{Cache.Property.Name}' of type '{Cache.Property.PropertyType}'. Null may only be assigned to properties of type string, int and double.");
+                }
+
+                if (isArray)
+                    throw new NotSupportedException($"Properties containing arrays of type {PropertyType} are not currently supported.");
+
+                //Convert bool to int
+                if (PropertyType == typeof(bool))
+                    val = ParseBoolValue(mode);
+                else if (PropertyType.IsEnum)
+                {
+                    var useAlternateXml = Cache.GetAttribute<TypeLookupAttribute>()?.Class == typeof(XmlEnumAlternateName);
+
+                    if (useAlternateXml)
+                        val = ParseEnumValue<XmlEnumAlternateName>(mode);
+                    else
+                        val = ParseEnumValue<XmlEnumAttribute>(mode);
+
+                    if (val == null)
+                        ThrowEnumArgumentException();
+                    else
+                        Type = TypeCategory.Enum;
+                }
+                else
+                    val = ParseOtherValue();
+
+                if (val == null)
+                    throw new ArgumentException($"Value '{Value}' could not be assigned to property '{Cache.Property.Name}'. Expected type: '{PropertyType}'. Actual type: '{ValueType}'.");
+            }
+
+            TryParseWithValueConverter(mode, ref val);
+
+            return val;
+        }
+
+        private bool TryParseWithValueConverter(SerializationMode mode, ref object result)
+        {
+            var converter = Property.GetEnumAttribute<ValueConverterAttribute>();
+
+            if (converter != null)
+            {
+                if (mode == SerializationMode.Serialize)
+                    result = converter.Converter.Serialize(result);
+                else
+                    result = converter.Converter.Deserialize(result);
+
+                return true;
+            }
+
+            return false;
+        }
+
+        private bool TrySerializeIFormattable(SerializationMode mode, out string serializedFormat)
+        {
+            if (mode == SerializationMode.Serialize)
+            {
+                if (Property.GetEnumAttribute<TypeAttribute>() != null)
+                {
+                    if (Value is ISerializable)
+                    {
+                        Type = TypeCategory.Other;
+                        serializedFormat = ((ISerializable)Value).GetSerializedFormat();
+                        return true;
+                    }
+
+                    throw new NotSupportedException("Serializng a TypeAttribute type that does not implement IFormattable is not currently supported.");
+                }
+            }
+
+            serializedFormat = null;
+            return false;
+        }
+
+        private void MaybeGetArrayTypeDetails(ref bool isArray, ref string splittableStringChar)
+        {
             if (PropertyType.IsArray)
             {
                 PropertyType = PropertyType.GetElementType();
@@ -86,7 +194,7 @@ namespace PrtgAPI.Parameters.Helpers
                     ValueType = ValueType.GetElementType();
 
                     //When an array is specified by PowerShell, the array will be a generic object[]
-                    if (ValueType == typeof (object) && Value != null)
+                    if (ValueType == typeof(object) && Value != null)
                     {
                         ValueType = ((object[])Value).First().GetType();
                     }
@@ -102,69 +210,16 @@ namespace PrtgAPI.Parameters.Helpers
                 //if our value is not an array, change property type to the underlying type
 
                 //if our value IS an array, set the array flag, and change the property to the underlying type
-                    //we'll then have checks in all our sections later to handle combining the array according to its splittable string
+                //we'll then have checks in all our sections later to handle combining the array according to its splittable string
 
             }
 
             //todo: if we're an array type, and our value is not an array type, we'll change our property type
             //to its underlying type, and then set a flag to say we were an array so we know to combine according to our splittable
             //string attribute
-
-            //String, Int and Double can be used as is
-            if (PropertyType == typeof (string))
-            {
-                Type = TypeCategory.String;
-
-                if (isArray)
-                {
-                    //No need to check whether value was null; if value was null, isArray would
-                    //not have been set
-
-                    return string.Join(splittableStringChar, ((Array)Value).Cast<object>().ToArray());
-                }
-
-                val = Value?.ToString();
-            }
-            else if (PropertyType == typeof (double) || PropertyType == typeof(int))
-            {
-                val = ParseNumericValue(isArray);
-            }
-            else
-            {
-                if (Value == null)
-                    throw new ArgumentNullException(nameof(Value), $"Value 'null' could not be assigned to property '{Cache.Property.Name}' of type '{Cache.Property.PropertyType}'. Null may only be assigned to properties of type string, int and double.");
-
-                if (isArray)
-                    throw new NotSupportedException($"Properties containing arrays of type {PropertyType} are not currently supported.");
-
-                //Convert bool to int
-                if (PropertyType == typeof(bool))
-                    val = ParseBoolValue();
-                else if (PropertyType.IsEnum)
-                {
-                    var useAlternateXml = Cache.GetAttribute<TypeLookupAttribute>()?.Class == typeof(XmlEnumAlternateName);
-
-                    if (useAlternateXml)
-                        val = ParseEnumValue<XmlEnumAlternateName>();
-                    else
-                        val = ParseEnumValue<XmlEnumAttribute>();
-
-                    if (val == null)
-                        ThrowEnumArgumentException();
-                    else
-                        Type = TypeCategory.Enum;
-                }
-                else
-                    val = ParseOtherValue();
-
-                if (val == null)
-                    throw new ArgumentException($"Value '{Value}' could not be assigned to property '{Cache.Property.Name}'. Expected type: '{PropertyType}'. Actual type: '{ValueType}'.");
-            }
-
-            return val;
         }
 
-        private object ParseNumericValue(bool isArray)
+        private object ParseNumericValue(SerializationMode mode, bool isArray)
         {
             object val = null;
 
@@ -187,13 +242,23 @@ namespace PrtgAPI.Parameters.Helpers
                         {
                             //If so, that's cool. When we ToString, we'll get an integer value anyway
                             Type = TypeCategory.Number;
-                            val = doubleResult.ToString(CultureInfo.CurrentCulture);
+
+                            if (mode == SerializationMode.Deserialize)
+                                val = (int)doubleResult;
+                            else
+                                val = doubleResult.ToString(CultureInfo.CurrentCulture);
                         }
+
+                        //Else: someone tried to assign an actual double to our integer. An exception will be thrown below
                     }
                     else
                     {
                         Type = TypeCategory.Number;
-                        val = doubleResult.ToString(CultureInfo.CurrentCulture);
+
+                        if (mode == SerializationMode.Deserialize)
+                            val = doubleResult;
+                        else
+                            val = doubleResult.ToString(CultureInfo.CurrentCulture);
                     }
                 }
 
@@ -205,18 +270,30 @@ namespace PrtgAPI.Parameters.Helpers
             return val;
         }
 
-        private object ParseEnumValue<T>() where T : XmlEnumAttribute
+        private object ParseEnumValue<T>(SerializationMode mode) where T : XmlEnumAttribute
         {
             object val = null;
 
             //If our value type was an enum, get its XmlEnumAttribute immediately
             if (PropertyType == ValueType)
-                val = ((Enum)Value).GetEnumAttribute<T>(true).Name;
+            {
+                if (mode == SerializationMode.Deserialize)
+                    val = (Enum)Value;
+                else
+                    val = ((Enum)Value).GetEnumAttribute<T>(true).Name;
+            }
             else
             {
                 //Otherwise, our value may have been a string. See if any enum members are named after the specified value
                 if (Enum.GetNames(PropertyType).Any(x => x.ToLower() == Value.ToString().ToLower()))
-                    val = ((Enum)Enum.Parse(PropertyType, Value.ToString(), true)).GetEnumAttribute<T>(true).Name;
+                {
+                    var enumValue = ((Enum) Enum.Parse(PropertyType, Value.ToString(), true));
+
+                    if (mode == SerializationMode.Deserialize)
+                        val = enumValue;
+                    else
+                        val = enumValue.GetEnumAttribute<T>(true).Name;
+                }
                 else
                 {
                     //If the enum represents a set of numeric values and our value was an integer,
@@ -226,7 +303,10 @@ namespace PrtgAPI.Parameters.Helpers
                     {
                         var enumVal = Enum.Parse(PropertyType, Value.ToString());
 
-                        val = ((Enum)enumVal).GetEnumAttribute<T>(true).Name;
+                        if (mode == SerializationMode.Deserialize)
+                            val = enumVal;
+                        else
+                            val = ((Enum)enumVal).GetEnumAttribute<T>(true).Name;
                     }
                 }
             }
@@ -234,14 +314,18 @@ namespace PrtgAPI.Parameters.Helpers
             return val;
         }
 
-        private object ParseBoolValue()
+        private object ParseBoolValue(SerializationMode mode)
         {
             object val = null;
 
             if (ValueType == typeof (bool))
             {
                 Type = TypeCategory.Boolean;
-                val = Convert.ToInt32((bool) Value);
+
+                if (mode == SerializationMode.Deserialize)
+                    val = Value;
+                else
+                    val = Convert.ToInt32((bool) Value);
             }
             else
             {
@@ -250,7 +334,11 @@ namespace PrtgAPI.Parameters.Helpers
                 if (Value != null && bool.TryParse(Value.ToString(), out boolVal))
                 {
                     Type = TypeCategory.Boolean;
-                    val = Convert.ToInt32(boolVal);
+
+                    if (mode == SerializationMode.Deserialize)
+                        val = boolVal;
+                    else
+                        val = Convert.ToInt32(boolVal);
                 }
             }
 
@@ -268,12 +356,11 @@ namespace PrtgAPI.Parameters.Helpers
                     Type = TypeCategory.Other;
                     val = ((ISerializable)Value).GetSerializedFormat();
                 }
-                    
                 else
                     throw new InvalidTypeException($"Cannot serialize value of type {PropertyType}; type does not implement {nameof(ISerializable)}.");
             }
             else
-                throw new InvalidTypeException(PropertyType, ValueType);
+                throw new InvalidTypeException($"Expected a value of type '{PropertyType}' while parsing property '{Property}' however received a value of type '{ValueType}'.");
 
             return val;
         }
@@ -321,7 +408,7 @@ namespace PrtgAPI.Parameters.Helpers
 
         internal CustomParameter GetParameter(Func<Enum, PropertyCache, string> nameResolver)
         {
-            return new CustomParameter(nameResolver(Property, Cache), ParseValue());
+            return new CustomParameter(nameResolver(Property, Cache), SerializeValue());
         }
     }
 }

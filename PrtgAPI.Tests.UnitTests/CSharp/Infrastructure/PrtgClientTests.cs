@@ -805,7 +805,12 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             if (t == typeof(ChannelProperty))
                 return ChannelProperty.LowerWarningLimit;
             if (t == typeof(object) && parameter.Name == "value")
+            {
+                if (method.Name.StartsWith("SetTriggerProperty"))
+                    return TriggerSensorState.Down;
+
                 return "1";
+            }
             if (t == typeof(Position))
                 return Position.Up;
             if (t == typeof(ProbeApproval))
@@ -842,10 +847,14 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
                 return realClient.GetChannels(4000).ToArray();
             if (t == typeof(NotificationTrigger))
                 return realClient.GetNotificationTriggers(0).First();
+            if (t == typeof(IEnumerable<NotificationTrigger>))
+                return realClient.GetNotificationTriggers(0).Where(tr => !tr.Inherited).ToArray();
             if (t == typeof(PropertyParameter[]))
                 return new[] { new PropertyParameter(ObjectProperty.Name, "test") };
             if (t == typeof(ChannelParameter[]))
                 return new[] { new ChannelParameter(ChannelProperty.LowerWarningLimit, 1) };
+            if (t == typeof(TriggerParameter[]))
+                return new[] { new TriggerParameter(TriggerProperty.Latency, 40) };
             if (t == typeof(ObjectType))
                 return ObjectType.Device;
             if (t == typeof(RecordAge))
@@ -918,7 +927,12 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             if (t == typeof(WmiServiceTarget))
                 return Initialize_Client(new MultiTypeResponse()).Targets.GetWmiServices(1001).First();
             if (t == typeof(Either<IPrtgObject, int>))
+            {
+                if (method.Name.StartsWith("SetTriggerProperty"))
+                    return new Either<IPrtgObject, int>(0);
+
                 return new Either<IPrtgObject, int>(1001);
+            }
             if (t == typeof(Either<Sensor, int>))
                 return new Either<Sensor, int>(1001);
             if (t == typeof(Either<Device, int>))
@@ -1044,7 +1058,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             if (parameter.GetCustomAttribute<ParamArrayAttribute>() != null)
                 return true;
 
-            if (IsMethod(method, "SetObjectProperty") || IsMethod(method, "SetChannelProperty") || IsMethod(method, "SetObjectPropertyRaw") && parameter.Name == "value")
+            if (IsMethod(method, "SetObjectProperty") || IsMethod(method, "SetChannelProperty") || IsMethod(method, "SetObjectPropertyRaw") || IsMethod(method, "SetTriggerProperty") && parameter.Name == "value")
                 return true;
 
             var allowed = new Dictionary<string, object>

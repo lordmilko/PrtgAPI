@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using PrtgAPI.Attributes;
+using PrtgAPI.Reflection;
 using PrtgAPI.Request;
 using PrtgAPI.Utilities;
 
@@ -20,6 +22,8 @@ namespace PrtgAPI.Parameters
             TriggerProperty.OffNotificationAction,
             TriggerProperty.EscalationNotificationAction
         };
+
+        internal static bool IsNotificationAction(TriggerProperty property) => notificationActionTypes.Contains(property);
 
         /// <summary>
         /// Gets the ID of the object this trigger applies to.
@@ -79,9 +83,6 @@ namespace PrtgAPI.Parameters
             if (action == ModifyAction.Edit && subId == null)
                 throw new ArgumentException("SubId cannot be null when ModifyAction is Edit.", nameof(subId));
 
-            if (action == ModifyAction.Add)
-                OnNotificationAction = null;
-
             ObjectId = objectOrId.GetId();
 
             this.subId = action == ModifyAction.Add ? "new" : subId.Value.ToString();
@@ -93,6 +94,7 @@ namespace PrtgAPI.Parameters
 
             if (action == ModifyAction.Add)
             {
+                OnNotificationAction = null;
                 Parameters.Add(new CustomParameter("class", type));
                 this[Parameter.ObjectType] = "nodetrigger";
             }
@@ -160,7 +162,7 @@ namespace PrtgAPI.Parameters
 
         private void ValidateActionType(TriggerProperty actionType)
         {
-            if (!notificationActionTypes.Contains(actionType))
+            if (!IsNotificationAction(actionType))
                 throw new ArgumentException($"'{actionType}' is not a valid notification action type. Please specify one of {string.Join(", ", notificationActionTypes)}.", nameof(actionType));
         }
 
@@ -246,6 +248,111 @@ namespace PrtgAPI.Parameters
         {
             var value = GetCustomParameterValue(property);
             return value == null ? (T?)null : (T)value;
+        }
+
+        /// <summary>
+        /// Creates a set of <see cref="TriggerParameters"/> for editing an existing notification trigger.
+        /// </summary>
+        /// <param name="trigger">The notification trigger to modify.</param>
+        /// <param name="parameters">A set of parameters describing the properties and their values to process.</param>
+        /// <returns>A set of trigger parameters containing the information required to modify the specified notification trigger.</returns>
+        internal static TriggerParameters Create(NotificationTrigger trigger, TriggerParameter[] parameters)
+        {
+            switch (trigger.Type)
+            {
+                case TriggerType.Change:
+                    return BindParameters(new ChangeTriggerParameters(trigger), parameters);
+                case TriggerType.Speed:
+                    return BindParameters(new SpeedTriggerParameters(trigger), parameters);
+                case TriggerType.State:
+                    return BindParameters(new StateTriggerParameters(trigger), parameters);
+                case TriggerType.Threshold:
+                    return BindParameters(new ThresholdTriggerParameters(trigger), parameters);
+                case TriggerType.Volume:
+                    return BindParameters(new VolumeTriggerParameters(trigger), parameters);
+                default:
+                    throw new NotImplementedException($"Handler of trigger type '{trigger.Type}' is not implemented.");
+            }
+        }
+
+        /// <summary>
+        /// Creates a set of <see cref="TriggerParameters"/> for creating a new notification trigger.
+        /// </summary>
+        /// <param name="type">The type of notification trigger to create.</param>
+        /// <param name="objectId">The ID of the object the notification trigger will be created under.</param>
+        /// <param name="parameters">A set of parameters describing the values to assign to each notification trigger property.</param>
+        /// <returns>A set of trigger parameters containing the information required to create the specified notification trigger.</returns>
+        internal static TriggerParameters Create(TriggerType type, int objectId, TriggerParameter[] parameters)
+        {
+            switch (type)
+            {
+                case TriggerType.Change:
+                    return BindParameters(new ChangeTriggerParameters(objectId), parameters);
+                case TriggerType.Speed:
+                    return BindParameters(new SpeedTriggerParameters(objectId), parameters);
+                case TriggerType.State:
+                    return BindParameters(new StateTriggerParameters(objectId), parameters);
+                case TriggerType.Threshold:
+                    return BindParameters(new ThresholdTriggerParameters(objectId), parameters);
+                case TriggerType.Volume:
+                    return BindParameters(new VolumeTriggerParameters(objectId), parameters);
+                default:
+                    throw new NotImplementedException($"Handler of trigger type '{type}' is not implemented.");
+            }
+        }
+
+        private static TriggerParameters BindParameters(TriggerParameters triggerParameters, TriggerParameter[] parameters)
+        {
+            var properties = triggerParameters.GetType().GetTypeCache().Properties;
+
+            foreach (var parameter in parameters)
+            {
+                var name = parameter.Property.ToString();
+
+                var propertyCache = properties.FirstOrDefault(p => p.Property.Name == name);
+
+                if (propertyCache == null)
+                    throw new InvalidOperationException($"Property '{name}' is not a valid property for a trigger of type '{triggerParameters.Type}'.");
+
+                var v = parameter.Value;
+
+                v = TryInvokeTypeParser(parameter.Property, v, triggerParameters);
+
+                var parser = new Helpers.DynamicPropertyTypeParser(parameter.Property, propertyCache, v);
+                var value = parser.DeserializeValue();
+
+                propertyCache.SetValue(triggerParameters, value);
+            }
+
+            return triggerParameters;
+        }
+
+        private static object TryInvokeTypeParser(TriggerProperty property, object v, TriggerParameters parameters)
+        {
+            var propertyInfo = parameters.GetTypeCache().Properties.FirstOrDefault(p => p.GetAttribute<PropertyParameterAttribute>()?.Property.Equals(property) == true)?.Property;
+
+            if (propertyInfo == null)
+                throw new InvalidOperationException($"Property '{property}' does not exist on triggers of type '{parameters.Type}'.");
+
+            if (ReflectionExtensions.IsPrtgAPIProperty(typeof(TriggerParameters), propertyInfo) && !propertyInfo.PropertyType.IsEnum)
+            {
+                var method = propertyInfo.PropertyType.GetMethod("Parse", BindingFlags.FlattenHierarchy | BindingFlags.Public | BindingFlags.Static);
+
+                if (method != null)
+                {
+                    try
+                    {
+                        var newValue = method.Invoke(null, new[] { v });
+                        v = newValue;
+                    }
+                    catch (Exception)
+                    {
+                        //Don't care if our value wasn't parsable
+                    }
+                }
+            }
+
+            return v;
         }
     }
 }

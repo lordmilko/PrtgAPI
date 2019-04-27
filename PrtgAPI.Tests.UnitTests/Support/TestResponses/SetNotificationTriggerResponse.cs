@@ -60,6 +60,11 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
                     return new NotificationActionResponse(new NotificationActionItem("301"));
                 case Content.Schedules:
                     return new ScheduleResponse(new ScheduleItem());
+                case Content.Objects:
+                    if (components["filter_objid"] == "4000")
+                        return new ObjectResponse(new SensorItem());
+
+                    return new ObjectResponse(new DeviceItem());
                 default:
                     throw new NotImplementedException($"Unknown content '{content}' requested from {nameof(SetNotificationTriggerResponse)}");
             }

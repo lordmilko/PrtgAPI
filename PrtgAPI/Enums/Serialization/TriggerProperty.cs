@@ -1,4 +1,6 @@
 ﻿using System.ComponentModel;
+using PrtgAPI.Attributes;
+using PrtgAPI.Request.Serialization.ValueConverters;
 
 namespace PrtgAPI
 {
@@ -23,18 +25,21 @@ namespace PrtgAPI
         /// The notification action to execute when the trigger has activated.
         /// </summary>
         [Description("onnotificationid")]
+        [ValueConverter(typeof(NotificationActionValueConverter))]
         OnNotificationAction,
 
         /// <summary>
         /// The notification action to execute when the trigger has deactivated.
         /// </summary>
         [Description("offnotificationid")]
+        [ValueConverter(typeof(NotificationActionValueConverter))]
         OffNotificationAction,
 
         /// <summary>
         /// The notification action to execute when the trigger continues to remain activated for an extended period of time.
         /// </summary>
         [Description("escnotificationid")]
+        [ValueConverter(typeof(NotificationActionValueConverter))]
         EscalationNotificationAction,
 
         /// <summary>

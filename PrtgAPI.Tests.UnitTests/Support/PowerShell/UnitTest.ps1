@@ -103,7 +103,17 @@ function WithStrict($script)
 
 function GetCustomCountDictionary($hashtable)
 {
-    $dictionary = New-Object "System.Collections.Generic.Dictionary[[PrtgAPI.Content],[int]]"
+    GetCustomContentDictionary $hashtable "int"
+}
+
+function GetCustomItemOverrideDictionary($hashtable)
+{
+    GetCustomContentDictionary $hashtable "PrtgAPI.Tests.UnitTests.Support.TestItems.BaseItem[]"
+}
+
+function GetCustomContentDictionary($hashtable, $valueType)
+{
+    $dictionary = New-Object "System.Collections.Generic.Dictionary[[PrtgAPI.Content],[$valueType]]"
 
     foreach($entry in $hashtable.GetEnumerator())
     {

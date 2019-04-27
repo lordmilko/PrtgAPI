@@ -35,7 +35,7 @@ namespace PrtgAPI.PowerShell.Base
         private Action<TObject, TParameter[]> setObjectProperty;
         private Action<List<TObject>, TParameter[]> setObjectPropertyList;
         private Action<int, int, TParameter[]> setObjectPropertyManual;
-        private Func<Enum, PropertyCache> getPropertyCache;
+        private Func<Enum, Type> getPropertyType;
 
         internal InternalSetSubObjectPropertyCmdlet(
             PrtgOperationCmdlet cmdlet,
@@ -45,7 +45,7 @@ namespace PrtgAPI.PowerShell.Base
             Action<TObject, TParameter[]> setObjectProperty,
             Action<List<TObject>, TParameter[]> setObjectPropertyList,
             Action<int, int, TParameter[]> setObjectPropertyManual,
-            Func<Enum, PropertyCache> getPropertyCache)
+            Func<Enum, Type> getPropertyType)
         {
             this.cmdlet = cmdlet;
             this.objectTypeDescription = objectTypeDescription;
@@ -54,14 +54,14 @@ namespace PrtgAPI.PowerShell.Base
             this.setObjectProperty = setObjectProperty;
             this.setObjectPropertyList = setObjectPropertyList;
             this.setObjectPropertyManual = setObjectPropertyManual;
-            this.getPropertyCache = getPropertyCache;
+            this.getPropertyType = getPropertyType;
         }
 
         internal string ProgressActivity => $"Modify PRTG {subObjectTypeDescription} Settings";
 
         private PropertyDynamicParameterSet<TProperty> dynamicParams;
 
-        private List<TParameter> dynamicParameters;
+        private Lazy<List<TParameter>> dynamicParameters;
         
         internal void BeginProcessing()
         {
@@ -69,10 +69,16 @@ namespace PrtgAPI.PowerShell.Base
 
             if (DynamicSet())
             {
-                dynamicParameters = dynamicParams.GetBoundParameters(cmdlet, (p, v) => createParameter(p, PSObjectUtilities.CleanPSObject(v)));
+                dynamicParameters = new Lazy<List<TParameter>>(() =>
+                {
+                    var ret = dynamicParams.GetBoundParameters(cmdlet,
+                            (p, v) => createParameter(p, PSObjectUtilities.CleanPSObject(v)));
 
-                if (dynamicParameters.Count == 0)
-                    throw new ParameterBindingException($"At least one dynamic property or -{nameof(Property)} and -{nameof(Value)} must be specified.");
+                    if (ret.Count == 0)
+                        throw new ParameterBindingException($"At least one dynamic property or -{nameof(Property)} and -{nameof(Value)} must be specified.");
+
+                    return ret;
+                });
             }
         }
 
@@ -110,7 +116,7 @@ namespace PrtgAPI.PowerShell.Base
         {
             if (DynamicSet())
             {
-                var strActions = dynamicParameters.Select(p => $"{p.Property} = '{p.Value}'");
+                var strActions = dynamicParameters.Value.Select(p => $"{p.Property} = '{p.Value}'");
                 var str = string.Join(", ", strActions);
 
                 return str;
@@ -133,7 +139,7 @@ namespace PrtgAPI.PowerShell.Base
             }
             else if (DynamicSet())
             {
-                var strActions = dynamicParameters.Select(p => $"'{p.Property}' to '{p.Value}'");
+                var strActions = dynamicParameters.Value.Select(p => $"'{p.Property}' to '{p.Value}'");
                 var str = string.Join(", ", strActions);
 
                 var name = Object != null ? $"{subObjectTypeDescription.ToLower()} '{Object.Name}'" : $"ID {SubId}";
@@ -143,10 +149,10 @@ namespace PrtgAPI.PowerShell.Base
                 switch (cmdlet.ParameterSetName)
                 {
                     case ParameterSet.Dynamic:
-                        action = () => setObjectProperty(Object, dynamicParameters.ToArray());
+                        action = () => setObjectProperty(Object, dynamicParameters.Value.ToArray());
                         break;
                     case ParameterSet.DynamicManual:
-                        action = () => setObjectPropertyManual(ObjectId, SubId, dynamicParameters.ToArray());
+                        action = () => setObjectPropertyManual(ObjectId, SubId, dynamicParameters.Value.ToArray());
                         break;
                     default:
                         throw new UnknownParameterSetException(cmdlet.ParameterSetName);
@@ -193,18 +199,18 @@ namespace PrtgAPI.PowerShell.Base
 
                 if (DynamicSet())
                 {
-                    var strActions = dynamicParameters.Select(p => $"'{p.Property}' to '{p.Value}'");
+                    var strActions = dynamicParameters.Value.Select(p => $"'{p.Property}' to '{p.Value}'");
                     var str = string.Join(", ", strActions);
                     message = $"Setting {type} {summary} setting {str}";
                 }
                 else
                 {
                     message = $"Setting {type} {summary} setting '{Property}' to '{Value}'";
-                    dynamicParameters = new[] { createParameter(Property, Value) }.ToList();
+                    dynamicParameters = new Lazy<List<TParameter>>(() => new[] { createParameter(Property, Value) }.ToList());
                 }
 
                 multiCmdlet.ExecuteMultiOperation(
-                    () => setObjectPropertyList(groups[i].ToList(), dynamicParameters.ToArray()),
+                    () => setObjectPropertyList(groups[i].ToList(), dynamicParameters.Value.ToArray()),
                     message,
                     complete
                 );
@@ -216,7 +222,7 @@ namespace PrtgAPI.PowerShell.Base
             if (dynamicParams == null)
                 dynamicParams = new PropertyDynamicParameterSet<TProperty>(
                     new[] { ParameterSet.Dynamic, ParameterSet.DynamicManual },
-                    e => getPropertyCache((Enum)(object)e).Property.PropertyType
+                    e => getPropertyType((Enum)(object)e)
                 );
 
             return dynamicParams.Parameters;

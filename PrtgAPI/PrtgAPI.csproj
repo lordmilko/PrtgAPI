@@ -117,6 +117,7 @@
     <Compile Include="Enums\NotificationType.cs" />
     <Compile Include="Enums\ProbeApproval.cs" />
     <Compile Include="Enums\RestartCoreStage.cs" />
+    <Compile Include="Enums\Serialization\SerializationMode.cs" />
     <Compile Include="Enums\Serialization\SortDirection.cs" />
     <Compile Include="Enums\Serialization\ObjectPropertyCategory.cs" />
     <Compile Include="Enums\Serialization\ObjectType.cs" />
@@ -128,6 +129,7 @@
     <Compile Include="Enums\RequestVersion.cs" />
     <Compile Include="Enums\SystemInfoType.cs" />
     <Compile Include="Objects\Models\Either.cs" />
+    <Compile Include="Parameters\TriggerParameter.cs" />
     <Compile Include="Request\LogVerboseEventArgs.cs" />
     <Compile Include="Exceptions\HttpDeserializationException.cs" />
     <Compile Include="Exceptions\Internal\InvalidExpressionException.cs" />
@@ -145,6 +147,7 @@
     <Compile Include="Parameters\Interfaces\ICustomParameterContainer.cs" />
     <Compile Include="Parameters\ObjectManipulation\ApproveProbeParameters.cs" />
     <Compile Include="Parameters\ObjectManipulation\NewObjectParameters\Sensors\FactorySensorParameters.cs" />
+    <Compile Include="Request\Serialization\ValueConverters\NotificationActionValueConverter.cs" />
     <Compile Include="Request\Serialization\ValueConverters\ValueLookupConverter.cs" />
     <Compile Include="Request\Version\ChannelLimitAnalysis.cs" />
     <Compile Include="Request\Version\SetChannelPropertyGrouping.cs" />
@@ -329,7 +332,7 @@
     <Compile Include="Objects\Models\DeviceTemplate.cs" />
     <Compile Include="Objects\Models\Settings\TableSettings.cs" />
     <Compile Include="Parameters\Base\PageableParameters.cs" />
-    <Compile Include="Parameters\Base\PropertyParameter.cs" />
+    <Compile Include="Parameters\Base\PropertyParameter`1.cs" />
     <Compile Include="Parameters\Interfaces\ISourceParameters.cs" />
     <Compile Include="Parameters\ChannelParameter.cs" />
     <Compile Include="Parameters\ObjectData\ScheduleParameters.cs" />

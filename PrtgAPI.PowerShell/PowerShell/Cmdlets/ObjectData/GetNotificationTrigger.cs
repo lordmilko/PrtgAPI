@@ -23,8 +23,8 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// When looking at notification triggers across multiple objects, it is often useful to filter out notification triggers inherited from a parent object via
     /// the -Inherited parameter.</para>
     /// 
-    /// <para type="description"><see cref="NotificationTrigger"/> objects returned from Get-NotificationTrigger can be passed to Edit-NotificationTriggerProperty
-    /// or  New-NotificationTriggerParameters, to allow cloning or editing the trigger's properties.</para>
+    /// <para type="description"><see cref="NotificationTrigger"/> objects returned from Get-NotificationTrigger can be passed to Set-TriggerProperty
+    /// or New-TriggerParameters, to allow cloning or editing the trigger's properties.</para>
     /// 
     /// <para type="description">Notification trigger types that are supported by a specified object can be determined using the -Types parameter.
     /// While there is no restriction on the types of triggers assignable to container-like objects (including devices, groups and probes)
@@ -61,7 +61,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <para type="link">Add-NotificationTrigger</para>
     /// <para type="link">New-NotificationTriggerParameters</para>
     /// <para type="link">Set-NotificationTrigger</para>
-    /// <para type="link">Edit-NotificationTriggerProperty</para>
+    /// <para type="link">Set-NotificationTriggerProperty</para>
     /// </summary>
     [OutputType(typeof(NotificationTrigger))]
     [Cmdlet(VerbsCommon.Get, "NotificationTrigger", DefaultParameterSetName = ParameterSet.Dynamic)]

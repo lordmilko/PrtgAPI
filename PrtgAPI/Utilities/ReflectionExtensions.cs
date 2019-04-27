@@ -199,5 +199,14 @@ namespace PrtgAPI.Reflection
             }
             return false;
         }
+
+        internal static bool IsPrtgAPIProperty(Type thisType, PropertyInfo property)
+        {
+            var propertyAssembly = property.PropertyType.Assembly.FullName;
+            var thisAssembly = thisType.Assembly.FullName;
+            var prtgAPIAssembly = typeof(PrtgClient).Assembly.FullName;
+
+            return propertyAssembly == thisAssembly || propertyAssembly == prtgAPIAssembly;
+        }
     }
 }

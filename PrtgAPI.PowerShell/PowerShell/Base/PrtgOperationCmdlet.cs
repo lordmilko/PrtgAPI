@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Management.Automation;
 using System.Reflection;
+using PrtgAPI.Reflection;
 using PrtgAPI.Utilities;
 
 namespace PrtgAPI.PowerShell.Base
@@ -18,7 +19,7 @@ namespace PrtgAPI.PowerShell.Base
         /// <param name="progressMessage">The body of the progress message to display.</param>
         /// <param name="complete">Whether to allow <see cref="PrtgOperationCmdlet"/> to dynamically determine whether progress should be completed</param>
         /// <param name="incrementRecord">Whether to increment the progress record of this cmdlet. If this value is false, the value will be incremented then decremented.</param>
-        protected virtual void ExecuteOperation(Action action, string progressMessage, bool complete = true, bool incrementRecord = true)
+        protected internal virtual void ExecuteOperation(Action action, string progressMessage, bool complete = true, bool incrementRecord = true)
         {
             ProgressManager.ProcessOperationProgress(ProgressActivity, progressMessage, incrementRecord);
 
@@ -55,7 +56,7 @@ namespace PrtgAPI.PowerShell.Base
 
             //Types that can have possible enum values (such as TriggerChannel) possess a static Parse method for type conversion by the PowerShell runtime.
             //Only parse types that are defined in the PrtgAPI assembly.
-            if (IsPrtgAPIProperty(property) && !property.PropertyType.IsEnum)
+            if (ReflectionExtensions.IsPrtgAPIProperty(GetType(), property) && !property.PropertyType.IsEnum)
             {
                 var method = property.PropertyType.GetMethod("Parse", BindingFlags.FlattenHierarchy | BindingFlags.Public | BindingFlags.Static);
 
@@ -88,15 +89,6 @@ namespace PrtgAPI.PowerShell.Base
             }
 
             return value;
-        }
-
-        private bool IsPrtgAPIProperty(PropertyInfo property)
-        {
-            var propertyAssembly = property.PropertyType.Assembly.FullName;
-            var thisAssembly = GetType().Assembly.FullName;
-            var prtgAPIAssembly = typeof(PrtgClient).Assembly.FullName;
-
-            return propertyAssembly == thisAssembly || propertyAssembly == prtgAPIAssembly;
         }
 
         private void CompleteOperationProgress()

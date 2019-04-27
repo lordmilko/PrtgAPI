@@ -32,7 +32,7 @@ PrtgAPI also provides a secondary, optional module *PrtgAPI.CustomSensors* which
 Install-Package PrtgAPI
 ```
 
-PrtgAPI is available on both [nuget.org](https://www.nuget.org/packages/PrtgAPI/) and [PowerShell Gallery](https://www.powershellgallery.com/packages/PrtgAPI/). Both packages are completely identical, however the nuget.org package also has corresponding symbols on symbolsource.org (for use with Visual Studio). In order to install PrtgAPI from the PowerShell Gallery you must be running PowerShell 5+.
+PrtgAPI is available on both [nuget.org](https://www.nuget.org/packages/PrtgAPI/) and [PowerShell Gallery](https://www.powershellgallery.com/packages/PrtgAPI/). The nuget.org package also has corresponding symbols on symbolsource.org (for use with Visual Studio). In order to install PrtgAPI from the PowerShell Gallery you must be running PowerShell 5+.
 
 If you have both the nuget.org and PowerShell Gallery package sources installed on your machine, you will need to specify the source you wish to install from, e.g.
 ```powershell
@@ -232,7 +232,6 @@ Connect-GoPrtgServer
 Connect-PrtgServer
 Disable-PrtgProgress
 Disconnect-PrtgServer
-Edit-NotificationTriggerProperty
 Enable-PrtgProgress
 Get-Channel
 Get-Device
@@ -283,6 +282,7 @@ Set-ObjectPosition
 Set-ObjectProperty
 Set-PrtgClient
 Set-NotificationTrigger
+Set-NotificationTriggerProperty
 Simulate-ErrorStatus
 Sort-PrtgObject
 Start-AutoDiscovery

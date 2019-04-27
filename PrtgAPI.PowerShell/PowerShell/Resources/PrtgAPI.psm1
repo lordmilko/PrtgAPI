@@ -3,8 +3,11 @@ New-Alias Edit-TriggerProperty Edit-NotificationTriggerProperty
 New-Alias Get-Trigger Get-NotificationTrigger
 New-Alias Get-TriggerTypes Get-NotificationTriggerTypes
 New-Alias New-TriggerParameters New-NotificationTriggerParameters
+New-Alias New-Trigger Add-NotificationTrigger
+New-Alias New-NotificationTrigger Add-NotificationTrigger
 New-Alias Remove-Trigger Remove-NotificationTrigger
 New-Alias Set-Trigger Set-NotificationTrigger
+New-Alias Set-TriggerProperty Set-NotificationTriggerProperty
 
 New-Alias Set-ChannelSetting Set-ChannelProperty
 New-Alias Set-ObjectSetting Set-ObjectProperty

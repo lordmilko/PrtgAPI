@@ -131,7 +131,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
                 (c, p) => client.SetChannelProperty(c, p),
                 (c, p) => client.SetChannelProperty(c, p),
                 (o, s, p) => client.SetChannelProperty(o, s, p),
-                ObjectPropertyParser.GetPropertyInfoViaPropertyParameter<Channel>
+                e => ObjectPropertyParser.GetPropertyInfoViaPropertyParameter<Channel>(e).Property.PropertyType
             );
         }
 

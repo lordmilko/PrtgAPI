@@ -3403,6 +3403,7 @@ namespace PrtgAPI
         #endregion
         #region Set Object Properties
             #region Normal
+                #region Single
 
         /// <summary>
         /// Modifies properties and settings of a PRTG Object.<para/>
@@ -3472,8 +3473,8 @@ namespace PrtgAPI
         public async Task SetObjectPropertyAsync(int[] objectIds, ObjectProperty property, object value, CancellationToken token) =>
             await SetObjectPropertyAsync(objectIds, new[]{new PropertyParameter(property, value)}, token).ConfigureAwait(false);
 
-            #endregion
-            #region Normal (Multiple)
+                #endregion
+                #region Multiple
 
         /// <summary>
         /// Modifies multiple properties of a PRTG Object.<para/>
@@ -3537,8 +3538,10 @@ namespace PrtgAPI
         public async Task SetObjectPropertyAsync(int[] objectIds, PropertyParameter[] parameters, CancellationToken token) =>
             await SetObjectPropertyAsync(await CreateSetObjectPropertyParametersAsync(objectIds, parameters, token).ConfigureAwait(false), objectIds.Length, token).ConfigureAwait(false);
 
+                #endregion
             #endregion
             #region Channel
+                #region Single
 
         /// <summary>
         /// Modifies a property of a PRTG Channel.
@@ -3616,8 +3619,8 @@ namespace PrtgAPI
         public async Task SetChannelPropertyAsync(IEnumerable<Channel> channels, ChannelProperty property, object value, CancellationToken token) =>
             await SetChannelPropertyAsync(AssertHasValue(channels, nameof(channels)), new[]{new ChannelParameter(property, value)}, token).ConfigureAwait(false);
 
-            #endregion
-            #region Channel (Multiple)
+                #endregion
+                #region Multiple
 
         /// <summary>
         /// Modifies one or more properties of a PRTG Channel.
@@ -3651,7 +3654,7 @@ namespace PrtgAPI
         /// <param name="parameters">A set of parameters describing the properties and their values to process.</param>
         /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         public void SetChannelProperty(IEnumerable<Channel> channels, ChannelParameter[] parameters, CancellationToken token) =>
-            SetChannelProperty(AssertHasValue(channels, nameof(channels)), null, null, parameters, token);
+            SetChannelPropertyInternal(AssertHasValue(channels, nameof(channels)), null, null, parameters, token);
 
         /// <summary>
         /// Asynchronously modifies one or more properties of a PRTG Channel.
@@ -3685,10 +3688,10 @@ namespace PrtgAPI
         /// <param name="parameters">A set of parameters describing the properties and their values to process.</param>
         /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         public async Task SetChannelPropertyAsync(IEnumerable<Channel> channels, ChannelParameter[] parameters, CancellationToken token) =>
-            await SetChannelPropertyAsync(AssertHasValue(channels, nameof(channels)), null, null, parameters, token).ConfigureAwait(false);
+            await SetChannelPropertyInternalAsync(AssertHasValue(channels, nameof(channels)), null, null, parameters, token).ConfigureAwait(false);
 
-            #endregion
-            #region Channel (Manual)
+                #endregion
+                #region Manual
 
         /// <summary>
         /// Modifies a property of a PRTG Channel based on its Sensor ID and Channel ID.
@@ -3774,8 +3777,8 @@ namespace PrtgAPI
         public async Task SetChannelPropertyAsync(int[] sensorIds, int channelId, ChannelProperty property, object value, CancellationToken token) =>
             await SetChannelPropertyAsync(sensorIds, channelId, new[]{new ChannelParameter(property, value)}, token).ConfigureAwait(false);
 
-            #endregion
-            #region Channel (Manual: Multiple)
+                #endregion
+                #region Manual: Multiple
 
         /// <summary>
         /// Modifies one or more properties of a PRTG Channel based on its Sensor ID and Channel ID.
@@ -3813,7 +3816,7 @@ namespace PrtgAPI
         /// <param name="parameters">A set of parameters describing the properties and their values to process.</param>
         /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         public void SetChannelProperty(int[] sensorIds, int channelId, ChannelParameter[] parameters, CancellationToken token) =>
-            SetChannelProperty(null, sensorIds, channelId, parameters, token);
+            SetChannelPropertyInternal(null, sensorIds, channelId, parameters, token);
 
         /// <summary>
         /// Asynchronously modifies one or more properties of a PRTG Channel based on its Sensor ID and Channel ID.
@@ -3851,10 +3854,239 @@ namespace PrtgAPI
         /// <param name="parameters">A set of parameters describing the properties and their values to process.</param>
         /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         public async Task SetChannelPropertyAsync(int[] sensorIds, int channelId, ChannelParameter[] parameters, CancellationToken token) =>
-            await SetChannelPropertyAsync(null, sensorIds, channelId, parameters, token).ConfigureAwait(false);
+            await SetChannelPropertyInternalAsync(null, sensorIds, channelId, parameters, token).ConfigureAwait(false);
 
+                #endregion
+            #endregion
+            #region Trigger
+                #region Single
+
+        /// <summary>
+        /// Modifies a property of a PRTG Notification Trigger.
+        /// </summary>
+        /// <param name="trigger">The notification trigger to modify.</param>
+        /// <param name="property">The property whose value should be modified.</param>
+        /// <param name="value">The value to set the property to.</param>
+        public void SetTriggerProperty(NotificationTrigger trigger, TriggerProperty property, object value) =>
+            SetTriggerProperty(trigger, property, value, CancellationToken.None);
+
+        /// <summary>
+        /// Modifies a property of a PRTG Notification Trigger with a specified cancellation token.
+        /// </summary>
+        /// <param name="trigger">The notification trigger to modify.</param>
+        /// <param name="property">The property whose value should be modified.</param>
+        /// <param name="value">The value to set the property to.</param>
+        /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        public void SetTriggerProperty(NotificationTrigger trigger, TriggerProperty property, object value, CancellationToken token) =>
+            SetTriggerProperty(new[] {AssertHasValue(trigger, nameof(trigger))}, property, value, token);
+
+        /// <summary>
+        /// Modifies a property of one or more PRTG Notification Triggers.
+        /// </summary>
+        /// <param name="triggers">The notification triggers to modify.</param>
+        /// <param name="property">The property of each trigger to modify.</param>
+        /// <param name="value">The value to set each trigger's property to.</param>
+        public void SetTriggerProperty(IEnumerable<NotificationTrigger> triggers, TriggerProperty property, object value) =>
+            SetTriggerProperty(triggers, property, value, CancellationToken.None);
+
+        /// <summary>
+        /// Modifies a property of one or more PRTG Notification Triggers with a specified cancellation token.
+        /// </summary>
+        /// <param name="triggers">The notification triggers to modify.</param>
+        /// <param name="property">The property of each trigger to modify.</param>
+        /// <param name="value">The value to set each trigger's property to.</param>
+        /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        public void SetTriggerProperty(IEnumerable<NotificationTrigger> triggers, TriggerProperty property, object value, CancellationToken token) =>
+            SetTriggerPropertyInternal(AssertHasValue(triggers, nameof(triggers)), new[]{new TriggerParameter(property, value)}, token);
+
+        /// <summary>
+        /// Asynchronously modifies a property of a PRTG Notification Trigger.
+        /// </summary>
+        /// <param name="trigger">The notification trigger to modify.</param>
+        /// <param name="property">The property whose value should be modified.</param>
+        /// <param name="value">The value to set the property to.</param>
+        public async Task SetTriggerPropertyAsync(NotificationTrigger trigger, TriggerProperty property, object value) =>
+            await SetTriggerPropertyAsync(trigger, property, value, CancellationToken.None).ConfigureAwait(false);
+
+        /// <summary>
+        /// Asynchronously modifies a property of a PRTG Notification Trigger with a specified cancellation token.
+        /// </summary>
+        /// <param name="trigger">The notification trigger to modify.</param>
+        /// <param name="property">The property whose value should be modified.</param>
+        /// <param name="value">The value to set the property to.</param>
+        /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        public async Task SetTriggerPropertyAsync(NotificationTrigger trigger, TriggerProperty property, object value, CancellationToken token) =>
+            await SetTriggerPropertyAsync(new[] {AssertHasValue(trigger, nameof(trigger))}, property, value, token).ConfigureAwait(false);
+
+        /// <summary>
+        /// Asynchronously modifies a property of one or more PRTG Notification Triggers.
+        /// </summary>
+        /// <param name="triggers">The notification triggers to modify.</param>
+        /// <param name="property">The property of each trigger to modify.</param>
+        /// <param name="value">The value to set each trigger's property to.</param>
+        public async Task SetTriggerPropertyAsync(IEnumerable<NotificationTrigger> triggers, TriggerProperty property, object value) =>
+            await SetTriggerPropertyAsync(triggers, property, value, CancellationToken.None).ConfigureAwait(false);
+
+        /// <summary>
+        /// Asynchronously modifies a property of one or more PRTG Notification Triggers with a specified cancellation token.
+        /// </summary>
+        /// <param name="triggers">The notification triggers to modify.</param>
+        /// <param name="property">The property of each trigger to modify.</param>
+        /// <param name="value">The value to set each trigger's property to.</param>
+        /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        public async Task SetTriggerPropertyAsync(IEnumerable<NotificationTrigger> triggers, TriggerProperty property, object value, CancellationToken token) =>
+            await SetTriggerPropertyInternalAsync(AssertHasValue(triggers, nameof(triggers)), new[]{new TriggerParameter(property, value)}, token).ConfigureAwait(false);
+
+                #endregion
+                #region Multiple
+
+        /// <summary>
+        /// Modifies one or more properties of a PRTG Notification Trigger.
+        /// </summary>
+        /// <param name="trigger">The notification trigger to modify.</param>
+        /// <param name="parameters">A set of parameters describing the properties and their values to process.</param>
+        public void SetTriggerProperty(NotificationTrigger trigger, params TriggerParameter[] parameters) =>
+            SetTriggerProperty(trigger, parameters, CancellationToken.None);
+
+        /// <summary>
+        /// Modifies one or more properties of a PRTG Notification Trigger with a specified cancellation token.
+        /// </summary>
+        /// <param name="trigger">The notification trigger to modify.</param>
+        /// <param name="parameters">A set of parameters describing the properties and their values to process.</param>
+        /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        public void SetTriggerProperty(NotificationTrigger trigger, TriggerParameter[] parameters, CancellationToken token) =>
+            SetTriggerProperty(new[] {AssertHasValue(trigger, nameof(trigger))}, parameters, token);
+
+        /// <summary>
+        /// Modifies multiple properties of one or more PRTG Notification Triggers.
+        /// </summary>
+        /// <param name="triggers">The notification triggers to modify.</param>
+        /// <param name="parameters">A set of parameters describing the properties and their values to process.</param>
+        public void SetTriggerProperty(IEnumerable<NotificationTrigger> triggers, params TriggerParameter[] parameters) =>
+            SetTriggerProperty(triggers, parameters, CancellationToken.None);
+
+        /// <summary>
+        /// Modifies multiple properties of one or more PRTG Notification Triggers with a specified cancellation token.
+        /// </summary>
+        /// <param name="triggers">The notification triggers to modify.</param>
+        /// <param name="parameters">A set of parameters describing the properties and their values to process.</param>
+        /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        public void SetTriggerProperty(IEnumerable<NotificationTrigger> triggers, TriggerParameter[] parameters, CancellationToken token) =>
+            SetTriggerPropertyInternal(AssertHasValue(triggers, nameof(triggers)), parameters, token);
+
+        /// <summary>
+        /// Asynchronously modifies one or more properties of a PRTG Notification Trigger.
+        /// </summary>
+        /// <param name="trigger">The notification trigger to modify.</param>
+        /// <param name="parameters">A set of parameters describing the properties and their values to process.</param>
+        public async Task SetTriggerPropertyAsync(NotificationTrigger trigger, params TriggerParameter[] parameters) =>
+            await SetTriggerPropertyAsync(trigger, parameters, CancellationToken.None).ConfigureAwait(false);
+
+        /// <summary>
+        /// Asynchronously modifies one or more properties of a PRTG Notification Trigger with a specified cancellation token.
+        /// </summary>
+        /// <param name="trigger">The notification trigger to modify.</param>
+        /// <param name="parameters">A set of parameters describing the properties and their values to process.</param>
+        /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        public async Task SetTriggerPropertyAsync(NotificationTrigger trigger, TriggerParameter[] parameters, CancellationToken token) =>
+            await SetTriggerPropertyAsync(new[] {AssertHasValue(trigger, nameof(trigger))}, parameters, token).ConfigureAwait(false);
+
+        /// <summary>
+        /// Asynchronously modifies multiple properties of one or more PRTG Notification Triggers.
+        /// </summary>
+        /// <param name="triggers">The notification triggers to modify.</param>
+        /// <param name="parameters">A set of parameters describing the properties and their values to process.</param>
+        public async Task SetTriggerPropertyAsync(IEnumerable<NotificationTrigger> triggers, params TriggerParameter[] parameters) =>
+            await SetTriggerPropertyAsync(triggers, parameters, CancellationToken.None).ConfigureAwait(false);
+
+        /// <summary>
+        /// Asynchronously modifies multiple properties of one or more PRTG Notification Triggers with a specified cancellation token.
+        /// </summary>
+        /// <param name="triggers">The notification triggers to modify.</param>
+        /// <param name="parameters">A set of parameters describing the properties and their values to process.</param>
+        /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        public async Task SetTriggerPropertyAsync(IEnumerable<NotificationTrigger> triggers, TriggerParameter[] parameters, CancellationToken token) =>
+            await SetTriggerPropertyInternalAsync(AssertHasValue(triggers, nameof(triggers)), parameters, token).ConfigureAwait(false);
+
+                #endregion
+                #region Manual
+
+        /// <summary>
+        /// Modifies a property of a PRTG Notification Trigger based on its Object ID and Sub ID.
+        /// </summary>
+        /// <param name="objectOrId">The object or ID of the object whose notification triggers should be modified.</param>
+        /// <param name="triggerId">The Sub ID of the notification trigger to modify.</param>
+        /// <param name="property">The property of the notification trigger to modify.</param>
+        /// <param name="value">The value to set the notification trigger's property to.</param>
+        public void SetTriggerProperty(Either<IPrtgObject, int> objectOrId, int triggerId, TriggerProperty property, object value) =>
+            SetTriggerProperty(objectOrId, triggerId, new[]{new TriggerParameter(property, value)});
+
+        /// <summary>
+        /// Asynchronously modifies a property of a PRTG Notification Trigger based on its Object ID and Sub ID.
+        /// </summary>
+        /// <param name="objectOrId">The object or ID of the object whose notification triggers should be modified.</param>
+        /// <param name="triggerId">The Sub ID of the notification trigger to modify.</param>
+        /// <param name="property">The property of the notification trigger to modify.</param>
+        /// <param name="value">The value to set the notification trigger's property to.</param>
+        public async Task SetTriggerPropertyAsync(Either<IPrtgObject, int> objectOrId, int triggerId, TriggerProperty property, object value) =>
+            await SetTriggerPropertyAsync(objectOrId, triggerId, property, value, CancellationToken.None).ConfigureAwait(false);
+
+        /// <summary>
+        /// Asynchronously modifies a property of a PRTG Notification Trigger based on its Object ID and Sub ID with a specified cancellation token.
+        /// </summary>
+        /// <param name="objectOrId">The object or ID of the object whose notification triggers should be modified.</param>
+        /// <param name="triggerId">The Sub ID of the notification trigger to modify.</param>
+        /// <param name="property">The property of the notification trigger to modify.</param>
+        /// <param name="value">The value to set the notification trigger's property to.</param>
+        /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        public async Task SetTriggerPropertyAsync(Either<IPrtgObject, int> objectOrId, int triggerId, TriggerProperty property, object value, CancellationToken token) =>
+            await SetTriggerPropertyAsync(objectOrId, triggerId, new[]{new TriggerParameter(property, value)}, token).ConfigureAwait(false);
+
+                #endregion
+                #region Manual: Multiple
+
+        /// <summary>
+        /// Modifies one or more properties of a PRTG Notification Trigger based on its Object ID and Sub ID.
+        /// </summary>
+        /// <param name="objectOrId">The object or ID of the object whose notification triggers should be modified.</param>
+        /// <param name="triggerId">The ID of the notification trigger to modify.</param>
+        /// <param name="parameters">A set of parameters describing the properties and their values to process.</param>
+        public void SetTriggerProperty(Either<IPrtgObject, int> objectOrId, int triggerId, params TriggerParameter[] parameters)
+        {
+            var triggers = GetNotificationTriggers(objectOrId.GetId());
+            var trigger = triggers.Where(t => t.SubId == triggerId && !t.Inherited).ToList().SingleObject(triggerId, "SubId");
+
+            SetTriggerProperty(trigger, parameters);
+        }
+
+        /// <summary>
+        /// Asynchronously modifies one or more properties of a PRTG Notification Trigger based on its Object ID and Sub ID.
+        /// </summary>
+        /// <param name="objectOrId">The object or ID of the object whose notification triggers should be modified.</param>
+        /// <param name="triggerId">The ID of the notification trigger to modify.</param>
+        /// <param name="parameters">A set of parameters describing the properties and their values to process.</param>
+        public async Task SetTriggerPropertyAsync(Either<IPrtgObject, int> objectOrId, int triggerId, params TriggerParameter[] parameters) =>
+            await SetTriggerPropertyAsync(objectOrId, triggerId, parameters, CancellationToken.None).ConfigureAwait(false);
+
+        /// <summary>
+        /// Asynchronously modifies one or more properties of a PRTG Notification Trigger based on its Object ID and Sub ID with a specified cancellation token.
+        /// </summary>
+        /// <param name="objectOrId">The object or ID of the object whose notification triggers should be modified.</param>
+        /// <param name="triggerId">The ID of the notification trigger to modify.</param>
+        /// <param name="parameters">A set of parameters describing the properties and their values to process.</param>
+        /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        public async Task SetTriggerPropertyAsync(Either<IPrtgObject, int> objectOrId, int triggerId, TriggerParameter[] parameters, CancellationToken token)
+        {
+            var triggers = await GetNotificationTriggersAsync(objectOrId.GetId(), token).ConfigureAwait(false);
+            var trigger = triggers.Where(t => t.SubId == triggerId && !t.Inherited).ToList().SingleObject(triggerId, "SubId");
+
+            await SetTriggerPropertyAsync(trigger, parameters, token).ConfigureAwait(false);
+        }
+
+                #endregion
             #endregion
             #region Custom
+                #region Single
 
         /// <summary>
         /// Modifies unsupported properties and settings of a PRTG Object.
@@ -3918,8 +4150,8 @@ namespace PrtgAPI
         public async Task SetObjectPropertyRawAsync(int[] objectIds, string property, string value, CancellationToken token) =>
             await SetObjectPropertyRawAsync(objectIds, new[]{new CustomParameter(property, value)}, token).ConfigureAwait(false);
 
-            #endregion
-            #region Custom (Multiple)
+                #endregion
+                #region Multiple
 
         /// <summary>
         /// Modifies multiple unsupported properties of a PRTG Object.
@@ -3971,6 +4203,7 @@ namespace PrtgAPI
         public async Task SetObjectPropertyRawAsync(int[] objectIds, CustomParameter[] parameters, CancellationToken token) =>
             await SetObjectPropertyAsync(new SetObjectPropertyParameters(objectIds, parameters), objectIds.Length, token).ConfigureAwait(false);
 
+                #endregion
             #endregion
         #endregion
         #region System Administration

@@ -1099,223 +1099,310 @@
                 </Region>
             </Region>
             <Region name="Set Object Properties">
-                <Region name="Normal" groupOverloads="true">
-                    <InlineMethodDef name="SetObjectProperty" returns="void">
-                        <Summary>
-                            Modifies properties and settings of a PRTG Object.&lt;para/&gt;
-                            Each &lt;see cref="ObjectProperty"/&gt; corresponds with a Property of a type derived from &lt;see cref="ObjectSettings"/>.&lt;para/&gt;
-                            If PrtgAPI cannot convert the specified value to the type required by the property, PrtgAPI will throw an exception indicating the type that was expected.
-                        </Summary>
+                <Region name="Normal">
+                    <Region name="Single" groupOverloads="true">
+                        <InlineMethodDef name="SetObjectProperty" returns="void">
+                            <Summary>
+                                Modifies properties and settings of a PRTG Object.&lt;para/&gt;
+                                Each &lt;see cref="ObjectProperty"/&gt; corresponds with a Property of a type derived from &lt;see cref="ObjectSettings"/>.&lt;para/&gt;
+                                If PrtgAPI cannot convert the specified value to the type required by the property, PrtgAPI will throw an exception indicating the type that was expected.
+                            </Summary>
 
-                        <Parameter name="objectOrId" type="Either&lt;IPrtgObject, int&gt;" description="The object or ID of the object whose properties should be modified."/>
-                        <Parameter name="property" type="ObjectProperty" description="The property of the object to modify."/>
-                        <Parameter name="value" type="object" description="The value to set the object's property to."/>
+                            <Parameter name="objectOrId" type="Either&lt;IPrtgObject, int&gt;" description="The object or ID of the object whose properties should be modified."/>
+                            <Parameter name="property" type="ObjectProperty" description="The property of the object to modify."/>
+                            <Parameter name="value" type="object" description="The value to set the object's property to."/>
 
-                        <Body expression="true">
-                            <Call name="SetObjectProperty" args="new[] {objectOrId.GetId()}, property, value"/>
-                        </Body>
-                    </InlineMethodDef>
-                    <InlineMethodDef name="SetObjectProperty" returns="void">
-                        <Summary>
-                            Modifies properties and settings of one or more PRTG Objects.&lt;para/&gt;
-                            Each &lt;see cref="ObjectProperty"/&gt; corresponds with a Property of a type derived from &lt;see cref="ObjectSettings"/&gt;.&lt;para/&gt;
-                            If PrtgAPI cannot convert the specified value to the type required by the property, PrtgAPI will throw an exception indicating the type that was expected.
-                        </Summary>
+                            <Body expression="true">
+                                <Call name="SetObjectProperty" args="new[] {objectOrId.GetId()}, property, value"/>
+                            </Body>
+                        </InlineMethodDef>
+                        <InlineMethodDef name="SetObjectProperty" returns="void">
+                            <Summary>
+                                Modifies properties and settings of one or more PRTG Objects.&lt;para/&gt;
+                                Each &lt;see cref="ObjectProperty"/&gt; corresponds with a Property of a type derived from &lt;see cref="ObjectSettings"/&gt;.&lt;para/&gt;
+                                If PrtgAPI cannot convert the specified value to the type required by the property, PrtgAPI will throw an exception indicating the type that was expected.
+                            </Summary>
 
-                        <Parameter name="objectIds" type="int[]" description="The IDs of the objects whose properties should be modified."/>
-                        <Parameter name="property" type="ObjectProperty" description="The property of each object to modify."/>
-                        <Parameter name="value" type="object" description="The value to set each object's property to."/>
+                            <Parameter name="objectIds" type="int[]" description="The IDs of the objects whose properties should be modified."/>
+                            <Parameter name="property" type="ObjectProperty" description="The property of each object to modify."/>
+                            <Parameter name="value" type="object" description="The value to set each object's property to."/>
 
-                        <Body expression="true">
-                            <Call name="SetObjectProperty" args="objectIds, new PropertyParameter(property, value)"/>
-                        </Body>
-                        <TokenBody expression="true">
-                            <Call name="SetObjectProperty" args="objectIds, new[]{new PropertyParameter(property, value)}"/>
-                        </TokenBody>
-                    </InlineMethodDef>
+                            <Body expression="true">
+                                <Call name="SetObjectProperty" args="objectIds, new PropertyParameter(property, value)"/>
+                            </Body>
+                            <TokenBody expression="true">
+                                <Call name="SetObjectProperty" args="objectIds, new[]{new PropertyParameter(property, value)}"/>
+                            </TokenBody>
+                        </InlineMethodDef>
+                    </Region>
+                    <Region name="Multiple" groupOverloads="true">
+                        <InlineMethodDef name="SetObjectProperty" returns="void">
+                            <Summary>
+                                Modifies multiple properties of a PRTG Object.&lt;para/&gt;
+                                Each &lt;see cref="ObjectProperty"/&gt; corresponds with a Property of a type derived from &lt;see cref="ObjectSettings"/&gt;.&lt;para/&gt;
+                                If PrtgAPI cannot convert the specified value to the type required by the property, PrtgAPI will throw an exception indicating the type that was expected.
+                            </Summary>
+
+                            <Parameter name="objectOrId" type="Either&lt;IPrtgObject, int&gt;" description="The object or ID of the object whose properties should be modified."/>
+                            <Parameter name="parameters" type="params PropertyParameter[]" description="A set of parameters describing the properties and their values to process."/>
+
+                            <Body expression="true">
+                                <Call name="SetObjectProperty" args="new[] {objectOrId.GetId()}, parameters"/>
+                            </Body>
+                        </InlineMethodDef>
+                        <InlineMethodDef name="SetObjectProperty" returns="void" tokenMode="MandatoryCall">
+                            <Summary>
+                                Modifies multiple properties of one or more PRTG Objects.&lt;para/&gt;
+                                Each &lt;see cref="ObjectProperty"/&gt; corresponds with a Property of a type derived from &lt;see cref="ObjectSettings"/&gt;.&lt;para/&gt;
+                                If PrtgAPI cannot convert the specified value to the type required by the property, PrtgAPI will throw an exception indicating the type that was expected.
+                            </Summary>
+
+                            <Parameter name="objectIds" type="int[]" description="The IDs of the objects whose properties should be modified."/>
+                            <Parameter name="parameters" type="params PropertyParameter[]" description="A set of parameters describing the properties and their values to process."/>
+
+                            <Body expression="true">
+                                <Call name="SetObjectProperty" args="{Alias:GetParameters}, objectIds.Length">
+                                    <Call name="CreateSetObjectPropertyParameters" args="objectIds, parameters" alias="GetParameters" needsToken="true"/>
+                                </Call>
+                            </Body>
+                        </InlineMethodDef>
+                    </Region>
                 </Region>
-                <Region name="Normal (Multiple)" groupOverloads="true">
-                    <InlineMethodDef name="SetObjectProperty" returns="void">
-                        <Summary>
-                            Modifies multiple properties of a PRTG Object.&lt;para/&gt;
-                            Each &lt;see cref="ObjectProperty"/&gt; corresponds with a Property of a type derived from &lt;see cref="ObjectSettings"/&gt;.&lt;para/&gt;
-                            If PrtgAPI cannot convert the specified value to the type required by the property, PrtgAPI will throw an exception indicating the type that was expected.
-                        </Summary>
+                <Region name="Channel">
+                    <Region name="Single" groupOverloads="true">
+                        <InlineMethodDef name="SetChannelProperty" returns="void" tokenMode="AutomaticAll">
+                            <Summary>Modifies a property of a PRTG Channel.</Summary>
 
-                        <Parameter name="objectOrId" type="Either&lt;IPrtgObject, int&gt;" description="The object or ID of the object whose properties should be modified."/>
-                        <Parameter name="parameters" type="params PropertyParameter[]" description="A set of parameters describing the properties and their values to process."/>
+                            <Parameter name="channel" type="Channel" description="The channel to modify."/>
+                            <Parameter name="property" type="ChannelProperty" description="The property whose value should be modified."/>
+                            <Parameter name="value" type="object" description="The value to set the property to."/>
 
-                        <Body expression="true">
-                            <Call name="SetObjectProperty" args="new[] {objectOrId.GetId()}, parameters"/>
-                        </Body>
-                    </InlineMethodDef>
-                    <InlineMethodDef name="SetObjectProperty" returns="void" tokenMode="MandatoryCall">
-                        <Summary>
-                            Modifies multiple properties of one or more PRTG Objects.&lt;para/&gt;
-                            Each &lt;see cref="ObjectProperty"/&gt; corresponds with a Property of a type derived from &lt;see cref="ObjectSettings"/&gt;.&lt;para/&gt;
-                            If PrtgAPI cannot convert the specified value to the type required by the property, PrtgAPI will throw an exception indicating the type that was expected.
-                        </Summary>
+                            <Body expression="true">
+                                <Call name="SetChannelProperty" args="new[] {AssertHasValue(channel, nameof(channel))}, property, value"/>
+                            </Body>
+                        </InlineMethodDef>
+                        <InlineMethodDef name="SetChannelProperty" returns="void" tokenMode="AutomaticAll">
+                            <Summary>Modifies a property of one or more PRTG Channels.</Summary>
 
-                        <Parameter name="objectIds" type="int[]" description="The IDs of the objects whose properties should be modified."/>
-                        <Parameter name="parameters" type="params PropertyParameter[]" description="A set of parameters describing the properties and their values to process."/>
+                            <Parameter name="channels" type="IEnumerable&lt;Channel&gt;" description="The channels to modify."/>
+                            <Parameter name="property" type="ChannelProperty" description="The property of each channel to modify."/>
+                            <Parameter name="value" type="object" description="The value to set each channel's property to."/>
 
-                        <Body expression="true">
-                            <Call name="SetObjectProperty" args="{Alias:GetParameters}, objectIds.Length">
-                                <Call name="CreateSetObjectPropertyParameters" args="objectIds, parameters" alias="GetParameters" needsToken="true"/>
-                            </Call>
-                        </Body>
-                    </InlineMethodDef>
+                            <Body expression="true">
+                                <Call name="SetChannelProperty" args="AssertHasValue(channels, nameof(channels)), new ChannelParameter(property, value)"/>
+                            </Body>
+                            <TokenBody expression="true">
+                                <Call name="SetChannelProperty" args="AssertHasValue(channels, nameof(channels)), new[]{new ChannelParameter(property, value)}"/>
+                            </TokenBody>
+                        </InlineMethodDef>
+                    </Region>
+                    <Region name="Multiple" groupOverloads="true">
+                        <InlineMethodDef name="SetChannelProperty" returns="void" tokenMode="AutomaticAll">
+                            <Summary>Modifies one or more properties of a PRTG Channel.</Summary>
+
+                            <Parameter name="channel" type="Channel" description="The channel to modify."/>
+                            <Parameter name="parameters" type="params ChannelParameter[]" description="A set of parameters describing the properties and their values to process."/>
+
+                            <Body expression="true">
+                                <Call name="SetChannelProperty" args="new[] {AssertHasValue(channel, nameof(channel))}, parameters"/>
+                            </Body>
+                        </InlineMethodDef>
+                        <InlineMethodDef name="SetChannelProperty" returns="void" tokenMode="AutomaticAll">
+                            <Summary>Modifies multiple properties of one or more PRTG Channels.</Summary>
+
+                            <Parameter name="channels" type="IEnumerable&lt;Channel&gt;" description="The channels to modify."/>
+                            <Parameter name="parameters" type="params ChannelParameter[]" description="A set of parameters describing the properties and their values to process."/>
+
+                            <Body expression="true">
+                                <Call name="SetChannelPropertyInternal" args="AssertHasValue(channels, nameof(channels)), null, null, parameters"/>
+                            </Body>
+                        </InlineMethodDef>
+                    </Region>
+                    <Region name="Manual" groupOverloads="true">
+                        <InlineMethodDef name="SetChannelProperty" returns="void" tokenMode="AutomaticAll">
+                            <Summary>Modifies a property of a PRTG Channel based on its Sensor ID and Channel ID.</Summary>
+
+                            <Parameter name="sensorOrId" type="Either&lt;Sensor, int&gt;" description="The sensor or ID of the sensor whose channels should be modified."/>
+                            <Parameter name="channelId" type="int" description="The ID of the channel to modify."/>
+                            <Parameter name="property" type="ChannelProperty" description="The property of the channel to modify."/>
+                            <Parameter name="value" type="object" description="The value to set the channel's property to."/>
+
+                            <Body expression="true">
+                                <Call name="SetChannelProperty" args="new[] {sensorOrId.GetId()}, channelId, property, value"/>
+                            </Body>
+                        </InlineMethodDef>
+                        <InlineMethodDef name="SetChannelProperty" returns="void" tokenMode="AutomaticAll">
+                            <Summary>Modifies a property of PRTG Channels with a given Channel ID across one or more PRTG Sensors.</Summary>
+
+                            <Parameter name="sensorIds" type="int[]" description="The IDs of the sensors whose channels should be modified."/>
+                            <Parameter name="channelId" type="int" description="The ID of the channel of each sensor to modify."/>
+                            <Parameter name="property" type="ChannelProperty" description="The property of each channel to modify."/>
+                            <Parameter name="value" type="object" description="The value to set each channel's property to."/>
+
+                            <Body expression="true">
+                                <Call name="SetChannelProperty" args="sensorIds, channelId, new ChannelParameter(property, value)"/>
+                            </Body>
+                            <TokenBody expression="true">
+                                <Call name="SetChannelProperty" args="sensorIds, channelId, new[]{new ChannelParameter(property, value)}"/>
+                            </TokenBody>
+                        </InlineMethodDef>
+                    </Region>
+                    <Region name="Manual: Multiple" groupOverloads="true">
+                        <InlineMethodDef name="SetChannelProperty" returns="void" tokenMode="AutomaticAll">
+                            <Summary>Modifies one or more properties of a PRTG Channel based on its Sensor ID and Channel ID.</Summary>
+
+                            <Parameter name="sensorOrId" type="Either&lt;Sensor, int&gt;" description="The sensor or ID of the sensor whose channels should be modified."/>
+                            <Parameter name="channelId" type="int" description="The ID of the channel to modify."/>
+                            <Parameter name="parameters" type="params ChannelParameter[]" description="A set of parameters describing the properties and their values to process."/>
+
+                            <Body expression="true">
+                                <Call name="SetChannelProperty" args="new[] {sensorOrId.GetId()}, channelId, parameters"/>
+                            </Body>
+                        </InlineMethodDef>
+                        <InlineMethodDef name="SetChannelProperty" returns="void" tokenMode="AutomaticAll">
+                            <Summary>Modifies multiple properties of PRTG Channels with a given Channel ID across one or more PRTG Sensors.</Summary>
+
+                            <Parameter name="sensorIds" type="int[]" description="The IDs of the sensors whose channels should be modified."/>
+                            <Parameter name="channelId" type="int" description="The ID of the channel of each sensor to modify."/>
+                            <Parameter name="parameters" type="params ChannelParameter[]" description="A set of parameters describing the properties and their values to process."/>
+
+                            <Body expression="true">
+                                <Call name="SetChannelPropertyInternal" args="null, sensorIds, channelId, parameters"/>
+                            </Body>
+                        </InlineMethodDef>
+                    </Region>
                 </Region>
-                 <Region name="Channel" groupOverloads="true">
-                    <InlineMethodDef name="SetChannelProperty" returns="void" tokenMode="AutomaticAll">
-                        <Summary>Modifies a property of a PRTG Channel.</Summary>
+                <Region name="Trigger">
+                    <Region name="Single" groupOverloads="true">
+                        <InlineMethodDef name="SetTriggerProperty" returns="void" tokenMode="AutomaticAll">
+                            <Summary>Modifies a property of a PRTG Notification Trigger.</Summary>
 
-                        <Parameter name="channel" type="Channel" description="The channel to modify."/>
-                        <Parameter name="property" type="ChannelProperty" description="The property whose value should be modified."/>
-                        <Parameter name="value" type="object" description="The value to set the property to."/>
+                            <Parameter name="trigger" type="NotificationTrigger" description="The notification trigger to modify."/>
+                            <Parameter name="property" type="TriggerProperty" description="The property whose value should be modified."/>
+                            <Parameter name="value" type="object" description="The value to set the property to."/>
 
-                        <Body expression="true">
-                            <Call name="SetChannelProperty" args="new[] {AssertHasValue(channel, nameof(channel))}, property, value"/>
-                        </Body>
-                    </InlineMethodDef>
-                    <InlineMethodDef name="SetChannelProperty" returns="void" tokenMode="AutomaticAll">
-                        <Summary>Modifies a property of one or more PRTG Channels.</Summary>
+                            <Body expression="true">
+                                <Call name="SetTriggerProperty" args="new[] {AssertHasValue(trigger, nameof(trigger))}, property, value"/>
+                            </Body>
+                        </InlineMethodDef>
+                        <InlineMethodDef name="SetTriggerProperty" returns="void" tokenMode="AutomaticAll">
+                            <Summary>Modifies a property of one or more PRTG Notification Triggers.</Summary>
 
-                        <Parameter name="channels" type="IEnumerable&lt;Channel&gt;" description="The channels to modify."/>
-                        <Parameter name="property" type="ChannelProperty" description="The property of each channel to modify."/>
-                        <Parameter name="value" type="object" description="The value to set each channel's property to."/>
+                            <Parameter name="triggers" type="IEnumerable&lt;NotificationTrigger&gt;" description="The notification triggers to modify."/>
+                            <Parameter name="property" type="TriggerProperty" description="The property of each trigger to modify."/>
+                            <Parameter name="value" type="object" description="The value to set each trigger's property to."/>
 
-                        <Body expression="true">
-                            <Call name="SetChannelProperty" args="AssertHasValue(channels, nameof(channels)), new ChannelParameter(property, value)"/>
-                        </Body>
-                        <TokenBody expression="true">
-                            <Call name="SetChannelProperty" args="AssertHasValue(channels, nameof(channels)), new[]{new ChannelParameter(property, value)}"/>
-                        </TokenBody>
-                    </InlineMethodDef>
-                </Region> 
-                <Region name="Channel (Multiple)" groupOverloads="true">
-                    <InlineMethodDef name="SetChannelProperty" returns="void" tokenMode="AutomaticAll">
-                        <Summary>Modifies one or more properties of a PRTG Channel.</Summary>
+                            <Body expression="true">
+                                <Call name="SetTriggerPropertyInternal" args="AssertHasValue(triggers, nameof(triggers)), new TriggerParameter(property, value)"/>
+                            </Body>
+                            <TokenBody expression="true">
+                                <Call name="SetTriggerPropertyInternal" args="AssertHasValue(triggers, nameof(triggers)), new[]{new TriggerParameter(property, value)}"/>
+                            </TokenBody>
+                        </InlineMethodDef>
+                    </Region>
+                    <Region name="Multiple" groupOverloads="true">
+                        <InlineMethodDef name="SetTriggerProperty" returns="void" tokenMode="AutomaticAll">
+                            <Summary>Modifies one or more properties of a PRTG Notification Trigger.</Summary>
 
-                        <Parameter name="channel" type="Channel" description="The channel to modify."/>
-                        <Parameter name="parameters" type="params ChannelParameter[]" description="A set of parameters describing the properties and their values to process."/>
+                            <Parameter name="trigger" type="NotificationTrigger" description="The notification trigger to modify."/>
+                            <Parameter name="parameters" type="params TriggerParameter[]" description="A set of parameters describing the properties and their values to process."/>
 
-                        <Body expression="true">
-                            <Call name="SetChannelProperty" args="new[] {AssertHasValue(channel, nameof(channel))}, parameters"/>
-                        </Body>
-                    </InlineMethodDef>
-                    <InlineMethodDef name="SetChannelProperty" returns="void" tokenMode="AutomaticAll">
-                        <Summary>Modifies multiple properties of one or more PRTG Channels.</Summary>
+                            <Body expression="true">
+                                <Call name="SetTriggerProperty" args="new[] {AssertHasValue(trigger, nameof(trigger))}, parameters"/>
+                            </Body>
+                        </InlineMethodDef>
+                        <InlineMethodDef name="SetTriggerProperty" returns="void" tokenMode="AutomaticAll">
+                            <Summary>Modifies multiple properties of one or more PRTG Notification Triggers.</Summary>
 
-                        <Parameter name="channels" type="IEnumerable&lt;Channel&gt;" description="The channels to modify."/>
-                        <Parameter name="parameters" type="params ChannelParameter[]" description="A set of parameters describing the properties and their values to process."/>
+                            <Parameter name="triggers" type="IEnumerable&lt;NotificationTrigger&gt;" description="The notification triggers to modify."/>
+                            <Parameter name="parameters" type="params TriggerParameter[]" description="A set of parameters describing the properties and their values to process."/>
 
-                        <Body expression="true">
-                            <Call name="SetChannelProperty" args="AssertHasValue(channels, nameof(channels)), null, null, parameters"/>
-                        </Body>
-                    </InlineMethodDef>
+                            <Body expression="true">
+                                <Call name="SetTriggerPropertyInternal" args="AssertHasValue(triggers, nameof(triggers)), parameters"/>
+                            </Body>
+                        </InlineMethodDef>
+                    </Region>
+                    <Region name="Manual" groupOverloads="true">
+                        <InlineMethodDef name="SetTriggerProperty" returns="void">
+                            <Summary>Modifies a property of a PRTG Notification Trigger based on its Object ID and Sub ID.</Summary>
+
+                            <Parameter name="objectOrId" type="Either&lt;IPrtgObject, int&gt;" description="The object or ID of the object whose notification triggers should be modified."/>
+                            <Parameter name="triggerId" type="int" description="The Sub ID of the notification trigger to modify."/>
+                            <Parameter name="property" type="TriggerProperty" description="The property of the notification trigger to modify."/>
+                            <Parameter name="value" type="object" description="The value to set the notification trigger's property to."/>
+
+                            <Body expression="true">
+                                <Call name="SetTriggerProperty" args="objectOrId, triggerId, new[]{new TriggerParameter(property, value)}"/>
+                            </Body>
+                        </InlineMethodDef>
+                    </Region>
+                    <Region name="Manual: Multiple" groupOverloads="true">
+                        <InlineMethodDef name="SetTriggerProperty" returns="void">
+                            <Summary>Modifies one or more properties of a PRTG Notification Trigger based on its Object ID and Sub ID.</Summary>
+
+                            <Parameter name="objectOrId" type="Either&lt;IPrtgObject, int&gt;" description="The object or ID of the object whose notification triggers should be modified."/>
+                            <Parameter name="triggerId" type="int" description="The ID of the notification trigger to modify."/>
+                            <Parameter name="parameters" type="params TriggerParameter[]" description="A set of parameters describing the properties and their values to process."/>
+
+                            <Body expression="false">
+                                var triggers = <Call name="GetNotificationTriggers" args="objectOrId.GetId()"/>;
+                                var trigger = triggers.Where(t => t.SubId == triggerId &amp;&amp; !t.Inherited).ToList().SingleObject(triggerId, "SubId");
+
+                                <Call name="SetTriggerProperty" args="trigger, parameters"/>;
+                            </Body>
+                        </InlineMethodDef>
+                    </Region>
                 </Region>
-                <Region name="Channel (Manual)" groupOverloads="true">
-                    <InlineMethodDef name="SetChannelProperty" returns="void" tokenMode="AutomaticAll">
-                        <Summary>Modifies a property of a PRTG Channel based on its Sensor ID and Channel ID.</Summary>
+                <Region name="Custom">
+                    <Region name="Single" groupOverloads="true">
+                        <InlineMethodDef name="SetObjectPropertyRaw" returns="void">
+                            <Summary>Modifies unsupported properties and settings of a PRTG Object.</Summary>
 
-                        <Parameter name="sensorOrId" type="Either&lt;Sensor, int&gt;" description="The sensor or ID of the sensor whose channels should be modified."/>
-                        <Parameter name="channelId" type="int" description="The ID of the channel to modify."/>
-                        <Parameter name="property" type="ChannelProperty" description="The property of the channel to modify."/>
-                        <Parameter name="value" type="object" description="The value to set the channel's property to."/>
+                            <Parameter name="objectOrId" type="Either&lt;IPrtgObject, int&gt;" description="The object or ID of the object whose properties should be modified."/>
+                            <Parameter name="property" type="string" description="The property of the object to modify. This can be typically discovered by inspecting the &quot;name&quot; attribute of the properties' &amp;lt;input/&amp;gt; tag on the Settings page of PRTG.&lt;para/&gt;\nIf the properties name ends in an underscore, this must be included."/>
+                            <Parameter name="value" type="string" description="The value to set the object's property to. For radio buttons and dropdown lists, this is the integer found in the 'value' attribute."/>
 
-                        <Body expression="true">
-                            <Call name="SetChannelProperty" args="new[] {sensorOrId.GetId()}, channelId, property, value"/>
-                        </Body>
-                    </InlineMethodDef>
-                    <InlineMethodDef name="SetChannelProperty" returns="void" tokenMode="AutomaticAll">
-                        <Summary>Modifies a property of PRTG Channels with a given Channel ID across one or more PRTG Sensors.</Summary>
+                            <Body expression="true">
+                                <Call name="SetObjectPropertyRaw" args="new[] {objectOrId.GetId()}, property, value"/>
+                            </Body>
+                        </InlineMethodDef>
+                        <InlineMethodDef name="SetObjectPropertyRaw" returns="void">
+                            <Summary>Modifies unsupported properties and settings of one or more PRTG Objects.</Summary>
 
-                        <Parameter name="sensorIds" type="int[]" description="The IDs of the sensors whose channels should be modified."/>
-                        <Parameter name="channelId" type="int" description="The ID of the channel of each sensor to modify."/>
-                        <Parameter name="property" type="ChannelProperty" description="The property of each channel to modify."/>
-                        <Parameter name="value" type="object" description="The value to set each channel's property to."/>
+                            <Parameter name="objectIds" type="int[]" description="The IDs of the objects whose properties should be modified."/>
+                            <Parameter name="property" type="string" description="The property of each object to modify. This can be typically discovered by inspecting the &quot;name&quot; attribute of the properties' &amp;lt;input/&amp;gt; tag on the Settings page of PRTG.&lt;para/&gt;\nIf the properties name ends in an underscore, this must be included."/>
+                            <Parameter name="value" type="string" description="The value to set each object's property to. For radio buttons and dropdown lists, this is the integer found in the 'value' attribute."/>
 
-                        <Body expression="true">
-                            <Call name="SetChannelProperty" args="sensorIds, channelId, new ChannelParameter(property, value)"/>
-                        </Body>
-                        <TokenBody expression="true">
-                            <Call name="SetChannelProperty" args="sensorIds, channelId, new[]{new ChannelParameter(property, value)}"/>
-                        </TokenBody>
-                    </InlineMethodDef>
-                </Region>
-                <Region name="Channel (Manual: Multiple)" groupOverloads="true">
-                    <InlineMethodDef name="SetChannelProperty" returns="void" tokenMode="AutomaticAll">
-                        <Summary>Modifies one or more properties of a PRTG Channel based on its Sensor ID and Channel ID.</Summary>
+                            <Body expression="true">
+                                <Call name="SetObjectPropertyRaw" args="objectIds, new CustomParameter(property, value)"/>
+                            </Body>
+                            <TokenBody expression="true">
+                                <Call name="SetObjectPropertyRaw" args="objectIds, new[]{new CustomParameter(property, value)}"/>
+                            </TokenBody>
+                        </InlineMethodDef>
+                    </Region>
+                    <Region name="Multiple" groupOverloads="true">
+                        <InlineMethodDef name="SetObjectPropertyRaw" returns="void">
+                            <Summary>Modifies multiple unsupported properties of a PRTG Object.</Summary>
 
-                        <Parameter name="sensorOrId" type="Either&lt;Sensor, int&gt;" description="The sensor or ID of the sensor whose channels should be modified."/>
-                        <Parameter name="channelId" type="int" description="The ID of the channel to modify."/>
-                        <Parameter name="parameters" type="params ChannelParameter[]" description="A set of parameters describing the properties and their values to process."/>
+                            <Parameter name="objectOrId" type="Either&lt;IPrtgObject, int&gt;" description="The object or ID of the object whose properties should be modified."/>
+                            <Parameter name="parameters" type="params CustomParameter[]" description="A set of parameters describing the properties and their values to process."/>
 
-                        <Body expression="true">
-                            <Call name="SetChannelProperty" args="new[] {sensorOrId.GetId()}, channelId, parameters"/>
-                        </Body>
-                    </InlineMethodDef>
-                    <InlineMethodDef name="SetChannelProperty" returns="void" tokenMode="AutomaticAll">
-                        <Summary>Modifies multiple properties of PRTG Channels with a given Channel ID across one or more PRTG Sensors.</Summary>
+                            <Body expression="true">
+                                <Call name="SetObjectPropertyRaw" args="new[] {objectOrId.GetId()}, parameters"/>
+                            </Body>
+                        </InlineMethodDef>
+                        <InlineMethodDef name="SetObjectPropertyRaw" returns="void" tokenMode="MandatoryCall">
+                            <Summary>Modifies multiple unsupported properties of one or more PRTG Objects.</Summary>
 
-                        <Parameter name="sensorIds" type="int[]" description="The IDs of the sensors whose channels should be modified."/>
-                        <Parameter name="channelId" type="int" description="The ID of the channel of each sensor to modify."/>
-                        <Parameter name="parameters" type="params ChannelParameter[]" description="A set of parameters describing the properties and their values to process."/>
+                            <Parameter name="objectIds" type="int[]" description="The IDs of the objects whose properties should be modified."/>
+                            <Parameter name="parameters" type="params CustomParameter[]" description="A set of parameters describing the properties and their values to process."/>
 
-                        <Body expression="true">
-                            <Call name="SetChannelProperty" args="null, sensorIds, channelId, parameters"/>
-                        </Body>
-                    </InlineMethodDef>
-                </Region>
-                <Region name="Custom" groupOverloads="true">
-                    <InlineMethodDef name="SetObjectPropertyRaw" returns="void">
-                        <Summary>Modifies unsupported properties and settings of a PRTG Object.</Summary>
-
-                        <Parameter name="objectOrId" type="Either&lt;IPrtgObject, int&gt;" description="The object or ID of the object whose properties should be modified."/>
-                        <Parameter name="property" type="string" description="The property of the object to modify. This can be typically discovered by inspecting the &quot;name&quot; attribute of the properties' &amp;lt;input/&amp;gt; tag on the Settings page of PRTG.&lt;para/&gt;\nIf the properties name ends in an underscore, this must be included."/>
-                        <Parameter name="value" type="string" description="The value to set the object's property to. For radio buttons and dropdown lists, this is the integer found in the 'value' attribute."/>
-
-                        <Body expression="true">
-                            <Call name="SetObjectPropertyRaw" args="new[] {objectOrId.GetId()}, property, value"/>
-                        </Body>
-                    </InlineMethodDef>
-                    <InlineMethodDef name="SetObjectPropertyRaw" returns="void">
-                        <Summary>Modifies unsupported properties and settings of one or more PRTG Objects.</Summary>
-
-                        <Parameter name="objectIds" type="int[]" description="The IDs of the objects whose properties should be modified."/>
-                        <Parameter name="property" type="string" description="The property of each object to modify. This can be typically discovered by inspecting the &quot;name&quot; attribute of the properties' &amp;lt;input/&amp;gt; tag on the Settings page of PRTG.&lt;para/&gt;\nIf the properties name ends in an underscore, this must be included."/>
-                        <Parameter name="value" type="string" description="The value to set each object's property to. For radio buttons and dropdown lists, this is the integer found in the 'value' attribute."/>
-
-                        <Body expression="true">
-                            <Call name="SetObjectPropertyRaw" args="objectIds, new CustomParameter(property, value)"/>
-                        </Body>
-                        <TokenBody expression="true">
-                            <Call name="SetObjectPropertyRaw" args="objectIds, new[]{new CustomParameter(property, value)}"/>
-                        </TokenBody>
-                    </InlineMethodDef>
-                </Region>
-                <Region name="Custom (Multiple)" groupOverloads="true">
-                    <InlineMethodDef name="SetObjectPropertyRaw" returns="void">
-                        <Summary>Modifies multiple unsupported properties of a PRTG Object.</Summary>
-
-                        <Parameter name="objectOrId" type="Either&lt;IPrtgObject, int&gt;" description="The object or ID of the object whose properties should be modified."/>
-                        <Parameter name="parameters" type="params CustomParameter[]" description="A set of parameters describing the properties and their values to process."/>
-
-                        <Body expression="true">
-                            <Call name="SetObjectPropertyRaw" args="new[] {objectOrId.GetId()}, parameters"/>
-                        </Body>
-                    </InlineMethodDef>
-                    <InlineMethodDef name="SetObjectPropertyRaw" returns="void" tokenMode="MandatoryCall">
-                        <Summary>Modifies multiple unsupported properties of one or more PRTG Objects.</Summary>
-
-                        <Parameter name="objectIds" type="int[]" description="The IDs of the objects whose properties should be modified."/>
-                        <Parameter name="parameters" type="params CustomParameter[]" description="A set of parameters describing the properties and their values to process."/>
-
-                        <Body expression="true">
-                            <Call name="SetObjectProperty" args="new SetObjectPropertyParameters(objectIds, parameters), objectIds.Length"/>
-                        </Body>
-                    </InlineMethodDef>
+                            <Body expression="true">
+                                <Call name="SetObjectProperty" args="new SetObjectPropertyParameters(objectIds, parameters), objectIds.Length"/>
+                            </Body>
+                        </InlineMethodDef>
+                    </Region>
                 </Region>
             </Region>
             <Region name="System Administration">

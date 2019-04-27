@@ -19,7 +19,7 @@ namespace PrtgAPI.PowerShell.Base
         /// <param name="progressMessage">The body of the progress message to display.</param>
         /// <param name="complete">Whether to allow <see cref="PrtgOperationCmdlet"/> to dynamically determine whether progress should be completed</param>
         /// <param name="incrementRecord">Whether to increment the progress record of this cmdlet. If this value is false, the value will be incremented then decremented.</param>
-        protected override void ExecuteOperation(Action action, string progressMessage, bool complete = true, bool incrementRecord = true)
+        protected internal override void ExecuteOperation(Action action, string progressMessage, bool complete = true, bool incrementRecord = true)
         {
             base.ExecuteOperation(action, progressMessage, complete, incrementRecord);
 

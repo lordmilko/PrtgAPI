@@ -1637,10 +1637,10 @@ namespace PrtgAPI
         }
 
         //#######################################
-        // SetChannelProperty
+        // SetChannelPropertyInternal
         //#######################################
 
-        internal void SetChannelProperty(IEnumerable<Channel> channels, int[] sensorIds, int? channelId, ChannelParameter[] parameters, CancellationToken token)
+        internal void SetChannelPropertyInternal(IEnumerable<Channel> channels, int[] sensorIds, int? channelId, ChannelParameter[] parameters, CancellationToken token)
         {
             if (parameters == null)
                 throw new ArgumentNullException(nameof(parameters), "Parameters cannot be null.");
@@ -1666,7 +1666,7 @@ namespace PrtgAPI
                 versionClient.SetChannelProperty(sensorIds, channelId.Value, parameters, token);
         }
 
-        internal async Task SetChannelPropertyAsync(IEnumerable<Channel> channels, int[] sensorIds, int? channelId, ChannelParameter[] parameters, CancellationToken token)
+        internal async Task SetChannelPropertyInternalAsync(IEnumerable<Channel> channels, int[] sensorIds, int? channelId, ChannelParameter[] parameters, CancellationToken token)
         {
             if (parameters == null)
                 throw new ArgumentNullException(nameof(parameters), "Parameters cannot be null.");
@@ -1690,6 +1690,62 @@ namespace PrtgAPI
             }
             else
                 await versionClient.SetChannelPropertyAsync(sensorIds, channelId.Value, parameters, token).ConfigureAwait(false);
+        }
+
+        //#######################################
+        // SetTriggerPropertyInternal
+        //#######################################
+
+        internal void SetTriggerPropertyInternal(IEnumerable<NotificationTrigger> triggers, TriggerParameter[] parameters, CancellationToken token)
+        {
+            AssertHasValue(triggers, nameof(triggers));
+
+            var triggersList = triggers.AsCollection();
+
+            if (triggersList.Any(c => c == null))
+                throw new ArgumentException("Cannot process a null trigger.", nameof(triggers));
+
+            if (parameters == null)
+                throw new ArgumentNullException(nameof(parameters), "Parameters cannot be null.");
+
+            if (parameters.Any(p => p == null))
+                throw new ArgumentException("Cannot process a null parameter.", nameof(parameters));
+
+            if (parameters.Length == 0)
+                throw new ArgumentException("At least one parameter must be specified.", nameof(parameters));
+
+            foreach (var trigger in triggersList)
+            {
+                var triggerParameters = TriggerParameters.Create(trigger, parameters);
+
+                SetNotificationTrigger(triggerParameters);
+            }
+        }
+
+        internal async Task SetTriggerPropertyInternalAsync(IEnumerable<NotificationTrigger> triggers, TriggerParameter[] parameters, CancellationToken token)
+        {
+            AssertHasValue(triggers, nameof(triggers));
+
+            var triggersList = triggers.AsCollection();
+
+            if (triggersList.Any(c => c == null))
+                throw new ArgumentException("Cannot process a null trigger.", nameof(triggers));
+
+            if (parameters == null)
+                throw new ArgumentNullException(nameof(parameters), "Parameters cannot be null.");
+
+            if (parameters.Any(p => p == null))
+                throw new ArgumentException("Cannot process a null parameter.", nameof(parameters));
+
+            if (parameters.Length == 0)
+                throw new ArgumentException("At least one parameter must be specified.", nameof(parameters));
+
+            foreach (var trigger in triggersList)
+            {
+                var triggerParameters = TriggerParameters.Create(trigger, parameters);
+
+                await SetNotificationTriggerAsync(triggerParameters, token).ConfigureAwait(false);
+            }
         }
     }
 }

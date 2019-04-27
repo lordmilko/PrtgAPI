@@ -1040,14 +1040,14 @@ for(int i = 0; i < 2; i++)
 }
 #>
         //#######################################
-        // SetChannelProperty
+        // SetChannelPropertyInternal
         //#######################################
 
 <#
 for(int i = 0; i < 2; i++)
 {
 #>
-        internal <#= GetSignature("SetChannelProperty", "void", i)#>(IEnumerable<Channel> channels, int[] sensorIds, int? channelId, ChannelParameter[] parameters, CancellationToken token)
+        internal <#= GetSignature("SetChannelPropertyInternal", "void", i)#>(IEnumerable<Channel> channels, int[] sensorIds, int? channelId, ChannelParameter[] parameters, CancellationToken token)
         {
             if (parameters == null)
                 throw new ArgumentNullException(nameof(parameters), "Parameters cannot be null.");
@@ -1071,6 +1071,43 @@ for(int i = 0; i < 2; i++)
             }
             else
                 <#= CallFunction("versionClient.SetChannelProperty", "sensorIds, channelId.Value, parameters, token", i) #>;
+        }
+
+<#
+}
+#>
+        //#######################################
+        // SetTriggerPropertyInternal
+        //#######################################
+
+<#
+for(int i = 0; i < 2; i++)
+{
+#>
+        internal <#= GetSignature("SetTriggerPropertyInternal", "void", i)#>(IEnumerable<NotificationTrigger> triggers, TriggerParameter[] parameters, CancellationToken token)
+        {
+            AssertHasValue(triggers, nameof(triggers));
+
+            var triggersList = triggers.AsCollection();
+
+            if (triggersList.Any(c => c == null))
+                throw new ArgumentException("Cannot process a null trigger.", nameof(triggers));
+
+            if (parameters == null)
+                throw new ArgumentNullException(nameof(parameters), "Parameters cannot be null.");
+
+            if (parameters.Any(p => p == null))
+                throw new ArgumentException("Cannot process a null parameter.", nameof(parameters));
+
+            if (parameters.Length == 0)
+                throw new ArgumentException("At least one parameter must be specified.", nameof(parameters));
+
+            foreach (var trigger in triggersList)
+            {
+                var triggerParameters = TriggerParameters.Create(trigger, parameters);
+
+                <#= CallFunctionWithAsyncOnlyToken("SetNotificationTrigger", "triggerParameters", "token", i) #>;
+            }
         }
 <#
 if (i == 0)
