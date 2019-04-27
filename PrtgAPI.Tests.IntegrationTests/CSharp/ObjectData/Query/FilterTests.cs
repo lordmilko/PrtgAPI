@@ -87,6 +87,34 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
             ExecuteSensor(s => s.Id.ToString().Contains(Settings.UpSensor.ToString()), Property.Id, Settings.UpSensor, FilterOperator.Contains);
 
         #endregion
+        #region ParentId
+
+        [TestMethod]
+        [TestCategory("IntegrationTest")]
+        public void Data_QueryFilter_PrtgObjectProperties_ParentId_Equals() =>
+            ExecuteSensor(s => s.ParentId == Settings.Device, Property.ParentId, Settings.Device);
+
+        [TestMethod]
+        [TestCategory("IntegrationTest")]
+        public void Data_QueryFilter_PrtgObjectProperties_ParentId_NotEquals() =>
+            ExecuteSensor(s => s.ParentId != Settings.Device, Property.ParentId, Settings.Device, FilterOperator.NotEquals);
+
+        [TestMethod]
+        [TestCategory("IntegrationTest")]
+        public void Data_QueryFilter_PrtgObjectProperties_ParentId_GreaterThan() =>
+            ExecuteSensor(s => s.ParentId > Settings.Device, Property.ParentId, Settings.Device, FilterOperator.GreaterThan);
+
+        [TestMethod]
+        [TestCategory("IntegrationTest")]
+        public void Data_QueryFilter_PrtgObjectProperties_ParentId_LessThan() =>
+            ExecuteSensor(s => s.ParentId < Settings.Device, Property.ParentId, Settings.Device, FilterOperator.LessThan);
+
+        [TestMethod]
+        [TestCategory("IntegrationTest")]
+        public void Data_QueryFilter_PrtgObjectProperties_ParentId_Contains() =>
+            ExecuteSensor(s => s.ParentId.ToString().Contains(Settings.Device.ToString()), Property.ParentId, Settings.Device, FilterOperator.Contains);
+
+        #endregion
         #region Active
 
         [TestMethod]
@@ -392,34 +420,6 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         [TestCategory("IntegrationTest")]
         public void Data_QueryFilter_SensorOrDeviceOrGroupOrProbeProperties_NotificationTypes_Contains() =>
             ExecuteUnsupported(Property.NotificationTypes, FilterOperator.Contains, "State", unsupported: true);
-
-        #endregion
-        #region ParentId
-
-        [TestMethod]
-        [TestCategory("IntegrationTest")]
-        public void Data_QueryFilter_SensorOrDeviceOrGroupOrProbeProperties_ParentId_Equals() =>
-            ExecuteSensor(s => s.ParentId == Settings.Device, Property.ParentId, Settings.Device);
-
-        [TestMethod]
-        [TestCategory("IntegrationTest")]
-        public void Data_QueryFilter_SensorOrDeviceOrGroupOrProbeProperties_ParentId_NotEquals() =>
-            ExecuteSensor(s => s.ParentId != Settings.Device, Property.ParentId, Settings.Device, FilterOperator.NotEquals);
-
-        [TestMethod]
-        [TestCategory("IntegrationTest")]
-        public void Data_QueryFilter_SensorOrDeviceOrGroupOrProbeProperties_ParentId_GreaterThan() =>
-            ExecuteSensor(s => s.ParentId > Settings.Device, Property.ParentId, Settings.Device, FilterOperator.GreaterThan);
-
-        [TestMethod]
-        [TestCategory("IntegrationTest")]
-        public void Data_QueryFilter_SensorOrDeviceOrGroupOrProbeProperties_ParentId_LessThan() =>
-            ExecuteSensor(s => s.ParentId < Settings.Device, Property.ParentId, Settings.Device, FilterOperator.LessThan);
-
-        [TestMethod]
-        [TestCategory("IntegrationTest")]
-        public void Data_QueryFilter_SensorOrDeviceOrGroupOrProbeProperties_ParentId_Contains() =>
-            ExecuteSensor(s => s.ParentId.ToString().Contains(Settings.Device.ToString()), Property.ParentId, Settings.Device, FilterOperator.Contains);
 
         #endregion
         #region Position

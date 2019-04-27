@@ -10,7 +10,7 @@ namespace PrtgAPI
     /// <summary>
     /// <para type="description">Represents a uniquely identifiable object within PRTG.</para>
     /// </summary>
-    public class PrtgObject : IPrtgObject, ITableObject, Request.ISerializable
+    public class PrtgObject : IPrtgObject, ITableObject, ISerializable
     {
         // ################################## All Object Tables ##################################
 
@@ -22,6 +22,19 @@ namespace PrtgAPI
         [XmlElement("objid")]
         [PropertyParameter(Property.Id)]
         public int Id { get; set; }
+
+        private int parentId;
+
+        /// <summary>
+        /// ID of this object's parent.
+        /// </summary>
+        [XmlElement("parentid")]
+        [PropertyParameter(Property.ParentId)]
+        public int ParentId
+        {
+            get { return Lazy(() => parentId); }
+            set { parentId = value; }
+        }
 
         /// <summary>
         /// Name of this object.

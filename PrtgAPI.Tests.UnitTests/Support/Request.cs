@@ -96,22 +96,22 @@ namespace PrtgAPI.Tests.UnitTests.Support
 
         internal static string DefaultSensorProperties()
         {
-            return "objid,name,probe,group,favorite,lastvalue,device,downtime,downtimetime,downtimesince,uptime,uptimetime,uptimesince,knowntime,cumsince,lastcheck,lastup,lastdown,minigraph,schedule,basetype,baselink,parentid,notifiesx,intervalx,access,dependency,position,status,comments,priority,message,tags,type,active";
+            return "objid,name,probe,group,favorite,lastvalue,device,downtime,downtimetime,downtimesince,uptime,uptimetime,uptimesince,knowntime,cumsince,lastcheck,lastup,lastdown,minigraph,schedule,basetype,baselink,notifiesx,intervalx,access,dependency,position,status,comments,priority,message,parentid,tags,type,active";
         }
 
         internal static string DefaultDeviceProperties()
         {
-            return "objid,name,location,host,group,probe,favorite,condition,upsens,downsens,downacksens,partialdownsens,warnsens,pausedsens,unusualsens,undefinedsens,totalsens,schedule,basetype,baselink,parentid,notifiesx,intervalx,access,dependency,position,status,comments,priority,message,tags,type,active";
+            return "objid,name,location,host,group,probe,favorite,condition,upsens,downsens,downacksens,partialdownsens,warnsens,pausedsens,unusualsens,undefinedsens,totalsens,schedule,basetype,baselink,notifiesx,intervalx,access,dependency,position,status,comments,priority,message,parentid,tags,type,active";
         }
 
         internal static string DefaultGroupProperties()
         {
-            return "objid,name,probe,condition,fold,groupnum,devicenum,upsens,downsens,downacksens,partialdownsens,warnsens,pausedsens,unusualsens,undefinedsens,totalsens,schedule,basetype,baselink,parentid,notifiesx,intervalx,access,dependency,position,status,comments,priority,message,tags,type,active";
+            return "objid,name,probe,condition,fold,groupnum,devicenum,upsens,downsens,downacksens,partialdownsens,warnsens,pausedsens,unusualsens,undefinedsens,totalsens,schedule,basetype,baselink,notifiesx,intervalx,access,dependency,position,status,comments,priority,message,parentid,tags,type,active";
         }
 
         internal static string DefaultProbeProperties()
         {
-            return "objid,name,condition,fold,groupnum,devicenum,upsens,downsens,downacksens,partialdownsens,warnsens,pausedsens,unusualsens,undefinedsens,totalsens,schedule,basetype,baselink,parentid,notifiesx,intervalx,access,dependency,position,status,comments,priority,message,tags,type,active";
+            return "objid,name,condition,fold,groupnum,devicenum,upsens,downsens,downacksens,partialdownsens,warnsens,pausedsens,unusualsens,undefinedsens,totalsens,schedule,basetype,baselink,notifiesx,intervalx,access,dependency,position,status,comments,priority,message,parentid,tags,type,active";
         }
 
         internal static string DefaultLogProperties()

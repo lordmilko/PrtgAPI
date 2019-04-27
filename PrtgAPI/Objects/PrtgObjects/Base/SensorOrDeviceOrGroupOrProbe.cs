@@ -45,13 +45,6 @@ namespace PrtgAPI
         [PropertyParameter(Property.Url)]
         public string Url { get; set; }
 
-        /// <summary>
-        /// ID of this object's parent.
-        /// </summary>
-        [XmlElement("parentid")]
-        [PropertyParameter(Property.ParentId)]
-        public int ParentId { get; set; }
-
         // ################################## Sensors, Devices, Groups, Probes ##################################
 
         /// <summary>

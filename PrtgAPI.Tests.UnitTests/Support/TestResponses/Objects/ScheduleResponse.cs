@@ -325,6 +325,7 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
             var xml = new XElement("item",
                 new XElement("baselink", item.BaseLink),
                 new XElement("baselink_raw", item.BaseLinkRaw),
+                new XElement("parentid", item.ParentId),
                 new XElement("type", item.Type),
                 new XElement("type_raw", item.TypeRaw),
                 new XElement("active", item.Active),
