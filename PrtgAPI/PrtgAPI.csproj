@@ -145,6 +145,7 @@
     <Compile Include="Parameters\Interfaces\ICustomParameterContainer.cs" />
     <Compile Include="Parameters\ObjectManipulation\ApproveProbeParameters.cs" />
     <Compile Include="Parameters\ObjectManipulation\NewObjectParameters\Sensors\FactorySensorParameters.cs" />
+    <Compile Include="Request\Serialization\ValueConverters\ValueLookupConverter.cs" />
     <Compile Include="Request\Version\ChannelLimitAnalysis.cs" />
     <Compile Include="Request\Version\SetChannelPropertyGrouping.cs" />
     <Compile Include="Request\Version\SetChannelPropertyTask.cs" />

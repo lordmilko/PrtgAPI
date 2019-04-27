@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using PrtgAPI.Attributes;
+using PrtgAPI.Request.Serialization.ValueConverters;
 
 namespace PrtgAPI
 {
@@ -47,6 +48,7 @@ namespace PrtgAPI
         /// A standard or custom value lookup that allows this sensor's value to be displayed as text in a gauge or a switch.
         /// </summary>
         [Description("valuelookup")]
+        [ValueConverter(typeof(ValueLookupConverter))]
         ValueLookup,
 
         /// <summary>

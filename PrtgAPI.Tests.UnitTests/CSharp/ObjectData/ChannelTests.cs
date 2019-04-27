@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using PrtgAPI.Tests.UnitTests.Support;
 using PrtgAPI.Tests.UnitTests.Support.TestItems;
 using PrtgAPI.Tests.UnitTests.Support.TestResponses;
 
@@ -77,6 +78,26 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             var client = Initialize_Client(new SetChannelPropertyResponse(property, channelId, value));
 
             client.SetChannelProperty(1234, channelId, property, value);
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void Channel_SetProperty_ValueLookup_NormalLookup() => Channel_SetValueLookup("potato", "potato%7Cpotato");
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void Channel_SetProperty_ValueLookup_None() => Channel_SetValueLookup("none", "%7CNone");
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void Channel_SetProperty_ValueLookup_Null() => Channel_SetValueLookup(null, "%7CNone");
+
+        private void Channel_SetValueLookup(object value, string url)
+        {
+            Execute(
+                c => c.SetChannelProperty(1001, 1, ChannelProperty.ValueLookup, value),
+                UnitRequest.EditSettings($"id=1001&valuelookup_1={url}")
+            );
         }
 
         [TestMethod]

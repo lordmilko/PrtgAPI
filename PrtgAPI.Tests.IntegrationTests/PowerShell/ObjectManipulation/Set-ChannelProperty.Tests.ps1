@@ -116,6 +116,11 @@ Describe "Set-ChannelProperty_IT" -Tag @("PowerShell", "IntegrationTest") {
         (& $channel) | Set-ChannelProperty ValueLookup "banana"
         $newChannel = (& $channel)
         $newChannel.ValueLookup | Should Be "None"
+
+        $channel = { Get-Sensor -Id (Settings ExeXml) | Get-Channel Value }
+        
+        (& $channel) | Set-ChannelProperty ValueLookup "prtg.standardlookups.yesno.stateyesok"
+        SetValue "ValueLookup" "None"
     }
 
     It "sets ValueLookup to None when an invalid value is specified" {
