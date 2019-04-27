@@ -24,11 +24,7 @@ namespace PrtgAPI
         public DateTime DateTime { get; set; }
 
         [ExcludeFromCodeCoverage]
-        int IEventObject.ObjectId
-        {
-            get { return SensorId; }
-            set { SensorId = value; }
-        }
+        int IEventObject.ObjectId => SensorId;
 
         /// <summary>
         /// The ID of the sensor to which this history record applies.

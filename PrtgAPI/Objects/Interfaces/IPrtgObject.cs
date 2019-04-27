@@ -8,6 +8,6 @@
         /// <summary>
         /// Unique identifier of this object within PRTG.
         /// </summary>
-        int Id { get; set; }
+        int Id { get; }
     }
 }

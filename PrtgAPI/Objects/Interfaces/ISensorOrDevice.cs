@@ -2,8 +2,8 @@
 {
     interface ISensorOrDevice : ISensorOrDeviceOrGroup
     {
-        string Group { get; set; }
+        string Group { get; }
 
-        bool Favorite { get; set; }
+        bool Favorite { get; }
     }
 }

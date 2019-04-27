@@ -14,18 +14,10 @@ namespace PrtgAPI
     public class SensorHistoryRecord : IEventObject
     {
         [ExcludeFromCodeCoverage]
-        string IObject.Name
-        {
-            get { return DateTime.ToString(CultureInfo.InvariantCulture); }
-            set { throw new NotSupportedException(); }
-        }
-        
+        string IObject.Name => DateTime.ToString(CultureInfo.InvariantCulture);
+
         [ExcludeFromCodeCoverage]
-        int IEventObject.ObjectId
-        {
-            get { return SensorId; }
-            set { SensorId = value; }
-        }
+        int IEventObject.ObjectId => SensorId;
 
         /// <summary>
         /// The date and time to which this object's historical values apply.

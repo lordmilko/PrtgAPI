@@ -21,11 +21,7 @@ namespace PrtgAPI
         public int Id { get; set; }
 
         [ExcludeFromCodeCoverage]
-        int IEventObject.ObjectId
-        {
-            get { return Id; }
-            set { Id = value; }
-        }
+        int IEventObject.ObjectId => Id;
 
         /// <summary>
         /// Name of the <see cref="PrtgObject"/> this event applies to.

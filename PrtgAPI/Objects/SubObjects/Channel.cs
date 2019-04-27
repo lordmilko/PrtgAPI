@@ -18,18 +18,10 @@ namespace PrtgAPI
         public int Id { get; set; }
 
         [ExcludeFromCodeCoverage]
-        int ISubObject.ObjectId
-        {
-            get { return SensorId; }
-            set { SensorId = value; }
-        }
+        int ISubObject.ObjectId => SensorId;
 
         [ExcludeFromCodeCoverage]
-        int ISubObject.SubId
-        {
-            get { return Id; }
-            set { Id = value; }
-        }
+        int ISubObject.SubId => Id;
 
         /// <summary>
         /// Name of this channel.

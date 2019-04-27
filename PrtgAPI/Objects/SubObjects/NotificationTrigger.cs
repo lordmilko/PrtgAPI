@@ -23,11 +23,7 @@ namespace PrtgAPI
         private string type;
 
         [ExcludeFromCodeCoverage]
-        string IObject.Name
-        {
-            get { return OnNotificationAction.Name; }
-            set { OnNotificationAction.Name = value; }
-        }
+        string IObject.Name => OnNotificationAction.Name;
 
         /// <summary>
         /// The Object ID this notification trigger applies to.

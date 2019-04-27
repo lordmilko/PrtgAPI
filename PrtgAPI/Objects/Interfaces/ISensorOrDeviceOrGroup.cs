@@ -2,6 +2,6 @@
 {
     interface ISensorOrDeviceOrGroup
     {
-        string Probe { get; set; }
+        string Probe { get; }
     }
 }

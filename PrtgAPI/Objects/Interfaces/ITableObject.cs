@@ -10,26 +10,26 @@
         /// <summary>
         /// The unique identifier of this object or the ID of the object this object pertains to.
         /// </summary>
-        int Id { get; set; }
+        int Id { get; }
 
         /// <summary>
         /// The display type of this object or the type of the object this object pertains to.
         /// </summary>
-        string DisplayType { get; set; }
+        string DisplayType { get; }
 
         /// <summary>
         /// The raw type name of this object or the raw type name of the object this object pertains to..
         /// </summary>
-        StringEnum<ObjectType> Type { get; set; }
+        StringEnum<ObjectType> Type { get; }
 
         /// <summary>
         /// Tags contained on this object or the object this object pertains to.
         /// </summary>
-        string[] Tags { get; set; }
+        string[] Tags { get; }
 
         /// <summary>
         /// Whether or not the object is currently active (in a monitoring state). If false, the object is paused.
         /// </summary>
-        bool Active { get; set; }
+        bool Active { get; }
     }
 }

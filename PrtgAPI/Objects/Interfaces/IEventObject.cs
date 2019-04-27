@@ -8,6 +8,6 @@
         /// <summary>
         /// ID of the object the event applies to.
         /// </summary>
-        int ObjectId { get; set; }
+        int ObjectId { get; }
     }
 }

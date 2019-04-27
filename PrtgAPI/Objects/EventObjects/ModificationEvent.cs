@@ -13,11 +13,7 @@ namespace PrtgAPI
     public class ModificationEvent : IEventObject
     {
         [ExcludeFromCodeCoverage]
-        string IObject.Name
-        {
-            get { return Message; }
-            set { Message = value; }
-        }
+        string IObject.Name => Message;
 
         /// <summary>
         /// The ID of the object the event occurred to.
