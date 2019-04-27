@@ -561,7 +561,7 @@
     <Compile Include="Objects\PrtgObjects\Base\PrtgObject.cs" />
     <Compile Include="Objects\PrtgObjects\Base\SensorOrDeviceOrGroupOrProbe.cs" />
     <Compile Include="Objects\PrtgObjects\Base\SensorOrDeviceOrGroupOrProbeOrTicket.cs" />
-    <Compile Include="Objects\PrtgObjects\Base\SensorOrDeviceOrGroupOrProbeOrTicketOrTicketDataOrHistory.cs" />
+    <Compile Include="Objects\PrtgObjects\Base\SensorOrDeviceOrGroupOrProbeOrTicketOrTicketData.cs" />
     <Compile Include="PrtgClient.cs" />
     <Compile Include="Request\PrtgRequestMessage.cs" />
     <Compile Include="Request\PrtgWebClient.cs" />

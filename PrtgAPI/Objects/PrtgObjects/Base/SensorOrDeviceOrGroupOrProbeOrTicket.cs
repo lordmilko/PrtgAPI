@@ -6,7 +6,7 @@ namespace PrtgAPI
     /// <summary>
     /// Base class for Sensors, Devices, Groups, Probes, Logs and Tickets, containing properties that apply to all six object types.
     /// </summary>
-    public class SensorOrDeviceOrGroupOrProbeOrTicket : SensorOrDeviceOrGroupOrProbeOrTicketOrTicketDataOrHistory
+    public class SensorOrDeviceOrGroupOrProbeOrTicket : SensorOrDeviceOrGroupOrProbeOrTicketOrTicketData
     {
         // ################################## Sensors, Devices, Groups, Probes, Messages, Tickets ##################################
 

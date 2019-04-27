@@ -52,7 +52,7 @@ namespace PrtgAPI.Tests.UnitTests.Support.Serialization
         object priority;
         object priorityRaw;
 
-        //SensorOrDeviceOrGroupOrProbeOrTicketOrTicketDataOrHistory
+        //SensorOrDeviceOrGroupOrProbeOrTicketOrTicketData
 
         object message;
         object displayMessage;
@@ -123,7 +123,7 @@ namespace PrtgAPI.Tests.UnitTests.Support.Serialization
             priority = reader.NameTable.Add("priority");
             priorityRaw = reader.NameTable.Add("priority_raw");
 
-            //SensorOrDeviceOrGroupOrProbeOrTicketOrTicketDataOrHistory
+            //SensorOrDeviceOrGroupOrProbeOrTicketOrTicketData
 
             message = reader.NameTable.Add("message_raw");
             displayMessage = reader.NameTable.Add("message");
@@ -389,7 +389,7 @@ namespace PrtgAPI.Tests.UnitTests.Support.Serialization
                 return true;
             }
 
-            //SensorOrDeviceOrGroupOrProbeOrTicketOrTicketDataOrHistory
+            //SensorOrDeviceOrGroupOrProbeOrTicketOrTicketData
 
             else if (!flagArray[31] && ElementName == message)
             {

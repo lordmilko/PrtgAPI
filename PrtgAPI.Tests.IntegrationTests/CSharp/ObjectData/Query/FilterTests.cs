@@ -639,32 +639,32 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
 
         #endregion
         #endregion
-        #region SensorOrDeviceOrGroupOrProbeOrTicketOrTicketDataOrHistory
+        #region SensorOrDeviceOrGroupOrProbeOrTicketOrTicketData
         #region Message
 
         [TestMethod]
         [TestCategory("IntegrationTest")]
-        public void Data_QueryFilter_SensorOrDeviceOrGroupOrProbeOrTicketOrTicketDataOrHistoryProperties_Message_Equals() =>
+        public void Data_QueryFilter_SensorOrDeviceOrGroupOrProbeOrTicketOrTicketDataProperties_Message_Equals() =>
             ExecuteSensor(s => s.Message == "OK", Property.Message, "OK");
 
         [TestMethod]
         [TestCategory("IntegrationTest")]
-        public void Data_QueryFilter_SensorOrDeviceOrGroupOrProbeOrTicketOrTicketDataOrHistoryProperties_Message_NotEquals() =>
+        public void Data_QueryFilter_SensorOrDeviceOrGroupOrProbeOrTicketOrTicketDataProperties_Message_NotEquals() =>
             ExecuteSensor(s => s.Message != "OK", Property.Message, "OK", FilterOperator.NotEquals, filterThrows: true);
 
         [TestMethod]
         [TestCategory("IntegrationTest")]
-        public void Data_QueryFilter_SensorOrDeviceOrGroupOrProbeOrTicketOrTicketDataOrHistoryProperties_Message_GreaterThan() =>
+        public void Data_QueryFilter_SensorOrDeviceOrGroupOrProbeOrTicketOrTicketDataProperties_Message_GreaterThan() =>
             ExecuteUnsupported(Property.Message, FilterOperator.GreaterThan, "OK");
 
         [TestMethod]
         [TestCategory("IntegrationTest")]
-        public void Data_QueryFilter_SensorOrDeviceOrGroupOrProbeOrTicketOrTicketDataOrHistoryProperties_Message_LessThan() =>
+        public void Data_QueryFilter_SensorOrDeviceOrGroupOrProbeOrTicketOrTicketDataProperties_Message_LessThan() =>
             ExecuteUnsupported(Property.Message, FilterOperator.LessThan, "OK");
 
         [TestMethod]
         [TestCategory("IntegrationTest")]
-        public void Data_QueryFilter_SensorOrDeviceOrGroupOrProbeOrTicketOrTicketDataOrHistoryProperties_Message_Contains() =>
+        public void Data_QueryFilter_SensorOrDeviceOrGroupOrProbeOrTicketOrTicketDataProperties_Message_Contains() =>
             ExecuteSensor(s => s.Message.Contains("OK"), Property.Message, "OK", FilterOperator.Contains, s => s.Message == "ok");
 
         #endregion

@@ -216,11 +216,11 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
             Execute(new Sensor { Priority = Priority.Four }, new Sensor { Priority = Priority.Three }, null, Property.Priority, Priority.Four);
 
         #endregion
-        #region SensorOrDeviceOrGroupOrProbeOrTicketOrTicketDataOrHistory
+        #region SensorOrDeviceOrGroupOrProbeOrTicketOrTicketData
 
         [TestMethod]
         [TestCategory("UnitTest")]
-        public void SearchFilterExpression_SensorOrDeviceOrGroupOrProbeOrTicketOrTicketDataOrHistoryProperties_Message() =>
+        public void SearchFilterExpression_SensorOrDeviceOrGroupOrProbeOrTicketOrTicketDataProperties_Message() =>
             Execute(new Sensor { Message = "goodMessage" }, new Sensor { Message = "badMessage" }, null, Property.Message, "goodMessage");
 
         #endregion

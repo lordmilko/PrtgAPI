@@ -142,11 +142,11 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         public void QueryFilter_SensorOrDeviceOrGroupOrProbeOrTicketProperties_Priority() => QuerySensor(s => s.Priority == Priority.Four, "filter_priority=4");
 
         #endregion
-        #region SensorOrDeviceOrGroupOrProbeOrTicketOrTicketDataOrHistory
+        #region SensorOrDeviceOrGroupOrProbeOrTicketOrTicketData
 
         [TestMethod]
         [TestCategory("UnitTest")]
-        public void QueryFilter_SensorOrDeviceOrGroupOrProbeOrTicketOrTicketDataOrHistoryProperties_Message() => QuerySensor(s => s.Message == "test", "filter_message=test");
+        public void QueryFilter_SensorOrDeviceOrGroupOrProbeOrTicketOrTicketDataProperties_Message() => QuerySensor(s => s.Message == "test", "filter_message=test");
 
         #endregion
         #region DeviceOrGroupOrProbe
