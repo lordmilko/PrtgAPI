@@ -6,6 +6,7 @@ using System.Xml.Serialization;
 using PrtgAPI.Attributes;
 using PrtgAPI.Parameters.Helpers;
 using PrtgAPI.Reflection.Cache;
+using PrtgAPI.Request;
 using PrtgAPI.Request.Serialization;
 using PrtgAPI.Utilities;
 using XmlMapping = PrtgAPI.Request.Serialization.XmlMapping;
@@ -122,7 +123,7 @@ namespace PrtgAPI.Linq.Expressions.Serialization
                 //Get the backing property so that we may extract the real value from the public
                 //property
                 var rawName = ObjectPropertyParser.GetObjectPropertyNameViaCache(property, cache);
-                var elementName = $"{ObjectSettings.prefix}{rawName.TrimEnd('_')}";
+                var elementName = $"{HtmlParser.DefaultPropertyPrefix}{rawName.TrimEnd('_')}";
 
                 mapping = mappings.FirstOrDefault(m => m.AttributeValue[0] == elementName);
 

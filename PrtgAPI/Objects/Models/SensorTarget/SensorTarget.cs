@@ -101,7 +101,7 @@ namespace PrtgAPI.Targets
         /// <returns>A list of sensor targets of type T</returns>
         protected static List<T> CreateFromDropDownOptions(string response, string name, Func<string, T> createObj)
         {
-            var files = ObjectSettings.GetDropDownList(response)
+            var files = HtmlParser.Default.GetDropDownList(response)
                 .Where(d => d.Name == name)
                 .SelectMany(d => d.Options
                 .Select(o => createObj(o.Value)))
@@ -126,7 +126,7 @@ namespace PrtgAPI.Targets
         /// <returns>A list of sensor targets of type T</returns>
         protected static List<T> CreateFromCheckbox(string response, string name, Func<string, T> createObj)
         {
-            var files = ObjectSettings.GetInput(response)
+            var files = HtmlParser.Default.GetInput(response)
                 .Where(i => i.Type == Html.InputType.Checkbox && i.Name == name)
                 .Select(i => createObj(i.Value))
                 .ToList();

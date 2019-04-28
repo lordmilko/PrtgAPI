@@ -164,7 +164,7 @@ namespace PrtgAPI.Request
 
         internal static void LoadTimeTable(Schedule schedule, string response)
         {
-            var input = ObjectSettings.GetInput(response, ObjectSettings.backwardsMatchRegex).Where(i => i.Name == "timetable").ToList();
+            var input = HtmlParser.Default.GetInput(response, HtmlParser.DefaultBackwardsMatchRegex).Where(i => i.Name == "timetable").ToList();
 
             //If user is read only inputs is empty
             if (input.Count > 0)
@@ -286,13 +286,13 @@ namespace PrtgAPI.Request
 
         internal static T GetObjectProperties<T>(PrtgResponse response, XmlEngine xmlEngine, ObjectProperty mandatoryProperty)
         {
-            var xml = ObjectSettings.GetXml(response);
+            var xml = HtmlParser.Default.GetXml(response);
             var xDoc = new XDocument(xml);
 
             //If the response does not contain the mandatory property, we are executing as a read only user, and
             //should return null
 
-            var name = ObjectSettings.prefix + ObjectPropertyParser.GetObjectPropertyName(mandatoryProperty).TrimEnd('_');
+            var name = HtmlParser.DefaultPropertyPrefix + ObjectPropertyParser.GetObjectPropertyName(mandatoryProperty).TrimEnd('_');
 
             if (xDoc.Descendants(name).ToList().Count > 0)
             {
@@ -484,7 +484,7 @@ namespace PrtgAPI.Request
 
         internal static List<DeviceTemplate> GetTemplates(string response)
         {
-            var checkboxes = ObjectSettings.GetInput(response).Where(
+            var checkboxes = HtmlParser.Default.GetInput(response).Where(
                 t => t.Type == Html.InputType.Checkbox && t.Name == Parameter.DeviceTemplate.GetDescription()
             ).ToList();
 

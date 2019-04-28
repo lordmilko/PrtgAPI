@@ -77,9 +77,9 @@ namespace PrtgAPI.Parameters
         private void ParseResponse(string response)
         {
             var nameRegex = "(.+?name=\")(.+?_*)(\".+)";
-            var inputs = ObjectSettings.GetFilteredInputs(response, nameRegex).Where(n => n.Name != "tmpid" && n.Name != "id" && n.Name != "sensortype" && n.Name != "parenttags_").ToList();
-            var lists = ObjectSettings.GetDropDownList(response, nameRegex);
-            var text = ObjectSettings.GetTextAreaFields(response, nameRegex);
+            var inputs = HtmlParser.Default.GetFilteredInputs(response, nameRegex).Where(n => n.Name != "tmpid" && n.Name != "id" && n.Name != "sensortype" && n.Name != "parenttags_").ToList();
+            var lists = HtmlParser.Default.GetDropDownList(response, nameRegex);
+            var text = HtmlParser.Default.GetTextAreaFields(response, nameRegex);
 
             Targets = GenericSensorTarget.GetAllTargets(response).ToDictionary(t => t.Key, t => t.Value.ToArray());
 

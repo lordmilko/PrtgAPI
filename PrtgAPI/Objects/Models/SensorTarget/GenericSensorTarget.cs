@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using PrtgAPI.Html;
+using PrtgAPI.Request;
 
 namespace PrtgAPI.Targets
 {
@@ -45,8 +46,8 @@ namespace PrtgAPI.Targets
 
         internal static Dictionary<string, List<GenericSensorTarget>> GetAllTargets(string response)
         {
-            var checkboxes = ObjectSettings.GetInput(response).Where(i => i.Type == InputType.Checkbox).ToList();
-            var dropdowns = ObjectSettings.GetDropDownList(response).ToList();
+            var checkboxes = HtmlParser.Default.GetInput(response).Where(i => i.Type == InputType.Checkbox).ToList();
+            var dropdowns = HtmlParser.Default.GetDropDownList(response).ToList();
 
             var validCheckboxes = GetValidCheckboxes(checkboxes, false, false);
             var validDropdowns = GetValidDropdowns(dropdowns, false, false);
@@ -75,8 +76,8 @@ namespace PrtgAPI.Targets
             //todo: we should filter out the common items, and then dont display that item type description entirely if there are none
             //if there are none of EITHER, fall back and just list all of them (including hidden)
 
-            var allCheckboxes = ObjectSettings.GetInput(response).Where(i => i.Type == InputType.Checkbox).ToList();
-            var allDropdowns = ObjectSettings.GetDropDownList(response).ToList();
+            var allCheckboxes = HtmlParser.Default.GetInput(response).Where(i => i.Type == InputType.Checkbox).ToList();
+            var allDropdowns = HtmlParser.Default.GetDropDownList(response).ToList();
 
             if (allCheckboxes.FirstOrDefault(c => c.Name == tableName) == null &&
                 allDropdowns.FirstOrDefault(d => d.Name == tableName) == null)
@@ -89,8 +90,8 @@ namespace PrtgAPI.Targets
 
         private static List<GenericSensorTarget> GetTargetFromUnknown(string response)
         {
-            var checkboxes = ObjectSettings.GetInput(response).Where(i => i.Type == InputType.Checkbox).ToList();
-            var dropdowns = ObjectSettings.GetDropDownList(response).ToList();
+            var checkboxes = HtmlParser.Default.GetInput(response).Where(i => i.Type == InputType.Checkbox).ToList();
+            var dropdowns = HtmlParser.Default.GetDropDownList(response).ToList();
 
             var validCheckboxes = GetValidCheckboxes(checkboxes, false, false);
             var validDropdowns = GetValidDropdowns(dropdowns, false, false);

@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Text.RegularExpressions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using PrtgAPI.Request;
 
 namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
 {
@@ -32,13 +33,13 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
 
         private string CleanResponse(string response)
         {
-            response = Regex.Replace(response, ObjectSettings.basicMatchRegex, string.Empty, RegexOptions.Singleline);
-            response = Regex.Replace(response, ObjectSettings.backwardsMatchRegex, string.Empty, RegexOptions.Singleline);
-            response = Regex.Replace(response, ObjectSettings.textAreaRegex, string.Empty, RegexOptions.Singleline);
-            response = Regex.Replace(response, ObjectSettings.dropDownListRegex, string.Empty, RegexOptions.Singleline);
-            response = Regex.Replace(response, ObjectSettings.dependencyDiv, string.Empty, RegexOptions.Singleline);
+            response = Regex.Replace(response, HtmlParser.DefaultBasicMatchRegex, string.Empty, RegexOptions.Singleline);
+            response = Regex.Replace(response, HtmlParser.DefaultBackwardsMatchRegex, string.Empty, RegexOptions.Singleline);
+            response = Regex.Replace(response, HtmlParser.DefaultTextAreaRegex, string.Empty, RegexOptions.Singleline);
+            response = Regex.Replace(response, HtmlParser.DefaultDropDownListRegex, string.Empty, RegexOptions.Singleline);
+            response = Regex.Replace(response, HtmlParser.DefaultDependencyDiv, string.Empty, RegexOptions.Singleline);
 
-            var xml = ObjectSettings.GetXml(new Request.PrtgResponse(response, false));
+            var xml = HtmlParser.Default.GetXml(new PrtgResponse(response, false));
 
             var descendents = xml.Descendants().ToList();
 

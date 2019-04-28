@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using PrtgAPI.Request;
 using PrtgAPI.Utilities;
 using PrtgAPI.Tests.UnitTests.Support.TestItems;
 
@@ -33,7 +34,7 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
                     if (components["name"] == "aggregationchannel")
                     {
                         var text = new SensorSettingsResponse(propertyChanger).GetResponseText(ref address);
-                        var xml = ObjectSettings.GetXml(text);
+                        var xml = HtmlParser.Default.GetXml(text);
 
                         var value = xml.Descendants("injected_aggregationchannel").First().Value;
 

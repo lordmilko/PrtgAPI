@@ -130,6 +130,7 @@
     <Compile Include="Enums\SystemInfoType.cs" />
     <Compile Include="Objects\Models\Either.cs" />
     <Compile Include="Parameters\TriggerParameter.cs" />
+    <Compile Include="Request\HtmlParser.cs" />
     <Compile Include="Request\LogVerboseEventArgs.cs" />
     <Compile Include="Exceptions\HttpDeserializationException.cs" />
     <Compile Include="Exceptions\Internal\InvalidExpressionException.cs" />

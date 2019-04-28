@@ -356,7 +356,7 @@ namespace PrtgAPI
         
         private XElement GetNotificationActionProperties(Either<IPrtgObject, int> objectOrId, CancellationToken token)
         {
-            var xml = RequestEngine.ExecuteRequest(new GetObjectPropertyParameters(objectOrId, ObjectType.Notification), ObjectSettings.GetXml, token);
+            var xml = RequestEngine.ExecuteRequest(new GetObjectPropertyParameters(objectOrId, ObjectType.Notification), HtmlParser.Default.GetXml, token);
 
             xml = ResponseParser.GroupNotificationActionProperties(xml);
 
@@ -365,7 +365,7 @@ namespace PrtgAPI
 
         private async Task<XElement> GetNotificationActionPropertiesAsync(Either<IPrtgObject, int> objectOrId, CancellationToken token)
         {
-            var xml = await RequestEngine.ExecuteRequestAsync(new GetObjectPropertyParameters(objectOrId, ObjectType.Notification), ObjectSettings.GetXml, token).ConfigureAwait(false);
+            var xml = await RequestEngine.ExecuteRequestAsync(new GetObjectPropertyParameters(objectOrId, ObjectType.Notification), HtmlParser.Default.GetXml, token).ConfigureAwait(false);
 
             xml = ResponseParser.GroupNotificationActionProperties(xml);
 
@@ -681,10 +681,10 @@ namespace PrtgAPI
             #region Get Multiple Raw Properties
 
         private Dictionary<string, string> GetObjectPropertiesRawDictionary(Either<IPrtgObject, int> objectOrId, object objectType) =>
-            ObjectSettings.GetDictionary(GetObjectPropertiesRawInternal(objectOrId, objectType));
+            HtmlParser.Default.GetDictionary(GetObjectPropertiesRawInternal(objectOrId, objectType));
 
         private async Task<Dictionary<string, string>> GetObjectPropertiesRawDictionaryAsync(Either<IPrtgObject, int> objectOrId, object objectType, CancellationToken token) =>
-            ObjectSettings.GetDictionary(await GetObjectPropertiesRawInternalAsync(objectOrId, objectType, token).ConfigureAwait(false));
+            HtmlParser.Default.GetDictionary(await GetObjectPropertiesRawInternalAsync(objectOrId, objectType, token).ConfigureAwait(false));
 
         private PrtgResponse GetObjectPropertiesRawInternal(Either<IPrtgObject, int> objectOrId, object objectType, CancellationToken token = default(CancellationToken)) =>
             RequestEngine.ExecuteRequest(new GetObjectPropertyParameters(objectOrId, objectType), token: token);

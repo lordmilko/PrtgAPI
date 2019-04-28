@@ -58,7 +58,7 @@ namespace PrtgAPI.Request.Serialization
             var typeLookup = property.GetEnumAttribute<TypeLookupAttribute>().Class;
             var deserializer = new XmlReflectionSerializerImpl(typeLookup);
 
-            var elementName = $"{ObjectSettings.prefix}{rawName.TrimEnd('_')}";
+            var elementName = $"{HtmlParser.DefaultPropertyPrefix}{rawName.TrimEnd('_')}";
 
             var xml = new XDocument(
                 new XElement("properties",
