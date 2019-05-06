@@ -29,6 +29,9 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
                     var faultyUrl = GetFaultyUrl();
                     return new BasicResponse($"{{\"progress\":\"100\",\"targeturl\":\"{faultyUrl}\"");
 
+                case nameof(JsonFunction.SensorTypes):
+                    return new SensorTypeResponse();
+
                 default:
                     throw GetUnknownFunctionException(function);
             }

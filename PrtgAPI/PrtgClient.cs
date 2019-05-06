@@ -601,6 +601,27 @@ namespace PrtgAPI
         }
 
         #endregion
+        #region Add Object
+
+        internal BeginAddSensorQueryParameters ValidateAddSensorQueryParameters(BeginAddSensorQueryParameters parameters)
+        {
+            var types = GetSensorTypes(parameters.ObjectId);
+            
+            RequestParser.ValidateAddSensorQueryTarget(types, parameters);
+
+            return parameters;
+        }
+
+        internal async Task<BeginAddSensorQueryParameters> ValidateAddSensorQueryParametersAsync(BeginAddSensorQueryParameters parameters)
+        {
+            var types = await GetSensorTypesAsync(parameters.ObjectId).ConfigureAwait(false);
+
+            RequestParser.ValidateAddSensorQueryTarget(types, parameters);
+
+            return parameters;
+        }
+
+        #endregion
         #region Clone Object
 
         private int CloneObject(CloneParameters parameters, CancellationToken token) =>

@@ -424,7 +424,7 @@ namespace PrtgAPI.Request
             return true;
         }
 
-        private void ValidateHttpResponse(HttpResponseMessage responseMessage, PrtgResponse response)
+        internal static void ValidateHttpResponse(HttpResponseMessage responseMessage, PrtgResponse response)
         {
             if (responseMessage.StatusCode == HttpStatusCode.BadRequest)
             {

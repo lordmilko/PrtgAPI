@@ -707,6 +707,7 @@ Describe "New-SensorParameters" -Tag @("PowerShell", "UnitTest") {
 
             $urls = @(
                 @(
+                    [Request]::SensorTypes(40)
                     [Request]::BeginAddSensorQuery(40, "http")
                     [Request]::AddSensorProgress(40, 2)
                     [Request]::AddSensorProgress(40, 2)
@@ -834,6 +835,114 @@ Describe "New-SensorParameters" -Tag @("PowerShell", "UnitTest") {
             SetValue $params "FactoryErrorMode" "WarnOnError"
             SetValue $params "FactoryErrorFormula" "test"
             SetValue $params "FactoryMissingDataMode" "CalculateWithZero"
+        }
+    }
+
+    Context "Query Target" {
+        It "parses a sensor query target" {
+            SetCustomAddressValidatorResponse "SensorQueryTargetValidatorResponse" @(
+                [Request]::SensorTypes(40) # Get initial target
+
+                [Request]::SensorTypes(40) # Verify specified target
+                [Request]::BeginAddSensorQuery(40, "snmplibrary_nolist", "APC+UPS.oidlib")
+                [Request]::AddSensorProgress(40, 2)
+                [Request]::EndAddSensorQuery(40, 2)
+            )
+
+            $target = $device | Get-SensorType snmplibrary | select -ExpandProperty QueryTargets|select -First 1
+
+            $target | Should Be "APC UPS.oidlib"
+
+            $device | New-SensorParameters -RawType snmplibrary -qt $target
+        }
+
+        It "parses a sensor query target wildcard" {
+            SetCustomAddressValidatorResponse "SensorQueryTargetValidatorResponse" @(
+                [Request]::SensorTypes(40), # Get initial target from wildcard
+
+                [Request]::SensorTypes(40) # Verify specified target
+                [Request]::BeginAddSensorQuery(40, "snmplibrary_nolist", "APC+UPS.oidlib")
+                [Request]::AddSensorProgress(40, 2)
+                [Request]::EndAddSensorQuery(40, 2)
+            )
+
+            $device | New-SensorParameters -RawType snmplibrary -qt *ups*
+        }
+
+        It "throws when a sensor query target wildcard does not match" {
+            SetCustomAddressValidatorResponse "SensorQueryTargetValidatorResponse" @(
+                [Request]::SensorTypes(40) # Get initial target from wildcard
+            )
+
+            { $device | New-SensorParameters -RawType snmplibrary -qt *potato* } | Should Throw "Could not find a query target matching the wildcard expression '*potato*'. Please specify one of the following parameters: 'APC UPS.oidlib',"
+        }
+
+        It "throws when a sensor query target wildcard is ambiguous" {
+            SetCustomAddressValidatorResponse "SensorQueryTargetValidatorResponse" @(
+                [Request]::SensorTypes(40) # Get initial target from wildcard
+            )
+
+            { $device | New-SensorParameters -RawType snmplibrary -qt *apc* } | Should Throw "Query target wildcard '*apc*' is ambiguous between the following parameters: 'APC UPS.oidlib', 'APCSensorstationlib.oidlib'. Please specify a more specific identifier."
+        }
+
+        It "throws when a sensor query target is invalid" {
+            SetCustomAddressValidatorResponse "SensorQueryTargetValidatorResponse" @(
+                [Request]::SensorTypes(40) # Get initial target from wildcard
+            )
+
+            { $device | New-SensorParameters -RawType snmplibrary -qt potato } | Should Throw "Query target 'potato' is not a valid target for sensor type 'snmplibrary' on device ID 40. Please specify one of the following targets: 'APC UPS.oidlib',"
+        }
+
+        It "throws when target is not required" {
+            SetCustomAddressValidatorResponse "SensorQueryTargetValidatorResponse" @(
+                [Request]::SensorTypes(40)
+            )
+
+            { $device | New-SensorParameters -RawType ptfadsreplfailurexml -qt potato } | Should Throw "Cannot specify query target 'potato' on sensor type 'ptfadsreplfailurexml': type does not support query targets."
+        }
+
+        It "throws when target is missing" {
+            SetCustomAddressValidatorResponse "SensorQueryTargetValidatorResponse" @(
+                [Request]::SensorTypes(40)
+            )
+
+            { $device | New-SensorParameters -RawType snmplibrary } | Should Throw "Failed to process query for sensor type 'snmplibrary': a sensor query target is required, however none was specified. Please specify one of the following targets: 'APC UPS.oidlib',"
+        }
+
+        It "parses a set of sensor query target parameters" {
+            SetCustomAddressValidatorResponse "SensorQueryTargetParametersValidatorResponse" @(
+                [Request]::SensorTypes(40)
+                [Request]::BeginAddSensorQuery(40, "ptfadsreplfailurexml")
+                [Request]::ContinueAddSensorQuery(2055, 7, "database_=XE&sid_type_=0&prefix_=0")
+                [Request]::AddSensorProgress(40, 7)
+                [Request]::EndAddSensorQuery(40, 7)
+            )
+
+            $device | New-SensorParameters -RawType ptfadsreplfailurexml -qp @{
+                database = "XE"
+                sid_type = 0
+                prefix = 0
+            }
+        }
+
+        It "throws when sensor query target parameters are not specified" {
+
+            SetCustomAddressValidatorResponse "SensorQueryTargetParametersValidatorResponse" @(
+                [Request]::SensorTypes(40) # Get initial target from wildcard
+
+                [Request]::SensorTypes(40)
+            )
+
+            { $device | New-SensorParameters -RawType ptfadsreplfailurexml -qt *ups* } | Should Throw "Cannot specify query target '*ups*' on sensor type 'ptfadsreplfailurexml': type does not support query targets."
+        }
+
+        It "throws when a sensor query target parameter is missing" {
+            SetCustomAddressValidatorResponse "SensorQueryTargetParametersValidatorResponse" @(
+                [Request]::SensorTypes(40)
+                [Request]::BeginAddSensorQuery(40, "ptfadsreplfailurexml")
+            )
+
+            { $device | New-SensorParameters -RawType ptfadsreplfailurexml } | Should Throw "Failed to process request for sensor type 'oracletablespace': sensor query target parameters are required, however none were specified. Please retry the request specifying the parameters 'database_',"
         }
     }
 }

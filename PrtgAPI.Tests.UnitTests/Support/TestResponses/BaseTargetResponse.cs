@@ -27,6 +27,9 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
                 case nameof(HtmlFunction.ObjectData):
                     return new BasicResponse(GetResponseText());
 
+                case nameof(JsonFunction.SensorTypes):
+                    return new SensorTypeResponse();
+
                 default:
                     throw GetUnknownFunctionException(function);
             }

@@ -132,6 +132,7 @@
     <None Include="PowerShell\ObjectManipulation\Clear-PrtgCache.Tests.ps1" />
     <None Include="PowerShell\ObjectManipulation\Clone-Object.Tests.ps1" />
     <None Include="PowerShell\Infrastructure\CodeGeneration.Tests.ps1" />
+    <None Include="PowerShell\ObjectManipulation\New-SensorParameters.Tests.ps1" />
     <None Include="PowerShell\ObjectManipulation\Set-NotificationTriggerProperty.Tests.ps1" />
     <None Include="PowerShell\ObjectData\Get-Channel.Tests.ps1" />
     <None Include="PowerShell\Infrastructure\Connect-PrtgServer.Tests.ps1" />

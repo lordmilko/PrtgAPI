@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace PrtgAPI.Utilities
 {
-    static class DictionaryExtensions
+    internal static class DictionaryExtensions
     {
-        public static bool TryGetValue<TKey, TValue>(this Dictionary<TKey, TValue> dictionary, TKey key, out TValue value, bool ignoreCase, bool trimName = false)
+        internal static bool TryGetValue<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, out TValue value, bool ignoreCase, bool trimName = false)
         {
             if (ignoreCase)
             {
@@ -15,19 +14,15 @@ namespace PrtgAPI.Utilities
                 if (trimName)
                     keyStr = keyStr.TrimEnd('_');
 
-                var val = dictionary.Where(
-                    k =>
-                    {
-                        var kStr = trimName ? k.Key.ToString().TrimEnd('_') : k.Key.ToString();
-
-                        return string.Equals(kStr, keyStr,
-                            StringComparison.InvariantCultureIgnoreCase);
-                    }).Select(v => v.Value).FirstOrDefault();
-
-                if (val != null)
+                foreach (var kv in dictionary)
                 {
-                    value = val;
-                    return true;
+                    var kStr = trimName ? kv.Key.ToString().TrimEnd('_') : kv.Key.ToString();
+
+                    if (string.Equals(kStr, keyStr, StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        value = kv.Value;
+                        return true;
+                    }
                 }
 
                 value = default(TValue);

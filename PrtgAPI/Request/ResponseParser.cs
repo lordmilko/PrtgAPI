@@ -444,12 +444,73 @@ namespace PrtgAPI.Request
         #endregion
         #region Sensor Targets
 
-        internal static PrtgResponse GetSensorTargetTmpId(HttpResponseMessage message)
+        internal static ContinueAddSensorQueryParameters GetProcessSensorQueryParameters(string content, string sensorType, SensorMultiQueryTargetParameters queryParameters)
         {
-            var id = Regex.Replace(message.RequestMessage.RequestUri.ToString(), "(.+)(tmpid=)(.+)", "$3");
+            //We didn't automatically redirect to addsensor3.htm, indicating that we are a sensor type
+            //like Oracle Tablespace that wants to prefill some information prior to loading addsensor4.htm.
+            //Ignore this information request; these fields will automatically be included in our dynamic sensor parameters (if applicable)
 
-            return id;
+            var dictionary = HtmlParser.Default.GetDictionary(content);
+            
+            var htmlParser = new HtmlParser
+            {
+                StandardNameRegex = "(.+?name=\")(.+?_*)(\".+)"
+            };
+
+            var excluded = new[] { "id", "tmpid" };
+
+            var dict = htmlParser.GetDictionary(content);
+
+            string tmpIdStr;
+            int tmpId;
+
+            if (dict.TryGetValue("tmpid", out tmpIdStr))
+                tmpId = Convert.ToInt32(tmpIdStr);
+            else
+                return null;
+
+            var deviceId = Convert.ToInt32(dict["id"]);
+
+            dict = dict.Where(kv => !excluded.Contains(kv.Key)).ToDictionary(i => i.Key, i => i.Value);
+
+            if (queryParameters?.Parameters == null)
+            {
+                var str = string.Join(", ", dict.Select(v => $"'{v.Key}'"));
+
+                throw new InvalidOperationException($"Failed to process request for sensor type '{sensorType}': sensor query target parameters are required, however none were specified. Please retry the request specifying the parameters {str}.");
+            }
+
+            var missing = new List<string>();
+
+            foreach (var prop in dict.ToDictionary(i => i.Key, i => i.Value))
+            {
+                object v;
+
+                //Only trim name if a trimmed version of this parameter doesn't exist
+                var flexibleName = !dict.ContainsKey(prop.Key.ToLower().TrimEnd('_')); //todo: unit test having a trimmed version conflicting but we specified UPPERCASE_ non-trimmed
+
+                if (queryParameters.Parameters.TryGetValue(flexibleName ? prop.Key : prop.Key.ToLower(), out v, flexibleName, flexibleName))
+                {
+                    if (v is ISerializable)
+                        dict[prop.Key] = ((ISerializable) v).GetSerializedFormat();
+                    else
+                        dict[prop.Key] = v?.ToString();
+                }
+                else
+                    missing.Add(prop.Key);
+            }
+
+            if (missing.Count > 0)
+            {
+                var plural = "parameter".Plural(missing.Count);
+
+                throw new InvalidOperationException($"Failed to process request for sensor type '{sensorType}': sensor query target parameters did not include mandatory {plural} {missing.ToQuotedList()}.");
+            }
+
+            return new ContinueAddSensorQueryParameters(deviceId, tmpId, dict);
         }
+
+        internal static PrtgResponse GetSensorTargetTmpId(HttpResponseMessage message) => Regex.Replace(message.RequestMessage.RequestUri.ToString(), "(.+tmpid=)(\\d+)(.*)", "$2");
 
         internal static void ValidateAddSensorProgressResult(AddSensorProgress p, bool addFull)
         {
@@ -472,7 +533,7 @@ namespace PrtgAPI.Request
                     throw new PrtgRequestException($"An exception occurred while trying to {action}: {message.EnsurePeriod()}");
                 }
 
-                throw new PrtgRequestException($"An unspecified error occurred while trying to {action}. Specified sensor type may not be valid on this device. Check the Device 'Host' is still valid or try adding targets with the PRTG UI.");
+                throw new PrtgRequestException($"An unspecified error occurred while trying to {action}. Specified sensor type may not be valid on this device, or sensor query target parameters may be incorrect. Check the Device 'Host' is still valid or try adding sensor with the PRTG UI.");
             }
 
             if (addFull && p.Percent == -1)

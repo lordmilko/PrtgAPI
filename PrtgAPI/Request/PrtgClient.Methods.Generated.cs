@@ -2744,11 +2744,12 @@ namespace PrtgAPI
         /// to be added before interrogating the target device.</param>
         /// <param name="progressCallback">A callback function used to monitor the progress of the request. If this function returns false, the request is aborted and this method returns null.</param>
         /// <param name="timeout">Duration (in seconds) to wait for sensor parameters to resolve.</param>
+        /// <param name="queryParameters">A <see cref="SensorQueryTarget"/>, <see cref="SensorQueryTargetParameters"/> or <see cref="SensorMultiQueryTargetParameters"/> value specifying the parameters must be known prior to interrogating a sensor's dynamic parameters (such as the SNMP Library file to use or IPMI UserName and Password).</param>
         /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="TimeoutException">Sensor parameters failed to resolve within the specified timespan.</exception>
         /// <returns>A dynamic set of sensor parameters that store the the parameters required to create a sensor of a specified type.</returns>
-        public DynamicSensorParameters GetDynamicSensorParameters(Either<Device, int> deviceOrId, string sensorType, Func<int, bool> progressCallback = null, int timeout = 60, CancellationToken token = default(CancellationToken)) =>
-            new DynamicSensorParameters(GetAddSensorQueryResponse(deviceOrId, sensorType, progressCallback, timeout, token), sensorType);
+        public DynamicSensorParameters GetDynamicSensorParameters(Either<Device, int> deviceOrId, string sensorType, Func<int, bool> progressCallback = null, int timeout = 60, ISensorQueryTargetParameters queryParameters = null, CancellationToken token = default(CancellationToken)) =>
+            new DynamicSensorParameters(GetAddSensorQueryResponse(deviceOrId, sensorType, progressCallback, timeout, queryParameters, token), sensorType);
 
         /// <summary>
         /// Asynchronously creates a set of dynamic sensor parameters for creating a new sensor of a specified type.
@@ -2759,11 +2760,12 @@ namespace PrtgAPI
         /// to be added before interrogating the target device.</param>
         /// <param name="progressCallback">A callback function used to monitor the progress of the request. If this function returns false, the request is aborted and this method returns null.</param>
         /// <param name="timeout">Duration (in seconds) to wait for sensor parameters to resolve.</param>
+        /// <param name="queryParameters">A <see cref="SensorQueryTarget"/>, <see cref="SensorQueryTargetParameters"/> or <see cref="SensorMultiQueryTargetParameters"/> value specifying the parameters must be known prior to interrogating a sensor's dynamic parameters (such as the SNMP Library file to use or IPMI UserName and Password).</param>
         /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="TimeoutException">Sensor parameters failed to resolve within the specified timespan.</exception>
         /// <returns>A dynamic set of sensor parameters that store the the parameters required to create a sensor of a specified type.</returns>
-        public async Task<DynamicSensorParameters> GetDynamicSensorParametersAsync(Either<Device, int> deviceOrId, string sensorType, Func<int, bool> progressCallback = null, int timeout = 60, CancellationToken token = default(CancellationToken)) =>
-            new DynamicSensorParameters(await GetAddSensorQueryResponseAsync(deviceOrId, sensorType, progressCallback, timeout, token).ConfigureAwait(false), sensorType);
+        public async Task<DynamicSensorParameters> GetDynamicSensorParametersAsync(Either<Device, int> deviceOrId, string sensorType, Func<int, bool> progressCallback = null, int timeout = 60, ISensorQueryTargetParameters queryParameters = null, CancellationToken token = default(CancellationToken)) =>
+            new DynamicSensorParameters(await GetAddSensorQueryResponseAsync(deviceOrId, sensorType, progressCallback, timeout, queryParameters, token).ConfigureAwait(false), sensorType);
 
         /// <summary>
         /// Automatically creates sensors under an object based on the object's (or it's children's) device type.

@@ -419,12 +419,13 @@ for(int i = 0; i < 2; i++)
         /*
          * Resolving sensor targets is a four step process, accomplished by executing three requests against PRTG:
          *
-         * | Step | Required              | Page                     | Description                                         |
-         * | ---- | --------------------- | ------------------------ | --------------------------------------------------- |
-         * |  1   | SensorType, Device ID | addsensor2.htm           | Request a tmpid for creating a sensor               |
-         * |  2   |                       | addsensor3.htm           | Response containing the tmpid requested in step 1   |
-         * |  3   | tmpid, Cookie         | getaddsensorprogress.htm | Wait for sensor targets to be retrieved             |
-         * |  4   | tmpid, Cookie         | addsensor4.htm           | Scrape the contents of the new sensor creation page |
+         * | Step | Required                              | Page                     | Description                                         |
+         * | ---- | ------------------------------------- | ------------------------ | --------------------------------------------------- |
+         * |  1   | SensorType, Device ID                 | addsensor2.htm           | Request a tmpid for creating a sensor               |
+         * |  2a  |                                       | addsensor3.htm           | Response containing the tmpid requested in step 1   |
+         * |  2b  | Device ID, TmpID, Query Target Params | addsensor3.htm           | Response requesting Query Target Parameters         |
+         * |  3   | tmpid, Cookie                         | getaddsensorprogress.htm | Wait for sensor targets to be retrieved             |
+         * |  4   | tmpid, Cookie                         | addsensor4.htm           | Scrape the contents of the new sensor creation page |
          */
 
 <#
@@ -439,12 +440,13 @@ for(int i = 0; i < 2; i++)
         /// <param name="sensorType">Type of sensor to retrieve sensor targets for.</param>
         /// <param name="progressCallback">A callback function used to monitor the progress of the request. If this function returns false, the request is aborted and this method returns null.</param>
         /// <param name="timeout">Duration (in seconds) to wait for sensor targets to resolve.</param>
+        /// <param name="queryParameters">A <see cref="SensorQueryTarget"/>, <see cref="SensorQueryTargetParameters"/> or <see cref="SensorMultiQueryTargetParameters"/> value specifying the parameters must be known prior to interrogating a sensor's dynamic parameters (such as the SNMP Library file to use or IPMI UserName and Password).</param>
         /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <param name="parser">Transforms the result of <see cref="HtmlFunction.AddSensor4"/> to instances of type <typeparamref name="T"/>.</param>
         /// <returns>A list of targets that were extracted from PRTG.</returns>
-        internal <#= GetSignature("ResolveSensorTargets", "List<T>", i) #><T>(Either<Device, int> deviceOrId, SensorType sensorType, Func<int, bool> progressCallback, int timeout, CancellationToken token, Func<string, List<T>> parser)
+        internal <#= GetSignature("ResolveSensorTargets", "List<T>", i) #><T>(Either<Device, int> deviceOrId, SensorType sensorType, Func<int, bool> progressCallback, int timeout, ISensorQueryTargetParameters queryParameters, CancellationToken token, Func<string, List<T>> parser)
         {
-            var parameters = new BeginAddSensorQueryParameters(deviceOrId, sensorType);
+            var parameters = <#= CallFunction("ValidateAddSensorQueryParameters", "new BeginAddSensorQueryParameters(deviceOrId, sensorType, queryParameters)", i) #>;
 
             return <#= CallFunction("ResolveSensorTargets", "deviceOrId, parameters, progressCallback, timeout, token, parser", i) #>;
         }
@@ -457,12 +459,13 @@ for(int i = 0; i < 2; i++)
         /// <param name="sensorType">Type of sensor to retrieve sensor targets for.</param>
         /// <param name="progressCallback">A callback function used to monitor the progress of the request. If this function returns false, the request is aborted and this method returns null.</param>
         /// <param name="timeout">Duration (in seconds) to wait for sensor targets to resolve.</param>
+        /// <param name="queryParameters">A <see cref="SensorQueryTarget"/>, <see cref="SensorQueryTargetParameters"/> or <see cref="SensorMultiQueryTargetParameters"/> value specifying the parameters must be known prior to interrogating a sensor's dynamic parameters (such as the SNMP Library file to use or IPMI UserName and Password).</param>
         /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <param name="parser">Transforms the result of <see cref="HtmlFunction.AddSensor4"/> to instances of type <typeparamref name="T"/>.</param>
         /// <returns>A list of targets that were extracted from PRTG.</returns>
-        internal <#= GetSignature("ResolveSensorTargets", "List<T>", i) #><T>(Either<Device, int> deviceOrId, string sensorType, Func<int, bool> progressCallback, int timeout, CancellationToken token, Func<string, List<T>> parser)
+        internal <#= GetSignature("ResolveSensorTargets", "List<T>", i) #><T>(Either<Device, int> deviceOrId, string sensorType, Func<int, bool> progressCallback, int timeout, ISensorQueryTargetParameters queryParameters, CancellationToken token, Func<string, List<T>> parser)
         {
-            var parameters = new BeginAddSensorQueryParameters(deviceOrId, sensorType);
+            var parameters = <#= CallFunction("ValidateAddSensorQueryParameters", "new BeginAddSensorQueryParameters(deviceOrId, sensorType, queryParameters)", i) #>; //todo: make them all use the async one. they should both have the same count of usages in the end
 
             return <#= CallFunction("ResolveSensorTargets", "deviceOrId, parameters, progressCallback, timeout, token, parser", i) #>;
         }
@@ -506,11 +509,12 @@ for(int i = 0; i < 2; i++)
         /// <param name="sensorType">Type of sensor to retrieve parameters for.</param>
         /// <param name="progressCallback">A callback function used to monitor the progress of the request. If this function returns false, the request is aborted and this method returns null.</param>
         /// <param name="timeout">Duration (in seconds) to wait for sensor targets to resolve.</param>
+        /// <param name="queryParameters">A <see cref="SensorQueryTarget"/>, <see cref="SensorQueryTargetParameters"/> or <see cref="SensorMultiQueryTargetParameters"/> value specifying the parameters must be known prior to interrogating a sensor's dynamic parameters (such as the SNMP Library file to use or IPMI UserName and Password).</param>
         /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>The contents of the <see cref="HtmlFunction.AddSensor4"/> page.</returns>
-        private <#= GetSignature("GetAddSensorQueryResponse", "string", i) #>(Either<Device, int> deviceOrId, string sensorType, Func<int, bool> progressCallback, int timeout, CancellationToken token)
+        private <#= GetSignature("GetAddSensorQueryResponse", "string", i) #>(Either<Device, int> deviceOrId, string sensorType, Func<int, bool> progressCallback, int timeout, ISensorQueryTargetParameters queryParameters, CancellationToken token)
         {
-            var parameters = new BeginAddSensorQueryParameters(deviceOrId, sensorType);
+            var parameters = <#= CallFunction("ValidateAddSensorQueryParameters", "new BeginAddSensorQueryParameters(deviceOrId, sensorType, queryParameters)", i) #>; //todo: make them all use the async one. they should both have the same count of usages in the end
 
             return <#= CallFunction("GetSensorTargetsResponse", "deviceOrId, parameters, progressCallback, timeout, token", i) #>;
         }
@@ -538,7 +542,7 @@ for(int i = 0; i < 2; i++)
 
         internal <#= GetSignature("GetAddSensorTmpId", "int?", i) #>(BeginAddSensorQueryParameters parameters, CancellationToken token)
         {
-            <#= DeclareLightFunc1("getSensorTargetTmpId", "HttpResponseMessage", "PrtgResponse", "ResponseParser.GetSensorTargetTmpId", i) #>;
+            <#= DeclareFunc("getSensorTargetTmpId", "m", "HttpResponseMessage", "GetSensorTargetTmpId", "m, parameters.QueryParameters, token", "PrtgResponse", i) #>;
 
             //Execute the request against addsensor2.htm to retrieve our tmpid
             var tmpIdStr = (<#= CallFunction("RequestEngine.ExecuteRequest", "parameters, getSensorTargetTmpId, token", i) #>).StringValue;
@@ -549,6 +553,46 @@ for(int i = 0; i < 2; i++)
                 return tmpId;
 
             return null;
+        }
+
+        internal <#= GetSignature("GetSensorTargetTmpId", "PrtgResponse", i) #>(HttpResponseMessage message, SensorMultiQueryTargetParameters queryParameters, CancellationToken token)
+        {
+            var uri = message.RequestMessage.RequestUri.ToString();
+
+            if (uri.Contains(CommandFunction.AddSensor3.GetDescription()))
+                return ResponseParser.GetSensorTargetTmpId(message);
+            {
+                var content = message.Content.ReadAsStringAsync().Result;
+
+                var components = UrlUtilities.CrackUrl(uri);
+
+                try
+                {
+                    RequestEngine.ValidateHttpResponse(message, content);
+                }
+                catch (PrtgRequestException ex)
+                {
+                    var exceptionMessage = ex.Message;
+
+                    var str = "PRTG was unable to complete the request. ";
+
+                    if (exceptionMessage.StartsWith(str))
+                        exceptionMessage = exceptionMessage.Substring(str.Length);
+
+                    throw new PrtgRequestException($"Failed to process query for sensor type '{components["sensortype"]}': you may not have sufficient permissions on the specified object. {exceptionMessage.EnsurePeriod()}");
+                }
+
+                var parameters = ResponseParser.GetProcessSensorQueryParameters(content, components["sensortype"], queryParameters);
+
+                //If we couldn't find our tmpid (e.g. because we're a read-only user) return null for the tmpid and let
+                //the calling method handle it
+                if (parameters == null)
+                    return null;
+
+                <#= DeclareLightFunc1("getSensorTargetTmpId", "HttpResponseMessage", "PrtgResponse", "ResponseParser.GetSensorTargetTmpId", i) #>;
+
+                return <#= CallFunction("RequestEngine.ExecuteRequest", "parameters, getSensorTargetTmpId, token", i) #>;
+            }
         }
 
 <#

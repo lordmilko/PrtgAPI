@@ -283,6 +283,248 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             }, new DefaultPSObjectUtilities());
         }
 
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void DynamicSensorParameters_SensorQueryTarget_ParsesTarget()
+        {
+            var client = Initialize_Client(new SensorQueryTargetValidatorResponse(new[]
+            {
+                UnitRequest.SensorTypes(1001), //Get initial target
+
+                UnitRequest.SensorTypes(1001), //Verify specified target
+                UnitRequest.BeginAddSensorQuery(1001, "snmplibrary_nolist", "APC+UPS.oidlib"),
+                UnitRequest.AddSensorProgress(1001, 2),
+                UnitRequest.EndAddSensorQuery(1001, 2)
+            }));
+
+            var target = client.GetSensorTypes(1001).First(t => t.Id == "snmplibrary").QueryTargets.First();
+
+            client.GetDynamicSensorParameters(1001, "snmplibrary", queryParameters: target);
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void DynamicSensorParameters_SensorQueryTarget_Throws_WhenTargetIsInvalid()
+        {
+            var client = Initialize_Client(new SensorQueryTargetValidatorResponse(new[]
+            {
+                UnitRequest.SensorTypes(1001)
+            }));
+
+            AssertEx.Throws<InvalidOperationException>(
+                () => client.GetDynamicSensorParameters(1001, "snmplibrary", queryParameters: (SensorQueryTarget)"test"),
+                "Query target 'test' is not a valid target for sensor type 'snmplibrary' on device ID 1001. Please specify one of the following targets: 'APC UPS.oidlib',"
+            );
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void DynamicSensorParameters_SensorQueryTarget_Throws_WhenTargetIsNotRequired()
+        {
+            var client = Initialize_Client(new SensorQueryTargetValidatorResponse(new[]
+            {
+                UnitRequest.SensorTypes(1001)
+            }));
+
+            AssertEx.Throws<InvalidOperationException>(
+                () => client.GetDynamicSensorParameters(1001, "ptfadsreplfailurexml", queryParameters: (SensorQueryTarget)"test"),
+                "Cannot specify query target 'test' on sensor type 'ptfadsreplfailurexml': type does not support query targets."
+            );
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void DynamicSensorParameters_SensorQueryTarget_Throws_WhenTargetMissing()
+        {
+            var client = Initialize_Client(new SensorQueryTargetValidatorResponse(new[]
+            {
+                UnitRequest.SensorTypes(1001)
+            }));
+
+            AssertEx.Throws<InvalidOperationException>(
+                () => client.GetDynamicSensorParameters(1001, "snmplibrary"),
+                "Failed to process query for sensor type 'snmplibrary': a sensor query target is required, however none was specified. Please specify one of the following targets: 'APC UPS.oidlib',"
+            );
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void DynamicSensorParameters_SensorQueryTarget_Throws_WhenTypeIsInvalid()
+        {
+            AssertEx.Throws<InvalidOperationException>(
+                () => client.GetDynamicSensorParameters(1001, "potato", queryParameters: (SensorQueryTarget)"test"),
+                "Failed to validate query target 'test' on sensor type 'potato': sensor type 'potato' is not valid."
+            );
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void DynamicSensorParameters_SensorQueryTarget_Throws_WhenTypeIsInvalid_NoTargetSpecified()
+        {
+            AssertEx.Throws<InvalidOperationException>(
+                () => client.GetDynamicSensorParameters(1001, "potato"),
+                "Cannot process query for sensor type 'potato': sensor type 'potato' is not valid."
+            );
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void DynamicSensorParameters_SensorQueryParameters_ParsesParameters()
+        {
+            var client = Initialize_Client(new SensorQueryTargetParametersValidatorResponse(new[]
+            {
+                UnitRequest.SensorTypes(1001),
+                UnitRequest.BeginAddSensorQuery(1001, "ptfadsreplfailurexml"),
+                UnitRequest.ContinueAddSensorQuery(2055, 7, "database_=XE&sid_type_=0&prefix_=0"),
+                UnitRequest.AddSensorProgress(1001, 7),
+                UnitRequest.EndAddSensorQuery(1001, 7)
+            }));
+
+            client.GetDynamicSensorParameters(1001, "ptfadsreplfailurexml", queryParameters: new SensorQueryTargetParameters
+            {
+                ["database"] = "XE",
+                ["sid_type"] = 0,
+                ["prefix"] = 0
+            });
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void DynamicSensorParameters_SensorQueryParameters_Throws_WhenParametersAreMissing()
+        {
+            var client = Initialize_Client(new SensorQueryTargetParametersValidatorResponse(new[]
+            {
+                UnitRequest.SensorTypes(1001),
+                UnitRequest.BeginAddSensorQuery(1001, "ptfadsreplfailurexml")
+            }));
+
+            AssertEx.Throws<InvalidOperationException>(
+                () => client.GetDynamicSensorParameters(1001, "ptfadsreplfailurexml", queryParameters: new SensorQueryTargetParameters()),
+                "Failed to process request for sensor type 'oracletablespace': sensor query target parameters did not include mandatory parameters 'database_',"
+            );
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public async Task DynamicSensorParameters_SensorQueryTarget_ParsesTargetAsync()
+        {
+            var client = Initialize_Client(new SensorQueryTargetValidatorResponse(new[]
+            {
+                UnitRequest.SensorTypes(1001), //Get initial target
+
+                UnitRequest.SensorTypes(1001), //Verify specified target
+                UnitRequest.BeginAddSensorQuery(1001, "snmplibrary_nolist", "APC+UPS.oidlib"),
+                UnitRequest.AddSensorProgress(1001, 2),
+                UnitRequest.EndAddSensorQuery(1001, 2)
+            }));
+
+            var target = (await client.GetSensorTypesAsync(1001)).First(t => t.Id == "snmplibrary").QueryTargets.First();
+
+            await client.GetDynamicSensorParametersAsync(1001, "snmplibrary", queryParameters: target);
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public async Task DynamicSensorParameters_SensorQueryTarget_Throws_WhenTargetIsInvalidAsync()
+        {
+            var client = Initialize_Client(new SensorQueryTargetValidatorResponse(new[]
+            {
+                UnitRequest.SensorTypes(1001)
+            }));
+
+            await AssertEx.ThrowsAsync<InvalidOperationException>(
+                async () => await client.GetDynamicSensorParametersAsync(1001, "snmplibrary", queryParameters: (SensorQueryTarget)"test"),
+                "Query target 'test' is not a valid target for sensor type 'snmplibrary' on device ID 1001. Please specify one of the following targets: 'APC UPS.oidlib',"
+            );
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public async Task DynamicSensorParameters_SensorQueryTarget_Throws_WhenTargetIsNotRequiredAsync()
+        {
+            var client = Initialize_Client(new SensorQueryTargetValidatorResponse(new[]
+            {
+                UnitRequest.SensorTypes(1001)
+            }));
+
+            await AssertEx.ThrowsAsync<InvalidOperationException>(
+                async () => await client.GetDynamicSensorParametersAsync(1001, "ptfadsreplfailurexml", queryParameters: (SensorQueryTarget)"test"),
+                "Cannot specify query target 'test' on sensor type 'ptfadsreplfailurexml': type does not support query targets."
+            );
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public async Task DynamicSensorParameters_SensorQueryTarget_Throws_WhenTargetMissingAsync()
+        {
+            var client = Initialize_Client(new SensorQueryTargetValidatorResponse(new[]
+            {
+                UnitRequest.SensorTypes(1001)
+            }));
+
+            await AssertEx.ThrowsAsync<InvalidOperationException>(
+                async () => await client.GetDynamicSensorParametersAsync(1001, "snmplibrary"),
+                "Failed to process query for sensor type 'snmplibrary': a sensor query target is required, however none was specified. Please specify one of the following targets: 'APC UPS.oidlib',"
+            );
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public async Task DynamicSensorParameters_SensorQueryTarget_Throws_WhenTypeIsInvalidAsync()
+        {
+            await AssertEx.ThrowsAsync<InvalidOperationException>(
+                async () => await client.GetDynamicSensorParametersAsync(1001, "potato", queryParameters: (SensorQueryTarget)"test"),
+                "Failed to validate query target 'test' on sensor type 'potato': sensor type 'potato' is not valid."
+            );
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public async Task DynamicSensorParameters_SensorQueryTarget_Throws_WhenTypeIsInvalid_NoTargetSpecifiedAsync()
+        {
+            await AssertEx.ThrowsAsync<InvalidOperationException>(
+                async () => await client.GetDynamicSensorParametersAsync(1001, "potato"),
+                "Cannot process query for sensor type 'potato': sensor type 'potato' is not valid."
+            );
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public async Task DynamicSensorParameters_SensorQueryParameters_ParsesParametersAsync()
+        {
+            var client = Initialize_Client(new SensorQueryTargetParametersValidatorResponse(new[]
+            {
+                UnitRequest.SensorTypes(1001),
+                UnitRequest.BeginAddSensorQuery(1001, "ptfadsreplfailurexml"),
+                UnitRequest.ContinueAddSensorQuery(2055, 7, "database_=XE&sid_type_=0&prefix_=0"),
+                UnitRequest.AddSensorProgress(1001, 7),
+                UnitRequest.EndAddSensorQuery(1001, 7)
+            }));
+
+            await client.GetDynamicSensorParametersAsync(1001, "ptfadsreplfailurexml", queryParameters: new SensorQueryTargetParameters
+            {
+                ["database"] = "XE",
+                ["sid_type"] = 0,
+                ["prefix"] = 0
+            });
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public async Task DynamicSensorParameters_SensorQueryParameters_Throws_WhenParametersAreMissingAsync()
+        {
+            var client = Initialize_Client(new SensorQueryTargetParametersValidatorResponse(new[]
+            {
+                UnitRequest.SensorTypes(1001),
+                UnitRequest.BeginAddSensorQuery(1001, "ptfadsreplfailurexml")
+            }));
+
+            await AssertEx.ThrowsAsync<InvalidOperationException>(
+                async () => await client.GetDynamicSensorParametersAsync(1001, "ptfadsreplfailurexml", queryParameters: new SensorQueryTargetParameters()),
+                "Failed to process request for sensor type 'oracletablespace': sensor query target parameters did not include mandatory parameters 'database_',"
+            );
+        }
+
         private PrtgClient client => Initialize_Client(new ExeFileTargetResponse());
     }
 }

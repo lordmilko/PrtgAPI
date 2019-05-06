@@ -285,6 +285,66 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             Assert.AreEqual("Volume IO _Total1", sensors[1].Name);
         }
 
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void AddSensor_SensorQueryTarget_IgnoresTarget()
+        {
+            var client = Initialize_Client(new SensorQueryTargetValidatorResponse(new[]
+            {
+                UnitRequest.Status(),
+                UnitRequest.BeginAddSensorQuery(1001, "snmplibrary"),
+                UnitRequest.AddSensor("name_=test&priority_=3&inherittriggers_=1&intervalgroup=1&interval_=60%7C60+seconds&errorintervalsdown_=1&sensortype=snmplibrary&id=1001")
+            }));
+
+            var parameters = new RawSensorParameters("test", "snmplibrary");
+
+            client.AddSensor(1001, parameters, false);
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void AddSensor_SensorQueryParameters_SynthesizesParameters()
+        {
+            var client = Initialize_Client(new SensorQueryTargetParametersValidatorResponse(new[]
+            {
+                UnitRequest.Status(),
+                UnitRequest.BeginAddSensorQuery(1001, "oracletablespace"),
+                UnitRequest.ContinueAddSensorQuery(2055, 7, "database_=XE&sid_type_=0&prefix_=0"), //Response hardcodes 2055, however normally this will in fact match
+                UnitRequest.AddSensor("name_=test&priority_=3&inherittriggers_=1&intervalgroup=1&interval_=60%7C60+seconds&errorintervalsdown_=1&database=XE&sid_type=0&prefix=0&sensortype=oracletablespace&id=1001")
+            }));
+
+            var parameters = new RawSensorParameters("test", "oracletablespace")
+            {
+                ["database"] = "XE",
+                ["sid_type"] = 0,
+                ["prefix"] = 0
+            };
+
+            client.AddSensor(1001, parameters, false);
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void AddSensor_SensorQueryParameters_Throws_WhenSynthesizedParametersAreMissing()
+        {
+            var client = Initialize_Client(new SensorQueryTargetParametersValidatorResponse(new[]
+            {
+                UnitRequest.Status(),
+                UnitRequest.BeginAddSensorQuery(1001, "oracletablespace"),
+            }));
+
+            var parameters = new RawSensorParameters("test", "oracletablespace")
+            {
+                ["sid_type"] = 0,
+                ["prefix"] = 0
+            };
+
+            AssertEx.Throws<InvalidOperationException>(
+                () => client.AddSensor(1001, parameters, false),
+                "Failed to process request for sensor type 'oracletablespace': sensor query target parameters did not include mandatory parameter 'database_'."
+            );
+        }
+
         #endregion
         #region AddDevice
 

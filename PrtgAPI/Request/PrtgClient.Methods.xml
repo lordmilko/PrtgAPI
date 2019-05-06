@@ -835,9 +835,10 @@
                     <Parameter name="sensorType" type="string" description="The type of sensor to create sensor paramters for.&lt;para/&gt;\nNote: sensor parameters cannot be created for types that require additional information\nto be added before interrogating the target device."/>
                     <Parameter name="progressCallback" type="Func&lt;int, bool&gt;" default="null" description="A callback function used to monitor the progress of the request. If this function returns false, the request is aborted and this method returns null."/>
                     <Parameter name="timeout" type="int" default="60" description="Duration (in seconds) to wait for sensor parameters to resolve."/>
+                    <Parameter name="queryParameters" type="ISensorQueryTargetParameters" default="null" description="A &lt;see cref=&quot;SensorQueryTarget&quot;/&gt;, &lt;see cref=&quot;SensorQueryTargetParameters&quot;/&gt; or &lt;see cref=&quot;SensorMultiQueryTargetParameters&quot;/&gt; value specifying the parameters must be known prior to interrogating a sensor's dynamic parameters (such as the SNMP Library file to use or IPMI UserName and Password)."/>
 
                     <Body expression="true">
-                        new DynamicSensorParameters(<Call name="GetAddSensorQueryResponse" args="deviceOrId, sensorType, progressCallback, timeout"/>, sensorType)
+                        new DynamicSensorParameters(<Call name="GetAddSensorQueryResponse" args="deviceOrId, sensorType, progressCallback, timeout, queryParameters"/>, sensorType)
                     </Body>
                 </InlineMethodDef>
                 <InlineMethodDef name="AutoDiscover" returns="void" tokenMode="AutomaticNamed">

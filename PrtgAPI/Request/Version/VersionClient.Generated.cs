@@ -66,7 +66,9 @@ namespace PrtgAPI.Request
 
         protected int? GetTmpId(int deviceId, ICommandParameters internalParams, CancellationToken token)
         {
-            var tmpIdParameters = new BeginAddSensorQueryParameters(deviceId, internalParams[Parameter.SensorType].ToString());
+            //Purposely not validating the QueryTarget for addsensor2; when adding the sensor for real we don't really need it, and
+            //current evidence suggestly we can simply just ignore it
+            var tmpIdParameters = new BeginAddSensorQueryParameters(deviceId, internalParams[Parameter.SensorType].ToString(), SynthesizeParameters(internalParams));
             var tmpId = client.GetAddSensorTmpId(tmpIdParameters, token);
 
             if (tmpId == null)
@@ -77,7 +79,9 @@ namespace PrtgAPI.Request
 
         protected async Task<int?> GetTmpIdAsync(int deviceId, ICommandParameters internalParams, CancellationToken token)
         {
-            var tmpIdParameters = new BeginAddSensorQueryParameters(deviceId, internalParams[Parameter.SensorType].ToString());
+            //Purposely not validating the QueryTarget for addsensor2; when adding the sensor for real we don't really need it, and
+            //current evidence suggestly we can simply just ignore it
+            var tmpIdParameters = new BeginAddSensorQueryParameters(deviceId, internalParams[Parameter.SensorType].ToString(), SynthesizeParameters(internalParams));
             var tmpId = await client.GetAddSensorTmpIdAsync(tmpIdParameters, token).ConfigureAwait(false);
 
             if (tmpId == null)

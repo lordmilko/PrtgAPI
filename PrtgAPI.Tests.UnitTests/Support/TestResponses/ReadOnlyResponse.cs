@@ -19,7 +19,7 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
             var func = MultiTypeResponse.GetFunctionEnum(address);
 
             if (func.Equals(CommandFunction.AddSensor2))
-                return string.Empty;
+                return "<div class=\"errormsg\"><p>PRTG Network Monitor has discovered a problem. Your last request could not be processed properly.</p><h3>Error message: Sorry, a read-only user account is not allowed to access this web page.</h3><small style=\"padding:5px;text-align:left\">Url: /controls/addsensor2.htm<br>Params: id=2055&sensortype=exexml&username=prtguser&passhash=***&</small></div>";
 
             var htmlFunc = func as HtmlFunction?;
 

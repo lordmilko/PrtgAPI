@@ -65,6 +65,9 @@ namespace PrtgAPI.Tests.UnitTests.Support
         public static string TriggerTypes(int objectId) =>
             Get($"api/triggers.json?id={objectId}");
 
+        public static string SensorTypes(int id) =>
+            Get($"api/sensortypes.json?id={id}");
+
         public static string Status() =>
             Get("api/getstatus.htm?id=0");
 
@@ -148,18 +151,24 @@ namespace PrtgAPI.Tests.UnitTests.Support
         public static string AddSensor(string url) =>
             Get($"addsensor5.htm?{url}");
 
-        public static string BeginAddSensorQuery(int deviceId, string sensorType) =>
-            Get($"controls/addsensor2.htm?id={deviceId}&sensortype={sensorType}");
+        public static string BeginAddSensorQuery(int deviceId, string sensorType, string preselection = null) =>
+            Get($"controls/addsensor2.htm?id={deviceId}{(preselection != null ? "&preselection_" + sensorType + "=" + preselection : "")}&sensortype={sensorType}");
+
+        public static string ContinueAddSensorQuery(int deviceId, int tmpId, string parameters) =>
+            GetWithCookie($"controls/addsensor3.htm?id={deviceId}&tmpid={tmpId}&{parameters}");
+            
 
         public static string AddSensorProgress(int deviceId, int tmpId, bool step = false) =>
-            $"https://prtg.example.com/api/getaddsensorprogress.htm?id={deviceId}&tmpid={tmpId}{(step ? "&step=3" : string.Empty)}";
+            GetWithCookie($"api/getaddsensorprogress.htm?id={deviceId}&tmpid={tmpId}{(step ? "&step=3" : string.Empty)}");
 
         public static string EndAddSensorQuery(int deviceId, int tmpId) =>
-            $"https://prtg.example.com/addsensor4.htm?id={deviceId}&tmpid={tmpId}";
+            GetWithCookie($"addsensor4.htm?id={deviceId}&tmpid={tmpId}");
 
         public static string EditSettings(string url) =>
             Get($"editsettings?{url}");
 
         public static string Get(string url) => $"https://prtg.example.com/{url}{(url.EndsWith("?") ? "" : "&")}username=username&passhash=12345678";
+
+        public static string GetWithCookie(string url) => $"https://prtg.example.com/{url}";
     }
 }

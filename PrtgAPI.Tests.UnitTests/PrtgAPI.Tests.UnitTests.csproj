@@ -116,6 +116,9 @@
     <Compile Include="Support\TestResponses\InfiniteLogValidatorResponse.cs" />
     <Compile Include="Support\TestResponses\ProgressOwnershipResponse.cs" />
     <Compile Include="Support\TestResponses\ReadOnlyResponse.cs" />
+    <Compile Include="Support\TestResponses\SensorQueryTargetParametersResponse.cs" />
+    <Compile Include="Support\TestResponses\SensorQueryTargetParametersValidatorResponse.cs" />
+    <Compile Include="Support\TestResponses\SensorQueryTargetValidatorResponse.cs" />
     <Compile Include="Support\TestResponses\SystemInfoResponse.cs" />
     <Compile Include="Support\TestResponses\TakeIterator\LogScenarios\ForceStream\TakeFilteredLogsForceStreamScenario.cs" />
     <Compile Include="Support\TestResponses\TakeIterator\LogScenarios\ForceStream\TakeFilteredLogsInsufficientForceStreamScenario.cs" />

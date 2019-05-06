@@ -16,7 +16,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
 
         [TestMethod]
         [TestCategory("IntegrationTest")]
-        public void AddSensor_AddsWithRawParameters()
+        public void Action_AddSensor_AddsWithRawParameters()
         {
             var parameters = new RawSensorParameters("raw c# sensor", "exexml")
             {
@@ -45,7 +45,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
 
         [TestMethod]
         [TestCategory("IntegrationTest")]
-        public void AddSensor_AddsWithDictionaryParameters()
+        public void Action_AddSensor_AddsWithDictionaryParameters()
         {
             var parameters = new RawSensorParameters("raw c# sensor", "exexml")
             {
@@ -69,7 +69,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
 
         [TestMethod]
         [TestCategory("IntegrationTest")]
-        public void AddSensor_AddsWithTypedRawParameters()
+        public void Action_AddSensor_AddsWithTypedRawParameters()
         {
             var parameters = new ExeXmlRawSensorParameters("raw c# sensor", "exexml", "test.ps1")
             {
@@ -130,28 +130,28 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
 
         [TestMethod]
         [TestCategory("IntegrationTest")]
-        public void AddSensor_Throws_AddingToASensor()
+        public void Action_AddSensor_Throws_AddingToASensor()
         {
             AddToInvalidObject(Settings.UpSensor);
         }
 
         [TestMethod]
         [TestCategory("IntegrationTest")]
-        public void AddSensor_Throws_AddingToAGroup()
+        public void Action_AddSensor_Throws_AddingToAGroup()
         {
             AddToInvalidObject(Settings.Group);
         }
 
         [TestMethod]
         [TestCategory("IntegrationTest")]
-        public void AddSensor_Throws_AddingToAProbe()
+        public void Action_AddSensor_Throws_AddingToAProbe()
         {
             AddToInvalidObject(Settings.Probe);
         }
 
         [TestMethod]
         [TestCategory("IntegrationTest")]
-        public void AddSensor_Throws_AddingToANonExistentObject()
+        public void Action_AddSensor_Throws_AddingToANonExistentObject()
         {
             var parameters = new ExeXmlSensorParameters("test.ps1");
 
@@ -173,7 +173,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
 
         [TestMethod]
         [TestCategory("IntegrationTest")]
-        public void AddSensor_ResolvesSingle()
+        public void Action_AddSensor_ResolvesSingle()
         {
             var name = "resolvesSingle";
 
@@ -195,7 +195,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
 
         [TestMethod]
         [TestCategory("IntegrationTest")]
-        public void AddSensor_ResolvesMultiple()
+        public void Action_AddSensor_ResolvesMultiple()
         {
             var services = client.Targets.GetWmiServices(Settings.Device).Where(s => s.Name.Contains("PRTG")).ToList();
 
@@ -224,7 +224,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
 
         [TestMethod]
         [TestCategory("IntegrationTest")]
-        public void AddSensor_DoesntResolve()
+        public void Action_AddSensor_DoesntResolve()
         {
             var name = "doesntResolveSingle";
 
@@ -248,7 +248,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
 
         [TestMethod]
         [TestCategory("IntegrationTest")]
-        public async Task AddSensor_ResolvesAsync()
+        public async Task Action_AddSensor_ResolvesAsync()
         {
             var name = "resolvesSingle";
 
@@ -270,7 +270,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
 
         [TestMethod]
         [TestCategory("IntegrationTest")]
-        public async Task AddSensor_ResolvesMultipleAsync()
+        public async Task Action_AddSensor_ResolvesMultipleAsync()
         {
             var services = (await client.Targets.GetWmiServicesAsync(Settings.Device)).Where(s => s.Name.Contains("PRTG")).ToList();
 
@@ -299,7 +299,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
 
         [TestMethod]
         [TestCategory("IntegrationTest")]
-        public async Task AddSensor_DoesntResolveAsync()
+        public async Task Action_AddSensor_DoesntResolveAsync()
         {
             var name = "doesntResolveSingle";
 
@@ -321,13 +321,195 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
             }
         }
 
+        [TestMethod]
+        [TestCategory("IntegrationTest")]
+        public void Action_AddSensor_AsReadOnlyUser_NoQueryTarget_Throws()
+        {
+            var parameters = new ExeXmlSensorParameters("test.ps1");
+
+            AssertEx.Throws<PrtgRequestException>(
+                () => readOnlyClient.AddSensor(Settings.Device, parameters),
+                "you may not have sufficient permissions on the specified object. The server responded"
+            );
+        }
+
+        [TestMethod]
+        [TestCategory("IntegrationTest")]
+        public void Action_AddSensor_AsReadOnlyUser_WithQueryTarget_Throws()
+        {
+            var parameters = new RawSensorParameters("test", "snmplibrary");
+
+            AssertEx.Throws<PrtgRequestException>(
+                () => readOnlyClient.AddSensor(Settings.Device, parameters),
+                "you may not have sufficient permissions on the specified object. The server responded"
+            );
+        }
+
+        [TestMethod]
+        [TestCategory("IntegrationTest")]
+        public void Action_AddSensor_AsReadOnlyUser_WithQueryTargetParameters_Throws()
+        {
+            var parameters = new RawSensorParameters("test", "oracletablespace");
+
+            AssertEx.Throws<PrtgRequestException>(
+                () => readOnlyClient.AddSensor(Settings.Device, parameters),
+                "you may not have sufficient permissions on the specified object. The server responded"
+            );
+        }
+
+        [TestMethod]
+        [TestCategory("IntegrationTest")]
+        public async Task Action_AddSensor_AsReadOnlyUser_NoQueryTarget_ThrowsAsync()
+        {
+            var parameters = new ExeXmlSensorParameters("test.ps1");
+
+            await AssertEx.ThrowsAsync<PrtgRequestException>(
+                async () => await readOnlyClient.AddSensorAsync(Settings.Device, parameters),
+                "you may not have sufficient permissions on the specified object. The server responded"
+            );
+        }
+
+        [TestMethod]
+        [TestCategory("IntegrationTest")]
+        public async Task Action_AddSensor_AsReadOnlyUser_WithQueryTarget_ThrowsAsync()
+        {
+            var parameters = new RawSensorParameters("test", "snmplibrary");
+
+            await AssertEx.ThrowsAsync<PrtgRequestException>(
+                async () => await readOnlyClient.AddSensorAsync(Settings.Device, parameters),
+                "you may not have sufficient permissions on the specified object. The server responded"
+            );
+        }
+
+        [TestMethod]
+        [TestCategory("IntegrationTest")]
+        public async Task Action_AddSensor_AsReadOnlyUser_WithQueryTargetParameters_ThrowsAsync()
+        {
+            var parameters = new RawSensorParameters("test", "oracletablespace");
+
+            await AssertEx.ThrowsAsync<PrtgRequestException>(
+                async () => await readOnlyClient.AddSensorAsync(Settings.Device, parameters),
+                "you may not have sufficient permissions on the specified object. The server responded"
+            );
+        }
+
+        [TestMethod]
+        [TestCategory("IntegrationTest")]
+        public void Action_AddSensor_SensorQueryTarget_IgnoresTarget()
+        {
+            var parameters = new RawSensorParameters("test", "snmplibrary")
+            {
+                ["library_"] = "C:\\Program Files (x86)\\PRTG Network Monitor\\snmplibs\\Basic Linux Library (UCD-SNMP-MIB).oidlib",
+                ["interfacenumber_"] = 1,
+                ["interfacenumber__check"] = "1.3.6.1.4.1.2021.2.1.100.1|Basic Linux Library (UCD-SNMP-MIB)|Processes: 1|Processes Error Flag|#|0|0|Processes Error Flag|2|1|0|1|A Error flag to indicate trouble with a process. It goes to 1 if there is an error, 0 if no error.|0|0|0|0||1.3.6.1.4.1.2021.2.1.100|prErrorFlag|1.3.6.1.4.1.2021.2||ASN_INTEGER|0|ASN_INTEGER||Basic Linux Library (UCD-SNMP-MIB)|Processes: #[1.3.6.1.4.1.2021.2.1.1]|100|||||||||||||||||||||||||||||||||||",
+                DynamicType = true
+            };
+
+            Sensor sensor = null;
+
+            try
+            {
+                sensor = client.AddSensor(Settings.Device, parameters).First();
+
+                AssertEx.AreEqual("enterprises test", sensor.Name, "Sensor name was not correct");
+            }
+            finally
+            {
+                if (sensor != null)
+                    client.RemoveObject(sensor.Id);
+            }
+        }
+
+        [TestMethod]
+        [TestCategory("IntegrationTest")]
+        public void Action_AddSensor_SensorQueryParameters_SynthesizesParameters()
+        {
+            var parameters = new RawSensorParameters("test", "oracletablespace")
+            {
+                ["database_"] = "XE",
+                ["sid_type_"] = 0,
+                ["prefix_"] = 0,
+                ["tablespace__check"] = "SYSAUX|SYSAUX|",
+                ["tablespace_"] = 1
+            };
+
+            Sensor sensor = null;
+
+            try
+            {
+                sensor = client.AddSensor(Settings.Device, parameters).First();
+
+                AssertEx.AreEqual("SYSAUX", sensor.Name, "Sensor name was not correct");
+            }
+            finally
+            {
+                if (sensor != null)
+                    client.RemoveObject(sensor.Id);
+            }
+        }
+
+        [TestMethod]
+        [TestCategory("IntegrationTest")]
+        public async Task Action_AddSensor_SensorQueryTarget_IgnoresTargetAsync()
+        {
+            var parameters = new RawSensorParameters("test", "snmplibrary")
+            {
+                ["library_"] = "C:\\Program Files (x86)\\PRTG Network Monitor\\snmplibs\\Basic Linux Library (UCD-SNMP-MIB).oidlib",
+                ["interfacenumber_"] = 1,
+                ["interfacenumber__check"] = "1.3.6.1.4.1.2021.2.1.100.1|Basic Linux Library (UCD-SNMP-MIB)|Processes: 1|Processes Error Flag|#|0|0|Processes Error Flag|2|1|0|1|A Error flag to indicate trouble with a process. It goes to 1 if there is an error, 0 if no error.|0|0|0|0||1.3.6.1.4.1.2021.2.1.100|prErrorFlag|1.3.6.1.4.1.2021.2||ASN_INTEGER|0|ASN_INTEGER||Basic Linux Library (UCD-SNMP-MIB)|Processes: #[1.3.6.1.4.1.2021.2.1.1]|100|||||||||||||||||||||||||||||||||||",
+                DynamicType = true
+            };
+
+            Sensor sensor = null;
+
+            try
+            {
+                sensor = (await client.AddSensorAsync(Settings.Device, parameters)).First();
+
+                AssertEx.AreEqual("enterprises test", sensor.Name, "Sensor name was not correct");
+            }
+            finally
+            {
+                if (sensor != null)
+                    await client.RemoveObjectAsync(sensor.Id);
+            }
+        }
+
+        [TestMethod]
+        [TestCategory("IntegrationTest")]
+        public async Task Action_AddSensor_SensorQueryParameters_SynthesizesParametersAsync()
+        {
+            var parameters = new RawSensorParameters("test", "oracletablespace")
+            {
+                ["database_"] = "XE",
+                ["sid_type_"] = 0,
+                ["prefix_"] = 0,
+                ["tablespace__check"] = "SYSAUX|SYSAUX|",
+                ["tablespace_"] = 1
+            };
+
+            Sensor sensor = null;
+
+            try
+            {
+                sensor = (await client.AddSensorAsync(Settings.Device, parameters)).First();
+
+                AssertEx.AreEqual("SYSAUX", sensor.Name, "Sensor name was not correct");
+            }
+            finally
+            {
+                if (sensor != null)
+                    await client.RemoveObjectAsync(sensor.Id);
+            }
+        }
+
         #endregion
         #region AddDevice
             #region Synchronous
 
         [TestMethod]
         [TestCategory("IntegrationTest")]
-        public void AddDevice_AddsWithLightParameters()
+        public void Action_AddDevice_AddsWithLightParameters()
         {
             var host = "exch-1";
 
@@ -340,7 +522,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
 
         [TestMethod]
         [TestCategory("IntegrationTest")]
-        public void AddDevice_AddsWithRealParameters()
+        public void Action_AddDevice_AddsWithRealParameters()
         {
             AddsWithRealParameters<Device, NewDeviceParameters, GroupOrProbe>(
                 new NewDeviceParameters("realParameters", "exch-2") { AutoDiscoverySchedule = AutoDiscoverySchedule.Hourly },
@@ -359,7 +541,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
 
         [TestMethod]
         [TestCategory("IntegrationTest")]
-        public void AddDevice_Resolves()
+        public void Action_AddDevice_Resolves()
         {
             Resolves<Device, NewDeviceParameters, GroupOrProbe>(
                 n => new NewDeviceParameters(n, "exch-3"),
@@ -372,7 +554,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
 
         [TestMethod]
         [TestCategory("IntegrationTest")]
-        public void AddDevice_DoesntResolve()
+        public void Action_AddDevice_DoesntResolve()
         {
             Resolves<Device, NewDeviceParameters, GroupOrProbe>(
                 n => new NewDeviceParameters(n, "exch-3"),
@@ -388,7 +570,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
 
         [TestMethod]
         [TestCategory("IntegrationTest")]
-        public async Task AddDevice_AddsWithLightParametersAsync()
+        public async Task Action_AddDevice_AddsWithLightParametersAsync()
         {
             await AddsWithLightParametersAsync<Device, GroupOrProbe>(
                 async (p, n, r, t) => await client.AddDeviceAsync(p, n, "exc-1", resolve: r, token: t),
@@ -399,7 +581,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
 
         [TestMethod]
         [TestCategory("IntegrationTest")]
-        public async Task AddDevice_AddsWithRealParametersAsync()
+        public async Task Action_AddDevice_AddsWithRealParametersAsync()
         {
             await AddsWithRealParametersAsync<Device, NewDeviceParameters, GroupOrProbe>(
                 new NewDeviceParameters("realParameters", "exch-2") { AutoDiscoverySchedule = AutoDiscoverySchedule.Hourly },
@@ -418,7 +600,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
 
         [TestMethod]
         [TestCategory("IntegrationTest")]
-        public async Task AddDevice_ResolvesAsync()
+        public async Task Action_AddDevice_ResolvesAsync()
         {
             await ResolvesAsync<Device, NewDeviceParameters, GroupOrProbe>(
                 n => new NewDeviceParameters(n, "exch-3"),
@@ -431,7 +613,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
 
         [TestMethod]
         [TestCategory("IntegrationTest")]
-        public async Task AddDevice_DoesntResolveAsync()
+        public async Task Action_AddDevice_DoesntResolveAsync()
         {
             await ResolvesAsync<Device, NewDeviceParameters, GroupOrProbe>(
                 n => new NewDeviceParameters(n, "exch-3"),
@@ -449,7 +631,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
 
         [TestMethod]
         [TestCategory("IntegrationTest")]
-        public void AddGroup_AddsWithLightParameters()
+        public void Action_AddGroup_AddsWithLightParameters()
         {
             AddsWithLightParameters<Group, GroupOrProbe>(
                 client.AddGroup,
@@ -460,14 +642,14 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
 
         [TestMethod]
         [TestCategory("IntegrationTest")]
-        public void AddGroup_AddsWithRealParameters()
+        public void Action_AddGroup_AddsWithRealParameters()
         {
             AddsWithRealParameters<Group, NewGroupParameters, GroupOrProbe>(new NewGroupParameters("realParameters"), client.AddGroup, client.GetGroups, null);
         }
 
         [TestMethod]
         [TestCategory("IntegrationTest")]
-        public void AddGroup_Resolves()
+        public void Action_AddGroup_Resolves()
         {
             Resolves<Group, NewGroupParameters, GroupOrProbe>(
                 n => new NewGroupParameters(n),
@@ -480,7 +662,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
 
         [TestMethod]
         [TestCategory("IntegrationTest")]
-        public void AddGroup_DoesntResolve()
+        public void Action_AddGroup_DoesntResolve()
         {
             Resolves<Group, NewGroupParameters, GroupOrProbe>(
                 n => new NewGroupParameters(n),
@@ -496,7 +678,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
 
         [TestMethod]
         [TestCategory("IntegrationTest")]
-        public async Task AddGroup_AddsWithLightParametersAsync()
+        public async Task Action_AddGroup_AddsWithLightParametersAsync()
         {
             await AddsWithLightParametersAsync<Group, GroupOrProbe>(
                 client.AddGroupAsync,
@@ -507,14 +689,14 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
 
         [TestMethod]
         [TestCategory("IntegrationTest")]
-        public async Task AddGroup_AddsWithRealParametersAsync()
+        public async Task Action_AddGroup_AddsWithRealParametersAsync()
         {
             await AddsWithRealParametersAsync<Group, NewGroupParameters, GroupOrProbe>(new NewGroupParameters("realParameters"), client.AddGroupAsync, client.GetGroupsAsync, null);
         }
 
         [TestMethod]
         [TestCategory("IntegrationTest")]
-        public async Task AddGroup_ResolvesAsync()
+        public async Task Action_AddGroup_ResolvesAsync()
         {
             await ResolvesAsync<Group, NewGroupParameters, GroupOrProbe>(
                 n => new NewGroupParameters(n),
@@ -527,7 +709,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
 
         [TestMethod]
         [TestCategory("IntegrationTest")]
-        public async Task AddGroup_DoesntResolveAsync()
+        public async Task Action_AddGroup_DoesntResolveAsync()
         {
             await ResolvesAsync<Group, NewGroupParameters, GroupOrProbe>(
                 n => new NewGroupParameters(n),

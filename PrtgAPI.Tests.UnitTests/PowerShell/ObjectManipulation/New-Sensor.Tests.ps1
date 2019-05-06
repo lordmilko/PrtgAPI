@@ -130,6 +130,7 @@ Describe "New-Sensor" -Tag @("PowerShell", "UnitTest") {
         It "specifies a wildcard of service names" {
 
             SetAddressValidatorResponse @(
+                [Request]::SensorTypes(40)
                 [Request]::BeginAddSensorQuery(40, "wmiservice")
                 [Request]::AddSensorProgress(40, 2)
                 [Request]::AddSensorProgress(40, 2)
@@ -147,6 +148,7 @@ Describe "New-Sensor" -Tag @("PowerShell", "UnitTest") {
             $service = GetService
 
             SetAddressValidatorResponse @(
+                [Request]::SensorTypes(40)
                 [Request]::BeginAddSensorQuery(40, "wmiservice")
                 [Request]::AddSensorProgress(40, 2)
                 [Request]::AddSensorProgress(40, 2)
@@ -168,6 +170,7 @@ Describe "New-Sensor" -Tag @("PowerShell", "UnitTest") {
         It "uses positional parameters" {
 
             SetAddressValidatorResponse @(
+                [Request]::SensorTypes(40)
                 [Request]::BeginAddSensorQuery(40, "wmiservice")
                 [Request]::AddSensorProgress(40, 2)
                 [Request]::AddSensorProgress(40, 2)

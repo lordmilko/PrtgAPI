@@ -14,7 +14,7 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
 {
     public class MultiTypeResponse : IWebStreamResponse
     {
-        private SensorType? newSensorType;
+        private StringEnum<SensorType> newSensorType;
 
         public MultiTypeResponse()
         {
@@ -108,13 +108,19 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
                     return GetRawObjectProperty(address);
                 case nameof(CommandFunction.AddSensor2):
 
+                    var sensorTypeStr = UrlUtilities.CrackUrl(address)["sensortype"];
+
                     try
                     {
-                        newSensorType = UrlUtilities.CrackUrl(address)["sensortype"].XmlToEnum<SensorType>();
+                        
+                        var sensorTypeEnum = sensorTypeStr.XmlToEnum<SensorType>();
+                        newSensorType = new StringEnum<SensorType>(sensorTypeEnum);
                     }
                     catch
                     {
+                        newSensorType = new StringEnum<SensorType>(sensorTypeStr);
                     }
+
                     address = "http://prtg.example.com/controls/addsensor3.htm?id=9999&tmpid=2";
                     return new BasicResponse(string.Empty);
                 case nameof(HtmlFunction.EditNotification):
@@ -614,7 +620,7 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
 
         private IWebResponse GetSensorTargetResponse()
         {
-            switch (newSensorType)
+            switch (newSensorType.Value)
             {
                 case SensorType.ExeXml:
                     return new ExeFileTargetResponse();
@@ -623,6 +629,9 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
                 case SensorType.Http:
                     return new HttpTargetResponse();
                 default:
+                    if (newSensorType.StringValue == "snmplibrary_nolist")
+                        return new ExeFileTargetResponse(); //We won't actually be utilizing the response
+
                     throw new NotSupportedException($"Sensor type {newSensorType} not supported");
             }
         }

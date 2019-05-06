@@ -7,12 +7,14 @@ namespace PrtgAPI.Parameters
     {
         CommandFunction ICommandParameters.Function => CommandFunction.AddSensor2;
 
-        public BeginAddSensorQueryParameters(Either<Device, int> deviceOrId, SensorType type) : base(deviceOrId.ToPrtgObject())
+        internal SensorMultiQueryTargetParameters QueryParameters { get; }
+
+        public BeginAddSensorQueryParameters(Either<Device, int> deviceOrId, SensorType type, ISensorQueryTargetParameters queryParameters) :
+            this(deviceOrId, type.EnumToXml(), queryParameters)
         {
-            SensorType = type;
         }
 
-        internal BeginAddSensorQueryParameters(Either<Device, int> deviceOrId, string sensorType) : base(deviceOrId.ToPrtgObject())
+        internal BeginAddSensorQueryParameters(Either<Device, int> deviceOrId, string sensorType, ISensorQueryTargetParameters queryParameters) : base(deviceOrId.ToPrtgObject())
         {
             if (sensorType == null)
                 throw new ArgumentNullException(nameof(sensorType), "Sensor type cannot be null.");
@@ -20,13 +22,36 @@ namespace PrtgAPI.Parameters
             if (string.IsNullOrWhiteSpace(sensorType))
                 throw new ArgumentException("Sensor type cannot be null or whitespace.", nameof(sensorType));
 
-            this[Parameter.SensorType] = sensorType;
+            OriginalType = sensorType;
+
+            QueryParameters = queryParameters?.ToMultiQueryParameters();
+
+            if (QueryParameters?.QueryTarget != null)
+                QueryTarget = QueryParameters.QueryTarget;
+            else
+                this[Parameter.SensorType] = sensorType;
         }
 
-        public SensorType SensorType
+        public string OriginalType { get; }
+
+        public string SensorType
         {
-            get { return this[Parameter.SensorType].ToString().XmlToEnum<SensorType>(); }
-            set { this[Parameter.SensorType] = value.EnumToXml().ToLower(); }
+            get { return this[Parameter.SensorType].ToString(); }
+            set { this[Parameter.SensorType] = value.ToString(); }
+        }
+
+        public SensorQueryTarget QueryTarget
+        {
+            get
+            {
+                return ((CustomParameter)this[Parameter.Custom])?.Value as SensorQueryTarget;
+            }
+            set
+            {
+                var sensorType = $"{OriginalType}_nolist";
+                this[Parameter.Custom] = new CustomParameter($"preselection_{OriginalType}_nolist", value);
+                this[Parameter.SensorType] = sensorType;
+            }
         }
     }
 }

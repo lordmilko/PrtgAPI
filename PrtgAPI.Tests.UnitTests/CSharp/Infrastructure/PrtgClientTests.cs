@@ -758,7 +758,12 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             if (t == typeof(string))
             {
                 if (parameter.Name == "sensorType")
+                {
+                    if (method.Name == "GetDynamicSensorParameters" || method.Name == "GetDynamicSensorParametersAsync")
+                        return "snmplibrary";
+
                     return "exexml";
+                }
                 if (parameter.Name == "objectType")
                     return "device";
                 if (parameter.Name == "property")
@@ -918,6 +923,8 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             //Parameter specific
             if (t == typeof(ExeFileTarget))
                 return (ExeFileTarget) "test.ps1";
+            if (t == typeof(ISensorQueryTargetParameters))
+                return new SensorQueryTarget("APC UPS.oidlib");
             if (t == typeof(IEnumerable<string>))
                 return Enumerable.Empty<string>();
             if (t.IsEnum)
@@ -943,6 +950,8 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
                 return new Either<GroupOrProbe, int>(1001);
             if (t == typeof(Either<DeviceOrGroupOrProbe, int>))
                 return new Either<DeviceOrGroupOrProbe, int>(1001);
+            if (t == typeof(Dictionary<string, string>))
+                return new Dictionary<string, string>();
             if (parameter.Name == "versionSpecific")
                 return null;
 
@@ -995,6 +1004,9 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
                     }
                     catch (TargetInvocationException ex)
                     {
+                        if (IsMethod(method, "GetDynamicSensorParameters") && p.Name == "queryParameters")
+                            return;
+
                         Assert.IsInstanceOfType(ex.InnerException, typeof(ArgumentNullException), $"Parameter '{p.Name}' did not throw the right exception on method '{method}': {ex.InnerException.StackTrace}");
                     }
                 }
@@ -1024,6 +1036,9 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
                     }
                     catch (Exception ex)
                     {
+                        if (IsMethod(method, "GetDynamicSensorParameters") && p.Name == "queryParameters")
+                            return;
+
                         Assert.IsInstanceOfType(ex, typeof(ArgumentNullException), $"Parameter '{p.Name}' did not throw the right exception on method '{method}': {ex.StackTrace}");
                     }
                 }
@@ -1067,7 +1082,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
                 ["GetLogsAsync"] = new[] { "status", "endDate" },
                 ["GetSensorsAsync"] = "statuses",
                 ["GetTotalObjectsAsync"] = "filters",
-                ["RefreshSystemInfoAsync"] = "types",
+                ["RefreshSystemInfoAsync"] = "types"
             };
 
             object v;

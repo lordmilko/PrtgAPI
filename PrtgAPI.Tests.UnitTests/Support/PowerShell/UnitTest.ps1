@@ -206,6 +206,11 @@ function SetAddressValidatorResponse($strArr, $exactMatch = $false)
     SetResponseAndClientWithArguments "AddressValidatorResponse" @($arr, $exactMatch)
 }
 
+function SetCustomAddressValidatorResponse($response, $arguments)
+{
+    SetResponseAndClientWithArguments $response @($arguments, $true)
+}
+
 function SetResponseAndClient($responseName)
 {
     $response = New-Object PrtgAPI.Tests.UnitTests.Support.TestResponses.$responseName

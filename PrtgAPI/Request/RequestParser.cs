@@ -146,6 +146,39 @@ namespace PrtgAPI.Request
                 ValidateRequiredValue(property, parameters, attrib);
         }
 
+        internal static void ValidateAddSensorQueryTarget(List<SensorTypeDescriptor> types, BeginAddSensorQueryParameters parameters)
+        {
+            var thisType = types.FirstOrDefault(t => string.Equals(t.Id, parameters.OriginalType, StringComparison.OrdinalIgnoreCase));
+
+            if (thisType == null)
+            {
+                if (parameters.QueryTarget == null)
+                    throw new InvalidOperationException($"Cannot process query for sensor type '{parameters.OriginalType}': sensor type '{parameters.OriginalType}' is not valid.");
+
+                throw new InvalidOperationException($"Failed to validate query target '{parameters.QueryTarget}' on sensor type '{parameters.OriginalType}': sensor type '{parameters.OriginalType}' is not valid.");
+            }
+
+            if (parameters.QueryTarget == null)
+            {
+                if (thisType.QueryTargets != null && thisType.QueryTargets.Count > 0)
+                    throw new InvalidOperationException($"Failed to process query for sensor type '{parameters.OriginalType}': a sensor query target is required, however none was specified. Please specify one of the following targets: {thisType.QueryTargets.ToQuotedList()}.");
+                else
+                    return;
+            }
+
+            if (thisType.QueryTargets == null || thisType.QueryTargets.Count == 0)
+                throw new InvalidOperationException($"Cannot specify query target '{parameters.QueryTarget}' on sensor type '{parameters.OriginalType}': type does not support query targets.");
+
+            var matchingArgument = thisType.QueryTargets.FirstOrDefault(a => string.Equals(a.Value, parameters.QueryTarget.Value, StringComparison.OrdinalIgnoreCase));
+
+            if (matchingArgument == null)
+            {
+                throw new InvalidOperationException($"Query target '{parameters.QueryTarget}' is not a valid target for sensor type '{parameters.OriginalType}' on device ID {parameters.ObjectId}. Please specify one of the following targets: {thisType.QueryTargets.ToQuotedList()}.");
+            }
+
+            parameters.QueryTarget = matchingArgument;
+        }
+
         internal static ICommandParameters GetInternalNewObjectParameters(Either<IPrtgObject, int> deviceOrId, NewObjectParameters parameters)
         {
             var newParams = new CommandFunctionParameters(parameters.Function);

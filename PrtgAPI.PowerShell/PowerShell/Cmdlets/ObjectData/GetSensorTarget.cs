@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Management.Automation;
@@ -31,6 +32,10 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// by default Get-SensorTarget will attempt to guess the name of the data table within PRTG the sensor targets are stored in. If PRTG detects
     /// more than one data table exists, an <see cref="ArgumentException"/> will be thrown listing the names of all of the available tables. The name
     /// of the table to use can then be specified to the -Table parameter.</para>
+    ///
+    /// <para>For sensor types that require additional information be provided before retrieving their sensor parameters, a -<see cref="QueryTarget"/>
+    /// or a set of -<see cref="QueryParameters"/> must be specified. Get-SensorTarget will automatically advise you what should be provided for these
+    /// parameters if it determines these values are required by the specified sensor type.</para>
     /// 
     /// <para type="description">Sensor targets identified for raw types are represented as a "generic" sensor target type. Generic sensor targets
     /// allow accessing both their Name and Value as named properties. Any other properties of the sensor target can be obtained by accessing the
@@ -78,6 +83,24 @@ namespace PrtgAPI.PowerShell.Cmdlets
     ///         C:\> $targets | foreach { $_.Properties[3] }
     ///     </code>
     ///     <para>List the disk type (Local Disk, Compact Disk etc) of all WMI Volume targets.</para>
+    ///     <para/>
+    /// </example>
+    /// <example>
+    ///     <code>C:\> $params = Get-Device -Id 1001 | Get-SensorTarget -RawType snmplibrary -qt *ups*</code>
+    ///     <para>Get all sensor targets that can be used on an SNMP Library sensor using the sensor query target "APC UPS.oidlib".</para>
+    ///     <para/>
+    /// </example>
+    /// <example>
+    ///     <code>
+    ///         C:\> $target = (Get-SensorType snmplibrary -Id 1001).QueryTargets | where Value -like *ups*
+    ///         C:\> $params = Get-Device -Id 1001 | Get-SensorTarget -RawType snmplibrary -qt $target
+    ///     </code>
+    ///     <para>Get all sensor targets that can be used on an SNMP Library sensor using the sensor query target "APC UPS.oidlib".</para>
+    ///     <para/>
+    /// </example>
+    /// <example>
+    ///     <code>C:\> $params = Get-Device -Id 1001 | New-SensorParameters -RawType ipmisensor -qp @{ username = "admin"; password = "password" }</code>
+    ///     <para>Get all sensor targets that can be used on an IPMI Sensor, specifying the query target parameters required to authenticate to IPMI.</para>
     /// </example>
     ///
     /// <para type="link" uri="https://github.com/lordmilko/PrtgAPI/wiki/Sensor-Targets#powershell">Online version:</para>
@@ -125,6 +148,20 @@ namespace PrtgAPI.PowerShell.Cmdlets
         public string RawType { get; set; }
 
         /// <summary>
+        /// <para type="description">A sensor query target to use when retrieving dynamic sensor parameters. Can include wildcards.</para>
+        /// </summary>
+        [Alias("qt")]
+        [Parameter(Mandatory = false, ParameterSetName = ParameterSet.Raw)]
+        public SensorQueryTarget QueryTarget { get; set; }
+
+        /// <summary>
+        /// <para type="description">A set of sensor query target parameters to use when retrieving dynamic sensor parameters.</para>
+        /// </summary>
+        [Alias("qp")]
+        [Parameter(Mandatory = false, ParameterSetName = ParameterSet.Raw)]
+        public Hashtable QueryParameters { get; set; }
+
+        /// <summary>
         /// <para type="description">The name of the Dropdown List or Checkbox Group the sensor targets belong to. If this value is null,
         /// PrtgAPI will attempt to guess the name of the table.  If this value cannot be guessed or is not valid,
         /// an <see cref="ArgumentException"/> will be thrown listing all possible values.</para>
@@ -162,7 +199,15 @@ namespace PrtgAPI.PowerShell.Cmdlets
 
                 GetTargets(
                    str,
-                   (d, c, ti, to) => client.Targets.GetSensorTargets(d, RawType, Table, c, ti, to),
+                   (d, c, ti, to) => client.Targets.GetSensorTargets(
+                       d,
+                       RawType,
+                       Table,
+                       c,
+                       ti,
+                       NewSensorParametersCommand.GetQueryTargetParameters(client, d.GetId(), RawType, QueryTarget, QueryParameters),
+                       to
+                   ),
                    ParametersNotSupported,
                     e => e.Name
                 );

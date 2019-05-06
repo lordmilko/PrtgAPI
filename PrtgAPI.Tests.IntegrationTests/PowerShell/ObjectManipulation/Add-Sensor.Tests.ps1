@@ -46,30 +46,35 @@ Describe "Add-Sensor_IT" -Tag @("PowerShell", "IntegrationTest") {
             $newSensor = $newSensors | where name -EQ $values.Name
             $newSensor.Count | Should Be 1
 
-            $properties = $newSensor | Get-ObjectProperty
-
-            function CheckValue($name)
+            try
             {
-                $properties.$name | Assert-Equal $values.$name -Message "Expected $name to be $($values.$name) but was <actual> instead"
+                $properties = $newSensor | Get-ObjectProperty
+
+                function CheckValue($name)
+                {
+                    $properties.$name | Assert-Equal $values.$name -Message "Expected $name to be $($values.$name) but was <actual> instead"
+                }
+
+                CheckValue "Name"
+                $properties.Tags -join " " | Should Be  $values.Tags
+                CheckValue "Priority"
+                CheckValue "ExeFile"
+                CheckValue "ExeParameters"
+                CheckValue "SetExeEnvironmentVariables"
+                CheckValue "UseWindowsAuthentication"
+                CheckValue "Mutex"
+                CheckValue "Timeout"
+                CheckValue "DebugMode"
+                CheckValue "InheritInterval"
+                CheckValue "Interval"
+                CheckValue "IntervalErrorMode"
+
+                $newSensor.NotificationTypes.InheritTriggers | Should Be $false
             }
-
-            CheckValue "Name"
-            $properties.Tags -join " " | Should Be  $values.Tags
-            CheckValue "Priority"
-            CheckValue "ExeFile"
-            CheckValue "ExeParameters"
-            CheckValue "SetExeEnvironmentVariables"
-            CheckValue "UseWindowsAuthentication"
-            CheckValue "Mutex"
-            CheckValue "Timeout"
-            CheckValue "DebugMode"
-            CheckValue "InheritInterval"
-            CheckValue "Interval"
-            CheckValue "IntervalErrorMode"
-
-            $newSensor.NotificationTypes.InheritTriggers | Should Be $false
-
-            $newSensor | Remove-Object -Force
+            finally
+            {
+                $newSensor | Remove-Object -Force
+            }
         }
 
         It "adds a new sensor using raw parameters" {
@@ -138,15 +143,20 @@ Describe "Add-Sensor_IT" -Tag @("PowerShell", "IntegrationTest") {
 
             $newSensor = $device | Add-Sensor $params
 
-            $newSensors = Get-Sensor
+            try
+            {
+                $newSensors = Get-Sensor
 
-            $newSensors.Count | Should BeGreaterThan $originalSensors.Count
+                $newSensors.Count | Should BeGreaterThan $originalSensors.Count
 
-            $diffSensor = $newSensors|where name -EQ $params.Name
+                $diffSensor = $newSensors|where name -EQ $params.Name
 
-            $diffSensor.Id | Should Be $newSensor.Id
-
-            $newSensor | Remove-Object -Force
+                $diffSensor.Id | Should Be $newSensor.Id
+            }
+            finally
+            {
+                $newSensor | Remove-Object -Force
+            }
         }
     }
 
@@ -238,10 +248,15 @@ Describe "Add-Sensor_IT" -Tag @("PowerShell", "IntegrationTest") {
 
         $sensors.Count | Should Be 2
 
-        $sensors | where Name -eq "Service: PRTG Core Server Service" | Should Not BeNullOrEmpty
-        $sensors | where Name -eq "Service: PRTG Probe Service" | Should Not BeNullOrEmpty
-
-        $sensors | Remove-Object -Force
+        try
+        {
+            $sensors | where Name -eq "Service: PRTG Core Server Service" | Should Not BeNullOrEmpty
+            $sensors | where Name -eq "Service: PRTG Probe Service" | Should Not BeNullOrEmpty
+        }
+        finally
+        {
+            $sensors | Remove-Object -Force
+        }
     }
     
     It "adds a sensor constructed through empty parameters" {
@@ -263,24 +278,34 @@ Describe "Add-Sensor_IT" -Tag @("PowerShell", "IntegrationTest") {
 
         $newSensor.Count | Should Be 1
 
-        $properties = $newSensor | Get-ObjectProperty
+        try
+        {
+            $properties = $newSensor | Get-ObjectProperty
 
-        $newSensor.Type | Should Be "Sensor (exexml)"
-        $properties.Name | Should Be "empty sensor"
-        $properties.ExeFile.ToString() | Should Be "testScript.bat"
-        $properties.Interval.ToString() | Should Be ([TimeSpan]"00:05:00").ToString()
-        $properties.Timeout | Should Be 70
-        
-        $newSensor | Remove-Object -Force
+            $newSensor.Type | Should Be "Sensor (exexml)"
+            $properties.Name | Should Be "empty sensor"
+            $properties.ExeFile.ToString() | Should Be "testScript.bat"
+            $properties.Interval.ToString() | Should Be ([TimeSpan]"00:05:00").ToString()
+            $properties.Timeout | Should Be 70
+        }
+        finally
+        {
+            $newSensor | Remove-Object -Force
+        }
     }
     
     It "pipes dynamic parameters to Add-Sensor" {
         $sensor = Get-Device -Id (Settings Device) | New-SensorParameters -RawType http | Add-Sensor
 
-        $sensor.Name | Should Be "HTTP"
-        $sensor.Type | Should Be "Sensor (http)"
-
-        $sensor | Remove-Object -Force
+        try
+        {
+            $sensor.Name | Should Be "HTTP"
+            $sensor.Type | Should Be "Sensor (http)"
+        }
+        finally
+        {
+            $sensor | Remove-Object -Force
+        }
     }
 
     It "adds sensor targets to dynamic parameters retrieved from Where-Object" {
@@ -323,9 +348,14 @@ Describe "Add-Sensor_IT" -Tag @("PowerShell", "IntegrationTest") {
 
         $sensor = $device | Add-Sensor $params
 
-        $sensor.Name | Should Be "(003) Data and Voice VLAN Traffic"
-
-        $sensor | Remove-Object -Force
+        try
+        {
+            $sensor.Name | Should Be "(003) Data and Voice VLAN Traffic"
+        }
+        finally
+        {
+            $sensor | Remove-Object -Force
+        }
     }
 
     It "adds a sensor from empty parameters that contain a multi parameter" {
@@ -346,9 +376,14 @@ Describe "Add-Sensor_IT" -Tag @("PowerShell", "IntegrationTest") {
 
         $sensor = $device | Add-Sensor $params
 
-        $sensor.Name | Should Be "(003) Data and Voice VLAN Traffic"
-
-        $sensor | Remove-Object -Force
+        try
+        {
+            $sensor.Name | Should Be "(003) Data and Voice VLAN Traffic"
+        }
+        finally
+        {
+            $sensor | Remove-Object -Force
+        }
     }
 
     It "resolves a sensor with a dynamic type" {
@@ -366,7 +401,14 @@ Describe "Add-Sensor_IT" -Tag @("PowerShell", "IntegrationTest") {
         $params = New-SensorParameters $table -DynamicType
         $sensor = $device | Add-Sensor $params
 
-        $sensor.Type.StringValue | Should Be "snmpcustomtable"
+        try
+        {
+            $sensor.Type.StringValue | Should Be "snmpcustomtable"
+        }
+        finally
+        {
+            $sensor | Remove-Object -Force
+        }
     }
     
     It "creates sensors from an excessive number of targets" {
@@ -403,7 +445,54 @@ Describe "Add-Sensor_IT" -Tag @("PowerShell", "IntegrationTest") {
     It "throws attempting to create dynamic parameters as a read only user" {
 
         ReadOnlyClient {
-            { Get-Device -Id (Settings Device) | New-SensorParameters -RawType exexml } | Should Throw "type was not valid or you do not have sufficient permissions"
+            { Get-Device -Id (Settings Device) | New-SensorParameters -RawType exexml } | Should Throw "a read-only user account is not allowed to access this web page"
+        }
+    }
+
+    It "ignores sensor query targets" {
+        $device = Get-Device -Id (Settings Device)
+
+        $table = @{
+            name_ = "Base Sensor"
+            sensortype = "snmplibrary"
+            library_="C:\Program Files (x86)\PRTG Network Monitor\snmplibs\Basic Linux Library (UCD-SNMP-MIB).oidlib"
+            interfacenumber_ = 1
+            interfacenumber__check = "1.3.6.1.4.1.2021.2.1.100.1|Basic Linux Library (UCD-SNMP-MIB)|Processes: 1|Processes Error Flag|#|0|0|Processes Error Flag|2|1|0|1|A Error flag to indicate trouble with a process. It goes to 1 if there is an error, 0 if no error.|0|0|0|0||1.3.6.1.4.1.2021.2.1.100|prErrorFlag|1.3.6.1.4.1.2021.2||ASN_INTEGER|0|ASN_INTEGER||Basic Linux Library (UCD-SNMP-MIB)|Processes: #[1.3.6.1.4.1.2021.2.1.1]|100|||||||||||||||||||||||||||||||||||"
+        }
+
+        $params = New-SensorParameters $table -DynamicType
+        $sensor = $device | Add-Sensor $params
+
+        try
+        {
+            $sensor.Type.StringValue | Should Be "snmpcustomtable"
+        }
+        finally
+        {
+            $sensor | Remove-Object -Force
+        }
+    }
+
+    It "synthesizes sensor query parameters" {
+        $params = New-SensorParameters @{
+            name_ = "Base Sensor"
+            sensortype = "oracletablespace"
+            database_ = "XE"
+            sid_type_ = 0
+            prefix_ = 0
+            tablespace__check = "SYSAUX|SYSAUX|"
+            tablespace_ = 1
+        }
+
+        $sensor = Get-Device -Id (Settings Device) | Add-Sensor $params
+
+        try
+        {
+            $sensor.Name | Should Be "SYSAUX"
+        }
+        finally
+        {
+            $sensor | Remove-Object -Force
         }
     }
 }

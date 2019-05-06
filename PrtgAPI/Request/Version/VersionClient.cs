@@ -414,5 +414,29 @@ namespace PrtgAPI.Request
         }
 
         #endregion
+
+        private ISensorQueryTargetParameters SynthesizeParameters(ICommandParameters parameters)
+        {
+            var customParameters = parameters[Parameter.Custom];
+
+            if (customParameters.IsIEnumerable())
+            {
+                var queryParameters = new SensorQueryTargetParameters();
+
+                var any = false;
+
+                foreach (CustomParameter parameter in customParameters.ToIEnumerable())
+                {
+                    any = true;
+
+                    queryParameters[parameter.Name] = parameter.Value;
+                }
+
+                if (any)
+                    return queryParameters;
+            }
+
+            return null;
+        }
     }
 }

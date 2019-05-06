@@ -101,6 +101,13 @@ namespace PrtgAPI
         AddSensor2,
 
         /// <summary>
+        /// Processes a query for device specific information required to create a sensor.
+        /// </summary>
+        [Undocumented]
+        [Description("controls/addsensor3.htm")]
+        AddSensor3,
+
+        /// <summary>
         /// Creates a new sensor.
         /// </summary>
         [Undocumented]

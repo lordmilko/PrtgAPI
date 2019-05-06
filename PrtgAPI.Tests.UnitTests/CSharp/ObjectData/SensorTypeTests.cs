@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using PrtgAPI.Tests.UnitTests.Support;
 using PrtgAPI.Tests.UnitTests.Support.TestResponses;
 
 namespace PrtgAPI.Tests.UnitTests.ObjectData
@@ -17,13 +18,13 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
                 {
                     var types = c.GetSensorTypes(3002);
 
-                    Assert.AreEqual(3, types.Count, "Did not return expected number of types");
+                    Assert.AreEqual(9, types.Count, "Did not return expected number of types");
 
                     Assert.AreEqual("ptfadsreplfailurexml", types[0].Id, "Id was not correct");
                     Assert.AreEqual("Active Directory Replication Errors", types[0].Name, "Name was not correct");
                     Assert.AreEqual("Checks Windows domain controllers for replication errors", types[0].Description, "Description was not correct");
                 },
-                "api/sensortypes.json?id=3002"
+                UnitRequest.SensorTypes(3002)
             );
         }
 
@@ -36,13 +37,13 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
                 {
                     var types = await c.GetSensorTypesAsync(3002);
 
-                    Assert.AreEqual(3, types.Count, "Did not return expected number of types");
+                    Assert.AreEqual(9, types.Count, "Did not return expected number of types");
 
                     Assert.AreEqual("ptfadsreplfailurexml", types[0].Id, "Id was not correct");
                     Assert.AreEqual("Active Directory Replication Errors", types[0].Name, "Name was not correct");
                     Assert.AreEqual("Checks Windows domain controllers for replication errors", types[0].Description, "Description was not correct");
                 },
-                "api/sensortypes.json?id=3002"
+                UnitRequest.SensorTypes(3002)
             );
         }
 

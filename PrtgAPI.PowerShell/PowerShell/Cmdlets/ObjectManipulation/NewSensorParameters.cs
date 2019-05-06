@@ -41,10 +41,14 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// 
     /// <para type="description">For sensor types that are not natively supported, PrtgAPI provides the ability to dynamically generate
     /// the set of parameters required to add the specified sensor type. Dynamically generated sensor parameters operate as a hybrid of a
-    /// both a Dictionary and a PSObject, allowing you to interface with these types as if they are a native object. For sensor types
-    /// that require Sensor Targets, a dictionary of all identified sensor targets can be found under the dynamic sensor parameter's Targets
-    /// property. Parameters that appear to contain sensor targets will automatically be wrapped as a <see cref="GenericSensorTarget"/>, and
-    /// by default will contain the first target from the list of available candidates.</para>
+    /// both a Dictionary and a PSObject, allowing you to interface with these types as if they are a native object. For sensor types that require
+    /// additional information be provided before retrieving their sensor parameters, a -<see cref="QueryTarget"/> or a set of -<see cref="QueryParameters"/>
+    /// must be specified. New-SensorParameters will automatically advise you what should be provided for these parameters if it determines these
+    /// values are required by the specified sensor type.</para>
+    ///
+    /// <para type="description">For sensor types that require Sensor Targets, a dictionary of all identified sensor targets can be found
+    /// under the dynamic sensor parameter's Targets property. Parameters that appear to contain sensor targets will automatically be wrapped
+    /// as a <see cref="GenericSensorTarget"/>, and by default will contain the first target from the list of available candidates.</para>
     /// 
     /// <para type="description">By default, dynamically sensor parameters are "locked", as to prevent additional parameters from being
     /// added to the object in the event a typo is made. If you do wish to add additional parameters however, this can be performed by calling the
@@ -181,6 +185,24 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <example>
     ///     <code>C:\> Set-StrictMode -Version 3</code>
     ///     <para>Set the Strict Mode to version 3 for the current PowerShell session.</para>
+    ///     <para/>
+    /// </example>
+    /// <example>
+    ///     <code>C:\> $params = Get-Device -Id 1001 | New-SensorParameters -RawType snmplibrary -qt *ups*</code>
+    ///     <para>Create a set of parameters for creating a SNMP Library sensor utilizing a wildcard expression that matches the sensor query target "APC UPS.oidlib".</para>
+    ///     <para/>
+    /// </example>
+    /// <example>
+    ///     <code>
+    ///         C:\> $target = (Get-SensorType snmplibrary -Id 1001).QueryTargets | where Value -like *ups*
+    ///         C:\> $params = Get-Device -Id 1001 | New-SensorParameters -RawType snmplibrary -qt $target
+    ///     </code>
+    ///     <para>Create a set of parameters for creating a SNMP Library sensor utilizing the sensor query target "APC UPS.oidlib".</para>
+    ///     <para/>
+    /// </example>
+    /// <example>
+    ///     <code>C:\> $params = Get-Device -Id 1001 | New-SensorParameters -RawType ipmisensor -qp @{ username = "admin"; password = "password" }</code>
+    ///     <para>Create a set of parameters for creating an IPMI Sensor specifying the query target parameters required to authenticate to IPMI.</para>
     /// </example>
     ///
     /// <para type="link" uri="https://github.com/lordmilko/PrtgAPI/wiki/Object-Creation#parameters">Online version:</para>
@@ -241,6 +263,20 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// </summary>
         [Parameter(Mandatory = false, ParameterSetName = ParameterSet.Dynamic)]
         public int Timeout { get; set; } = 60;
+
+        /// <summary>
+        /// <para type="description">A sensor query target to use when retrieving dynamic sensor parameters. Can include wildcards.</para>
+        /// </summary>
+        [Alias("qt")]
+        [Parameter(Mandatory = false, ParameterSetName = ParameterSet.Dynamic)]
+        public SensorQueryTarget QueryTarget { get; set; }
+
+        /// <summary>
+        /// <para type="description">A set of sensor query target parameters to use when retrieving dynamic sensor parameters.</para>
+        /// </summary>
+        [Alias("qp")]
+        [Parameter(Mandatory = false, ParameterSetName = ParameterSet.Dynamic)]
+        public Hashtable QueryParameters { get; set; }
 
         /// <summary>
         /// <para type="description">Specifies that an empty set of <see cref="RawSensorParameters"/> should be returned to allow constructing
@@ -340,9 +376,62 @@ namespace PrtgAPI.PowerShell.Cmdlets
             return parameters;
         }
 
+        internal static SensorMultiQueryTargetParameters GetQueryTargetParameters(PrtgClient client, int deviceId, string sensorType, SensorQueryTarget queryTarget, Hashtable queryParametersRaw)
+        {
+            queryTarget = GetQueryTarget(client, deviceId, sensorType, queryTarget);
+            var queryParameters = GetQueryParameters(queryParametersRaw);
+
+            if (queryTarget != null || queryParameters != null)
+                return new SensorMultiQueryTargetParameters(queryTarget, queryParameters);
+
+            return null;
+        }
+
+        private static SensorQueryTarget GetQueryTarget(PrtgClient client, int deviceId, string sensorType, SensorQueryTarget queryTarget)
+        {
+            if (queryTarget != null && queryTarget.Value.Contains("*"))
+            {
+                var allTypes = client.GetSensorTypes(deviceId);
+                var desiredType = allTypes.FirstOrDefault(t => string.Equals(t.Id, sensorType, StringComparison.OrdinalIgnoreCase));
+
+                if (desiredType != null)
+                {
+                    if (desiredType.QueryTargets == null)
+                        return queryTarget; //Type does not support query targets; leave it to internal engine to throw exception
+
+                    var wildcard = new WildcardPattern(queryTarget.Value, WildcardOptions.IgnoreCase);
+                    var candidates = desiredType.QueryTargets.Where(a => wildcard.IsMatch(a.Value)).ToList();
+
+                    if (candidates.Count == 1)
+                        return candidates.Single();
+                    else if (candidates.Count > 1)
+                        throw new InvalidOperationException($"Query target wildcard '{queryTarget}' is ambiguous between the following parameters: {candidates.ToQuotedList()}. Please specify a more specific identifier.");
+                    else
+                        throw new InvalidOperationException($"Could not find a query target matching the wildcard expression '{queryTarget}'. Please specify one of the following parameters: {desiredType.QueryTargets.ToQuotedList()}.");
+                }
+            }
+
+            return queryTarget;
+        }
+
+        private static SensorQueryTargetParameters GetQueryParameters(Hashtable queryParametersRaw)
+        {
+            if (queryParametersRaw == null)
+                return null;
+
+            var queryParameters = new SensorQueryTargetParameters();
+
+            foreach (var key in queryParametersRaw.Keys.Cast<object>())
+                queryParameters[key.ToString()] = PSObjectUtilities.CleanPSObject(queryParametersRaw[key]);
+
+            return queryParameters;
+        }
+
         private DynamicSensorParameters CreateDynamicParameters(Func<int, bool> progressCallback)
         {
-            var dynamicParamters = client.GetDynamicSensorParameters(Device.Id, RawType, progressCallback, Timeout, CancellationToken);
+            var multiQuery = GetQueryTargetParameters(client, Device.Id, RawType, QueryTarget, QueryParameters);
+
+            var dynamicParamters = client.GetDynamicSensorParameters(Device, RawType, progressCallback, Timeout, multiQuery, CancellationToken);
             dynamicParamters.Source = Device;
 
             if (!string.IsNullOrEmpty(Target) && dynamicParamters.Targets.Count > 0)

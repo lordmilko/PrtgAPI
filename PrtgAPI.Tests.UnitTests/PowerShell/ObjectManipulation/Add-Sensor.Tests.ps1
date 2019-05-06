@@ -123,4 +123,61 @@ Describe "Add-Sensor" -Tag @("PowerShell", "UnitTest") {
     It "throws piping sensors not created by Get-SensorTarget" {
         { New-SensorParameters ExeXml | Add-Sensor } | Should Throw "Only sensor parameters created by Get-SensorTarget can be piped"
     }
+
+    It "ignores sensor query targets" {
+
+        SetCustomAddressValidatorResponse "SensorQueryTargetValidatorResponse" @(
+            [Request]::Status()
+            [Request]::BeginAddSensorQuery(40, "snmplibrary"),
+            [Request]::AddSensor("name_=test&priority_=3&inherittriggers_=1&intervalgroup=1&interval_=60%7C60+seconds&errorintervalsdown_=1&sensortype=snmplibrary&id=40")
+        )
+
+        $params = New-SensorParameters -RawParameters @{
+            name_ = "test"
+            sensortype = "snmplibrary"
+        }
+
+        $device = Run Device { Get-Device }
+
+        $device | Add-Sensor $params -Resolve:$false
+    }
+
+    It "synthesizes sensor query parameters" {
+        SetCustomAddressValidatorResponse "SensorQueryTargetParametersValidatorResponse" @(
+            [Request]::Status(),
+            [Request]::BeginAddSensorQuery(40, "oracletablespace")
+            [Request]::ContinueAddSensorQuery(2055, 7, "database_=XE&sid_type_=0&prefix_=0"), # Response hardcodes 2055, however normally this will in fact match
+            [Request]::AddSensor("name_=test&priority_=3&inherittriggers_=1&intervalgroup=1&interval_=60%7C60+seconds&errorintervalsdown_=1&sid_type=0&database=XE&prefix=0&sensortype=oracletablespace&id=40")
+        )
+
+        $params = New-SensorParameters -RawParameters @{
+            name_ = "test"
+            sensortype = "oracletablespace"
+            database = "XE"
+            sid_type = 0
+            prefix = 0
+        }
+
+        $device = Run Device { Get-Device }
+
+        $device | Add-Sensor $params -Resolve:$false
+    }
+
+    It "throws when synthesized sensor query parameters are missing" {
+        SetCustomAddressValidatorResponse "SensorQueryTargetParametersValidatorResponse" @(
+            [Request]::Status(),
+            [Request]::BeginAddSensorQuery(40, "oracletablespace")
+        )
+
+        $params = New-SensorParameters -RawParameters @{
+            name_ = "test"
+            sensortype = "oracletablespace"
+            sid_type = 0
+            prefix = 0
+        }
+
+        $device = Run Device { Get-Device }
+
+        { $device | Add-Sensor $params -Resolve:$false } | Should Throw "Failed to process request for sensor type 'oracletablespace': sensor query target parameters did not include mandatory parameter 'database_'."
+    }
 }
