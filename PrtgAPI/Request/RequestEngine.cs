@@ -59,9 +59,9 @@ namespace PrtgAPI.Request
             if (parameters == null)
                 throw new ArgumentNullException(nameof(parameters), "Parameters cannot be null.");
 
-            var url = GetRequestMessage(parameters);
+            var request = GetRequestMessage(parameters);
 
-            var response = ExecuteRequest(url, token, responseParser);
+            var response = ExecuteRequest(request, token, responseParser);
 
             return response;
         }
@@ -71,9 +71,9 @@ namespace PrtgAPI.Request
             if (parameters == null)
                 throw new ArgumentNullException(nameof(parameters), "Parameters cannot be null.");
 
-            var url = GetRequestMessage(parameters);
+            var request = GetRequestMessage(parameters);
 
-            var response = await ExecuteRequestAsync(url, token, responseParser).ConfigureAwait(false);
+            var response = await ExecuteRequestAsync(request, token, responseParser).ConfigureAwait(false);
 
             return response;
         }
@@ -87,9 +87,9 @@ namespace PrtgAPI.Request
             if (parameters == null)
                 throw new ArgumentNullException(nameof(parameters), "Parameters cannot be null.");
 
-            var url = GetRequestMessage(parameters);
+            var request = GetRequestMessage(parameters);
 
-            var response = ExecuteRequest(url, token, responseParser);
+            var response = ExecuteRequest(request, token, responseParser);
 
             responseValidator?.Invoke(response);
 
@@ -102,9 +102,9 @@ namespace PrtgAPI.Request
             if (parameters == null)
                 throw new ArgumentNullException(nameof(parameters), "Parameters cannot be null.");
 
-            var url = GetRequestMessage(parameters);
+            var request = GetRequestMessage(parameters);
 
-            var response = await ExecuteRequestAsync(url, token, responseParser).ConfigureAwait(false);
+            var response = await ExecuteRequestAsync(request, token, responseParser).ConfigureAwait(false);
 
             responseValidator?.Invoke(response);
 
@@ -152,9 +152,9 @@ namespace PrtgAPI.Request
             if (parameters == null)
                 throw new ArgumentNullException(nameof(parameters), "Parameters cannot be null.");
 
-            var url = GetRequestMessage(parameters);
+            var request = GetRequestMessage(parameters);
 
-            var response = ExecuteRequest(url, token, responseParser);
+            var response = ExecuteRequest(request, token, responseParser);
 
             return response;
         }
@@ -164,9 +164,9 @@ namespace PrtgAPI.Request
             if (parameters == null)
                 throw new ArgumentNullException(nameof(parameters), "Parameters cannot be null.");
 
-            var url = GetRequestMessage(parameters);
+            var request = GetRequestMessage(parameters);
 
-            var response = await ExecuteRequestAsync(url, token, responseParser).ConfigureAwait(false);
+            var response = await ExecuteRequestAsync(request, token, responseParser).ConfigureAwait(false);
 
             return response;
         }
@@ -193,7 +193,7 @@ namespace PrtgAPI.Request
 
         #endregion
 
-        private PrtgResponse ExecuteMultiRequest(Func<IParameters, PrtgRequestMessage> getUrl, IMultiTargetParameters parameters, CancellationToken token, Func<HttpResponseMessage, PrtgResponse> responseParser = null)
+        private PrtgResponse ExecuteMultiRequest(Func<IParameters, PrtgRequestMessage> getRequestMessage, IMultiTargetParameters parameters, CancellationToken token, Func<HttpResponseMessage, PrtgResponse> responseParser = null)
         {
             var allIds = parameters.ObjectIds;
 
@@ -203,7 +203,7 @@ namespace PrtgAPI.Request
                 {
                     parameters.ObjectIds = allIds.Skip(i).Take(BatchLimit).ToArray();
 
-                    ExecuteRequest(getUrl(parameters), token, responseParser);
+                    ExecuteRequest(getRequestMessage(parameters), token, responseParser);
                 }
             }
             finally
@@ -214,7 +214,7 @@ namespace PrtgAPI.Request
             return string.Empty;
         }
 
-        internal async Task<PrtgResponse> ExecuteMultiRequestAsync(Func<IParameters, PrtgRequestMessage> getUrl, IMultiTargetParameters parameters, CancellationToken token, Func<HttpResponseMessage, Task<PrtgResponse>> responseParser = null)
+        internal async Task<PrtgResponse> ExecuteMultiRequestAsync(Func<IParameters, PrtgRequestMessage> getRequestMessage, IMultiTargetParameters parameters, CancellationToken token, Func<HttpResponseMessage, Task<PrtgResponse>> responseParser = null)
         {
             var allIds = parameters.ObjectIds;
 
@@ -224,7 +224,7 @@ namespace PrtgAPI.Request
                 {
                     parameters.ObjectIds = allIds.Skip(i).Take(BatchLimit).ToArray();
 
-                    await ExecuteRequestAsync(getUrl(parameters), token, responseParser).ConfigureAwait(false);
+                    await ExecuteRequestAsync(getRequestMessage(parameters), token, responseParser).ConfigureAwait(false);
                 }
             }
             finally

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
@@ -25,6 +26,7 @@ namespace PrtgAPI.Request
 
         private string propertyPrefix;
 
+        [ExcludeFromCodeCoverage]
         public string PropertyPrefix
         {
             get { return propertyPrefix ?? DefaultPropertyPrefix; }
@@ -36,6 +38,7 @@ namespace PrtgAPI.Request
 
         private string basicMatchRegex;
 
+        [ExcludeFromCodeCoverage]
         public string BasicMatchRegex
         {
             get { return basicMatchRegex ?? DefaultBasicMatchRegex; }
@@ -47,6 +50,7 @@ namespace PrtgAPI.Request
 
         private string backwardsMatchRegex;
 
+        [ExcludeFromCodeCoverage]
         public string BackwardsMatchRegex
         {
             get { return backwardsMatchRegex ?? DefaultBackwardsMatchRegex; }
@@ -58,6 +62,7 @@ namespace PrtgAPI.Request
 
         private string standardNameRegex;
 
+        [ExcludeFromCodeCoverage]
         public string StandardNameRegex
         {
             get { return standardNameRegex ?? DefaultStandardNameRegex; }
@@ -69,6 +74,7 @@ namespace PrtgAPI.Request
 
         private string dropDownListRegex;
 
+        [ExcludeFromCodeCoverage]
         public string DropDownListRegex
         {
             get { return dropDownListRegex ?? DefaultDropDownListRegex; }
@@ -80,6 +86,7 @@ namespace PrtgAPI.Request
 
         private string textAreaRegex;
 
+        [ExcludeFromCodeCoverage]
         public string TextAreaRegex
         {
             get { return textAreaRegex ?? DefaultTextAreaRegex; }
@@ -91,6 +98,7 @@ namespace PrtgAPI.Request
 
         private string dependencyDiv;
 
+        [ExcludeFromCodeCoverage]
         public string DependencyDiv
         {
             get { return dependencyDiv ?? DefaultDependencyDiv; }

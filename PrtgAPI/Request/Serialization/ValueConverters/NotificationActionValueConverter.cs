@@ -1,4 +1,5 @@
-﻿using PrtgAPI.Parameters;
+﻿using System.Diagnostics.CodeAnalysis;
+using PrtgAPI.Parameters;
 
 namespace PrtgAPI.Request.Serialization.ValueConverters
 {
@@ -6,6 +7,7 @@ namespace PrtgAPI.Request.Serialization.ValueConverters
     {
         internal static NotificationActionValueConverter Instance = new NotificationActionValueConverter();
 
+        [ExcludeFromCodeCoverage]
         public object Serialize(object value)
         {
             if (value == null)

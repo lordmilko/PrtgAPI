@@ -695,9 +695,11 @@ namespace PrtgAPI
             #endregion
             #region Get Single Raw Property
 
+        [ExcludeFromCodeCoverage]
         private object GetObjectProperty(int objectId, ObjectPropertyInternal property) =>
             GetObjectPropertyInternal(objectId, property);
 
+        [ExcludeFromCodeCoverage]
         private async Task<object> GetObjectPropertyAsync(int objectId, ObjectPropertyInternal property, CancellationToken token) =>
             await GetObjectPropertyInternalAsync(objectId, property, token).ConfigureAwait(false);
 
@@ -905,6 +907,7 @@ namespace PrtgAPI
 
         #endregion
 
+        [ExcludeFromCodeCoverage]
         internal void FoldObject(int objectId, bool fold) =>
             RequestEngine.ExecuteRequest(new FoldParameters(objectId, fold));
 
