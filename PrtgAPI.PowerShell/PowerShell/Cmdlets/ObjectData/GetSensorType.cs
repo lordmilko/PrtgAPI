@@ -8,8 +8,8 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <para type="synopsis">Retrieves all sensor types supported by a PRTG Server.</para> 
     /// 
     /// <para type="description">The Get-SensorType cmdlet retrieves all sensor types from PRTG that are supported by a specified object, allowing
-    /// you to identify the Type Id to be used with other cmdlets (such as Get-SensorTarget and New-SensorParameters). If no -<see cref="Object"/> is specified,
-    /// by default Get-SensorType will retrieve sensor types supported by the Core Probe (Object ID: 1). Practically speaking, all objects appear to support
+    /// you to identify the Type Id to be used with other cmdlets (such as Get-SensorTarget and New-SensorParameters). If no -<see cref="Object"/> or -<see cref="Id"/>
+    /// is specified, by default Get-SensorType will retrieve sensor types supported by the Core Probe (Object ID: 1). Practically speaking, all objects appear to support
     /// all sensor types; as such, there should generally be no need to specify an object.</para>
     /// 
     /// <para type="description">Results returned by Get-SensorType can be filtered by specifying an expression to the -Name parameter. Sensor type
@@ -37,14 +37,20 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// 
     /// </summary>
     [OutputType(typeof(SensorTypeDescriptor))]
-    [Cmdlet(VerbsCommon.Get, "SensorType")]
+    [Cmdlet(VerbsCommon.Get, "SensorType", DefaultParameterSetName = ParameterSet.Default)]
     public class GetSensorType : PrtgCmdlet
     {
         /// <summary>
         /// <para type="description">The object to retrieve sensor types from. If no object is specified, PrtgAPI will retrieve all types supported by the Core Probe (ID 1)</para>
         /// </summary>
-        [Parameter(Mandatory = false, ValueFromPipeline = true)]
+        [Parameter(Mandatory = false, ValueFromPipeline = true, ParameterSetName = ParameterSet.Default)]
         public DeviceOrGroupOrProbe Object { get; set; }
+
+        /// <summary>
+        /// <para type="description">The ID of the object to retrieve sensor types from.</para>
+        /// </summary>
+        [Parameter(Mandatory = true, ParameterSetName = ParameterSet.Manual)]
+        public int Id { get; set; }
 
         /// <summary>
         /// <para type="description">Filters results to those that contain the specified expression in any field.</para> 
@@ -57,7 +63,9 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// </summary>
         protected override void ProcessRecordEx()
         {
-            var types = client.GetSensorTypes(Object?.Id ?? 1);
+            var id = GetDeviceId();
+
+            var types = client.GetSensorTypes(id);
 
             if (Name != null)
             {
@@ -68,6 +76,19 @@ namespace PrtgAPI.PowerShell.Cmdlets
 
             foreach (var type in types)
                 WriteObject(type);
+        }
+
+        private int GetDeviceId()
+        {
+            switch (ParameterSetName)
+            {
+                case ParameterSet.Default:
+                    return Object?.Id ?? 1;
+                case ParameterSet.Manual:
+                    return Id;
+                default:
+                    throw new UnknownParameterSetException(ParameterSetName);
+            }
         }
     }
 }
