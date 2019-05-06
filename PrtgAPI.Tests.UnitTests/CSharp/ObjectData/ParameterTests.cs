@@ -8,7 +8,6 @@ using PrtgAPI.Parameters;
 using PrtgAPI.Utilities;
 using PrtgAPI.Tests.UnitTests.Infrastructure;
 using PrtgAPI.Tests.UnitTests.Support;
-using PrtgAPI.Tests.UnitTests.Support.TestResponses;
 
 namespace PrtgAPI.Tests.UnitTests.ObjectData
 {
@@ -754,6 +753,80 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             AssertEx.Throws<ArgumentException>(() => new SetChannelPropertyParameters(new int[] { }, 1, settings), $"At least one Sensor ID must be specified.{Environment.NewLine}Parameter name: sensorIds");
             AssertEx.Throws<ArgumentNullException>(() => new SetChannelPropertyParameters(new[] { 1 }, 1, null), $"Value cannot be null.{Environment.NewLine}Parameter name: parameters");
             AssertEx.Throws<ArgumentException>(() => new SetChannelPropertyParameters(new[] { 1 }, 1, new ChannelParameter[] { }), $"At least one parameter must be specified.{Environment.NewLine}Parameter name: parameters");
+        }
+
+        #endregion
+        #region NewObjectParameters
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void NewSensorParameters_NameOverride_CanOverride()
+        {
+            var parameters = new RawSensorParameters("test", "snmplibrary");
+            
+            ValidateUrl("name_=test", parameters);
+
+            parameters.AddNameOverride(ObjectProperty.Name, "potato");
+            ValidateUrl("potato=test", parameters);
+
+            parameters.Name = "test1";
+
+            Assert.AreEqual("test1", parameters.Name);
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void NewSensorParameters_NameOverride_RemovesProperly()
+        {
+            var parameters = new RawSensorParameters("test", "snmplibrary");
+
+            ValidateUrl("name_=test", parameters);
+
+            parameters.AddNameOverride(ObjectProperty.Name, "potato");
+            ValidateUrl("potato=test", parameters);
+
+            parameters.Name = "test1";
+            Assert.AreEqual("test1", parameters.Name);
+
+            parameters.RemoveNameOverride(ObjectProperty.Name);
+            ValidateUrl("name_=test1", parameters);
+
+            Assert.AreEqual("test1", parameters.Name);
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void NewSensorParameters_NameOverride_RemovesWhenNotAdded()
+        {
+            var parameters = new RawSensorParameters("test", "snmplibrary");
+
+            Assert.IsFalse(parameters.RemoveNameOverride(ObjectProperty.Name));
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void NewSensorParameters_NameOverride_RetrievesOverrides()
+        {
+            var parameters = new RawSensorParameters("test", "snmplibrary");
+
+            parameters.AddNameOverride(ObjectProperty.Name, "potato");
+            parameters.AddNameOverride(ObjectProperty.Priority, "tomato");
+
+            var overrides = parameters.GetNameOverrides().OrderBy(kv => kv.Key).ToList();
+
+            Assert.AreEqual(ObjectProperty.Name, overrides[0].Key);
+            Assert.AreEqual("potato", overrides[0].Value);
+            Assert.AreEqual(ObjectProperty.Priority, overrides[1].Key);
+            Assert.AreEqual("tomato", overrides[1].Value);
+        }
+
+        private void ValidateUrl(string url, IParameters parameters)
+        {
+            url += "&priority_=3&inherittriggers_=1&intervalgroup=1&interval_=60%7C60+seconds&errorintervalsdown_=1&sensortype=snmplibrary";
+
+            var actual = PrtgRequestMessageTests.CreateUrl(parameters);
+
+            Assert.AreEqual(url, actual);
         }
 
         #endregion

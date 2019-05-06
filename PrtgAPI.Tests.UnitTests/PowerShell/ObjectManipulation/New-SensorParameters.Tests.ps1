@@ -441,7 +441,7 @@ Describe "New-SensorParameters" -Tag @("PowerShell", "UnitTest") {
             $paramsArr = @(
                 "name_=XML+Custom+EXE%2FScript+Sensor"
                 "priority_=3"
-                "inherittriggers_=1"
+                "inherittriggers=1"
                 "intervalgroup=1"
                 "interval_=60%7C60+seconds"
                 "errorintervalsdown_=1"
@@ -522,7 +522,7 @@ Describe "New-SensorParameters" -Tag @("PowerShell", "UnitTest") {
             $paramsArr = @(
                 "name_=XML+Custom+EXE%2FScript+Sensor"
                 "priority_=3"
-                "inherittriggers_=1"
+                "inherittriggers=1"
                 "intervalgroup=0"
                 "interval_=60%7C60+seconds"
                 "errorintervalsdown_=1"
@@ -551,7 +551,7 @@ Describe "New-SensorParameters" -Tag @("PowerShell", "UnitTest") {
             $paramsArr = @(
                 "name_=XML+Custom+EXE%2FScript+Sensor"
                 "priority_=3"
-                "inherittriggers_=1"
+                "inherittriggers=1"
                 "intervalgroup=0"
                 "interval_=300%7C5+minutes"
                 "errorintervalsdown_=1"
@@ -617,7 +617,7 @@ Describe "New-SensorParameters" -Tag @("PowerShell", "UnitTest") {
             $paramsArr = @(
                 "name_=XML+Custom+EXE%2FScript+Sensor"
                 "priority_=3"
-                "inherittriggers_=1"
+                "inherittriggers=1"
                 "intervalgroup=1"
                 "interval_=60%7C60+seconds"
                 "errorintervalsdown_=1"
@@ -677,7 +677,7 @@ Describe "New-SensorParameters" -Tag @("PowerShell", "UnitTest") {
             $addAddressParts = @(
                 "name_=HTTP"
                 "priority_=3"
-                "inherittriggers_=1"
+                "inherittriggers=1"
                 "intervalgroup=1"
                 "interval_=60%7C60+seconds"
                 "errorintervalsdown_=1"

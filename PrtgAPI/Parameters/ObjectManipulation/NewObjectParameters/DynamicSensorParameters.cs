@@ -113,6 +113,9 @@ namespace PrtgAPI.Parameters
 
                 prop.Item2.SetValue(this, deserialized);
 
+                if (propKey.EndsWith("_") && !name.EndsWith("_"))
+                    AddNameOverride(prop.Item1, name);
+
                 return;
             }
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using PrtgAPI.Attributes;
@@ -15,6 +16,8 @@ namespace PrtgAPI.Parameters
     public abstract class NewObjectParameters : BaseParameters, ICommandParameters, ICustomParameterContainer, IPropertyCacheResolver
     {
         internal abstract CommandFunction Function { get; }
+
+        internal Dictionary<ObjectProperty, string> nameOverrideMap = new Dictionary<ObjectProperty, string>();
 
         CommandFunction ICommandParameters.Function => Function;
 
@@ -368,9 +371,17 @@ namespace PrtgAPI.Parameters
             return name;
         }
 
-        private string GetObjectPropertyName(Enum property)
+        private string GetObjectPropertyName(Enum property, bool forceOriginalName = false)
         {
             var name = ObjectPropertyParser.GetObjectPropertyName(property);
+
+            if (forceOriginalName)
+                return name;
+
+            string realName;
+
+            if (property is ObjectProperty && nameOverrideMap.TryGetValue((ObjectProperty) property, out realName))
+                name = realName;
 
             return name;
         }
@@ -420,6 +431,63 @@ namespace PrtgAPI.Parameters
 
                 return list;
             }
+        }
+
+        /// <summary>
+        /// Overrides the the name a typed property is stored as. If a parameter for the specified property already exists, it will be automatically updated to use the new name.
+        /// </summary>
+        /// <param name="property">The property to override the name of.</param>
+        /// <param name="newName">The name to assign the property.</param>
+        public void AddNameOverride(ObjectProperty property, string newName)
+        {
+            if (newName == null)
+                throw new ArgumentNullException(nameof(newName));
+
+            string currentName;
+
+            if(!nameOverrideMap.TryGetValue(property, out currentName))
+                currentName = GetObjectPropertyName(property, true);
+
+            nameOverrideMap[property] = newName;
+
+            var existingParameter = InternalParameters.FirstOrDefault(p => p.Name == currentName);
+
+            if (existingParameter != null)
+                existingParameter.Name = newName;
+        }
+
+        /// <summary>
+        /// Retrieves all name overrides that are defined on this object.
+        /// </summary>
+        /// <returns>A read-only dictionary of overrides that are defined on this object.</returns>
+        public IReadOnlyDictionary<ObjectProperty, string> GetNameOverrides() => new ReadOnlyDictionary<ObjectProperty, string>(nameOverrideMap);
+
+        /// <summary>
+        /// Determines whether this object contains an override for a specified property.
+        /// </summary>
+        /// <param name="property">The property to check for the existence of.</param>
+        /// <returns></returns>
+        public bool ContainsNameOverride(ObjectProperty property) => nameOverrideMap.ContainsKey(property);
+
+        /// <summary>
+        /// Removes a name override for a specified property. If a parameter for the property was successfully removed, the parameter will be reverted to use its original name.
+        /// </summary>
+        /// <param name="property">The property to remove the name override for.</param>
+        /// <returns>If a name override for the specified property existed and was removed, true. Otherwise, false.</returns>
+        public bool RemoveNameOverride(ObjectProperty property)
+        {
+            string currentName;
+
+            if (nameOverrideMap.TryGetValue(property, out currentName) && nameOverrideMap.Remove(property))
+            {
+                var existingParameter = InternalParameters.FirstOrDefault(p => p.Name == currentName);
+
+                existingParameter.Name = GetObjectPropertyName(property, true);
+
+                return true;
+            }
+
+            return false;
         }
     }
 }

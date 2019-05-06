@@ -64,7 +64,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
 
             builder.Append("name_=XML+Custom+EXE%2FScript+Sensor&");
             builder.Append("priority_=3&");
-            builder.Append("inherittriggers_=1&");
+            builder.Append("inherittriggers=1&");
             builder.Append("intervalgroup=1&");
             builder.Append("interval_=60%7C60+seconds&");
             builder.Append("errorintervalsdown_=1&");
