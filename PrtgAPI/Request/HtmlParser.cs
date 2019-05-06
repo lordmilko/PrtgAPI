@@ -363,8 +363,8 @@ namespace PrtgAPI.Request
 
         private void ReplaceExistingItem(Dictionary<string, Input> dictionary, Input prop)
         {
-            if (prop.Type == dictionary[prop.Name].Type)
             //If our new item has the same as our existing item of the same name
+            if (prop.Type == dictionary[prop.Name].Type) 
             {
                 if (prop.Checked && !dictionary[prop.Name].Checked)
                 {
@@ -395,9 +395,13 @@ namespace PrtgAPI.Request
             }
             else
             {
+                //We have two properties with different types. if the existing object is hidden and the replacement isn't, the replacement
+                //supercedes it
                 if (!prop.Hidden && dictionary[prop.Name].Hidden)
                     dictionary[prop.Name] = prop;
-                else if (prop.Hidden && dictionary[prop.Name].Hidden)
+
+                //If both properties are hidden but are of different types, or the challenge is hidden but the existing one ISN'T (inverse of the above), we don't care
+                else if (prop.Hidden && dictionary[prop.Name].Hidden || prop.Hidden && !dictionary[prop.Name].Hidden)
                 {
                     //Don't care
                 }
