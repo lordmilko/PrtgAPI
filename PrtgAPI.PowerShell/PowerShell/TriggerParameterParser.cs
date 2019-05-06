@@ -6,6 +6,7 @@ using PrtgAPI.Attributes;
 using PrtgAPI.Parameters;
 using PrtgAPI.Reflection;
 using PrtgAPI.Reflection.Cache;
+using PrtgAPI.Utilities;
 
 namespace PrtgAPI.PowerShell
 {
@@ -60,10 +61,7 @@ namespace PrtgAPI.PowerShell
                 if (single.Count == 1)
                     parameter.Value = single.Single();
                 else if (single.Count > 1)
-                {
-                    var str = string.Join(", ", single.Select(s => $"'{s}'"));
-                    throw new InvalidOperationException($"Notification Action wildcard '{nameOrObject.Name}' on parameter '{parameter.Property}' is ambiguous between the actions: {str}. Please specify a more specific action name.");
-                }
+                    throw new InvalidOperationException($"Notification Action wildcard '{nameOrObject.Name}' on parameter '{parameter.Property}' is ambiguous between the actions: {single.ToQuotedList()}. Please specify a more specific action name.");
                 else
                     throw new InvalidOperationException($"Could not find a notification action matching the wildcard expression '{nameOrObject.Name}' for use with parameter '{parameter.Property}'.");
             }
@@ -101,11 +99,7 @@ namespace PrtgAPI.PowerShell
                 string str2 = null;
 
                 if (channels.Count > 0)
-                {
-                    str2 = string.Join(", ", channels.Select(c => $"'{c}'"));
-
-                    str2 = $"Specify one of the following channel names and try again: {str2}";
-                }
+                    str2 = $"Specify one of the following channel names and try again: {channels.ToQuotedList()}";
                 else
                     str2 = "No channels currently exist on this sensor";
 
@@ -114,11 +108,7 @@ namespace PrtgAPI.PowerShell
             if (matches.Length == 1)
                 parameter.Value = matches.Single();
             else
-            {
-                var str2 = string.Join(", ", matches.Select(m => $"'{m}'"));
-
-                throw new InvalidOperationException($"Channel wildcard '{str}' on parameter '{parameter.Property}' is ambiguous between the channels: {str2}.");
-            }
+                throw new InvalidOperationException($"Channel wildcard '{str}' on parameter '{parameter.Property}' is ambiguous between the channels: {matches.ToQuotedList()}.");
         }
 
         internal static Type GetPropertyType(TriggerProperty e)

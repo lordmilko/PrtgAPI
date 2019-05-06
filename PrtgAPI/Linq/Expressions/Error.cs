@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using PrtgAPI.Linq.Expressions.Visitors;
+using PrtgAPI.Utilities;
 
 namespace PrtgAPI.Linq.Expressions
 {
@@ -214,7 +215,7 @@ namespace PrtgAPI.Linq.Expressions
 
         private static Exception LogDuplicateBoundEnd(string end, List<DateTime> dates)
         {
-            return new NotSupportedException(string.Format(logDuplicateRangeBound, end, string.Join(", ", dates.Select(d => $"'{d}'"))));
+            return new NotSupportedException(string.Format(logDuplicateRangeBound, end, dates.ToQuotedList()));
         }
 
         public static Exception LogUnsupportedFilter(List<SearchFilter> filters)
@@ -227,7 +228,7 @@ namespace PrtgAPI.Linq.Expressions
 
         public static Exception LogDuplicateId(List<object> ids)
         {
-            return new NotSupportedException(string.Format(logDuplicateId, string.Join(", ", ids.Select(i => $"'{i}'"))));
+            return new NotSupportedException(string.Format(logDuplicateId, ids.ToQuotedList()));
         }
 
         public static Exception AmbiguousCondition(Expression condition, List<Expression> subconditions)

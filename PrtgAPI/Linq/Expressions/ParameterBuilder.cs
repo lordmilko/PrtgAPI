@@ -76,7 +76,7 @@ namespace PrtgAPI.Linq.Expressions
             if (Properties.Count == 0)
                 Logger.Log("Did not identify any column limiters", Indentation.Three);
             else
-                Logger.Log("Limiting by properties " + string.Join(", ", Properties.Select(p => $"'{p}'")), Indentation.Three);
+                Logger.Log($"Limiting by properties {Properties.ToQuotedList()}", Indentation.Three);
 
             return propertyExpression;
         }

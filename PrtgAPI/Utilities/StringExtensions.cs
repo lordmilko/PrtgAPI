@@ -1,8 +1,10 @@
 ﻿using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace PrtgAPI.Utilities
 {
-    static class StringExtensions
+    internal static class StringExtensions
     {
         public static string Plural(this string str, int count)
         {
@@ -42,6 +44,11 @@ namespace PrtgAPI.Utilities
                 return str;
 
             return $"{str}.";
+        }
+
+        public static string ToQuotedList<T>(this IEnumerable<T> list)
+        {
+            return string.Join(", ", list.Select(l => $"'{l}'"));
         }
     }
 }
