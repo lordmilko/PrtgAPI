@@ -209,6 +209,11 @@ namespace PrtgAPI.Parameters.Helpers
 
         internal static string GetObjectPropertyNameViaCache(Enum property, PropertyCache cache)
         {
+            var mergeable = property.GetEnumAttribute<MergeableAttribute>();
+
+            if (mergeable != null)
+                throw new InvalidOperationException($"'{property}' is a virtual property and cannot be retrieved directly. To access this value, property '{mergeable.Dependency}' should be retrieved instead.");
+
             var attribute = cache?.GetAttribute<XmlElementAttribute>();
             string name;
 

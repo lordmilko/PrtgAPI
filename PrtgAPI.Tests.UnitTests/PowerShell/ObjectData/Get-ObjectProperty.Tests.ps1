@@ -52,6 +52,13 @@ Describe "Get-ObjectProperty" -Tag @("PowerShell", "UnitTest") {
             $properties.Tags[0] | Should Be "tag1"
             $properties.Tags[1] | Should Be "tag2"
         }
+
+        It "throws trying to retrieve a mergeable property" {
+
+            $device = Get-Device -Count 1
+
+            { $Device | Get-ObjectProperty LocationName } | Should Throw "'LocationName' is a virtual property and cannot be retrieved directly. To access this value, property 'Location' should be retrieved instead."
+        }
     }
 
     Context "RawProperty" {
