@@ -151,13 +151,19 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
 
             var syncMethods = methods.Where(m => !m.Name.EndsWith("Async") && !skipStartsWith.Any(m.Name.StartsWith) && !skipFull.Any(m.Name.StartsWith)).ToList();
 
-            var methodFullNames = methods.Select(m => ReflectionExtensions.GetInternalProperty(m, "FullName")).ToList();
+            var methodFullNames = methods.Select(m =>
+            {
+                var str = m.ToString();
+
+                return str.Substring(str.IndexOf(' ') + 1);
+            }).ToList();
 
             var missingAsync = new List<MethodInfo>();
 
             foreach (var s in syncMethods)
             {
-                var fullName = (string)ReflectionExtensions.GetInternalProperty(s, "FullName");
+                var str = s.ToString();
+                var fullName = str.Substring(str.IndexOf(' ') + 1);
 
                 var asyncName = fullName.Replace($"{s.Name}(", $"{s.Name}Async(");
 
@@ -505,6 +511,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
 
         private void ExecuteSocketException(SocketError error)
         {
+#if NETFRAMEWORK
             var ctor = typeof(SocketException).GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, new[]
             {
                 typeof (int), typeof (EndPoint)
@@ -514,6 +521,17 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             {
                 (int) error, new IPEndPoint(new IPAddress(0x2414188f), 80)
             });
+#else
+            var ctor = typeof(SocketException).GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance, null, new[]
+            {
+                typeof(SocketError)
+            }, null);
+
+            var ex = (SocketException) ctor.Invoke(new object[]
+            {
+                error
+            });
+#endif
 
             var response = new ExceptionResponse(ex);
             var webClient = new MockWebClient(response);

@@ -181,7 +181,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
 
         public static string Cast(string value, string type)
         {
-#if NET461
+#if NETFRAMEWORK
             return $"Convert({value})";
 #else
             return $"Convert({value}, {type})";

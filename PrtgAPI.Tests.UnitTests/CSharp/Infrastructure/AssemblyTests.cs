@@ -88,6 +88,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             }
         }
 
+#if WINDOWS
         [TestMethod]
         [TestCategory("SkipCI")]
         [TestCategory("UnitTest")]
@@ -137,6 +138,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             if (badNewLines.Count > 0)
                 throw new Exception($"{string.Join(", ", badNewLines) } are missing CRLF");
         }
+#endif
 
         private bool IsNotExcludedFolder(string root, string f)
         {

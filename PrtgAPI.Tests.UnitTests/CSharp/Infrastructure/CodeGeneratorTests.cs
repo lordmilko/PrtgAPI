@@ -1,4 +1,6 @@
-﻿using System;
+﻿#if NETFRAMEWORK
+
+using System;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PrtgAPI.CodeGenerator;
@@ -257,3 +259,4 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
         }
     }
 }
+#endif //NETFRAMEWORK

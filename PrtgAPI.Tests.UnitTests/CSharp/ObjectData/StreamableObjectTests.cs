@@ -23,20 +23,35 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
 
         protected void Object_CanStream_Ordered_FastestToSlowest()
         {
-            var count = 2000;
-            var perPage = 500;
-            var pages = count / perPage;
-
-            //bug: the issue is our sensorresponse has no way of knowing whether to do a normal response or do a streaming response
-
-            var client = Initialize_Client_WithItems(Enumerable.Range(0, count).Select(i => GetItem()).ToArray());
-            var results = Stream(client).Select(i => i.Id).ToList();
-            Assert.IsTrue(results.Count == count, $"Expected {count} results but got {results.Count} instead.");
-
-            for (int pageNum = pages; pageNum > 0; pageNum--)
+            Action action = () =>
             {
-                var r = results.Skip((pages - pageNum) * perPage).Take(perPage).ToList();
-                Assert.IsTrue(r.TrueForAll(item => item == pageNum));
+                var count = 2000;
+                var perPage = 500;
+                var pages = count / perPage;
+
+                //bug: the issue is our sensorresponse has no way of knowing whether to do a normal response or do a streaming response
+
+                var client = Initialize_Client_WithItems(Enumerable.Range(0, count).Select(i => GetItem()).ToArray());
+                var results = Stream(client).Select(i => i.Id).ToList();
+                Assert.IsTrue(results.Count == count, $"Expected {count} results but got {results.Count} instead.");
+
+                for (int pageNum = pages; pageNum > 0; pageNum--)
+                {
+                    var r = results.Skip((pages - pageNum) * perPage).Take(perPage).ToList();
+                    Assert.IsTrue(r.TrueForAll(item => item == pageNum));
+                }
+            };
+
+            for (var i = 0; i < 5; i++)
+            {
+                try
+                {
+                    action();
+                    return;
+                }
+                catch (AssertFailedException)
+                {
+                }
             }
         }
 

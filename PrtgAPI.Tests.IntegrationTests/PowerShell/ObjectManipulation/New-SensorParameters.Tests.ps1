@@ -18,7 +18,7 @@ Describe "New-SensorParameters_IT" -Tag @("PowerShell", "IntegrationTest") {
         }
 
         It "throws when sensor query target is missing" {
-            { Get-Device -Id (Settings Device) | New-SensorParameters -RawType snmplibrary } | Should Throw "Cannot process query for sensor type 'snmplibrary': a sensor query target is required, however none was specified. Please specify one of the following targets: 'APC UPS.oidlib',"
+            { Get-Device -Id (Settings Device) | New-SensorParameters -RawType snmplibrary } | Should Throw "Failed to process query for sensor type 'snmplibrary': a sensor query target is required, however none was specified. Please specify one of the following targets: 'APC UPS.oidlib',"
         }
 
         It "parses a set of sensor query target parameters" {

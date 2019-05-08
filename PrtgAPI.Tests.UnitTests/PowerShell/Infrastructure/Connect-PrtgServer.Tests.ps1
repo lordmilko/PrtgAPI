@@ -7,12 +7,12 @@ Describe "Connect-PrtgServer" -Tag @("PowerShell", "UnitTest") {
 
         try
         {
-            Connect-PrtgServer http://127.0.0.2 (New-Credential username password)
+            Connect-PrtgServer http://127.0.0.1 (New-Credential username password)
             throw "Connection should not have succeeded"
         }
         catch
         {
-            if($_.exception.message -notlike "*Not Found*" -and $_.exception.message -notlike "*Server rejected HTTP connection*")
+            if($_.exception.message -notlike "*Not Found*" -and $_.exception.message -notlike "*Connection refused*" -and $_.exception.message -notlike "*Server rejected HTTP connection*")
             {
                 throw
             }
