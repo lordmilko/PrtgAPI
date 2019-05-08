@@ -281,7 +281,7 @@ Describe "Get-SensorHistory" -Tag @("PowerShell", "UnitTest") {
         $sensor | Get-SensorHistory
 
         # Validate that the format was created
-        $post = gci $dir | sort LastWriteTime
+        $post = gci $dir | Sort-Object LastWriteTime
         $post.Count | Should Be ($pre.Count + 1)
 
         $new = $post | Select -Last 1

@@ -143,7 +143,7 @@ function Get-LastAppveyorNuGetVersion
     {
         $deployments = Get-AppveyorDeployment
 
-        $lastNuGet = $deployments|sort datetime -Descending|where Name -eq "NuGet"|select -first 1
+        $lastNuGet = $deployments|Sort-Object datetime -Descending|where Name -eq "NuGet"|select -first 1
 
         return $lastNuGet.Version
     }

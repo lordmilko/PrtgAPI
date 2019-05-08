@@ -6,7 +6,7 @@
         [MissingSensorType[]]$Types
     )
     
-    $sortedTypes  = $Types|sort Name
+    $sortedTypes  = $Types|Sort-Object Name
 
     $builder = New-Object System.Text.StringBuilder
 
