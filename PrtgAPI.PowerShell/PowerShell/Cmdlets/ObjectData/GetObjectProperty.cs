@@ -251,14 +251,36 @@ namespace PrtgAPI.PowerShell.Cmdlets
             return value;
         }
 
+        void WriteObjectWithProgressSafe(Func<object> obj)
+        {
+            WriteObjectWithProgress(() =>
+            {
+                try
+                {
+                    return obj();
+                }
+                catch(Exception ex) when (ex is PrtgRequestException)
+                {
+                    WriteError(new ErrorRecord(
+                        ex,
+                        nameof(PrtgRequestException),
+                        ErrorCategory.InvalidOperation,
+                        null
+                    ));
+
+                    return null;
+                }
+            });
+        }
+
         #endregion
 
         private void WriteProperties<TProperty>(TProperty[] properties, Func<TProperty, object> getValue, Func<TProperty, TProperty> getPropertyName = null)
         {
             if (properties.Length == 1)
-                WriteObjectWithProgress(() => getValue(properties[0]));
+                WriteObjectWithProgressSafe(() => getValue(properties[0]));
             else
-                WriteObjectWithProgress(() => GetMultipleProperties(properties, getValue, getPropertyName));
+                WriteObjectWithProgressSafe(() => GetMultipleProperties(properties, getValue, getPropertyName));
         }
 
         private PSObject GetMultipleProperties<TProperty>(TProperty[] properties, Func<TProperty, object> getValue, Func<TProperty, TProperty> getPropertyName)

@@ -188,5 +188,15 @@ Describe "Get-ObjectProperty" -Tag @("PowerShell", "UnitTest") {
         }
     }
 
+    It "throws an ErrorRecord when a property doesn't exist" {
+        Get-Device -Count 1 | Get-ObjectProperty -RawProperty banana -ErrorAction SilentlyContinue
+
+        $? | Should Be $false
+    }
+
+    It "throws when a property doesn't exist and ErrorActionPreference is stop" {
+        { Get-Device -Count 1 | Get-ObjectProperty -RawProperty banana -ErrorAction Stop } | Should Throw "PRTG was unable to complete the request. A value for property 'banana' could not be found."
+    }
+
     #endregion
 }

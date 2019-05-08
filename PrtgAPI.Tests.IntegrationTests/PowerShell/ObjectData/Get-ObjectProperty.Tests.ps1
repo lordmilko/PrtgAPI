@@ -93,6 +93,12 @@ Describe "Get-ObjectProperty_IT" -Tag @("PowerShell", "IntegrationTest") {
         { $device | Get-ObjectProperty -RawProperty "banana" } | Should Throw "A value for property 'banana' could not be found"
     }
 
+    It "throws an ErrorRecord when a property doesn't exist" {
+        $device = Get-Device -Id (Settings Device)
+
+        $device | Get-ObjectProperty -RawProperty "banana" -ErrorAction SilentlyContinue
+    }
+
     $cases = @(
         @{name = "Sensor"}
         @{name = "Device"}

@@ -37,7 +37,10 @@ namespace PrtgAPI.PowerShell.Base
         {
             DisplayProgress();
 
-            WriteObject(obj(), true);
+            var result = obj();
+
+            if (result != null)
+                WriteObject(result, true);
 
             PostUpdateProgress();
         }
