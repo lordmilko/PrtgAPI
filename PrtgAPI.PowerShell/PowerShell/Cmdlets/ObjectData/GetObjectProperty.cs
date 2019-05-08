@@ -67,7 +67,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     ///     <para>Retrieve the upper error limit property of the channel with ID 1 on the object with ID 1001</para>
     /// </example>
     ///
-    /// <para type="link" uri="https://github.com/lordmilko/PrtgAPI/wiki/Property-Manipulation#retrieving-properties-1">Online version:</para>
+    /// <para type="link" uri="https://github.com/lordmilko/PrtgAPI/wiki/Property-Manipulation#get-1">Online version:</para>
     /// <para type="link">Set-ObjectProperty</para>
     /// <para type="link">Get-Sensor</para>
     /// <para type="link">Get-Device</para>

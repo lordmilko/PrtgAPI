@@ -41,7 +41,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     ///     <para>Add a new group called "Servers" with custom tags to the Contoso probe.</para>
     /// </example>
     ///
-    /// <para type="link" uri="https://github.com/lordmilko/PrtgAPI/wiki/Object-Creation#group-creation-1">Online version:</para>
+    /// <para type="link" uri="https://github.com/lordmilko/PrtgAPI/wiki/Object-Creation#groups-1">Online version:</para>
     /// <para type="link">New-GroupParameters</para>
     /// <para type="link">Get-Group</para>
     /// <para type="link">Get-Probe</para>
