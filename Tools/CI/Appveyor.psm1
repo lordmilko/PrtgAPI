@@ -1,8 +1,8 @@
-ipmo $PSScriptRoot\build.psm1
+ipmo $PSScriptRoot\ci.psm1
 
 $script:SolutionDir = $script:SolutionDir = Get-SolutionRoot
 
-. $PSScriptRoot\Functions\Import-ModuleFunctions.ps1
+. $PSScriptRoot\Helpers\Import-ModuleFunctions.ps1
 . Import-ModuleFunctions "$PSScriptRoot\Appveyor"
 
 $script:APPEYOR_BUILD_CORE = $true

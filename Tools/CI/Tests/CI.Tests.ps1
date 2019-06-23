@@ -1,6 +1,6 @@
-Import-Module $PSScriptRoot\..\Build.psm1
+Import-Module $PSScriptRoot\..\ci.psm1
 
-Describe "Build" {
+Describe "CI" {
 
     It "invokes a native executable" {
         $version = Invoke-Process {
