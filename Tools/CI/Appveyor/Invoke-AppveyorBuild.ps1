@@ -8,28 +8,12 @@ function Invoke-AppveyorBuild
 
     Write-LogHeader "Building PrtgAPI (Core: $IsCore)"
 
-    if($IsCore)
+    $additionalArgs = $null
+
+    if($env:APPVEYOR)
     {
-        throw ".NET Core is not currently supported"
+        $additionalArgs = "/logger:`"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll`""
     }
-    else
-    {
-        Invoke-Process {
 
-            $msbuild = Get-MSBuild
-
-            $msbuildArgs = @(
-                "$env:APPVEYOR_BUILD_FOLDER\PrtgAPI.sln"
-                "/verbosity:minimal"
-                "/p:Configuration=$env:CONFIGURATION"
-            )
-
-            if($env:APPVEYOR)
-            {
-                $msbuildArgs += "/logger:`"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll`""
-            }
-
-            & $msbuild @msbuildArgs
-        } -Host
-    }
+    Invoke-CIBuild $env:APPVEYOR_BUILD_FOLDER $additionalArgs -IsCore:$IsCore
 }

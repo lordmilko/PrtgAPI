@@ -5,7 +5,7 @@
 
     $folder = GetProjectRoot
 
-    ipmo $folder\Tools\Build\build.psm1
+    ipmo $folder\Tools\CI\ci.psm1
 
     Get-CodeCoverage -BuildFolder $folder "Debug"
 

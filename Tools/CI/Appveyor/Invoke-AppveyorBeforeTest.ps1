@@ -6,5 +6,5 @@ function Invoke-AppveyorBeforeTest
         [switch]$IsCore = $script:APPEYOR_BUILD_CORE
     )
 
-    Invoke-AppveyorNuGet $IsCore
+    New-AppveyorPackage $IsCore
 }

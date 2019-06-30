@@ -1,11 +1,9 @@
+. "$PSScriptRoot\..\..\..\Tools\CI\Helpers\PackageManager.ps1"
+
 $ProgressPreference = "SilentlyContinue"
 $ErrorActionPreference = "Stop"
 
-$repoName = "TempRepository"
-$repoLocation = "$env:TEMP\$repoName"
-$packageLocation = "$env:TEMP\TempPackages"
-
-function Invoke-AppveyorNuGet
+function New-AppveyorPackage
 {
     [CmdletBinding()]
     param(
@@ -20,167 +18,49 @@ function Invoke-AppveyorNuGet
         CSharpProjectRoot     = "$env:APPVEYOR_BUILD_FOLDER\PrtgAPI"
         CSharpOutputDir       = "$env:APPVEYOR_BUILD_FOLDER\PrtgAPI\bin\$env:CONFIGURATION"
         PowerShellProjectRoot = "$env:APPVEYOR_BUILD_FOLDER\PrtgAPI.PowerShell"
-        PowerShellOutputDir   = GetPowerShellOutputDir $IsCore
-        IsCore = $IsCore
+        PowerShellOutputDir   = Get-PowerShellOutputDir $env:APPVEYOR_BUILD_FOLDER $env:CONFIGURATION $IsCore
+        Manager               = New-PackageManager
+        IsCore                = $IsCore
     }
 
     Process-CSharpPackage $config
     Process-PowerShellPackage $config
 }
 
-function GetPowerShellOutputDir($IsCore)
-{
-    $base = "$env:APPVEYOR_BUILD_FOLDER\PrtgAPI.PowerShell\bin\$env:CONFIGURATION\"
-
-    if($IsCore)
-    {
-        # Get the lowest .NET Framework folder
-        $candidates = gci "$base\net4*"
-
-        $fullName = $candidates | select -First 1 -Expand FullName
-
-        return "$fullName\PrtgAPI"
-    }
-    else
-    {
-        return "$base\PrtgAPI"
-    }
-}
-
-#region PackageSource
-
-function Install-CSharpPackageSource
-{
-    $packageArgs = @(
-        "CSharp"
-        { Get-PackageSource }
-        { Register-PackageSource -Name $repoName -Location $repoLocation -ProviderName "NuGet" -Trusted }
-        { Unregister-PackageSource -Name $repoName -Location $repoLocation -ProviderName "NuGet" -Force -ErrorAction SilentlyContinue }
-    )
-    
-    Install-GenericPackageSource @packageArgs
-}
-
-function Uninstall-CSharpPackageSource
-{
-    Uninstall-GenericPackageSource "CSharp" { Unregister-PackageSource -Name $repoName -Location $repoLocation -ProviderName "NuGet" -Force }
-}
-
-#endregion
-#region PSRepository
-
-function Install-TempPSRepository
-{
-    $packageArgs = @(
-        "PowerShell",
-        { Get-PSRepository },
-        { Register-PSRepository -Name $repoName -SourceLocation $repoLocation -PublishLocation $repoLocation -InstallationPolicy Trusted },
-        { Unregister-PSRepository $repoName }
-    )
-    
-    Install-GenericPackageSource @packageArgs
-}
-
-function Uninstall-TempPSRepository
-{
-    Uninstall-GenericPackageSource "PowerShell" { Unregister-PSRepository $repoName }
-}
-
-#endregion
-#region Generic Package Source
-
-function Install-GenericPackageSource($language, $exists, $register, $unregister)
-{
-    Write-LogInfo "`t`tInstalling temp $language repository"
-
-    if(Test-Path $repoLocation)
-    {
-        Write-LogError "`t`t`tRemoving repository folder left over from previous run..."
-
-        Remove-Item $repoLocation -Recurse -Force
-    }
-
-    Write-LogInfo "`t`t`tCreating repository folder"
-    New-Item -ItemType Directory $repoLocation | Out-Null
-
-    if((& $exists) | where name -eq $repoName)
-    {
-        Write-LogError "`t`t`tRemoving repository left over from previous run..."
-        & $unregister
-    }
-
-    Write-LogInfo "`t`t`tRegistering temp repository"
-    & $register | Out-Null
-}
-
-function Uninstall-GenericPackageSource($language, $unregister)
-{
-    Write-LogInfo "`t`tUninstalling temp $language repository"
-
-    Write-LogInfo "`t`t`tUnregistering temp repository"
-    & $unregister
-
-    Write-LogInfo "`t`t`tRemoving temp repository folder"
-    Remove-Item $repoLocation -Recurse -Force
-}
-
-#endregion
 #region C#
 
 function Process-CSharpPackage($config)
 {
     Write-LogSubHeader "`tProcessing C# package"
 
-    Install-CSharpPackageSource
+    $config.Manager.InstallCSharpPackageSource()
 
-    New-CSharpPackage $config
-    Test-CSharpPackage $config
-
-    Move-Packages
-
-    Uninstall-CSharpPackageSource
-}
-
-function New-CSharpPackage($config)
-{
-    Write-LogInfo "`t`tBuilding package"
-
-    $result = Invoke-Process {
-
-        if($config.IsCore)
-        {
-            throw ".NET Core is not currently supported"
-        }
-        else
-        {
-            $nugetArgs = @(
-                "pack"
-                "$($config.CSharpProjectRoot)\PrtgAPI.csproj"
-                "-Exclude"
-                "**/*.tt;**/Resources/*.txt;*PrtgClient.Methods.xml"
-                "-outputdirectory"
-                "$repoLocation"
-                "-NoPackageAnalysis"
-                "-symbols"
-                "-version"
-            )
-
-            if($env:APPVEYOR)
-            {
-                $nugetArgs += ($env:APPVEYOR_BUILD_VERSION -replace "-.+")
-            }
-            else
-            {
-                $nugetArgs += (Get-PrtgVersion)
-            }
-
-            nuget @nugetArgs
-        }
+    $csharpArgs = @{
+        BuildFolder = $config.SolutionRoot
+        OutputFolder = ([PackageManager]::RepoLocation)
+        Version = Get-CSharpVersion
+        Configuration = $env:CONFIGURATION
+        IsCore = $config.IsCore
     }
 
-    if($result)
+    New-CSharpPackage @csharpArgs
+    Test-CSharpPackage $config
+
+    Move-AppveyorPackages $config
+
+    $config.Manager.UninstallCSharpPackageSource()
+}
+
+function Get-CSharpVersion
+{
+    if($env:APPVEYOR)
     {
-        Write-LogInfo $result
+        # Trim any version qualifiers (-build.2, etc)
+        return $env:APPVEYOR_BUILD_VERSION -replace "-.+"
+    }
+    else
+    {
+        return Get-PrtgVersion
     }
 }
 
@@ -263,7 +143,7 @@ function Test-CSharpPackageInstalls
 
     $nupkg = Get-CSharpNupkg
     $packageName = $nupkg.Name -replace ".nupkg",""
-    $installPath = "$packageLocation\$packageName"
+    $installPath = "$([PackageManager]::PackageLocation)\$packageName"
 
     if(IsNuGetPackageInstalled $installPath)
     {
@@ -271,14 +151,14 @@ function Test-CSharpPackageInstalls
         Uninstall-CSharpPackageInternal
     }
 
-    Install-CSharpPackageInternal
+    Install-CSharpPackageInternal $installPath
     Test-CSharpPackageInstallInternal
     Uninstall-CSharpPackageInternal
 }
 
 function Get-CSharpNupkg
 {
-    $nupkg = @(gci $repoLocation -Filter *.nupkg|where name -NotLike "*.symbols.nupkg")
+    $nupkg = @(gci ([PackageManager]::RepoLocation) -Filter *.nupkg|where name -NotLike "*.symbols.nupkg")
 
     if(!$nupkg)
     {
@@ -301,14 +181,14 @@ function Get-CSharpNupkg
 
 function IsNuGetPackageInstalled($installPath)
 {
-    return (Get-Package PrtgAPI -Destination $packageLocation -ErrorAction SilentlyContinue) -or (Test-Path $installPath)
+    return (Get-Package PrtgAPI -Destination ([PackageManager]::PackageLocation) -ErrorAction SilentlyContinue) -or (Test-Path $installPath)
 }
 
-function Install-CSharpPackageInternal
+function Install-CSharpPackageInternal($installPath)
 {
-    Write-LogInfo "`t`t`t`tInstalling package from $repoName"
+    Write-LogInfo "`t`t`t`tInstalling package from $([PackageManager]::RepoName)"
 
-    $result = Install-Package PrtgAPI -Source $repoName -ProviderName NuGet -Destination $packageLocation | Out-Null
+    Install-Package PrtgAPI -Source ([PackageManager]::RepoName) -ProviderName NuGet -Destination ([PackageManager]::PackageLocation) -SkipDependencies | Out-Null
 
     if(!(Test-Path $installPath))
     {
@@ -318,7 +198,7 @@ function Install-CSharpPackageInternal
 
 function Test-CSharpPackageInstallInternal
 {
-    $folders = gci "$packageLocation\PrtgAPI.$(Get-PrtgVersion)\lib\net4*"
+    $folders = gci "$([PackageManager]::PackageLocation)\PrtgAPI.$(Get-PrtgVersion)\lib\net4*"
 
     foreach($folder in $folders)
     {
@@ -335,7 +215,7 @@ function Test-CSharpPackageInstallInternal
 
 function Uninstall-CSharpPackageInternal
 {
-    Get-Package PrtgAPI -Provider NuGet -Destination $packageLocation | Uninstall-Package
+    Get-Package PrtgAPI -Provider NuGet -Destination ([PackageManager]::PackageLocation) | Uninstall-Package | Out-Null
 
     if(Test-Path $installPath)
     {
@@ -350,33 +230,27 @@ function Process-PowerShellPackage($config)
 {
     Write-LogSubHeader "`tProcessing PowerShell package"
 
-    Install-TempPSRepository
+    $config.Manager.InstallPowerShellRepository()
 
     if($env:APPVEYOR)
     {
         Update-ModuleManifest "$($config.PowerShellOutputDir)\PrtgAPI.psd1"
     }    
 
-    New-PowerShellPackage $config
+    $powershellArgs = @{
+        OutputDir = $config.PowerShellOutputDir
+        RepoManager = $config.Manager
+        Configuration = $env:CONFIGURATION
+        IsCore = $config.IsCore
+    }
+
+    New-PowerShellPackage @powershellArgs
 
     Test-PowerShellPackage
 
-    Move-Packages "_PowerShell"
+    Move-AppveyorPackages $config "_PowerShell"
 
-    Uninstall-TempPSRepository
-}
-
-function New-PowerShellPackage($config)
-{
-    WithTempCopy $config.PowerShellOutputDir {
-        param($tempPath)
-
-        gci "$($tempPath)\*" -Include *.cmd,*.pdb | Remove-Item -Force
-
-        Write-LogInfo "`t`tPublishing module to $repoName"
-
-        Publish-Module -Path $tempPath -Repository $repoName -WarningAction SilentlyContinue
-    }
+    $config.Manager.UninstallPowerShellRepository()
 }
 
 function Test-PowerShellPackage
@@ -401,6 +275,26 @@ function Test-PowerShellPackageDefinition($extractFolder)
     Write-LogInfo "`t`t`tValidating package definition"
 
     $psd1Path = "$extractFolder\PrtgAPI.psd1"
+
+    # Dynamic expression on RootModule checking the PSEdition cannot be parsed by
+    # Import-PowerShellDataFile; as such, we need to remove this property
+
+    $fullModule = "fullclr\PrtgAPI.PowerShell.dll"
+    $coreModule = "coreclr\PrtgAPI.PowerShell.dll"
+
+    $rootModule = $coreModule
+
+    if($PSEdition -eq "Desktop")
+    {
+        $rootModule = $fullModule
+
+        if(!(Test-Path $fullModule))
+        {
+            $rootModule = $coreModule
+        }
+    }
+
+    Update-ModuleManifest $psd1Path -RootModule $rootModule
 
     $psd1 = Import-PowerShellDataFile $psd1Path
 
@@ -433,6 +327,8 @@ function Test-PowerShellPackageContents($extractFolder)
         "Functions"
         "_rels"
         "package"
+        "coreclr"
+        "fullclr"
     )
 
     $legalFiles = @(
@@ -461,21 +357,29 @@ function Test-PowerShellPackageInstalls
     Write-LogInfo "`t`t`tInstalling Package"
 
     Hide-Module "PrtgAPI" {
-        if(!(Install-Package PrtgAPI -Source $repoName -AllowClobber)) # TShell has a Get-Device cmdlet
+
+        if(!(Install-Package PrtgAPI -Source ([PackageManager]::RepoName) -AllowClobber)) # TShell has a Get-Device cmdlet
         {
             throw "PrtgAPI did not install properly"
         }
 
         Write-LogInfo "`t`t`t`tTesting Package cmdlets"
 
-        $resultCmdlet =   (powershell -command '&{ import-module PrtgAPI; try { Get-Sensor } catch [exception] { $_.exception.message }}')
-        $resultFunction = (powershell -command '&{ import-module PrtgAPI; (New-Credential a b).ToString() }')
-
-        Write-LogInfo "`t`t`t`tUninstalling Package"
-    
-        if(!(Uninstall-Package PrtgAPI))
+        try
         {
-            throw "PrtgAPI did not uninstall properly"
+            $exe = Get-PowerShellExecutable
+
+            $resultCmdlet =   (& $exe -command '&{ import-module PrtgAPI; try { Get-Sensor } catch [exception] { $_.exception.message }}')
+            $resultFunction = (& $exe -command '&{ import-module PrtgAPI; (New-Credential a b).ToString() }')
+        }
+        finally
+        {
+            Write-LogInfo "`t`t`t`tUninstalling Package"
+
+            if(!(Uninstall-Package PrtgAPI))
+            {
+                throw "PrtgAPI did not uninstall properly"
+            }
         }
 
         Write-LogInfo "`t`t`t`tValidating cmdlet output"
@@ -494,6 +398,27 @@ function Test-PowerShellPackageInstalls
     }
 }
 
+function Get-PowerShellExecutable
+{
+    $package = Get-Module PrtgAPI -ListAvailable
+
+    if($PSEdition -eq "Core")
+    {
+        return "pwsh.exe"
+    }
+    else
+    {
+        $dllPath = Join-Path (Split-Path $package.Path -Parent) "fullclr"
+
+        if(Test-Path $dllPath)
+        {
+            return "powershell.exe"
+        }
+        
+        return "pwsh.exe"
+    }
+}
+
 function Hide-Module($name, $script)
 {
     $hidden = $false
@@ -506,6 +431,23 @@ function Hide-Module($name, $script)
         {
             $hidden = $true
 
+            Write-LogInfo "`t`t`t`tRenaming module info files"
+
+            foreach($m in $module)
+            {
+                # Rename the module info file so the package manager doesn't find it even inside
+                # the renamed folder
+
+                $moduleInfo = $m.Path -replace "PrtgAPI.psd1","PSGetModuleInfo.xml"
+
+                if(Test-Path $moduleInfo)
+                {
+                    Rename-Item $moduleInfo "PSGetModuleInfo_bak.xml"
+                }
+            }
+
+            Write-LogInfo "`t`t`t`tRenaming module directories"
+
             foreach($m in $module)
             {
                 $path = Get-ModuleFolder $m
@@ -513,10 +455,24 @@ function Hide-Module($name, $script)
                 # Check if we haven't already renamed the folder as part of a previous module
                 if(Test-Path $path)
                 {
-                    Rename-Item $path "PrtgAPI_bak"
+                    try
+                    {
+                        Rename-Item $path "PrtgAPI_bak"
+                    }
+                    catch
+                    {
+                        throw "$path could not be renamed to 'PrtgAPI_bak' properly: $($_.Exception.Message)"
+                    }
+
+                    if(Test-Path $path)
+                    {
+                        throw "$path did not rename properly"
+                    }
                 }
             }
         }
+
+        Write-LogInfo "`t`t`t`tInvoking script"
 
         & $script
     }
@@ -524,6 +480,8 @@ function Hide-Module($name, $script)
     {
         if($hidden)
         {
+            Write-LogInfo "`t`t`t`tRestoring module directories"
+
             foreach($m in $module)
             {
                 $path = (split-path (Get-ModuleFolder $m) -parent) + "\PrtgAPI_bak"
@@ -532,6 +490,18 @@ function Hide-Module($name, $script)
                 if(Test-Path $path)
                 {
                     Rename-Item $path "PrtgAPI"
+                }
+            }
+
+            Write-LogInfo "`t`t`t`tRestoring module info files"
+
+            foreach($m in $module)
+            {
+                $moduleInfo = $m.Path -replace "PrtgAPI.psd1","PSGetModuleInfo_bak.xml"
+
+                if(Test-Path $moduleInfo)
+                {
+                    Rename-Item $moduleInfo "PSGetModuleInfo.xml"
                 }
             }
         }
@@ -554,36 +524,16 @@ function Get-ModuleFolder($module)
 
 #endregion
 
-function WithTempCopy($folderName, $script)
-{
-    $tempPath = Join-Path $repoLocation "TempOutput\$(Split-Path $folderName -Leaf)"
-
-    Copy-Item -Path $folderName -Destination $tempPath -Recurse -Force
-
-    try
-    {
-        & $script $tempPath
-    }
-    finally
-    {
-        Remove-Item "$repoLocation\TempOutput" -Recurse -Force
-    }
-}
-
-function Move-Packages($suffix)
+function Move-AppveyorPackages($suffix, $config)
 {
    if($env:APPVEYOR)
-    {
-        $pkgs = Get-ChildItem $repoLocation -Filter *.nupkg
-        
-        foreach($pkg in $pkgs)
+   {
+        if(!$suffix)
         {
-            $newName = "$($pkg.BaseName)$suffix$($pkg.Extension)"
-            $newPath = "$env:APPVEYOR_BUILD_FOLDER\$newName"
-
-            Write-LogInfo "`t`t`t`tMoving package $($pkg.Name) to $newPath"
-            Move-Item $pkg.Fullname $newPath
+            $suffix = ""
         }
+
+        Move-Packages $suffix $config.SolutionRoot | Out-Null
     }
     else
     {
@@ -594,7 +544,7 @@ function Move-Packages($suffix)
 
 function Clear-Repo
 {
-    gci -recurse $repoLocation|remove-item -Recurse -Force
+    gci -recurse ([PackageManager]::RepoLocation)|remove-item -Recurse -Force
 }
 
 function Extract-Package($package, $script)
@@ -646,6 +596,3 @@ function Test-PackageContentsInternal($type, $all, $legal)
         throw "Package contained illegal $type(s) $str"
     }
 }
-
-#todo: for c# we also need to manually compare all the fields in the resulting nuspec vs the nuspecs we've been getting
-#in our released nupkgs to make sure all the fields are filled in correctly

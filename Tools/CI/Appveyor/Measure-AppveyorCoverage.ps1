@@ -7,7 +7,7 @@ function Measure-AppveyorCoverage
 
     Write-LogHeader "Calculating code coverage"
 
-    Get-CodeCoverage -IsCore:$IsCore
+    Get-CodeCoverage -IsCore:$IsCore -Configuration $env:CONFIGURATION
 
     $lineCoverage = Get-LineCoverage
 
@@ -24,7 +24,7 @@ function Measure-AppveyorCoverage
         if($env:APPVEYOR)
         {
             Write-LogInfo "`tUploading coverage to codecov"
-            Invoke-Process { codecov -f "$env:temp\opencover.xml" } -Host
+            Invoke-Process { codecov -f "$env:temp\opencover.xml" } -WriteHost
         }
     }
 }

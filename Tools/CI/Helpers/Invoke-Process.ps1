@@ -5,7 +5,7 @@ function Invoke-Process
     param(
         [scriptblock]$ScriptBlock,
         [switch]$IgnoreExitCode,
-        [switch]$Host
+        [switch]$WriteHost
     )
 
     $backupEAP = $script:ErrorActionPreference
@@ -13,19 +13,24 @@ function Invoke-Process
 
     try
     {
-        if($Host)
+        if($WriteHost)
         {
-            & $ScriptBlock
+            $output = & $ScriptBlock | Merge-Stream
         }
         else
         {
-            $output = & $ScriptBlock 2>&1
+            $output = & $ScriptBlock
         }
 
         # Note, if $ScriptBlock doesn't have a native invocation, $LASTEXITCODE will
         # point to the obsolete value
         if ($LASTEXITCODE -ne 0 -and -not $IgnoreExitCode)
         {
+            if($WriteHost)
+            {
+                throw "Execution of {$ScriptBlock} failed with exit code $($LASTEXITCODE)"
+            }
+
             # Get caller location for easier debugging
             $caller = Get-PSCallStack -ErrorAction SilentlyContinue
 
@@ -35,7 +40,7 @@ function Invoke-Process
                 $callerFile = $callerLocationParts[0]
                 $callerLine = $callerLocationParts[1]
 
-                $errorMessage = "Execution of {$ScriptBlock} by ${callerFile}: line $callerLine failed with exit code $($LASTEXITCODE): $output"
+                $errorMessage = "Execution of {$ScriptBlock} by ${callerFile}: line $callerLine failed with exit code $($LASTEXITCODE):`n$($output -join "`n")"
                 throw $errorMessage
             }
 
@@ -45,5 +50,19 @@ function Invoke-Process
     finally
     {
         $script:ErrorActionPreference = $backupEAP
+    }
+}
+
+function Merge-Stream
+{
+    [CmdletBinding()]
+    param(
+        [Parameter(Position = 0, ValueFromPipeline = $true)]
+        $Object
+    )
+
+    Process {
+        $Object
+        $Object | Write-Host
     }
 }

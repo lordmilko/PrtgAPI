@@ -31,23 +31,49 @@ function Write-Log($msg, $color)
 
     $msg = $msg -replace "`t","    "
 
-    if($color)
+    if(!$global:prtgProgressArgs)
     {
-        Write-Host -ForegroundColor $color $msg
-    }
-    else
-    {
-        if($psISE)
+        if($color)
         {
-            Write-Verbose $msg
+            Write-Host -ForegroundColor $color $msg
         }
         else
         {
             Write-Host $msg
         }
     }
+    else
+    {
+        $global:prtgProgressArgs.CurrentOperation = $msg.Trim()
+        Write-Progress @global:prtgProgressArgs
+    }
 
-    [IO.File]::AppendAllText("$env:TEMP\PrtgAPI.Build.log", "$(Get-Date) $msg`r`n")
+    $nl = [Environment]::NewLine
+
+    [IO.File]::AppendAllText("$env:TEMP\PrtgAPI.Build.log", "$(Get-Date) $msg$nl")
 }
 
-Export-ModuleMember Write-LogHeader,Write-LogSubHeader,Write-LogInfo,Write-LogError
+function Write-LogVerbose($msg, $color)
+{
+    if($psISE)
+    {
+        Write-Verbose $msg
+
+        $msg = "`t$msg"
+
+        $msg = $msg -replace "`t","    "
+
+        $nl = [Environment]::NewLine
+
+        [IO.File]::AppendAllText("$env:TEMP\PrtgAPI.Build.log", "$(Get-Date) $msg$nl")
+    }
+    else
+    {
+        Write-Log $msg $color
+    }
+}
+
+if(!$skipExport)
+{
+    Export-ModuleMember Write-LogHeader,Write-LogSubHeader,Write-LogInfo,Write-LogError,Write-LogVerbose
+}

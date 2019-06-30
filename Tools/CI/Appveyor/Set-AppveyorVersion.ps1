@@ -6,9 +6,9 @@ function Get-AppveyorVersion
     $lastBuild = Get-LastAppveyorBuild
     $lastRelease = Get-LastAppveyorNuGetVersion
 
-    Write-Log "    Assembly version: $assemblyVersion"
-    Write-Log "    Last build: $lastBuild"
-    Write-Log "    Last release: $lastRelease"
+    Write-LogVerbose "    Assembly version: $assemblyVersion"
+    Write-LogVerbose "    Last build: $lastBuild"
+    Write-LogVerbose "    Last release: $lastRelease"
 
     if(IsPreview $assemblyVersion $lastRelease)
     {
@@ -282,8 +282,11 @@ function Set-AppveyorVersion
     }
     catch
     {
-        $host.SetShouldExit(1)
-
+        if(!$psISE)
+        {
+            $host.SetShouldExit(1)
+        }
+        
         throw
     }
 }

@@ -9,10 +9,10 @@ function Invoke-AppveyorBeforeBuild
 
     if($IsCore)
     {
-        throw ".NET Core is not currently supported"
+        Invoke-Process { dotnet restore (Join-Path $env:APPVEYOR_BUILD_FOLDER "PrtgAPIv17.sln") }
     }
     else
     {
-        Invoke-Process { nuget restore $env:APPVEYOR_BUILD_FOLDER\PrtgAPI.sln }
+        Invoke-Process { nuget restore (Join-Path $env:APPVEYOR_BUILD_FOLDER "PrtgAPI.sln") }
     }
 }
