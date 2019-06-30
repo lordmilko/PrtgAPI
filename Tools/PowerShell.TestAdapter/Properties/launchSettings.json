@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "PowerShell.TestAdapter": {
+      "commandName": "Executable",
+      "executablePath": "%userprofile%\\.nuget\\packages\\microsoft.testplatform.portable\\16.1.1\\tools\\net451\\vstest.console.exe",
+      "commandLineArgs": ".\\Invoke-Cmdlet.Tests.ps1 /TestAdapterPath:."
+    }
+  }
+}
