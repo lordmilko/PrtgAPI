@@ -1,4 +1,4 @@
-Import-Module $PSScriptRoot\..\ci.psm1
+Import-Module $PSScriptRoot\..\ci.psm1 -Scope Local
 
 Describe "CI" {
 
@@ -9,9 +9,9 @@ Describe "CI" {
     }
 
     It "gets the PrtgAPI version" {
-        $version = Get-PrtgVersion $PSScriptRoot\..\..\..\
+        $version = Get-CIVersion $PSScriptRoot\..\..\..\
 
-        $version -match "\d+\.\d+\.\d+" | Should Be $true
+        $version.File.ToString() -match "\d+\.\d+\.\d+" | Should Be $true
     }
 
     It "gets the solution root" {

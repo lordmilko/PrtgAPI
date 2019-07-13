@@ -245,10 +245,20 @@ function BuildStr($str)
 
 function SetPrtgClient($client)
 {
-    $type = (gcm Connect-PrtgServer).ImplementingType.Assembly.GetType("PrtgAPI.PowerShell.PrtgSessionState")
-    $property = $type.GetProperty("Client", [System.Reflection.BindingFlags]::Static -bor [System.Reflection.BindingFlags]::NonPublic)
+    $assembly = (gcm Connect-PrtgServer).ImplementingType.Assembly
 
-    $property.SetValue($null, $client)
+    $sessionType = $assembly.GetType("PrtgAPI.PowerShell.PrtgSessionState")
+    $editionType = $assembly.GetType("PrtgAPI.PowerShell.PSEdition")
+
+    $edition = [enum]::GetValues($editionType) | where { $_ -eq $PSEdition }
+
+    $flags = [System.Reflection.BindingFlags]::Static -bor [System.Reflection.BindingFlags]::NonPublic
+
+    $clientProperty = $sessionType.GetProperty("Client", $flags)
+    $editionProperty = $sessionType.GetProperty("PSEdition", $flags)
+
+    $clientProperty.SetValue($null, $client)
+    $editionProperty.SetValue($null, $edition)
 }
 
 function SetVersion($versionStr)

@@ -15,7 +15,11 @@ function Measure-AppveyorCoverage
 
     if($lineCoverage -lt $threshold)
     {
-        throw "Code coverage was $lineCoverage%. Coverage must be higher than $threshold%"
+        $msg = "Code coverage was $lineCoverage%. Coverage must be higher than $threshold%"
+
+        Write-LogError $msg
+
+        throw $msg
     }
     else
     {

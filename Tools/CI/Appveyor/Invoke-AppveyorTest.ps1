@@ -15,48 +15,45 @@ function Invoke-AppveyorTest
 
 function Invoke-AppveyorPesterTest($IsCore)
 {
-    if($IsCore)
+    if($PSEdition -eq "Desktop" -and !$env:APPVEYOR -and $IsCore)
     {
-        if($PSEdition -eq "Desktop" -and !$env:APPVEYOR)
+        Write-LogInfo "`tExecuting PowerShell tests under PowerShell Core"
+
+        pwsh -NonInteractive -Command "Invoke-Pester '$env:APPVEYOR_BUILD_FOLDER\PrtgAPI.Tests.UnitTests\PowerShell' -EnableExit"
+
+        $failed = $LASTEXITCODE
+
+        if($failed -gt 0)
         {
-            Write-LogInfo "`tExecuting PowerShell tests under PowerShell Core"
-
-            pwsh -NonInteractive -Command "Invoke-Pester '$env:APPVEYOR_BUILD_FOLDER\PrtgAPI.Tests.UnitTests\PowerShell' -EnableExit -ExcludeTag Build"
-
-            $failed = $LASTEXITCODE
-
-            if($failed -gt 0)
-            {
-                throw "$failed Pester tests failed"
-            }
+            throw "$failed Pester tests failed"
         }
-        else
+    }
+    else
+    {
+        $result = Invoke-CIPowerShellTest $env:APPVEYOR_BUILD_FOLDER -IsCore:$IsCore
+
+        if($env:APPVEYOR)
         {
-            $result = Invoke-CIPowerShellTest $env:APPVEYOR_BUILD_FOLDER
-
-            if($env:APPVEYOR)
+            foreach($test in $result.TestResult)
             {
-                foreach($test in $result.TestResult)
-                {
-                    $appveyorTestArgs = @{
-                        Name = GetAppveyorTestName $test
-                        Framework = "Pester"
-                        Filename = "$($test.Describe).Tests.ps1"
-                        Outcome = GetAppveyorTestOutcome $test
-                        ErrorMessage = $test.FailureMessage
-                        Duration = [long]$test.Time.TotalMilliseconds
-                    }
-
-                    Add-AppveyorTest @appveyorTestArgs
+                $appveyorTestArgs = @{
+                    Name = GetAppveyorTestName $test
+                    Framework = "Pester"
+                    Filename = "$($test.Describe).Tests.ps1"
+                    Outcome = GetAppveyorTestOutcome $test
+                    ErrorMessage = $test.FailureMessage
+                    Duration = [long]$test.Time.TotalMilliseconds
                 }
-            }
 
-            if($result.FailedCount -gt 0)
-            {
-                throw "$($result.FailedCount) Pester tests failed"
+                Add-AppveyorTest @appveyorTestArgs
             }
         }
-    }    
+
+        if($result.FailedCount -gt 0)
+        {
+            throw "$($result.FailedCount) Pester tests failed"
+        }
+    }
 }
 
 function GetAppveyorTestName($test)
@@ -92,14 +89,18 @@ function Invoke-AppveyorCSharpTest($IsCore)
 {
     if($IsCore)
     {
-        $additionalArgs = $null        
+        $additionalArgs = @(
+            "--filter"
+            "TestCategory!=SkipCI"
+        )
 
-        if($env:APPVEYOR)
+        # .NET Core is not currently supported https://github.com/appveyor/ci/issues/2212
+        <#if($env:APPVEYOR)
         {
-            $additionalArgs = "--logger:Appveyor"
-        }
+            $additionalArgs += "--logger:Appveyor"
+        }#>
 
-        Invoke-CICSharpTest $env:APPVEYOR_BUILD_FOLDER $additionalArgs
+        Invoke-CICSharpTest $env:APPVEYOR_BUILD_FOLDER $additionalArgs -IsCore:$IsCore
     }
     else
     {

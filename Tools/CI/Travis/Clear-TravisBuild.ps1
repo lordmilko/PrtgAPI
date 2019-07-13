@@ -5,5 +5,12 @@ function Clear-TravisBuild
         [switch]$NuGetOnly
     )
 
-    Clear-CIBuild $env:TRAVIS_BUILD_DIR -IsCore:$true -NuGetOnly:$NuGetOnly
+    $clearArgs = @{
+        BuildFolder = $env:TRAVIS_BUILD_DIR
+        Configuration = $env:CONFIGURATION
+        IsCore = $true
+        NuGetOnly = $NuGetOnly
+    }
+
+    Clear-CIBuild @clearArgs
 }

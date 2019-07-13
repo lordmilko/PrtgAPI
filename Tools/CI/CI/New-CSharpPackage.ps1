@@ -25,6 +25,8 @@ function New-CSharpPackage
 
     if($IsCore)
     {
+        # Unlike nuget.exe, dotnet pack only includes "normal" files in the output directory
+        # and so we don't need to manually specify a list of exclusions
         $nugetArgs = @(
             "pack"
             Join-Path $BuildFolder "PrtgAPI\PrtgAPIv17.csproj"
@@ -39,7 +41,7 @@ function New-CSharpPackage
             "-p:EnableSourceLink=true;SymbolPackageFormat=snupkg"
         )
 
-        #todo: dotnet pack exclusions?
+        Install-CIDependency dotnet
 
         $nuget = "dotnet"
     }
@@ -59,6 +61,8 @@ function New-CSharpPackage
             "-properties"
             "Configuration=$Configuration"
         )
+
+        Install-CIDependency nuget
 
         $nuget = "nuget"
     }

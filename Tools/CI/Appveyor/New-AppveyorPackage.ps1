@@ -1,5 +1,3 @@
-. "$PSScriptRoot\..\..\..\Tools\CI\Helpers\PackageManager.ps1"
-
 $ProgressPreference = "SilentlyContinue"
 $ErrorActionPreference = "Stop"
 
@@ -20,6 +18,7 @@ function New-AppveyorPackage
         PowerShellProjectRoot = "$env:APPVEYOR_BUILD_FOLDER\PrtgAPI.PowerShell"
         PowerShellOutputDir   = Get-PowerShellOutputDir $env:APPVEYOR_BUILD_FOLDER $env:CONFIGURATION $IsCore
         Manager               = New-PackageManager
+        Configuration         = $env:CONFIGURATION
         IsCore                = $IsCore
     }
 
@@ -37,8 +36,8 @@ function Process-CSharpPackage($config)
 
     $csharpArgs = @{
         BuildFolder = $config.SolutionRoot
-        OutputFolder = ([PackageManager]::RepoLocation)
-        Version = Get-CSharpVersion
+        OutputFolder = (PackageManager -RepoLocation)
+        Version = Get-CSharpVersion $config.IsCore
         Configuration = $env:CONFIGURATION
         IsCore = $config.IsCore
     }
@@ -51,7 +50,7 @@ function Process-CSharpPackage($config)
     $config.Manager.UninstallCSharpPackageSource()
 }
 
-function Get-CSharpVersion
+function Get-CSharpVersion($IsCore)
 {
     if($env:APPVEYOR)
     {
@@ -60,11 +59,11 @@ function Get-CSharpVersion
     }
     else
     {
-        return Get-PrtgVersion
+        return GetVersion $IsCore
     }
 }
 
-function Test-CSharpPackage
+function Test-CSharpPackage($config)
 {
     Write-LogInfo "`t`tTesting package"
 
@@ -74,14 +73,14 @@ function Test-CSharpPackage
 
         param($extractFolder)
 
-        Test-CSharpPackageDefinition $extractFolder
-        Test-CSharpPackageContents $extractFolder
+        Test-CSharpPackageDefinition $config $extractFolder
+        Test-CSharpPackageContents $config $extractFolder
     }
 
-    Test-CSharpPackageInstalls
+    Test-CSharpPackageInstalls $config
 }
 
-function Test-CSharpPackageDefinition($extractFolder)
+function Test-CSharpPackageDefinition($config, $extractFolder)
 {
     Write-LogInfo "`t`t`tValidating package definition"
 
@@ -97,7 +96,7 @@ function Test-CSharpPackageDefinition($extractFolder)
 
     # Validate release notes
 
-    $version = Get-PrtgVersion
+    $version = GetVersion $config.IsCore
 
     if($metadata.version -ne $version)
     {
@@ -120,30 +119,57 @@ function Test-CSharpPackageDefinition($extractFolder)
     }
 }
 
-function Test-CSharpPackageContents($extractFolder)
+function Test-CSharpPackageContents($config, $extractFolder)
 {
-    $legalFolders = @(
-        "_rels"
-        "lib"
-        "package"
-    )
-
-    $legalFiles = @(
-        "LICENSE"
+    $required = @(
+        "lib\net452\PrtgAPI.dll"
+        "lib\net452\PrtgAPI.xml"
+        "package\*"
+        "_rels\*"
         "PrtgAPI.nuspec"
         "[Content_Types].xml"
     )
 
-    Test-PackageContents $extractFolder $legalFolders $legalFiles
+    if($config.IsCore)
+    {
+        $required += "LICENSE"
+
+        if($env:CONFIGURATION -eq "Release")
+        {
+            $required += @(
+                "lib\netstandard2.0\PrtgAPI.dll"
+                "lib\netstandard2.0\PrtgAPI.xml"
+            )
+        }
+        else
+        {
+            $debugVersion = Get-DebugTargetFramework
+
+            Write-LogInfo "`t`t`t`tUsing debug build '$debugVersion' for testing nupkg contents"
+
+            $required = $required | foreach {
+                if($_ -like "*net452*")
+                {
+                    $_ -replace "net452",$debugVersion
+                }
+                else
+                {
+                    $_
+                }
+            }
+        }
+    }
+
+    Test-PackageContents $extractFolder $required
 }
 
-function Test-CSharpPackageInstalls
+function Test-CSharpPackageInstalls($config)
 {
     Write-LogInfo "`t`t`tTesting package installs properly"
 
     $nupkg = Get-CSharpNupkg
     $packageName = $nupkg.Name -replace ".nupkg",""
-    $installPath = "$([PackageManager]::PackageLocation)\$packageName"
+    $installPath = "$(PackageManager -PackageLocation)\$packageName"
 
     if(IsNuGetPackageInstalled $installPath)
     {
@@ -152,13 +178,13 @@ function Test-CSharpPackageInstalls
     }
 
     Install-CSharpPackageInternal $installPath
-    Test-CSharpPackageInstallInternal
+    Test-CSharpPackageInstallInternal $config
     Uninstall-CSharpPackageInternal
 }
 
 function Get-CSharpNupkg
 {
-    $nupkg = @(gci ([PackageManager]::RepoLocation) -Filter *.nupkg|where name -NotLike "*.symbols.nupkg")
+    $nupkg = @(gci (PackageManager -RepoLocation) -Filter *.nupkg|where { $_.Name -NotLike "*.symbols.nupkg" -and $_.Name -notlike "*.snupkg" })
 
     if(!$nupkg)
     {
@@ -181,14 +207,14 @@ function Get-CSharpNupkg
 
 function IsNuGetPackageInstalled($installPath)
 {
-    return (Get-Package PrtgAPI -Destination ([PackageManager]::PackageLocation) -ErrorAction SilentlyContinue) -or (Test-Path $installPath)
+    return (Get-Package PrtgAPI -Destination (PackageManager -PackageLocation) -ErrorAction SilentlyContinue) -or (Test-Path $installPath)
 }
 
 function Install-CSharpPackageInternal($installPath)
 {
-    Write-LogInfo "`t`t`t`tInstalling package from $([PackageManager]::RepoName)"
+    Write-LogInfo "`t`t`t`tInstalling package from $(PackageManager -RepoName)"
 
-    Install-Package PrtgAPI -Source ([PackageManager]::RepoName) -ProviderName NuGet -Destination ([PackageManager]::PackageLocation) -SkipDependencies | Out-Null
+    Install-Package PrtgAPI -Source (PackageManager -RepoName) -ProviderName NuGet -Destination (PackageManager -PackageLocation) -SkipDependencies | Out-Null
 
     if(!(Test-Path $installPath))
     {
@@ -196,13 +222,17 @@ function Install-CSharpPackageInternal($installPath)
     }
 }
 
-function Test-CSharpPackageInstallInternal
+function Test-CSharpPackageInstallInternal($config)
 {
-    $folders = gci "$([PackageManager]::PackageLocation)\PrtgAPI.$(Get-PrtgVersion)\lib\net4*"
+    Write-LogInfo "`t`t`t`tTesting package contents"
+
+    $version = GetVersion $config.IsCore
+
+    $folders = gci "$(PackageManager -PackageLocation)\PrtgAPI.$version\lib\net4*"
 
     foreach($folder in $folders)
     {
-        $dll = $folders.FullName + "\PrtgAPI.dll"
+        $dll = Join-Path $folder.FullName "PrtgAPI.dll"
 
         $result = (powershell -command "Add-Type -Path '$dll'; [PrtgAPI.AuthMode]::Password")
 
@@ -215,7 +245,9 @@ function Test-CSharpPackageInstallInternal
 
 function Uninstall-CSharpPackageInternal
 {
-    Get-Package PrtgAPI -Provider NuGet -Destination ([PackageManager]::PackageLocation) | Uninstall-Package | Out-Null
+    Write-LogInfo "`t`t`t`tUninstalling package"
+
+    Get-Package PrtgAPI -Provider NuGet -Destination (PackageManager -PackageLocation) | Uninstall-Package | Out-Null
 
     if(Test-Path $installPath)
     {
@@ -235,18 +267,22 @@ function Process-PowerShellPackage($config)
     if($env:APPVEYOR)
     {
         Update-ModuleManifest "$($config.PowerShellOutputDir)\PrtgAPI.psd1"
-    }    
+    }
 
     $powershellArgs = @{
         OutputDir = $config.PowerShellOutputDir
         RepoManager = $config.Manager
         Configuration = $env:CONFIGURATION
         IsCore = $config.IsCore
+        PowerShell = $true
+        Redist = $true
     }
 
     New-PowerShellPackage @powershellArgs
 
-    Test-PowerShellPackage
+    Test-PowerShellPackage $config
+
+    Test-RedistributablePackage $config
 
     Move-AppveyorPackages $config "_PowerShell"
 
@@ -263,42 +299,47 @@ function Test-PowerShellPackage
 
         param($extractFolder)
 
-        Test-PowerShellPackageDefinition $extractFolder
-        Test-PowerShellPackageContents $extractFolder
+        Test-PowerShellPackageDefinition $config $extractFolder
+        Test-PowerShellPackageContents $config $extractFolder
     }
 
     Test-PowerShellPackageInstalls
 }
 
-function Test-PowerShellPackageDefinition($extractFolder)
+function Test-PowerShellPackageDefinition($config, $extractFolder)
 {
     Write-LogInfo "`t`t`tValidating package definition"
 
-    $psd1Path = "$extractFolder\PrtgAPI.psd1"
+    $psd1Path = Join-Path $extractFolder "PrtgAPI.psd1"
 
-    # Dynamic expression on RootModule checking the PSEdition cannot be parsed by
-    # Import-PowerShellDataFile; as such, we need to remove this property
-
-    $fullModule = "fullclr\PrtgAPI.PowerShell.dll"
-    $coreModule = "coreclr\PrtgAPI.PowerShell.dll"
-
-    $rootModule = $coreModule
-
-    if($PSEdition -eq "Desktop")
+    if($config.IsCore -and $config.Configuration -eq "Release")
     {
-        $rootModule = $fullModule
+        Test-Psd1RootModule $config $psd1Path
 
-        if(!(Test-Path $fullModule))
+        # Dynamic expression on RootModule checking the PSEdition cannot be parsed by
+        # Import-PowerShellDataFile; as such, we need to remove this property
+
+        $fullModule = "fullclr\PrtgAPI.PowerShell.dll"
+        $coreModule = "coreclr\PrtgAPI.PowerShell.dll"
+
+        $rootModule = $coreModule
+
+        if($PSEdition -eq "Desktop")
         {
-            $rootModule = $coreModule
-        }
-    }
+            $rootModule = $fullModule
 
-    Update-ModuleManifest $psd1Path -RootModule $rootModule
+            if(!(Test-Path $fullModule))
+            {
+                $rootModule = $coreModule
+            }
+        }
+
+        Update-ModuleManifest $psd1Path -RootModule $rootModule
+    }
 
     $psd1 = Import-PowerShellDataFile $psd1Path
 
-    $version = Get-PrtgVersion
+    $version = GetVersion $config.IsCore
 
     $expectedUrl = "https://github.com/lordmilko/PrtgAPI/releases/tag/v$version"
 
@@ -321,109 +362,278 @@ function Test-PowerShellPackageDefinition($extractFolder)
     }
 }
 
-function Test-PowerShellPackageContents($extractFolder)
+function Test-Psd1RootModule($config, $psd1Path)
 {
-    $legalFolders = @(
-        "Functions"
-        "_rels"
-        "package"
-        "coreclr"
-        "fullclr"
-    )
+    if($config.IsCore -and $config.Configuration -eq "Release")
+    {
+        $contents = (gc $psd1Path) -Join "`n"
 
-    $legalFiles = @(
+        $expected = "RootModule = if(`$PSEdition -eq 'Core')`n{`n    'coreclr\PrtgAPI.PowerShell.dll'`n}`nelse # Desktop`n{`n    'fullclr\PrtgAPI.PowerShell.dll'`n}"
+
+        if(!$contents.Contains($expected))
+        {
+            throw "'$psd1Path' dod not contain correect RootModule for Release build"
+        }
+    }
+}
+
+function Test-PowerShellPackageContents($config, $extractFolder)
+{
+    $required = @(
+        "Functions\New-Credential.ps1"
+        "package\*"
+        "_rels\*"
+        "PrtgAPI.nuspec"
         "about_ChannelSettings.help.txt"
         "about_ObjectSettings.help.txt"
         "about_PrtgAPI.help.txt"
         "about_SensorParameters.help.txt"
         "about_SensorSettings.help.txt"
-        "PrtgAPI.dll"
         "PrtgAPI.Format.ps1xml"
-        "PrtgAPI.nuspec"
-        "PrtgAPI.PowerShell.dll"
-        "PrtgAPI.PowerShell.xml"
-        "PrtgAPI.PowerShell.dll-Help.xml"
         "PrtgAPI.psd1"
         "PrtgAPI.psm1"
-        "PrtgAPI.xml"
         "[Content_Types].xml"
     )
 
-    Test-PackageContents $extractFolder $legalFolders $legalFiles
+    if($config.IsCore -and $config.Configuration -eq "Release")
+    {
+        $required += @(
+            "coreclr\PrtgAPI.dll"
+            "coreclr\PrtgAPI.PowerShell.dll"
+            "fullclr\PrtgAPI.dll"
+            "fullclr\PrtgAPI.PowerShell.dll"
+        )
+    }
+    else
+    {
+        $required += @(
+            "PrtgAPI.dll"
+            "PrtgAPI.PowerShell.dll"
+        )
+    }
+
+    $debugVersion = Get-DebugTargetFramework
+
+    if($debugVersion -like "net4*" -or $config.Configuration -eq "Release" -or !$config.IsCore)
+    {
+        $required += @(
+            "PrtgAPI.PowerShell.dll-Help.xml"
+        )
+    }
+
+    Test-PackageContents $extractFolder $required
 }
 
 function Test-PowerShellPackageInstalls
 {
     Write-LogInfo "`t`t`tInstalling Package"
 
-    Hide-Module "PrtgAPI" {
+    if($config.Configuration -eq "Release" -and $config.IsCore)
+    {
+        Test-PowerShellPackageInstallsHidden "Desktop"
+        Test-PowerShellPackageInstallsHidden "Core"
+    }
+    else
+    {
+        Test-PowerShellPackageInstallsHidden $PSEdition
+    }
+}
 
-        if(!(Install-Package PrtgAPI -Source ([PackageManager]::RepoName) -AllowClobber)) # TShell has a Get-Device cmdlet
+function Test-PowerShellPackageInstallsHidden($edition, $config)
+{
+    if([string]::IsNullOrEmpty($edition))
+    {
+        $edition = "Desktop"
+    }
+
+    Write-LogInfo "`t`t`t`tTesting package installs on $edition"
+
+    Hide-Module $edition {
+
+        param($edition)
+
+        if(!(Install-EditionPackage $edition PrtgAPI -Source (PackageManager -RepoName) -AllowClobber)) # TShell has a Get-Device cmdlet
         {
             throw "PrtgAPI did not install properly"
         }
 
-        Write-LogInfo "`t`t`t`tTesting Package cmdlets"
+        Write-LogInfo "`t`t`t`t`tTesting Package cmdlets"
 
         try
         {
-            $exe = Get-PowerShellExecutable
-
-            $resultCmdlet =   (& $exe -command '&{ import-module PrtgAPI; try { Get-Sensor } catch [exception] { $_.exception.message }}')
-            $resultFunction = (& $exe -command '&{ import-module PrtgAPI; (New-Credential a b).ToString() }')
+            Test-PowerShellPackageInstallsInternal $edition
         }
         finally
         {
-            Write-LogInfo "`t`t`t`tUninstalling Package"
+            Write-LogInfo "`t`t`t`t`tUninstalling Package"
 
-            if(!(Uninstall-Package PrtgAPI))
+            if(!(Uninstall-EditionPackage $edition PrtgAPI))
             {
                 throw "PrtgAPI did not uninstall properly"
             }
         }
-
-        Write-LogInfo "`t`t`t`tValidating cmdlet output"
-
-        if($resultCmdlet -ne "You are not connected to a PRTG Server. Please connect first using Connect-PrtgServer.")
-        {
-            throw $resultCmdlet
-        }
-
-        $str = [string]::Join("", $resultFunction)
-
-        if($resultFunction -ne "System.Management.Automation.PSCredential")
-        {
-            throw $resultFunction
-        }
     }
 }
 
-function Get-PowerShellExecutable
+function Test-PowerShellPackageInstallsInternal($edition, $module = "PrtgAPI")
 {
-    $package = Get-Module PrtgAPI -ListAvailable
+    $exe = Get-PowerShellExecutable $edition
 
-    if($PSEdition -eq "Core")
+    Write-LogInfo "`t`t`t`t`t`tValidating '$exe' cmdlet output"
+
+    $resultCmdlet =   (& $exe -command "&{ import-module '$module'; try { Get-Sensor } catch [exception] { `$_.exception.message }}")
+    $resultFunction = (& $exe -command "&{ import-module '$module'; (New-Credential a b).ToString() }")
+
+    if($resultCmdlet -ne "You are not connected to a PRTG Server. Please connect first using Connect-PrtgServer.")
+    {
+        throw $resultCmdlet
+    }
+
+    $str = [string]::Join("", $resultFunction)
+
+    if($resultFunction -ne "System.Management.Automation.PSCredential")
+    {
+        throw $resultFunction
+    }
+}
+
+function Get-PowerShellExecutable($edition)
+{
+    if($edition -eq "Core")
     {
         return "pwsh.exe"
     }
     else
     {
-        $dllPath = Join-Path (Split-Path $package.Path -Parent) "fullclr"
-
-        if(Test-Path $dllPath)
-        {
-            return "powershell.exe"
-        }
-        
-        return "pwsh.exe"
+        return "powershell.exe"
     }
 }
 
-function Hide-Module($name, $script)
+function Get-EditionModule
+{
+    param(
+        [Parameter(Mandatory = $true, Position = 0)]
+        [string]$Edition
+    )
+
+    $command = "Get-Module PrtgAPI -ListAvailable"
+
+    if($PSEdition -eq $Edition)
+    {
+        return Invoke-Expression $command | Select Path,Version
+    }
+    else
+    {
+        $response = Invoke-Edition $Edition "$command | foreach { `$_.Path + '|' + `$_.Version }"
+
+        foreach($line in $response)
+        {
+            $split = $line.Split('|')
+
+            [PSCustomObject]@{
+                Path = $split[0]
+                Version = $split[1]
+            }
+        }
+    }
+}
+
+function Install-EditionPackage
+{
+    param(
+        [Parameter(Mandatory = $true, Position = 0)]
+        [string]$Edition,
+
+        [Parameter(Mandatory = $true, Position = 1)]
+        [string]$Name,
+
+        [Parameter()]
+        [string]$Source,
+
+        [Parameter()]
+        [switch]$AllowClobber
+    )
+
+    $command = "Install-Package $Name -Source $Source -AllowClobber:([bool]'$AllowClobber')"
+
+    if($PSEdition -eq $Edition)
+    {
+        return Invoke-Expression $command
+    }
+    else
+    {
+        $response = Invoke-Edition $Edition "$command | foreach { `$_.Name + '|' + `$_.Version }"
+
+        foreach($line in $response)
+        {
+            $split = $line.Split('|')
+
+            [PSCustomObject]@{
+                Name = $split[0]
+                Version = $split[1]
+            }
+        }
+    }
+}
+
+function Uninstall-EditionPackage
+{
+    param(
+        [Parameter(Mandatory = $true, Position = 0)]
+        [string]$Edition,
+
+        [Parameter(Mandatory = $true, Position = 1)]
+        [string]$Name
+    )
+
+    $command = "Uninstall-Package $Name"
+
+    if($PSEdition -eq $Edition)
+    {
+        return Invoke-Expression $command
+    }
+    else
+    {
+        $response = Invoke-Edition $Edition "$command | foreach { `$_.Name + '|' + `$_.Version }"
+
+        foreach($line in $response)
+        {
+            $split = $line.Split('|')
+
+            [PSCustomObject]@{
+                Name = $split[0]
+                Version = $split[1]
+            }
+        }
+    }
+}
+
+function Invoke-Edition($edition, $command)
+{
+    if($PSEdition -eq $edition)
+    {
+        throw "Cannot invoke command '$command' in edition 'edition': edition is the same as the currently running process"
+    }
+    else
+    {
+        $exe = Get-PowerShellExecutable $edition
+
+        $response = & $exe -Command $command
+
+        if($LASTEXITCODE -ne 0)
+        {
+            throw "'$edition' invocation failed with exit code '$LASTEXITCODE': $response"
+        }
+
+        return $response
+    }
+}
+
+function Hide-Module($edition, $script)
 {
     $hidden = $false
 
-    $module = Get-Module $name -ListAvailable
+    $module = Get-EditionModule $edition
 
     try
     {
@@ -431,7 +641,7 @@ function Hide-Module($name, $script)
         {
             $hidden = $true
 
-            Write-LogInfo "`t`t`t`tRenaming module info files"
+            Write-LogInfo "`t`t`t`t`tRenaming module info files"
 
             foreach($m in $module)
             {
@@ -446,7 +656,7 @@ function Hide-Module($name, $script)
                 }
             }
 
-            Write-LogInfo "`t`t`t`tRenaming module directories"
+            Write-LogInfo "`t`t`t`t`tRenaming module directories"
 
             foreach($m in $module)
             {
@@ -472,15 +682,15 @@ function Hide-Module($name, $script)
             }
         }
 
-        Write-LogInfo "`t`t`t`tInvoking script"
+        Write-LogInfo "`t`t`t`t`tInvoking script"
 
-        & $script
+        & $script $edition
     }
     finally
     {
         if($hidden)
         {
-            Write-LogInfo "`t`t`t`tRestoring module directories"
+            Write-LogInfo "`t`t`t`t`tRestoring module directories"
 
             foreach($m in $module)
             {
@@ -493,7 +703,7 @@ function Hide-Module($name, $script)
                 }
             }
 
-            Write-LogInfo "`t`t`t`tRestoring module info files"
+            Write-LogInfo "`t`t`t`t`tRestoring module info files"
 
             foreach($m in $module)
             {
@@ -510,9 +720,9 @@ function Hide-Module($name, $script)
 
 function Get-ModuleFolder($module)
 {
-    $path = $m.Path -replace "PrtgAPI.psd1",""
+    $path = $module.Path -replace "PrtgAPI.psd1",""
 
-    $versionFolder = "$($m.Version)\"
+    $versionFolder = "$($module.Version)\"
 
     if($path.EndsWith($versionFolder))
     {
@@ -523,11 +733,126 @@ function Get-ModuleFolder($module)
 }
 
 #endregion
+#region Redist
 
-function Move-AppveyorPackages($suffix, $config)
+function Test-RedistributablePackage($config)
+{
+    Write-LogInfo "`t`tProcessing Redistributable package"
+
+    $zipPath = Join-Path (PackageManager -RepoLocation) "PrtgAPI.zip"
+
+    Extract-Package (gi $zipPath) {
+
+        param($extractFolder)
+
+        $psd1Path = Join-Path $extractFolder "PrtgAPI.psd1"
+
+        Test-Psd1RootModule $config $psd1Path
+        Test-RedistributablePackageContents $config $extractFolder
+        Test-RedistributableModuleInstalls $config $extractFolder
+    }
+}
+
+function Test-RedistributablePackageContents($config, $extractFolder)
+{
+    $required = @(
+        "Functions\New-Credential.ps1"
+        "about_ChannelSettings.help.txt"
+        "about_ObjectSettings.help.txt"
+        "about_PrtgAPI.help.txt"
+        "about_SensorParameters.help.txt"
+        "about_SensorSettings.help.txt"
+        "PrtgAPI.cmd"
+        "PrtgAPI.Format.ps1xml"
+        "PrtgAPI.psd1"
+        "PrtgAPI.psm1"
+        "PrtgAPI.sh"
+    )
+
+    if($config.IsCore)
+    {
+        if($config.Configuration -eq "Release")
+        {
+            # Add all the .NET Core Release specific files
+
+            $required += @(
+                "fullclr\PrtgAPI.dll"
+                "fullclr\PrtgAPI.pdb"
+                "fullclr\PrtgAPI.xml"
+
+                "fullclr\PrtgAPI.PowerShell.dll"
+                "fullclr\PrtgAPI.PowerShell.pdb"
+                "fullclr\PrtgAPI.PowerShell.xml"
+
+                "coreclr\PrtgAPI.deps.json"
+                "coreclr\PrtgAPI.dll"
+                "coreclr\PrtgAPI.pdb"
+                "coreclr\PrtgAPI.xml"
+
+                "coreclr\PrtgAPI.PowerShell.deps.json"
+                "coreclr\PrtgAPI.PowerShell.dll"
+                "coreclr\PrtgAPI.PowerShell.pdb"
+                "coreclr\PrtgAPI.PowerShell.xml"
+            )
+        }
+        else
+        {
+            # Add all the .NET Core Debug specific files
+
+            $required += @(
+                "PrtgAPI.PowerShell.deps.json"
+            )
+        }
+    }
+
+    if($config.Configuration -eq "Debug" -or !$config.IsCore)
+    {
+        # Add all files common to .NET Core/.NET Framework debug builds
+
+        $required += @(
+            "PrtgAPI.dll"
+            "PrtgAPI.pdb"
+            "PrtgAPI.xml"
+            
+            "PrtgAPI.PowerShell.dll"
+            "PrtgAPI.PowerShell.pdb"
+            "PrtgAPI.PowerShell.xml"
+        )
+    }
+
+    $debugVersion = Get-DebugTargetFramework
+
+    if($debugVersion -like "net4*" -or $config.Configuration -eq "Release" -or !$config.IsCore)
+    {
+        $required += @(
+            "PrtgAPI.PowerShell.dll-Help.xml"
+        )
+    }
+
+    Test-PackageContents $extractFolder $required
+}
+
+function Test-RedistributableModuleInstalls($config, $extractFolder)
+{
+    if($config.IsCore)
+    {
+        Test-PowerShellPackageInstallsInternal "Desktop" $extractFolder
+        Test-PowerShellPackageInstallsInternal "Core" $extractFolder
+    }
+    else
+    {
+        Test-PowerShellPackageInstallsInternal "Desktop" $extractFolder
+    }
+}
+
+#endregion
+
+function Move-AppveyorPackages($config, $suffix)
 {
    if($env:APPVEYOR)
    {
+        Write-LogInfo "`t`t`tMoving Appveyor artifacts"
+        
         if(!$suffix)
         {
             $suffix = ""
@@ -544,7 +869,7 @@ function Move-AppveyorPackages($suffix, $config)
 
 function Clear-Repo
 {
-    gci -recurse ([PackageManager]::RepoLocation)|remove-item -Recurse -Force
+    gci -recurse (PackageManager -RepoLocation)|remove-item -Recurse -Force
 }
 
 function Extract-Package($package, $script)
@@ -570,29 +895,84 @@ function Extract-Package($package, $script)
     }
 }
 
-function Test-PackageContents($folder, $legalFolders, $legalFiles)
+function Test-PackageContents($folder, $required)
 {
     Write-LogInfo "`t`t`tValidating package contents"
 
-    $contents = gci $extractFolder
+    $pathWithoutTrailingSlash = $folder.TrimEnd("\", "/")
 
-    $folders = $contents | where PSIsContainer
-    $files = $contents | where { !$_.PSIsContainer }
+    $existing = gci $folder -Recurse|foreach {
+        [PSCustomObject]@{
+            Name = $_.fullname.substring($pathWithoutTrailingSlash.length + 1)
+            IsFolder = $_.PSIsContainer
+        }
+    }
 
-    Test-PackageContentsInternal "folder" $folders $legalFolders
-    Test-PackageContentsInternal "file" $files $legalFiles
-}
+    $found = @()
+    $illegal = @()
 
-function Test-PackageContentsInternal($type, $all, $legal)
-{
-    $illegal = $all | where { $legal -notcontains $_.Name }
+    foreach($item in $existing)
+    {
+        if($item.IsFolder)
+        {
+            # Do we have a folder that contains a wildcard that matches this folder? (e.g. packages\* covers packages\foo)
+            $match = $required | where { $item.Name -like $_ }
+
+            if(!$match)
+            {
+                # There isn't a wildcard that covers this folder, but if there are actually any items contained under this folder
+                # then transitively this folder is allowed
+
+                $match = $required | where { $_ -like "$($item.Name)\*" }
+
+                # If there is a match, we don't care - we don't whitelist empty folders, so we'll leave it up to the file processing block
+                # to decide whether the required files have been found or not
+                if(!$match)
+                {
+                    $illegal += $item.Name
+                }
+            }
+            else
+            {
+                # Add our wildcard folder (e.g. packages\*)
+                $found += $match
+            }
+        }
+        else
+        {
+            # If there isnt a required item that case insensitively matches a file that appears
+            # to exist, then that file must be "extra" and is therefore considered illegal
+            $match = $required | where { $_ -eq $item.Name }
+
+            if(!$match)
+            {
+                # We don't have a direct matchm however maybe we have a folder that contains a wildcard
+                # that matches this file (e.g. packages\* covers packages\foo.txt)
+                $match = $required | where { $item.Name -like $_ }
+            }
+
+            if(!$match)
+            {
+                $illegal += $item.Name
+            }
+            else
+            {
+                $found += $match
+            }
+        }
+    }
 
     if($illegal)
     {
-        $names = $illegal|select -ExpandProperty name|foreach { "'$_'" }
+        $str = ($illegal | Sort-Object | foreach { "'$_'" }) -join "`n"
+        throw "Package contained illegal items:`n$str"
+    }
 
-        $str = [string]::Join(", ", $names)
+    $missing = $required | where { $_ -notin $found }
 
-        throw "Package contained illegal $type(s) $str"
+    if($missing)
+    {
+        $str = ($missing | Sort-Object | foreach { "'$_'" }) -join "`n"
+        throw "Package is missing required items:`n$str"
     }
 }

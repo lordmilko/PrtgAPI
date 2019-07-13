@@ -9,11 +9,14 @@ function Invoke-CITest
         $AdditionalArgs,
 
         [Parameter(Mandatory = $false)]
-        $Configuration = $env:CONFIGURATION
+        $Configuration = $env:CONFIGURATION,
+
+        [Parameter(Mandatory = $true)]
+        [switch]$IsCore
     )
 
-    Invoke-CIPowerShellTest $BuildFolder $AdditionalArgs
-    Invoke-CICSharpTest $BuildFolder $AdditionalArgs $Configuration
+    Invoke-CIPowerShellTest $BuildFolder $AdditionalArgs -IsCore:$IsCore
+    Invoke-CICSharpTest $BuildFolder $AdditionalArgs $Configuration -IsCore:$IsCore
 }
 
 function Invoke-CICSharpTest
@@ -29,25 +32,29 @@ function Invoke-CICSharpTest
         [Parameter(Mandatory = $false, Position = 2)]
         $Configuration = $env:CONFIGURATION,
 
+        [Parameter(Mandatory = $true)]
+        [switch]$IsCore,
+
         [Parameter(Mandatory = $false)]
-        [switch]$IsCore = $true
+        [switch]$Integration
     )
 
     Write-LogInfo "`tExecuting C# tests"
 
-    $relativePath = (Get-UnitTestProject $IsCore).CSProj
-
-    $csproj = Join-Path $BuildFolder $relativePath
-
-    Write-Verbose "Using csproj '$csproj'"
+    $testProjectDetails = Get-TestProject $IsCore $Integration
 
     if($IsCore)
     {
+        $csproj = Join-Path $BuildFolder $testProjectDetails.CSProj
+        Write-Verbose "Using csproj '$csproj'"
+
         Invoke-CICSharpTestCore $csproj $Configuration $AdditionalArgs
     }
     else
-    {
-        Invoke-CICSharpTestFull $BuildFolder $Configuration $AdditionalArgs
+        $dll = Join-Path $BuildFolder "$($testProjectDetails.Directory)\bin\$Configuration\$($testProjectDetails.Directory).dll"
+        Write-Verbose "Using DLL '$dll'"
+
+        Invoke-CICSharpTestFull $dll $BuildFolder $Configuration $AdditionalArgs
     }
 }
 
@@ -69,15 +76,17 @@ function Invoke-CICSharpTestCore($csproj, $Configuration, $AdditionalArgs)
         $dotnetTestArgs += $AdditionalArgs
     }
 
+    Install-CIDependency dotnet
+
     Write-Verbose "Executing command 'dotnet $dotnetTestArgs'"
 
     Invoke-Process { & "dotnet" @dotnetTestArgs } -WriteHost
 }
 
-function Invoke-CICSharpTestFull($BuildFolder, $Configuration, $AdditionalArgs)
+function Invoke-CICSharpTestFull($dll, $BuildFolder, $Configuration, $AdditionalArgs)
 {
     $vsTestArgs = @(
-        Join-Path $BuildFolder "PrtgAPI.Tests.UnitTests\bin\$Configuration\PrtgAPI.Tests.UnitTests.dll"
+        $dll
     )
 
     if($AdditionalArgs)
@@ -100,18 +109,24 @@ function Invoke-CIPowerShellTest
     param(
         [Parameter(Mandatory = $true, Position = 0)]
         $BuildFolder,
+
         [Parameter(Position = 1)]
         $AdditionalArgs,
 
+        [Parameter(Mandatory = $true)]
+        [switch]$IsCore,
+
         [Parameter(Mandatory = $false)]
-        [switch]$IsCore = $true
+        [switch]$Integration
     )
 
     Write-LogInfo "`tExecuting PowerShell tests"
 
-    $relativePath = (Get-UnitTestProject $IsCore).PowerShell
+    $relativePath = (Get-TestProject $IsCore $Integration).PowerShell
 
     $directory = Join-Path $BuildFolder $relativePath
 
-    Invoke-Pester $directory -PassThru @AdditionalArgs -ExcludeTag Build
+    Install-CIDependency Pester
+
+    Invoke-Pester $directory -PassThru @AdditionalArgs
 }

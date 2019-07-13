@@ -1,7 +1,8 @@
-Import-Module $PSScriptRoot\..\ci.psm1
-Import-Module $PSScriptRoot\..\Appveyor.psm1 -DisableNameChecking
+Import-Module $PSScriptRoot\..\ci.psm1 -Scope Local
+Import-Module $PSScriptRoot\..\Appveyor.psm1 -DisableNameChecking -Scope Local
 
-. $PSScriptRoot\Support.ps1
+$skipBuildModule = $true
+. $PSScriptRoot\..\..\..\PrtgAPI.Tests.UnitTests\Support\PowerShell\BuildCore.ps1
 
 #region Support
 
@@ -90,8 +91,10 @@ function global:Mock-Version
         $LastRelease
     )
 
-    Mock Get-PrtgVersion {
-        $Assembly
+    Mock Get-CIVersion {
+        [PSCustomObject]@{
+            File = [Version]$Assembly
+        }
     }.GetNewClosure()
 
     Mock Get-LastAppveyorBuild {
@@ -138,13 +141,130 @@ function Simulate-Build
     }
 }
 
+function TestPackageContents
+{
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory = $true, Position = 0)]
+        [bool]$IsCore,
+
+        [Parameter(Mandatory = $true, Position = 1)]
+        $Contents,
+
+        [Parameter(Mandatory = $false, Position = 2)]
+        $Configuration = "Debug",
+
+        [Parameter(Mandatory = $false)]
+        [ValidateSet("CSharp", "PowerShell", "Redist")]
+        [string]$Type = "CSharp"
+    )
+
+    $global:prtgPackageContents = $Contents
+
+    if($Type -eq "CSharp")
+    {
+        Mock "New-AppveyorPackage" {
+
+            param($IsCore)
+
+            $config = [PSCustomObject]@{
+                IsCore = $IsCore
+                Configuration = $env:CONFIGURATION
+            }
+
+            Test-CSharpPackageContents $config "C:\FakeExtractFolder"
+        } -Verifiable -ModuleName "Appveyor"
+    }
+    elseif($Type -eq "PowerShell")
+    {
+        Mock "New-AppveyorPackage" {
+
+            param($IsCore)
+
+            $config = [PSCustomObject]@{
+                IsCore = $IsCore
+                Configuration = $env:CONFIGURATION
+            }
+
+            Test-PowerShellPackageContents $config "C:\FakeExtractFolder"
+        } -Verifiable -ModuleName "Appveyor"
+    }
+    elseif($Type -eq "Redist")
+    {
+        Mock "New-AppveyorPackage" {
+
+            param($IsCore)
+
+            $config = [PSCustomObject]@{
+                IsCore = $IsCore
+                Configuration = $env:CONFIGURATION
+            }
+
+            Test-RedistributablePackageContents $config "C:\FakeExtractFolder"
+        } -Verifiable -ModuleName "Appveyor"
+    }
+    else
+    {
+        throw "Don't know how to handle type '$Type'"
+    }
+
+    InModuleScope "Appveyor" {
+
+        Mock "Get-ChildItem" {
+
+            param($Path)
+
+            if($Path -eq "C:\FakeExtractFolder")
+            {
+                foreach($content in $global:prtgPackageContents)
+                {
+                    $joined = Join-Path $Path $content.Path
+
+                    if($content.Type -eq "File")
+                    {
+                        [System.IO.FileInfo]$joined | Add-Member PSIsContainer $false -PassThru
+                    }
+                    elseif($content.Type -eq "Folder")
+                    {
+                        [System.IO.DirectoryInfo]$joined | Add-Member PSIsContainer $true -PassThru
+                    }
+                    else
+                    {
+                        throw "Unknown type specified in content '$content'"
+                    }
+                }
+            }
+            else
+            {
+                throw "Unknown path '$Path' was specified"
+            }            
+        } -Verifiable
+    }
+
+    try
+    {
+        Simulate-Environment {
+
+            $env:CONFIGURATION = $Configuration
+
+            Invoke-AppveyorBeforeTest -IsCore:$IsCore
+        }
+    }
+    finally
+    {
+        $global:prtgPackageContents = $null
+    }
+
+    Assert-VerifiableMocks
+}
+
 #endregion
 
 Describe "Appveyor" {
     It "simulates Appveyor" {
 
         WithoutTestDrive {
-            Simulate-Appveyor $true
+            Simulate-Appveyor -IsCore
         }
     }
 
@@ -249,6 +369,349 @@ Describe "Appveyor" {
             }
 
             Simulate-Build @buildArgs
+        }
+    }
+    
+    Context "C# NuGet" {
+
+        It "has all files for .NET Framework" {
+            TestPackageContents $false @(
+                @{Type = "File"; Path = "[Content_Types].xml"}
+                @{Type = "File"; Path = "_rels\blah.txt"}
+                @{Type = "File"; Path = "lib\net452\PrtgAPI.dll"}
+                @{Type = "File"; Path = "lib\net452\PrtgAPI.xml"}
+                @{Type = "File"; Path = "package\foo\bar.txt"}
+                @{Type = "File"; Path = "PrtgAPI.nuspec"}
+                @{Type = "Folder"; Path = "_rels"}
+                @{Type = "Folder"; Path = "lib"}
+                @{Type = "Folder"; Path = "lib\net452"}
+                @{Type = "Folder"; Path = "package"}
+                @{Type = "Folder"; Path = "package\foo"}
+            )
+        }
+
+        It "has all files for .NET Core" {
+
+            $target = Get-DebugTargetFramework
+
+            TestPackageContents $true @(
+                @{Type = "File"; Path = "[Content_Types].xml"}
+                @{Type = "File"; Path = "_rels\blah.txt"}
+                @{Type = "File"; Path = "lib\$target\PrtgAPI.dll"}
+                @{Type = "File"; Path = "lib\$target\PrtgAPI.xml"}
+                @{Type = "File"; Path = "package\foo\bar.txt"}
+                @{Type = "File"; Path = "LICENSE"}
+                @{Type = "File"; Path = "PrtgAPI.nuspec"}
+                @{Type = "Folder"; Path = "_rels"}
+                @{Type = "Folder"; Path = "lib"}
+                @{Type = "Folder"; Path = "lib\$target"}
+                @{Type = "Folder"; Path = "package"}
+                @{Type = "Folder"; Path = "package\foo"}
+            )
+        }
+
+        It "has all files for .NET Core for Release" {
+            TestPackageContents $true @(
+                @{Type = "File"; Path = "[Content_Types].xml"}
+                @{Type = "File"; Path = "_rels\blah.txt"}
+                @{Type = "File"; Path = "lib\net452\PrtgAPI.dll"}
+                @{Type = "File"; Path = "lib\net452\PrtgAPI.xml"}
+                @{Type = "File"; Path = "lib\netstandard2.0\PrtgAPI.dll"}
+                @{Type = "File"; Path = "lib\netstandard2.0\PrtgAPI.xml"}
+                @{Type = "File"; Path = "package\foo\bar.txt"}
+                @{Type = "File"; Path = "LICENSE"}
+                @{Type = "File"; Path = "PrtgAPI.nuspec"}
+                @{Type = "Folder"; Path = "_rels"}
+                @{Type = "Folder"; Path = "lib"}
+                @{Type = "Folder"; Path = "lib\net452"}
+                @{Type = "Folder"; Path = "lib\netstandard2.0"}
+                @{Type = "Folder"; Path = "package"}
+                @{Type = "Folder"; Path = "package\foo"}
+            ) "Release"
+        }
+
+        It "has no contents" {
+
+            $missing = @(
+                "'[Content_Types].xml'"
+                "'_rels\*'"
+                "'lib\net452\PrtgAPI.dll'"
+                "'lib\net452\PrtgAPI.xml'"
+                "'package\*'"
+                "'PrtgAPI.nuspec'"
+            )
+
+            { TestPackageContents $false @() } | Should Throw "Package is missing required items:`n$($missing -join "`n")"
+        }
+
+        It "is missing one file" {
+            { TestPackageContents $false @(
+                @{Type = "File"; Path = "_rels\blah.txt"}
+                @{Type = "File"; Path = "lib\net452\PrtgAPI.dll"}
+                @{Type = "File"; Path = "lib\net452\PrtgAPI.xml"}
+                @{Type = "File"; Path = "package\foo\bar.txt"}
+                @{Type = "File"; Path = "PrtgAPI.nuspec"}
+                @{Type = "Folder"; Path = "_rels"}
+                @{Type = "Folder"; Path = "lib"}
+                @{Type = "Folder"; Path = "lib\net452"}
+                @{Type = "Folder"; Path = "package"}
+                @{Type = "Folder"; Path = "package\foo"}
+            ) } | Should Throw "Package is missing required items:`n'[Content_Types].xml'"
+        }
+
+        It "is missing a wildcard folder" {
+            { TestPackageContents $false @(
+                @{Type = "File"; Path = "[Content_Types].xml"}
+                @{Type = "File"; Path = "_rels\blah.txt"}
+                @{Type = "File"; Path = "lib\net452\PrtgAPI.dll"}
+                @{Type = "File"; Path = "lib\net452\PrtgAPI.xml"}
+                @{Type = "File"; Path = "PrtgAPI.nuspec"}
+                @{Type = "Folder"; Path = "_rels"}
+                @{Type = "Folder"; Path = "lib"}
+                @{Type = "Folder"; Path = "lib\net452"}
+            ) } | Should Throw "Package is missing required items:`n'package\*'"
+        }
+    }
+
+    Context "PowerShell NuGet" {
+
+        It "has all files for .NET Framework" {
+            TestPackageContents $false @(
+                @{Type = "File"; Path = "[Content_Types].xml"}
+                @{Type = "File"; Path = "_rels\blah.txt"}
+                @{Type = "File"; Path = "about_ChannelSettings.help.txt"}
+                @{Type = "File"; Path = "about_ObjectSettings.help.txt"}
+                @{Type = "File"; Path = "about_ChannelSettings.help.txt"}
+                @{Type = "File"; Path = "about_PrtgAPI.help.txt"}
+                @{Type = "File"; Path = "about_SensorParameters.help.txt"}
+                @{Type = "File"; Path = "about_SensorSettings.help.txt"}
+                @{Type = "File"; Path = "PrtgAPI.dll"}
+                @{Type = "File"; Path = "PrtgAPI.PowerShell.dll"}
+                @{Type = "File"; Path = "Functions\New-Credential.ps1"}
+                @{Type = "File"; Path = "package\foo\bar.txt"}
+                @{Type = "File"; Path = "PrtgAPI.Format.ps1xml"}
+                @{Type = "File"; Path = "PrtgAPI.nuspec"}
+                @{Type = "File"; Path = "PrtgAPI.PowerShell.dll-Help.xml"}
+                @{Type = "File"; Path = "PrtgAPI.psd1"}
+                @{Type = "File"; Path = "PrtgAPI.psm1"}
+                @{Type = "Folder"; Path = "_rels"}
+                @{Type = "Folder"; Path = "Functions"}
+                @{Type = "Folder"; Path = "package"}
+                @{Type = "Folder"; Path = "package\foo"}
+            ) -Type PowerShell
+        }
+
+        It "has all files for .NET Core for Release" {
+            TestPackageContents $true @(
+                @{Type = "File"; Path = "[Content_Types].xml"}
+                @{Type = "File"; Path = "_rels\blah.txt"}
+                @{Type = "File"; Path = "about_ChannelSettings.help.txt"}
+                @{Type = "File"; Path = "about_ObjectSettings.help.txt"}
+                @{Type = "File"; Path = "about_PrtgAPI.help.txt"}
+                @{Type = "File"; Path = "about_SensorParameters.help.txt"}
+                @{Type = "File"; Path = "about_SensorSettings.help.txt"}
+                @{Type = "File"; Path = "fullclr\PrtgAPI.dll"}
+                @{Type = "File"; Path = "fullclr\PrtgAPI.PowerShell.dll"}
+                @{Type = "File"; Path = "coreclr\PrtgAPI.dll"}
+                @{Type = "File"; Path = "coreclr\PrtgAPI.PowerShell.dll"}
+                @{Type = "File"; Path = "Functions\New-Credential.ps1"}
+                @{Type = "File"; Path = "package\foo\bar.txt"}
+                @{Type = "File"; Path = "PrtgAPI.Format.ps1xml"}
+                @{Type = "File"; Path = "PrtgAPI.nuspec"}
+                @{Type = "File"; Path = "PrtgAPI.PowerShell.dll-Help.xml"}
+                @{Type = "File"; Path = "PrtgAPI.psd1"}
+                @{Type = "File"; Path = "PrtgAPI.psm1"}
+                @{Type = "Folder"; Path = "_rels"}
+                @{Type = "Folder"; Path = "Functions"}
+                @{Type = "Folder"; Path = "fullclr"}
+                @{Type = "Folder"; Path = "coreclr"}
+                @{Type = "Folder"; Path = "package"}
+                @{Type = "Folder"; Path = "package\foo"}
+            ) "Release" -Type PowerShell
+        }
+
+        It "has no contents" {
+
+            $missing = @(
+                "'[Content_Types].xml'"
+                "'_rels\*'"
+                "'about_ChannelSettings.help.txt'"
+                "'about_ObjectSettings.help.txt'"
+                "'about_PrtgAPI.help.txt'"
+                "'about_SensorParameters.help.txt'"
+                "'about_SensorSettings.help.txt'"
+                "'Functions\New-Credential.ps1'"
+                "'package\*'"
+                "'PrtgAPI.dll'"
+                "'PrtgAPI.Format.ps1xml'"
+                "'PrtgAPI.nuspec'"
+                "'PrtgAPI.PowerShell.dll'"
+                "'PrtgAPI.PowerShell.dll-Help.xml'"
+                "'PrtgAPI.psd1'"
+                "'PrtgAPI.psm1'"
+            )
+
+            { TestPackageContents $false @() -Type PowerShell } | Should Throw "Package is missing required items:`n$($missing -join "`n")"
+        }
+
+        It "is missing one file" {
+            { TestPackageContents $false @(
+                @{Type = "File"; Path = "_rels\blah.txt"}
+                @{Type = "File"; Path = "about_ChannelSettings.help.txt"}
+                @{Type = "File"; Path = "about_ObjectSettings.help.txt"}
+                @{Type = "File"; Path = "about_ChannelSettings.help.txt"}
+                @{Type = "File"; Path = "about_PrtgAPI.help.txt"}
+                @{Type = "File"; Path = "about_SensorParameters.help.txt"}
+                @{Type = "File"; Path = "about_SensorSettings.help.txt"}
+                @{Type = "File"; Path = "PrtgAPI.dll"}
+                @{Type = "File"; Path = "PrtgAPI.PowerShell.dll"}
+                @{Type = "File"; Path = "Functions\New-Credential.ps1"}
+                @{Type = "File"; Path = "package\foo\bar.txt"}
+                @{Type = "File"; Path = "PrtgAPI.Format.ps1xml"}
+                @{Type = "File"; Path = "PrtgAPI.nuspec"}
+                @{Type = "File"; Path = "PrtgAPI.PowerShell.dll-Help.xml"}
+                @{Type = "File"; Path = "PrtgAPI.psd1"}
+                @{Type = "File"; Path = "PrtgAPI.psm1"}
+                @{Type = "Folder"; Path = "_rels"}
+                @{Type = "Folder"; Path = "Functions"}
+                @{Type = "Folder"; Path = "package"}
+                @{Type = "Folder"; Path = "package\foo"}
+            ) -Type PowerShell } | Should Throw "Package is missing required items:`n'[Content_Types].xml'"
+        }
+
+        It "is missing a wildcard folder" {
+            { TestPackageContents $false @(
+                @{Type = "File"; Path = "[Content_Types].xml"}
+                @{Type = "File"; Path = "_rels\blah.txt"}
+                @{Type = "File"; Path = "about_ChannelSettings.help.txt"}
+                @{Type = "File"; Path = "about_ObjectSettings.help.txt"}
+                @{Type = "File"; Path = "about_ChannelSettings.help.txt"}
+                @{Type = "File"; Path = "about_PrtgAPI.help.txt"}
+                @{Type = "File"; Path = "about_SensorParameters.help.txt"}
+                @{Type = "File"; Path = "about_SensorSettings.help.txt"}
+                @{Type = "File"; Path = "PrtgAPI.dll"}
+                @{Type = "File"; Path = "PrtgAPI.PowerShell.dll"}
+                @{Type = "File"; Path = "Functions\New-Credential.ps1"}
+                @{Type = "File"; Path = "PrtgAPI.Format.ps1xml"}
+                @{Type = "File"; Path = "PrtgAPI.nuspec"}
+                @{Type = "File"; Path = "PrtgAPI.PowerShell.dll-Help.xml"}
+                @{Type = "File"; Path = "PrtgAPI.psd1"}
+                @{Type = "File"; Path = "PrtgAPI.psm1"}   
+                @{Type = "Folder"; Path = "_rels"}
+                @{Type = "Folder"; Path = "Functions"}
+            ) -Type PowerShell } | Should Throw "Package is missing required items:`n'package\*'"
+        }
+    }
+
+    Context "Redistributable" {
+        It "has all files for .NET Framework for Debug" {
+            TestPackageContents $false @(
+                @{Type = "File"; Path = "about_ChannelSettings.help.txt"}
+                @{Type = "File"; Path = "about_ObjectSettings.help.txt"}
+                @{Type = "File"; Path = "about_ChannelSettings.help.txt"}
+                @{Type = "File"; Path = "about_PrtgAPI.help.txt"}
+                @{Type = "File"; Path = "about_SensorParameters.help.txt"}
+                @{Type = "File"; Path = "about_SensorSettings.help.txt"}
+                @{Type = "File"; Path = "Functions\New-Credential.ps1"}
+                @{Type = "File"; Path = "PrtgAPI.cmd"}
+                @{Type = "File"; Path = "PrtgAPI.dll"}
+                @{Type = "File"; Path = "PrtgAPI.Format.ps1xml"}
+                @{Type = "File"; Path = "PrtgAPI.pdb"}
+                @{Type = "File"; Path = "PrtgAPI.PowerShell.dll"}
+                @{Type = "File"; Path = "PrtgAPI.PowerShell.dll-Help.xml"}
+                @{Type = "File"; Path = "PrtgAPI.PowerShell.pdb"}
+                @{Type = "File"; Path = "PrtgAPI.PowerShell.xml"}
+                @{Type = "File"; Path = "PrtgAPI.psd1"}
+                @{Type = "File"; Path = "PrtgAPI.psm1"}
+                @{Type = "File"; Path = "PrtgAPI.sh"}
+                @{Type = "File"; Path = "PrtgAPI.xml"}
+                @{Type = "Folder"; Path = "Functions"}
+            ) -Type Redist
+        }
+
+        It "has all files for .NET Framework for Release" {
+            TestPackageContents $false @(
+                @{Type = "File"; Path = "about_ChannelSettings.help.txt"}
+                @{Type = "File"; Path = "about_ObjectSettings.help.txt"}
+                @{Type = "File"; Path = "about_ChannelSettings.help.txt"}
+                @{Type = "File"; Path = "about_PrtgAPI.help.txt"}
+                @{Type = "File"; Path = "about_SensorParameters.help.txt"}
+                @{Type = "File"; Path = "about_SensorSettings.help.txt"}
+                @{Type = "File"; Path = "Functions\New-Credential.ps1"}
+                @{Type = "File"; Path = "PrtgAPI.cmd"}
+                @{Type = "File"; Path = "PrtgAPI.dll"}
+                @{Type = "File"; Path = "PrtgAPI.Format.ps1xml"}
+                @{Type = "File"; Path = "PrtgAPI.pdb"}
+                @{Type = "File"; Path = "PrtgAPI.PowerShell.dll"}
+                @{Type = "File"; Path = "PrtgAPI.PowerShell.dll-Help.xml"}
+                @{Type = "File"; Path = "PrtgAPI.PowerShell.pdb"}
+                @{Type = "File"; Path = "PrtgAPI.PowerShell.xml"}
+                @{Type = "File"; Path = "PrtgAPI.psd1"}
+                @{Type = "File"; Path = "PrtgAPI.psm1"}
+                @{Type = "File"; Path = "PrtgAPI.sh"}
+                @{Type = "File"; Path = "PrtgAPI.xml"}
+                @{Type = "Folder"; Path = "Functions"}
+            ) "Release" -Type Redist
+        }
+
+        It "has all files for .NET Core for Debug" {
+            TestPackageContents $true @(
+                @{Type = "File"; Path = "about_ChannelSettings.help.txt"}
+                @{Type = "File"; Path = "about_ObjectSettings.help.txt"}
+                @{Type = "File"; Path = "about_ChannelSettings.help.txt"}
+                @{Type = "File"; Path = "about_PrtgAPI.help.txt"}
+                @{Type = "File"; Path = "about_SensorParameters.help.txt"}
+                @{Type = "File"; Path = "about_SensorSettings.help.txt"}
+                @{Type = "File"; Path = "Functions\New-Credential.ps1"}
+                @{Type = "File"; Path = "PrtgAPI.cmd"}
+                @{Type = "File"; Path = "PrtgAPI.dll"}
+                @{Type = "File"; Path = "PrtgAPI.Format.ps1xml"}
+                @{Type = "File"; Path = "PrtgAPI.pdb"}
+                @{Type = "File"; Path = "PrtgAPI.PowerShell.deps.json"}
+                @{Type = "File"; Path = "PrtgAPI.PowerShell.dll"}
+                @{Type = "File"; Path = "PrtgAPI.PowerShell.pdb"}
+                @{Type = "File"; Path = "PrtgAPI.PowerShell.xml"}
+                @{Type = "File"; Path = "PrtgAPI.psd1"}
+                @{Type = "File"; Path = "PrtgAPI.psm1"}
+                @{Type = "File"; Path = "PrtgAPI.sh"}
+                @{Type = "File"; Path = "PrtgAPI.xml"}
+                @{Type = "Folder"; Path = "Functions"}
+            ) -Type Redist
+        }
+
+        It "has all files for .NET Core for Release" {
+            TestPackageContents $true @(
+                @{Type = "File"; Path = "about_ChannelSettings.help.txt"}
+                @{Type = "File"; Path = "about_ObjectSettings.help.txt"}
+                @{Type = "File"; Path = "about_ChannelSettings.help.txt"}
+                @{Type = "File"; Path = "about_PrtgAPI.help.txt"}
+                @{Type = "File"; Path = "about_SensorParameters.help.txt"}
+                @{Type = "File"; Path = "about_SensorSettings.help.txt"}
+                @{Type = "File"; Path = "Functions\New-Credential.ps1"}
+                @{Type = "File"; Path = "PrtgAPI.cmd"}
+                @{Type = "File"; Path = "coreclr\PrtgAPI.deps.json"}
+                @{Type = "File"; Path = "coreclr\PrtgAPI.dll"}
+                @{Type = "File"; Path = "coreclr\PrtgAPI.pdb"}
+                @{Type = "File"; Path = "coreclr\PrtgAPI.xml"}
+                @{Type = "File"; Path = "coreclr\PrtgAPI.PowerShell.deps.json"}
+                @{Type = "File"; Path = "coreclr\PrtgAPI.PowerShell.dll"}
+                @{Type = "File"; Path = "coreclr\PrtgAPI.PowerShell.pdb"}
+                @{Type = "File"; Path = "coreclr\PrtgAPI.PowerShell.xml"}
+                @{Type = "File"; Path = "fullclr\PrtgAPI.dll"}
+                @{Type = "File"; Path = "fullclr\PrtgAPI.pdb"}
+                @{Type = "File"; Path = "fullclr\PrtgAPI.xml"}
+                @{Type = "File"; Path = "fullclr\PrtgAPI.PowerShell.dll"}
+                @{Type = "File"; Path = "fullclr\PrtgAPI.PowerShell.pdb"}
+                @{Type = "File"; Path = "fullclr\PrtgAPI.PowerShell.xml"}
+                @{Type = "File"; Path = "PrtgAPI.Format.ps1xml"}
+                @{Type = "File"; Path = "PrtgAPI.PowerShell.dll-Help.xml"}
+                @{Type = "File"; Path = "PrtgAPI.psd1"}
+                @{Type = "File"; Path = "PrtgAPI.psm1"}
+                @{Type = "File"; Path = "PrtgAPI.sh"}
+                @{Type = "Folder"; Path = "coreclr"}
+                @{Type = "Folder"; Path = "fullclr"}
+                @{Type = "Folder"; Path = "Functions"}
+            ) "Release" -Type Redist
         }
     }
 

@@ -2,7 +2,7 @@
 
 if(!(Get-Module -ListAvailable Assert))
 {
-    Install-Package Assert -ForceBootstrap -Force | Out-Null
+    Install-Package Assert -ProviderName PowerShellGet -RequiredVersion 0.8.1 -ForceBootstrap -Force | Out-Null
 }
 
 function ServerManager

@@ -1,4 +1,4 @@
-ipmo $PSScriptRoot\ci.psm1
+ipmo $PSScriptRoot\ci.psm1 -Scope Local
 
 $script:SolutionDir = $script:SolutionDir = Get-SolutionRoot
 
@@ -21,4 +21,28 @@ function Enable-AppveyorRDPAccess
     $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
 }
 
-Export-ModuleMember Set-AppveyorBuildMode,Enable-AppveyorRDPAccess,Simulate-Environment
+function Get-DebugTargetFramework
+{
+    [xml]$xml = gc (Join-Path $env:APPVEYOR_BUILD_FOLDER "Directory.Build.props")
+    
+    $debugVersion = ($xml.project.PropertyGroup.targetframeworks|where condition -ne "`$(IsUnix)")."#text"
+
+    if(!$debugVersion)
+    {
+        throw "Could not find debug TargetFramework in Directory.Build.props"
+    }
+
+    return $debugVersion
+}
+
+function GetVersion
+{
+    param(
+        [Parameter(Mandatory = $true, Position = 0)]
+        [switch]$IsCore
+    )
+
+    return (Get-CIVersion $env:APPVEYOR_BUILD_FOLDER -IsCore:$IsCore).File.ToString(3)
+}
+
+Export-ModuleMember Set-AppveyorBuildMode,Enable-AppveyorRDPAccess,Simulate-Environment,Get-DebugTargetFramework

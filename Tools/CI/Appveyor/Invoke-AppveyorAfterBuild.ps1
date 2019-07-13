@@ -1,7 +1,10 @@
 function Invoke-AppveyorAfterBuild
 {
     [CmdletBinding()]
-    param()
+    param(
+        [Parameter(Position = 0)]
+        [switch]$IsCore = $script:APPEYOR_BUILD_CORE
+    )
 
-    Set-AppveyorVersion
+    Set-AppveyorVersion -IsCore:$IsCore
 }

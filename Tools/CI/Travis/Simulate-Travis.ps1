@@ -1,6 +1,12 @@
 function Simulate-Travis
 {
-    InitializeEnvironment
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory = $false)]
+        [string]$Configuration = "Debug"
+    )
+
+    InitializeEnvironment $Configuration
 
     Clear-TravisBuild
 
@@ -8,8 +14,8 @@ function Simulate-Travis
     Invoke-TravisScript
 }
 
-function InitializeEnvironment
+function InitializeEnvironment($configuration)
 {
-    $env:CONFIGURATION = "Debug"
+    $env:CONFIGURATION = $configuration
     $env:TRAVIS_BUILD_DIR = $script:SolutionDir
 }

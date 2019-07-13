@@ -9,9 +9,11 @@ function Get-MSBuild
 {
     Install-CIDependency vswhere
 
-    $msbuild = vswhere -latest -requires Microsoft.Component.MSBuild -find MSBuild\**\Bin\MSBuild.exe | select-object -first 1
+    $vswhere = Get-ChocolateyCommand vswhere
 
-    if(!(Test-Path $msbuild))
+    $msbuild = & $vswhere -latest -requires Microsoft.Component.MSBuild -find MSBuild\**\Bin\MSBuild.exe | select-object -first 1
+
+    if([string]::IsNullOrEmpty($msbuild) -or !(Test-Path $msbuild))
     {
         $msbuild = "C:\Program Files (x86)\MSBuild\14.0\bin\amd64\msbuild.exe"
 
@@ -28,9 +30,11 @@ function Get-VSTest
 {
     Install-CIDependency vswhere
 
-    $path = vswhere -latest -products * -requires Microsoft.VisualStudio.Workload.ManagedDesktop Microsoft.VisualStudio.Workload.Web -requiresAny -property installationPath
+    $vswhere = Get-ChocolateyCommand vswhere
 
-    if(!(Test-Path $path))
+    $path = & $vswhere -latest -products * -requires Microsoft.VisualStudio.Workload.ManagedDesktop Microsoft.VisualStudio.Workload.Web -requiresAny -property installationPath
+
+    if([string]::IsNullOrEmpty($path) -or !(Test-Path $path))
     {
         $path = "C:\Program Files (x86)\Microsoft Visual Studio 14.0"
 
@@ -47,6 +51,15 @@ function Get-VSTest
 
 function Test-IsWindows
 {
+    Test-CIIsWindows
+}
+
+function Test-CIIsWindows
+{
+    # Pester 3 freaks out if you mock the same command twice for two different modules; as such
+    # we mock a single command Test-CIIsWindows; all modules call Test-IsWindows, which forwards
+    # the request to the internal implementation
+
     if($PSEdition -ne $null -and $PSEdition -ne "Desktop")
     {
         if($IsWindows)
@@ -84,15 +97,22 @@ function Invoke-VSTest($vstestArgs)
     } -WriteHost
 }
 
-function Get-UnitTestProject($IsCore)
+function Get-TestProject($IsCore, $integration = $false)
 {
-    $folder = "PrtgAPI.Tests.UnitTests"
-    $csproj = "PrtgAPI.Tests.UnitTests.csproj"
+    $name = "Unit"
+
+    if($integration)
+    {
+        $name = "Integration"
+    }
+
+    $folder = "PrtgAPI.Tests.$($name)Tests"
+    $csproj = "PrtgAPI.Tests.$($name)Tests.csproj"
     $powerShell = Join-Path $folder "PowerShell"
 
     if($IsCore)
     {
-        $csproj = "PrtgAPIv17.Tests.UnitTests.csproj"
+        $csproj = "PrtgAPIv17.Tests.$($name)Tests.csproj"
     }
 
     return [PSCustomObject]@{
@@ -104,20 +124,19 @@ function Get-UnitTestProject($IsCore)
 
 function Get-BuildProject($IsCore)
 {
-    $prefix = "PrtgAPI"
+    $root = Get-SolutionRoot
+    $projects = gci $root -Recurse -Filter "*.csproj"
 
     if($IsCore)
     {
-        $prefix = "PrtgAPIv17."
+        $projects = $projects | where { $_.Name -notlike "PrtgAPI.*"}
     }
     else
     {
-        $prefix = "PrtgAPI."
+        $projects = $projects | where { $_.Name -notlike "PrtgAPIv17.*"}
     }
 
-    $root = Get-SolutionRoot
-
-    gci $root -Recurse -Filter "$prefix*csproj"
+    return $projects
 }
 
 function Get-PowerShellOutputDir
@@ -134,7 +153,7 @@ function Get-PowerShellOutputDir
         $IsCore
     )
 
-    $base = "$BuildFolder\PrtgAPI.PowerShell\bin\$Configuration\"
+    $base = Join-Path $BuildFolder "PrtgAPI.PowerShell\bin\$Configuration\"
 
     if($IsCore)
     {
@@ -148,7 +167,17 @@ function Get-PowerShellOutputDir
             $candidates = gci "$base\netcore*"
         }
 
+        if(!$candidates)
+        {
+            $candidates = gci (Join-Path $base "netstandard*")
+        }
+
         $fullName = $candidates | select -First 1 -Expand FullName
+
+        if(!$fullName)
+        {
+            throw "Couldn't find any Core $Configuration build candidates for PrtgAPI.PowerShell"
+        }
 
         return "$fullName\PrtgAPI"
     }
@@ -169,7 +198,7 @@ function Move-Packages
         $DestinationFolder
     )
 
-    $pkgs = Get-ChildItem ([PackageManager]::RepoLocation) -Filter *.*nupkg
+    $pkgs = (Get-ChildItem (PackageManager -RepoLocation) -Filter *.*nupkg)
         
     foreach($pkg in $pkgs)
     {
@@ -181,21 +210,178 @@ function Move-Packages
 
         gi $newPath
     }
+
+    $zips = Get-ChildItem (PackageManager -RepoLocation) -Filter *.zip
+
+    foreach($zip in $zips)
+    {
+        $newPath = Join-Path $DestinationFolder $zip.Name
+
+        Write-LogInfo "`t`t`t`tMoving package '$($zip.Name)' to '$newPath'"
+        Move-Item $zip.FullName $newPath -Force
+
+        gi $newPath
+    }
+}
+
+function HasType
+{
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory = $false, ValueFromPipeline = $true)]
+        [string[]]$Actual,
+
+        [Parameter(Mandatory = $true, Position = 0)]
+        [string[]]$Desired
+    )
+
+    begin {
+        $actuals = @()
+    }
+
+    process {
+        $actuals += $Actual
+    }
+
+    end {
+        return [string]::IsNullOrEmpty($actuals) -or $actuals.Count -eq 0 -or [bool]($Desired | where { $_ -in $actuals })
+    }
+}
+
+# Based on https://powershell.org/2014/01/revisited-script-modules-and-variable-scopes/
+function Get-CallerPreference
+{
+    [CmdletBinding()]
+    param (
+        [Parameter(Mandatory = $true, Position = 0)]
+        [ValidateScript({ $_.GetType().FullName -eq 'System.Management.Automation.PSScriptCmdlet' })]
+        $Cmdlet,
+
+        [Parameter(Mandatory = $true, Position = 1)]
+        [System.Management.Automation.SessionState]
+        $SessionState,
+
+        [Parameter(Mandatory = $false)]
+        [string]$DefaultErrorAction
+    )
+
+    $preferences = @{
+        'ErrorActionPreference' = 'ErrorAction'
+        'DebugPreference' = 'Debug'
+        'ConfirmPreference' = 'Confirm'
+        'WhatIfPreference' = 'WhatIf'
+        'VerbosePreference' = 'Verbose'
+        'WarningPreference' = 'WarningAction'
+    }
+
+    foreach($preference in $preferences.GetEnumerator())
+    {
+        # If this preference wasn't specified to our inner cmdlet
+        if(!$Cmdlet.MyInvocation.BoundParameters.ContainsKey($preference.Value))
+        {
+            if($PSCmdlet.MyInvocation.BoundParameters.ContainsKey("Default$($preference.Value)"))
+            {
+                $variable = [PSCustomObject]@{
+                    Name = $preference.Name
+                    Value = $PSCmdlet.MyInvocation.BoundParameters["Default$($preference.Value)"]
+                }
+            }
+            else
+            {
+                # Get the value of this preference from the outer scope
+                $variable = $Cmdlet.SessionState.PSVariable.Get($preference.Key)
+            }
+
+            # And apply it to our inner scope
+            if($null -ne $variable -and $null -ne $variable.Value)
+            {
+                if ($SessionState -eq $ExecutionContext.SessionState)
+                {
+                    #todo: what is "scope 1"?
+                    Set-Variable -Scope 1 -Name $variable.Name -Value $variable.Value -Force -Confirm:$false -WhatIf:$false
+                }
+                else
+                {
+                    $SessionState.PSVariable.Set($variable.Name, $variable.Value)
+                }
+            }
+        }
+    }
+}
+
+function global:Join-PathEx
+{
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory = $true, Position = 0)]
+        [string[]]$Path,
+
+        [Parameter(Mandatory = $true, Position = 1)]
+        [string]$ChildPath,
+
+        [Parameter(Mandatory = $false, Position = 2, ValueFromRemainingArguments = $true)]
+        [string[]]$AdditionalChildPath
+    )
+
+    foreach($v in $Path)
+    {
+        $p = Join-Path $Path $ChildPath
+
+        if($AdditionalChildPath)
+        {
+            foreach($cp in $AdditionalChildPath)
+            {
+                $p = Join-Path $p $cp
+            }
+        }
+
+        $p
+    }
 }
 
 $exports = @(
-    "Get-MSBuild"
+    "HasType"
+    "New-PackageManager"
+    "PackageManager"
+    "Get-CallerPreference"
+    "Get-ChocolateyCommand"
     "Test-IsWindows"
-    "Get-UnitTestProject"
+    "Get-TestProject"
     "Import-ModuleFunctions"
+    "Invoke-CIRestoreFull"
     "Invoke-CICSharpTest"
     "Invoke-CIPowerShellTest"
+    "Join-PathEx"
     "Get-BuildProject"
     "New-CSharpPackage"
     "New-PowerShellPackage"
     "New-PackageManager"
     "Get-PowerShellOutputDir"
     "Move-Packages"
+    "Write-LogHeader"
+    "Write-LogSubHeader"
+    "Write-LogInfo"
+    "Write-LogError"
+    "Write-LogVerbose"
+
+    # Exports to prevent Pester 3 from blowing up due to mocks disappearing after being used
+
+    "GetGitTag"
+    "Write-Log"
+    "Invoke-CIProcess"
+    "Test-CIIsWindows"
+    "Get-MSBuild"
+    "Get-VSTest"
+    "Get-CIVersionInternal"
+    "Get-PackageSourceEx"
+    "Register-PackageSourceEx"
+    "Unregister-PackageSourceEx"
+    "Get-PSRepositoryEx"
+    "Register-PSRepositoryEx"
+    "Unregister-PSRepositoryEx"
+    "Install-PackageEx"
+    "Publish-ModuleEx"
+    "Update-RootModule"
 )
 
 Export-ModuleMember $exports

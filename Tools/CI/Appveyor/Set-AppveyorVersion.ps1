@@ -1,8 +1,8 @@
 #region Get-AppveyorVersion
 
-function Get-AppveyorVersion
+function Get-AppveyorVersion($IsCore)
 {
-    $assemblyVersion = Get-PrtgVersion
+    $assemblyVersion = GetVersion $IsCore
     $lastBuild = Get-LastAppveyorBuild
     $lastRelease = Get-LastAppveyorNuGetVersion
 
@@ -50,8 +50,6 @@ function Get-AppveyorVersion
     {
         throw "Failed to determine the type of build"
     }
-
-    Write-Log "Setting Appveyor build to '$result'"
 
     return $result
 }
@@ -261,15 +259,18 @@ function Set-AppveyorVersion
     [CmdletBinding()]
     param(
         [Parameter(Mandatory = $false, Position = 0)]
-        [string]$BuildFolder = $env:APPVEYOR_BUILD_FOLDER
+        [string]$BuildFolder = $env:APPVEYOR_BUILD_FOLDER,
+
+         [Parameter(Mandatory = $false)]
+        [switch]$IsCore = $script:APPEYOR_BUILD_CORE
     )
 
     try
     {
         Write-LogInfo "Calculating version"
-        $version = Get-AppveyorVersion
+        $version = Get-AppveyorVersion $IsCore
 
-        Write-LogInfo "`tSetting AppVeyor build to version '$version'"
+        Write-LogInfo "Setting AppVeyor build to version '$version'"
 
         if($env:APPVEYOR)
         {

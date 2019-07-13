@@ -15,7 +15,10 @@ function Invoke-CIBuild
         $Target,
 
         [Parameter(Mandatory = $false)]
-        [switch]$IsCore
+        [switch]$IsCore,
+
+        [Parameter(Mandatory = $false)]
+        [switch]$SourceLink
     )
 
     if([string]::IsNullOrEmpty($Target))
@@ -35,6 +38,7 @@ function Invoke-CIBuild
         AdditionalArgs = $AdditionalArgs
         Configuration = $Configuration
         Target = $Target
+        SourceLink = $SourceLink
     }
 
     if($IsCore)
@@ -53,21 +57,33 @@ function Invoke-CIBuildCore
         $BuildFolder,
         $AdditionalArgs,
         $Configuration,
-        $Target
+        $Target,
+        $SourceLink
     )
 
     $dotnetBuildArgs = @(
         "build"
         $Target
-        "-p:EnableSourceLink=true"
         "-nologo"
         "-c"
         "$Configuration"
     )
 
+    if($SourceLink)
+    {
+        $dotnetBuildArgs += "-p:EnableSourceLink=true"
+    }
+
     if($AdditionalArgs)
     {
         $dotnetBuildArgs += $AdditionalArgs
+    }
+
+    Install-CIDependency dotnet
+
+    if(Test-IsWindows)
+    {
+        Install-CIDependency net452,net461
     }
 
     Write-Verbose "Executing command 'dotnet $dotnetBuildArgs'"
@@ -104,4 +120,24 @@ function Invoke-CIBuildFull
     Invoke-Process {
         & $msbuild @msbuildArgs
     } -WriteHost
+}
+
+function Invoke-CIRestoreFull
+{
+    [CmdletBinding()]
+    param($root)
+
+    Install-CIDependency nuget
+
+    $nuget = Get-ChocolateyCommand nuget
+    $sln = Join-Path $root "PrtgAPI.sln"
+
+    $nugetArgs = @(
+        "restore"
+        $sln
+    )
+
+    Write-Verbose "Executing command '$nuget $nugetArgs'"
+
+    Invoke-Process { & $nuget $nugetArgs } -WriteHost
 }

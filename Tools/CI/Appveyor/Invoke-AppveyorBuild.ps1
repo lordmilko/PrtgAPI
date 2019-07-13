@@ -8,12 +8,18 @@ function Invoke-AppveyorBuild
 
     Write-LogHeader "Building PrtgAPI (Core: $IsCore)"
 
-    $additionalArgs = $null
+    $additionalArgs = @()
 
-    if($env:APPVEYOR)
+    # .NET Core is not currently supported https://github.com/appveyor/ci/issues/2212
+    if($env:APPVEYOR -and !$IsCore)
     {
-        $additionalArgs = "/logger:`"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll`""
+        $additionalArgs += "/logger:`"C:\Program Files\AppVeyor\BuildAgent\Appveyor.MSBuildLogger.dll`""
     }
 
-    Invoke-CIBuild $env:APPVEYOR_BUILD_FOLDER $additionalArgs -IsCore:$IsCore
+    if($IsCore)
+    {
+        $additionalArgs += "--no-restore"
+    }
+
+    Invoke-CIBuild $env:APPVEYOR_BUILD_FOLDER $additionalArgs -IsCore:$IsCore -SourceLink
 }

@@ -1,4 +1,4 @@
 function Get-SolutionRoot
 {
-    return Resolve-Path "$PSScriptRoot\..\..\..\"
+    return (Resolve-Path "$PSScriptRoot\..\..\..\").Path
 }

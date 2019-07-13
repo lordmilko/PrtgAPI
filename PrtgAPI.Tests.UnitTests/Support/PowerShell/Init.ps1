@@ -1,4 +1,6 @@
-﻿function Startup($type)
+﻿gci Function:/Describe -ErrorAction SilentlyContinue|where Version -EQ $null|Remove-Item
+
+function Startup($type)
 {
     InitializeUnitTestModules
     $global:tester = SetState $type $null
@@ -31,56 +33,266 @@ function InitializeModules($testProject, $scriptRoot)
     $global:ErrorActionPreference = "Stop"
 }
 
-function ImportModules($testProject, $scriptRoot)
+function ImportModules
 {
-    # Get Root Folder
+    param(
+        $testProjectName, # e.g. PrtgAPI.Tests.PowerShell
+        $scriptRoot       # e.g. C:\PrtgAPI\PrtgAPI.Tests.UnitTests\Support\PowerShell
+    )
 
-    $root = $testProject
-    $rootIndex = $scriptRoot.ToLower().IndexOf($root.ToLower())
+    $analysis = AnalyzeTestProject $testProjectName $scriptRoot
 
-    if($rootIndex -eq -1)
+    $validCandidates = ReduceCandidates $analysis.Candidates
+
+    $selectedCandidate = $validCandidates|Sort-Object LastWriteTime -Descending | select -First 1
+
+    Import-Module $selectedCandidate.PrtgAPIPath
+    Import-Module $selectedCandidate.TestProjectDll
+}
+
+function AnalyzeTestProject($testProjectName, $scriptRoot)
+{
+    $solutionFolderEndIndex = $scriptRoot.ToLower().IndexOf($testProjectName.ToLower())
+
+    if($solutionFolderEndIndex -eq -1)
     {
-        throw "Could not identity root folder"
+        throw "Could not identify solution folder"
     }
 
-    $rootFolder = $scriptRoot.Substring(0, $rootIndex)      # e.g. C:\PrtgAPI
+    $solutionFolder = $scriptRoot.Substring(0, $solutionFolderEndIndex)                                  # e.g. C:\PrtgAPI\
+    $testProjectFolder = $scriptRoot.Substring(0, $solutionFolderEndIndex + $testProjectName.Length + 1) # e.g. C:\PrtgAPI\PrtgAPI.Tests.UnitTests
 
-    # Get Test Folder
+    $unitTestFolderCandidates = gci (Join-Path $testProjectFolder "bin") -Recurse "$testProjectName.dll" # e.g. get all folders containing PrtgAPI.Tests.UnitTests.dll
 
-    $testIndex = $scriptRoot.IndexOf("\", $rootIndex) + 1
-    $testFolder = $scriptRoot.Substring(0, $testIndex)      # e.g. C:\PrtgAPI\PrtgAPI.Tests.UnitTests
+    $candidates = @()
 
-    # Test Project Name
+    Write-Verbose "Enumerating build candidates"
 
-    $testProject = $scriptRoot.Substring($rootIndex, $testIndex - $rootIndex - 1)
+    Write-Verbose "############################################################################"
 
-    # Get Configuration Name
-
-    $directory = gci ($testFolder + "bin\") -Recurse "$testProject.dll"|sort lastwritetime -Descending|select -first 1 -expand Directory
-
-    $testModuleDir = $null
-
-    if($directory.Name.StartsWith("PrtgAPI"))
+    foreach($candidate in $unitTestFolderCandidates)
     {
-        $testModuleDir = $directory
-        $directory = $directory.Parent
+        $obj = [PSCustomObject]@{
+            Folder             = $candidate.Directory                                          # e.g. Debug (2015) or net461 (2017)
+            FolderSuffix       = $candidate.DirectoryName.Substring($testProjectFolder.Length) # e.g. bin\Debug (2015) or bin\Debug\net461 (2017)
+            TargetFramework    = $null                                                         # e.g. $null (2015) or net461 (2017)
+            TestProjectDll     = Join-Path $candidate.DirectoryName "$testProjectName.dll"
+            FolderPath         = $candidate.DirectoryName                                      # e.g. C:\PrtgAPI\PrtgAPI.Tests.UnitTests\bin\Debug\net461
+            Configuration      = $null                                                         # e.g. Debug
+            Edition            = $null                                                         # e.g. Desktop or Core
+            LastWriteTime      = $candidate.LastWriteTime
+            PrtgAPIPath        = $null
+        }
+
+        if($obj.Folder.Name -eq "PrtgAPI.Tests")
+        {
+            $obj.Folder = $obj.Folder.Parent
+            $obj.FolderSuffix = $obj.FolderSuffix.Substring(0, $obj.FolderSuffix.Length - "PrtgAPI.Tests".Length - 1) # Get rid of \PrtgAPI.Tests
+        }
+
+        #todo: support .net standard powershell dll with .net core unit test dll
+
+        if($obj.Folder.Name.StartsWith("net"))
+        {
+            $obj.Configuration = $obj.Folder.Parent.Name
+
+            # No point supporting .NET Standard as we're looking for unit test projects - project is either '
+            if($obj.Folder.Name.StartsWith("netcore"))
+            {
+                $obj.Edition = "Core"
+            }
+            else
+            {
+                $obj.Edition = "Desktop"
+            }
+        }
+        else
+        {
+            $obj.Configuration = $obj.Folder.Name
+            $obj.Edition = "Desktop"
+        }
+
+        $suffix = $obj.FolderSuffix
+        $targetFramework = Split-Path $suffix -Leaf
+
+        if($targetFramework -notlike "net*")
+        {
+            $targetFramework = $null
+        }
+
+        $obj.PrtgAPIPath = Join-PathEx $solutionFolder "PrtgAPI.PowerShell" $suffix "PrtgAPI"
+        $obj.TargetFramework = $targetFramework
+
+        foreach($property in $obj.PSObject.Properties)
+        {
+            Write-Verbose "$($property.Name): $($obj.$($property.Name))"
+        }
+
+        Write-Verbose "############################################################################"
+
+        #Write-Verbose $obj
+
+        $candidates += $obj
     }
 
-    $configuration = $directory|select -expand Name
-
-    # Get Module Path
-
-    $module = $rootFolder + "PrtgAPI.PowerShell\bin\" + $configuration + "\PrtgAPI"
-    
-    if($testModuleDir -ne $null)
-    {
-        $directory = $testModuleDir
+    $analysis = [PSCustomObject]@{
+        SolutionDir = $solutionFolder
+        TestProjectDir = $testProjectFolder
+        Candidates = $candidates
     }
-    
-    $testModule = $directory.FullName + "\" + $testProject + ".dll"
-    
-    import-module $module
-    import-module $testModule
+
+    Write-Verbose "SolutionDir: $solutionFolder"
+    Write-Verbose "TestProjectDir: $testProjectFolder"
+
+    Write-Verbose "############################################################################"
+
+    return $analysis
+}
+
+function ReduceCandidates($candidates)
+{
+    $newCandidates = $candidates| where {
+        if(!(Test-Path $_.PrtgAPIPath))
+        {
+            $alternatePrtgAPIPath = GetAlternatePrtgAPIPath $_
+
+            if($alternatePrtgAPIPath -eq $null)
+            {
+                Write-Verbose "Eliminating candidate '$($_.TestProjectDll)' as folder '$($_.PrtgAPIPath)' does not exist"
+                return $false
+            }
+
+            $_.PrtgAPIPath = $alternatePrtgAPIPath
+        }
+
+        $dll = Join-Path $_.PrtgAPIPath "PrtgAPI.PowerShell.dll"
+
+        if(!(Test-Path $dll))
+        {
+            Write-Verbose "Eliminating candidate DLL '$dll' as file does not exist"
+            return $false
+        }
+
+        if($PSEdition -ne $_.Edition)
+        {
+            Write-Verbose "Eliminating candidate '$($_.TestProjectDll)' as candidate edition '$_.Edition' does not match required edition '$PSEdition'"
+            return $false
+        }
+
+        return $true
+    }
+
+    if(!$newCandidates)
+    {
+        throw "Could not find any valid build candidates for PowerShell $($PSEdition)"
+    }
+
+    return $newCandidates
+}
+
+function GetAlternatePrtgAPIPath($candidate)
+{
+    if($candidate.TargetFramework -eq $null)
+    {
+        return $null
+    }
+
+    # e.g. C:\PrtgAPI\PrtgAPI.PowerShell\bin\Debug
+    $outputDir = $candidate.PrtgAPIPath.Substring(0, $candidate.PrtgAPIPath.LastIndexOf($candidate.Configuration) + $candidate.Configuration.Length)
+
+    $alternateCandidates = gci $outputDir -Filter "net*" | where PSIsContainer -eq $true | select -ExpandProperty Name
+
+    $existsScriptBlock = {
+        $path = Join-PathEx $outputDir $_ "PrtgAPI" "PrtgAPI.PowerShell.dll"
+
+        return Test-Path $path
+    }
+
+    $selectedCandidate = $null
+
+    if($candidate.TargetFramework -like "net4*")
+    {
+        # The unit test was built for .NET Framework. We'll accept another
+        # .NET Framework version (preferred) or a .NET Standard version
+
+        $fullCandidates = $alternateCandidates | where { $_ -like "net4*" } | where $existsScriptBlock
+
+        if($fullCandidates)
+        {
+            $selectedCandidate = $fullCandidates | select -first 1
+        }
+        else
+        {
+            $standardCandidates = $alternateCandidates | where { $_ -like "netstandard*" } | where $existsScriptBlock
+
+            if($standardCandidates)
+            {
+                $selectedCandidate = $standardCandidates | select -first 1
+            }
+        }
+    }
+    elseif($candidate.TargetFramework -like "netcoreapp*")
+    {
+        # The unit test was built for .NET Core. We'll accept another
+        # .NET Core version (preferred) or a .NET Standard version
+
+        $fullCandidates = $alternateCandidates | where { $_ -like "netcoreapp*" } | where $existsScriptBlock
+
+        if($fullCandidates)
+        {
+            $selectedCandidate = $fullCandidates | select -first 1
+        }
+        else
+        {
+            $standardCandidates = $alternateCandidates | where { $_ -like "netstandard*" } | where $existsScriptBlock
+
+            if($standardCandidates)
+            {
+                $selectedCandidate = $standardCandidates | select -first 1
+            }
+        }
+    }
+    elseif($candidate.TargetFramework -like "netstandard*")
+    {
+        throw "Unit test projects can't target .NET Standard?"
+    }
+
+    if($selectedCandidate)
+    {
+        return $candidate.PrtgAPIPath -replace $candidate.TargetFramework,$selectedCandidate
+    }
+
+    return $null
+}
+
+function global:Join-PathEx
+{
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory = $true, Position = 0)]
+        [string[]]$Path,
+
+        [Parameter(Mandatory = $true, Position = 1)]
+        [string]$ChildPath,
+
+        [Parameter(Mandatory = $false, Position = 2, ValueFromRemainingArguments = $true)]
+        [string[]]$AdditionalChildPath
+    )
+
+    foreach($v in $Path)
+    {
+        $p = Join-Path $Path $ChildPath
+
+        if($AdditionalChildPath)
+        {
+            foreach($cp in $AdditionalChildPath)
+            {
+                $p = Join-Path $p $cp
+            }
+        }
+
+        $p
+    }
 }
 
 function SetState($objectType, $items)

@@ -135,6 +135,7 @@
     <Compile Include="Parameters\ObjectManipulation\AddSensor\SensorQueryTarget.cs" />
     <Compile Include="Parameters\ObjectManipulation\AddSensor\SensorQueryTargetParameters.cs" />
     <Compile Include="Parameters\TriggerParameter.cs" />
+    <Compile Include="Properties\Version.cs" />
     <Compile Include="Request\HtmlParser.cs" />
     <Compile Include="Request\LogVerboseEventArgs.cs" />
     <Compile Include="Exceptions\HttpDeserializationException.cs" />
@@ -424,11 +425,6 @@
     <Compile Include="Parameters\ObjectManipulation\SetObjectPropertyParameters.cs" />
     <Compile Include="Parameters\ObjectManipulation\SetPositionParameters.cs" />
     <Compile Include="Parameters\ObjectManipulation\Triggers\RemoveTriggerParameters.cs" />
-    <Compile Include="Properties\AssemblyVersion.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>AssemblyVersion.tt</DependentUpon>
-    </Compile>
     <Compile Include="Attributes\RequireValueAttribute.cs" />
     <Compile Include="Attributes\SplittableStringAttribute.cs" />
     <Compile Include="Enums\Enhanced\TriggerChannel.cs" />
@@ -482,11 +478,6 @@
       <DependentUpon>VersionClient18_1.Generated.tt</DependentUpon>
     </Compile>
     <Compile Include="_Todo.cs" />
-    <Compile Include="Properties\AssemblyFileVersion.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>AssemblyFileVersion.tt</DependentUpon>
-    </Compile>
     <Compile Include="Attributes\DependentPropertyAttribute.cs" />
     <Compile Include="Attributes\XmlEnumAlternateName.cs" />
     <Compile Include="Attributes\ParameterTypeAttribute.cs" />
@@ -577,14 +568,6 @@
     <None Include="PrtgAPI.nuspec" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Properties\AssemblyVersion.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>AssemblyVersion.cs</LastGenOutput>
-    </Content>
-    <Content Include="Properties\AssemblyFileVersion.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>AssemblyFileVersion1.cs</LastGenOutput>
-    </Content>
     <Content Include="Request\PrtgClient.Generated.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>PrtgClient.Generated.cs</LastGenOutput>
@@ -607,18 +590,6 @@
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PreBuildEvent>if "$(ConfigurationName)" == "Release" goto :release
-goto :exit
-
-:release
-set textTemplatingPath="%25CommonProgramFiles(x86)%25\Microsoft Shared\TextTemplating\$(VisualStudioVersion)\texttransform.exe"
-if %25textTemplatingPath%25=="\Microsoft Shared\TextTemplating\$(VisualStudioVersion)\texttransform.exe" set textTemplatingPath="%25CommonProgramFiles%25\Microsoft Shared\TextTemplating\$(VisualStudioVersion)\texttransform.exe"
-%25textTemplatingPath%25 "$(ProjectDir)Properties\AssemblyFileVersion.tt"
-%25textTemplatingPath%25 "$(ProjectDir)Properties\AssemblyVersion.tt"
-
-:exit</PreBuildEvent>
-  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

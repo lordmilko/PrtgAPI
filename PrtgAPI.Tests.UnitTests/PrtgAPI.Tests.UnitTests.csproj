@@ -342,6 +342,21 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="PowerShell\Infrastructure\Build\Clear-PrtgBuild.Tests.ps1" />
+    <None Include="PowerShell\Infrastructure\Build\Get-PrtgCommand.Tests.ps1" />
+    <None Include="PowerShell\Infrastructure\Build\Get-PrtgCoverage.Tests.ps1" />
+    <None Include="PowerShell\Infrastructure\Build\Get-PrtgHelp.Tests.ps1" />
+    <None Include="PowerShell\Infrastructure\Build\Get-PrtgLog.Tests.ps1" />
+    <None Include="PowerShell\Infrastructure\Build\Get-PrtgTestResult.Tests.ps1" />
+    <None Include="PowerShell\Infrastructure\Build\Get-PrtgVersion.Tests.ps1" />
+    <None Include="PowerShell\Infrastructure\Build\Install-PrtgDependency.Tests.ps1" />
+    <None Include="PowerShell\Infrastructure\Build\Invoke-PrtgBuild.Tests.ps1" />
+    <None Include="PowerShell\Infrastructure\Build\Invoke-PrtgTest.Tests.ps1" />
+    <None Include="PowerShell\Infrastructure\Build\New-PrtgPackage.Tests.ps1" />
+    <None Include="PowerShell\Infrastructure\Build\Set-PrtgVersion.Tests.ps1" />
+    <None Include="PowerShell\Infrastructure\Build\Simulate-PrtgCI.Tests.ps1" />
+    <None Include="PowerShell\Infrastructure\Build\Start-PrtgAPI.Tests.ps1" />
+    <None Include="PowerShell\Infrastructure\Build\Update-PrtgVersion.Tests.ps1" />
     <None Include="PowerShell\Infrastructure\Set-PrtgClient.Tests.ps1" />
     <None Include="PowerShell\ObjectData\Get-Object.Tests.ps1" />
     <None Include="PowerShell\ObjectData\Get-PrtgSchedule.Tests.ps1" />

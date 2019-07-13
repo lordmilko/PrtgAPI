@@ -8,6 +8,17 @@ function Invoke-Process
         [switch]$WriteHost
     )
 
+    Invoke-CIProcess $ScriptBlock -IgnoreExitCode:$IgnoreExitCode -WriteHost:$WriteHost
+}
+
+function Invoke-CIProcess
+{
+    param(
+        [scriptblock]$ScriptBlock,
+        [switch]$IgnoreExitCode,
+        [switch]$WriteHost
+    )
+
     $backupEAP = $script:ErrorActionPreference
     $script:ErrorActionPreference = "Continue"
 

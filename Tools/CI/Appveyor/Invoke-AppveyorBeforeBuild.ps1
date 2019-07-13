@@ -9,7 +9,7 @@ function Invoke-AppveyorBeforeBuild
 
     if($IsCore)
     {
-        Invoke-Process { dotnet restore (Join-Path $env:APPVEYOR_BUILD_FOLDER "PrtgAPIv17.sln") }
+        Invoke-Process { dotnet restore (Join-Path $env:APPVEYOR_BUILD_FOLDER "PrtgAPIv17.sln") "-p:EnableSourceLink=true" }
     }
     else
     {

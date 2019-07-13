@@ -27,6 +27,11 @@ function Write-LogError($msg)
 
 function Write-Log($msg, $color)
 {
+    if($global:prtgBuildDisableLog)
+    {
+        return
+    }
+
     $msg = "`t$msg"
 
     $msg = $msg -replace "`t","    "
@@ -50,7 +55,9 @@ function Write-Log($msg, $color)
 
     $nl = [Environment]::NewLine
 
-    [IO.File]::AppendAllText("$env:TEMP\PrtgAPI.Build.log", "$(Get-Date) $msg$nl")
+    $path = Join-Path ([IO.Path]::GetTempPath()) "PrtgAPI.Build.log"
+
+    [IO.File]::AppendAllText($path, "$(Get-Date) $msg$nl")
 }
 
 function Write-LogVerbose($msg, $color)
@@ -65,15 +72,12 @@ function Write-LogVerbose($msg, $color)
 
         $nl = [Environment]::NewLine
 
-        [IO.File]::AppendAllText("$env:TEMP\PrtgAPI.Build.log", "$(Get-Date) $msg$nl")
+        $path = Join-Path ([IO.Path]::GetTempPath()) "PrtgAPI.Build.log"
+
+        [IO.File]::AppendAllText($path, "$(Get-Date) $msg$nl")
     }
     else
     {
         Write-Log $msg $color
     }
-}
-
-if(!$skipExport)
-{
-    Export-ModuleMember Write-LogHeader,Write-LogSubHeader,Write-LogInfo,Write-LogError,Write-LogVerbose
 }

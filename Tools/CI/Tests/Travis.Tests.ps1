@@ -1,7 +1,8 @@
-Import-Module $PSScriptRoot\..\ci.psm1
-Import-Module $PSScriptRoot\..\Travis.psm1 -DisableNameChecking
+Import-Module $PSScriptRoot\..\ci.psm1 -Scope Local
+Import-Module $PSScriptRoot\..\Travis.psm1 -DisableNameChecking -Scope Local
 
-. $PSScriptRoot\Support.ps1
+$skipBuildModule = $true
+. $PSScriptRoot\..\..\..\PrtgAPI.Tests.UnitTests\Support\PowerShell\Build.ps1
 
 Describe "Travis" {
     It "simulates Travis" {

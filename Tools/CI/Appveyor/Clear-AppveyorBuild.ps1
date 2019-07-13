@@ -10,5 +10,12 @@ function Clear-AppveyorBuild
 
     Write-LogHeader "Cleaning Appveyor build folder (Core: $IsCore)"
 
-    Clear-CIBuild $env:APPVEYOR_BUILD_FOLDER -IsCore:$IsCore -NuGetOnly:$NuGetOnly
+    $clearArgs = @{
+        BuildFolder = $env:APPVEYOR_BUILD_FOLDER
+        Configuration = $env:CONFIGURATION
+        NuGetOnly = $NuGetOnly
+        IsCore = $IsCore
+    }
+
+    Clear-CIBuild @clearArgs
 }

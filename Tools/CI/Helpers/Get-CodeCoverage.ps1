@@ -4,22 +4,11 @@ function Get-CodeCoverage
 {
     [CmdletBinding()]
     param(
-        [Parameter()]
         [string]$Name = "*",
-
-        [Parameter()]
         [string]$BuildFolder = $env:APPVEYOR_BUILD_FOLDER,
-
-        [Parameter()]
-        [string[]]$Type = "All",
-
-        [Parameter()]
+        [string[]]$Type,
         [string]$Configuration = "Debug",
-
-        [Parameter()]
         [switch]$TestOnly,
-
-        [Parameter()]
         [switch]$IsCore
     )
 
@@ -45,7 +34,9 @@ class CodeCoverage
 
     static CodeCoverage()
     {
-        [CodeCoverage]::OpenCover = "OpenCover.Console.exe"
+        Install-CIDependency OpenCover
+
+        [CodeCoverage]::OpenCover = Get-ChocolateyCommand "OpenCover.Console.exe"
         [CodeCoverage]::Temp = [IO.Path]::GetTempPath()
         [CodeCoverage]::OpenCoverOutput = Join-Path ([CodeCoverage]::Temp) "opencover.xml"
     }
@@ -62,10 +53,6 @@ class CodeCoverage
 
     [void]GetCoverage()
     {
-        Install-CIDependency OpenCover
-
-        Write-Host "$(& $([CodeCoverage]::OpenCover) -version)"
-
         $this.ClearCoverage()
 
         $this.GetPowerShellCoverage()
@@ -76,7 +63,7 @@ class CodeCoverage
 
     [void]GetCSharpCoverage()
     {
-        if(!$this.RequireCSharpCoverage())
+        if(!($this.Type | HasType "C#"))
         {
             return
         }
@@ -93,7 +80,7 @@ class CodeCoverage
         {
             $opencoverParams = $this.GetCSharpOpenCoverParams($testRunner, $testParams)
 
-            Write-LogInfo "`t`tExecuting $($this.opencover) $opencoverParams"
+            Write-LogInfo "`t`tExecuting '$([CodeCoverage]::OpenCover) $opencoverParams'"
             Invoke-Process { & ([CodeCoverage]::OpenCover) @opencoverParams } -WriteHost
         }
     }
@@ -102,6 +89,8 @@ class CodeCoverage
     {
         if($this.IsCore)
         {
+            Install-CIDependency dotnet
+
             return (gcm dotnet).Source
         }
         else
@@ -127,11 +116,13 @@ class CodeCoverage
 
         if($this.IsCore)
         {
+            $csproj = Join-PathEx $this.BuildFolder PrtgAPI.Tests.UnitTests PrtgAPIv17.Tests.UnitTests.csproj
+
             $testParams = @(
                 "test"
                 "--filter"
                 $filter
-                "`"$($this.BuildFolder)PrtgAPI.Tests.UnitTests\PrtgAPIv17.Tests.UnitTests.csproj`""
+                "`"$csproj`""
                 "--verbosity:n"
                 "--no-build"
                 "-c"
@@ -140,9 +131,11 @@ class CodeCoverage
         }
         else
         {
+            $dll = Join-PathEx $this.BuildFolder PrtgAPI.Tests.UnitTests bin $($this.Configuration) PrtgAPI.Tests.UnitTests.dll
+
             $testParams = @(
                 "/TestCaseFilter:$filter"
-                "\`"$($this.BuildFolder)PrtgAPI.Tests.UnitTests\bin\$($this.Configuration)\PrtgAPI.Tests.UnitTests.dll\`""
+                "\`"$dll\`""
             )
         }
 
@@ -172,17 +165,12 @@ class CodeCoverage
         return $opencoverParams
     }
 
-    [bool]RequireCSharpCoverage()
-    {
-        return "All" -in $this.Type -or "C#" -in $this.Type
-    }
-
     #endregion
     #region PowerShell
 
     [void]GetPowerShellCoverage()
     {
-        if(!$this.RequirePowerShellCoverage())
+        if(!($this.Type | HasType "PowerShell"))
         {
             return
         }
@@ -216,7 +204,7 @@ class CodeCoverage
 
     [void]AssertHasPowerShellDll()
     {
-        $candidates = (AnalyzeTestProject "PrtgAPI.Tests.UnitTests" (Resolve-Path "$PSScriptRoot\..\..\..\PrtgAPI.Tests.UnitTests\Support\PowerShell").Path).Candidates
+        $candidates = @((AnalyzeTestProject "PrtgAPI.Tests.UnitTests" (Resolve-Path "$PSScriptRoot\..\..\..\PrtgAPI.Tests.UnitTests\Support\PowerShell").Path).Candidates)
 
         if(!($candidates|where Edition -EQ "Desktop"))
         {
@@ -258,7 +246,7 @@ class CodeCoverage
         $testsStr = $tests -join " "
         $vstestParams = $null
 
-        $testAdapterPath = Join-Path $this.BuildFolder "Tools\PowerShell.TestAdapter\bin\Release\netstandard2.0"
+        $testAdapterPath = Join-PathEx $this.BuildFolder Tools PowerShell.TestAdapter bin Release netstandard2.0
 
         $testParams = "/TestAdapterPath:\`"$testAdapterPath\`""
 
@@ -281,7 +269,11 @@ class CodeCoverage
     {
         $testRoot = Join-Path $this.BuildFolder "PrtgAPI.Tests.UnitTests\PowerShell"
 
-        $tests = gci $testRoot -Recurse -Filter *.Tests.ps1 | where { $_.BaseName -like $this.Name -and $_.DirectoryName -notlike "*Infrastructure\Build*" } | foreach {"\`"$($_.FullName)\`""}
+        $tests = gci $testRoot -Recurse -Filter *.Tests.ps1 | where {
+            # Blacklist Solution.Tests.ps1 as this invokes Invoke-PrtgAnalyzer which causes vstest.console to hang on completion
+            # Also blacklist build tests as these do not pertain to the PrtgAPI assemblies
+            $_.BaseName -like $this.Name -and $_.DirectoryName -notlike "*Infrastructure\Build*" -and $_.BaseName -ne "Solution.Tests"
+        } | foreach {"\`"$($_.FullName)\`""}
 
         if($tests -eq $null -or $tests.Count -eq 0)
         {
@@ -318,15 +310,12 @@ class CodeCoverage
 
             Write-Host $csproj
 
+            Install-CIDependency dotnet
+
             Invoke-Process {
                dotnet build $csproj -c Release
             } -WriteHost
         }
-    }
-
-    [bool]RequirePowerShellCoverage()
-    {
-        return "All" -in $this.Type -or "PowerShell" -in $this.Type
     }
 
     #endregion
@@ -385,8 +374,10 @@ function New-CoverageReport
         "-verbosity:off"
     )
 
-    Write-LogInfo "`t`tExecuting reportgenerator $reportParams"
-    Invoke-Process { & "reportgenerator" @reportParams }
+    $reportgenerator = Get-ChocolateyCommand "reportgenerator"
+
+    Write-LogInfo "`t`tExecuting '$reportgenerator $reportParams'"
+    Invoke-Process { & $reportgenerator @reportParams }
 }
 
 function Get-LineCoverage
