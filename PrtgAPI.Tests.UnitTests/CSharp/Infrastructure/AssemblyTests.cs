@@ -101,6 +101,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
                 ".tt",
                 ".cs",
                 ".ps1",
+                ".psm1",
                 ".txt",
                 ".md",
                 ".ps1xml"
@@ -140,11 +141,86 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
         }
 #endif
 
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void AllTextFiles_UseEnvironmentNewLine_AndNotCRLF()
+        {
+            var path = TestHelpers.GetProjectRoot(true);
+
+            var types = new[]
+            {
+                ".tt",
+                ".cs",
+                ".ps1",
+                ".psm1"
+            };
+
+            var allowed = new[]
+            {
+                "Location.cs",
+                "SensorSettings.cs",
+                "RequestParser.cs",
+                "NewSensor.cs",
+                "ConnectGoPrtgServer.cs",
+                "GetGoPrtgServer.cs",
+                "UpdateGoPrtgCredential.cs",
+                "New-AppveyorPackage.ps1",
+                "Get-CIVersion.ps1",
+                "Get-CodeCoverage.ps1",
+                "Invoke-Process.ps1",
+                "Appveyor.Tests.ps1",
+                "Start-PrtgAPI.ps1",
+                "MethodXmlDocBuilder.cs",
+                "New-PowerShellPackage.ps1"
+            };
+
+            var exprs = new[]
+            {
+                "\\\\n",
+                "\\\\r",
+                "`r",
+                "`n"
+            };
+
+            var files = Directory.EnumerateFiles(path, "*.*", SearchOption.AllDirectories).Where(f =>
+                types.Any(f.EndsWith) && IsNotExcludedFolder(path, f) && !f.Contains("PrtgAPI.Tests")
+            );
+
+            foreach (var file in files)
+            {
+                var info = new FileInfo(file);
+
+                if (allowed.Contains(info.Name))
+                    continue;
+
+                var text = File.ReadAllText(file);
+
+                foreach (var expr in exprs)
+                {
+                    var matches = Regex.Matches(text, expr);
+
+                    foreach (Match match in matches)
+                    {
+                        var index = match.Index;
+
+                        var prev = text[index - 1];
+                        var next = text[index + 2];
+
+                        if (prev == '\'' && next == '\'')
+                            continue;
+
+                        throw new Exception($"{file} contains {expr}");
+                    }
+                }
+            }
+        }
+
         private bool IsNotExcludedFolder(string root, string f)
         {
             var illegal = new[]
             {
-                "obj"
+                "obj",
+                "packages"
             };
 
             var info = new FileInfo(new Uri(f).LocalPath);

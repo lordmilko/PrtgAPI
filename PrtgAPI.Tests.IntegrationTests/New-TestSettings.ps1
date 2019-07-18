@@ -15,14 +15,14 @@
 
     write-host "$PSScriptRoot"
 
-    $default = (gc -Path "$PSScriptRoot\Support\Settings.cs"|where {$_ -notlike "*#pragma*"}) -join "`n"
+    $default = (gc -Path "$PSScriptRoot\Support\Settings.cs"|where {$_ -notlike "*#pragma*"}) -join ([Environment]::NewLine)
     $localPath = "$PSScriptRoot\Settings.Local.cs"
 
     #Add-Type -TypeDefinition $default
 
     if(Test-Path $localPath)
     {
-        $local = (gc -Path $localPath|where { $_ -NotLike "using*"}) -join "`n"
+        $local = (gc -Path $localPath|where { $_ -NotLike "using*"}) -join ([Environment]::NewLine)
 
         $default += $local
 

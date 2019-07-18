@@ -164,7 +164,7 @@ function Get-PowerShellOutputDir
         {
             # Could not find a build for .NET Framework. Maybe we're building .NET Core instead
 
-            $candidates = gci "$base\netcore*"
+            $candidates = gci (Join-Path $base "netcore*")
         }
 
         if(!$candidates)
