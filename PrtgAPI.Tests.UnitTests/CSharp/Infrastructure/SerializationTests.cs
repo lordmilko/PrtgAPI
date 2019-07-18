@@ -21,6 +21,9 @@ using PrtgAPI.Tests.UnitTests.Support.TestResponses;
 namespace PrtgAPI.Tests.UnitTests.Infrastructure
 {
     [TestClass]
+#if MSTEST2
+    [DoNotParallelize]
+#endif
     public class SerializationTests
     {
         private string ExceptionException(string value, string type, string message)

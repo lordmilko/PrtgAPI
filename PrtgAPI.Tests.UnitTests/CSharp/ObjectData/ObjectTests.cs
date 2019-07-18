@@ -22,6 +22,9 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         [TestMethod]
         [TestCategory("SlowCoverage")]
         [TestCategory("UnitTest")]
+#if MSTEST2
+        [DoNotParallelize]
+#endif
         public void PrtgObject_CanStream_Ordered_FastestToSlowest() => Object_CanStream_Ordered_FastestToSlowest();
 
         [TestMethod]

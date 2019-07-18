@@ -433,6 +433,9 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+#if MSTEST2
+        [DoNotParallelize]
+#endif
         [TestCategory("UnitTest")]
         public void RawSensorParameters_WithoutPSObjectUtilities_SingleObject()
         {
@@ -454,6 +457,9 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         }
 
         [TestMethod]
+#if MSTEST2
+        [DoNotParallelize]
+#endif
         [TestCategory("UnitTest")]
         public void RawSensorParameters_WithoutPSObjectUtilities_ObjectArray()
         {

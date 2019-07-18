@@ -242,6 +242,9 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+#if MSTEST2
+        [DoNotParallelize]
+#endif
         [TestCategory("UnitTest")]
         public void DynamicSensorParameters_WithoutPSObjectUtilities_SingleObject()
         {
@@ -263,6 +266,9 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         [TestMethod]
+#if MSTEST2
+        [DoNotParallelize]
+#endif
         [TestCategory("UnitTest")]
         public void DynamicSensorParameters_WithoutPSObjectUtilities_ObjectArray()
         {
