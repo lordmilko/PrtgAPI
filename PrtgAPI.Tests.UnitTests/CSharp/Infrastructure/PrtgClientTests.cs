@@ -83,9 +83,14 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
 
             client.RetryCount = retriesToMake;
 
+            object objLock = new object();
+
             client.RetryRequest += (sender, args) =>
             {
-                retriesMade++;
+                lock (objLock)
+                {
+                    retriesMade++;
+                }
             };
 
             AssertEx.Throws<WebException>(() => client.StreamSensors().ToList(), string.Empty);

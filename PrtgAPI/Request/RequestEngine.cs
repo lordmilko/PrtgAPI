@@ -284,7 +284,7 @@ namespace PrtgAPI.Request
                     {
                         if (innerException != null)
                             throw innerException;
-                    });
+                    }, token);
 
                     if (!result)
                         throw;
@@ -327,7 +327,7 @@ namespace PrtgAPI.Request
                 {
                     var inner = ex.InnerException as WebException;
 
-                    var result = HandleRequestException(inner, ex, request, ref retriesRemaining, null);
+                    var result = HandleRequestException(inner, ex, request, ref retriesRemaining, null, token);
 
                     if (!result)
                         throw;
@@ -386,7 +386,7 @@ namespace PrtgAPI.Request
             }
         }
 
-        private bool HandleRequestException(Exception innerMostEx, Exception fallbackHandlerEx, PrtgRequestMessage request, ref int retriesRemaining, Action thrower)
+        private bool HandleRequestException(Exception innerMostEx, Exception fallbackHandlerEx, PrtgRequestMessage request, ref int retriesRemaining, Action thrower, CancellationToken token)
         {
             if (innerMostEx != null) //Synchronous + Asynchronous
             {
@@ -416,7 +416,10 @@ namespace PrtgAPI.Request
                 var attemptsMade = prtgClient.RetryCount - retriesRemaining + 1;
                 var delay = prtgClient.RetryDelay * attemptsMade;
 
-                Thread.Sleep(delay * 1000);
+                //Note that we don't have an asynchronous wait for the asynchronous version,
+                //as this causes weird timing issues in tests like PrtgClient_RetriesWhileStreaming,
+                //where the final retry occurs after StreamSensors has supposedly completed
+                token.WaitHandle.WaitOne(delay * 1000);
             }
 
             retriesRemaining--;
