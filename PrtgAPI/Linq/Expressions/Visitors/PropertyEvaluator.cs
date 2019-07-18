@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -32,7 +33,7 @@ namespace PrtgAPI.Linq.Expressions.Visitors
         /// </summary>
         private static ReadOnlyCollection<PropertyCache> propertyCache;
 
-        private static Dictionary<PropertyInfo, PropertyCache> internalPropertyMap = new Dictionary<PropertyInfo, PropertyCache>();
+        private static ConcurrentDictionary<PropertyInfo, PropertyCache> internalPropertyMap = new ConcurrentDictionary<PropertyInfo, PropertyCache>();
 
         private bool strict;
 
