@@ -1,4 +1,4 @@
-﻿. $PSScriptRoot\..\..\..\Support\PowerShell\GoPrtg.Shared.ps1
+﻿. $PSScriptRoot\..\..\..\Support\PowerShell\GoPrtg.ps1
 
 Describe "Update-GoPrtgCredential" -Tag @("PowerShell", "UnitTest") {
 
@@ -12,6 +12,8 @@ Describe "Update-GoPrtgCredential" -Tag @("PowerShell", "UnitTest") {
 
     BeforeEach { GoPrtgBeforeEach }
     AfterEach { GoPrtgAfterEach }
+
+    AfterAll { GoPrtgAfterAll }
 
     Mock -ModuleName PrtgAPI Connect-PrtgServer {
         param($Server, $Credential, $Force)

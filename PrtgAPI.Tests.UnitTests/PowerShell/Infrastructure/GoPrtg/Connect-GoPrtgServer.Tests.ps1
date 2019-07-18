@@ -1,4 +1,4 @@
-﻿. $PSScriptRoot\..\..\..\Support\PowerShell\GoPrtg.Shared.ps1
+﻿. $PSScriptRoot\..\..\..\Support\PowerShell\GoPrtg.ps1
 
 Describe "Connect-GoPrtgServer" -Tag @("PowerShell", "UnitTest") {
 
@@ -6,6 +6,8 @@ Describe "Connect-GoPrtgServer" -Tag @("PowerShell", "UnitTest") {
 
     BeforeEach { GoPrtgBeforeEach }
     AfterEach { GoPrtgAfterEach }
+
+    AfterAll { GoPrtgAfterAll }
 
     It "can connect to default server" {
         Install-GoPrtgServer

@@ -1,10 +1,12 @@
-﻿. $PSScriptRoot\..\..\..\Support\PowerShell\GoPrtg.Shared.ps1
+﻿. $PSScriptRoot\..\..\..\Support\PowerShell\GoPrtg.ps1
 
 Describe "Set-GoPrtgAlias" -Tag @("PowerShell", "UnitTest") {
     BeforeAll { GoPrtgBeforeAll    }
 
     BeforeEach { GoPrtgBeforeEach }
     AfterEach { GoPrtgAfterEach }
+
+    AfterAll { GoPrtgAfterAll }
 
     $nl = [Environment]::NewLine
 

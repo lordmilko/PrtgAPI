@@ -1,4 +1,4 @@
-﻿. $PSScriptRoot\..\..\..\Support\PowerShell\GoPrtg.Shared.ps1
+﻿. $PSScriptRoot\..\..\..\Support\PowerShell\GoPrtg.ps1
 
 Describe "Uninstall-GoPrtgServer" -Tag @("PowerShell", "UnitTest") {
 
@@ -12,6 +12,8 @@ Describe "Uninstall-GoPrtgServer" -Tag @("PowerShell", "UnitTest") {
 
     BeforeEach { GoPrtgBeforeEach }
     AfterEach { GoPrtgAfterEach }
+
+    AfterAll { GoPrtgAfterAll }
 
     It "uninstalls correctly in empty profile" {
         InstallInEmptyProfile $baseExpected

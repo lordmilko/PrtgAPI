@@ -407,7 +407,8 @@
     <None Include="PowerShell\ObjectManipulation\Simulate-ErrorStatus.Tests.ps1" />
     <None Include="PowerShell\ObjectManipulation\Sort-PrtgObject.Tests.ps1" />
     <None Include="PowerShell\ObjectManipulation\Start-AutoDiscovery.Tests.ps1" />
-    <None Include="Support\PowerShell\GoPrtg.Shared.ps1" />
+    <None Include="Support\PowerShell\Build.ps1" />
+    <None Include="Support\PowerShell\GoPrtg.ps1" />
     <None Include="PowerShell\Infrastructure\GoPrtg\Install-GoPrtgServer.Tests.ps1" />
     <None Include="PowerShell\Infrastructure\GoPrtg\Set-GoPrtgAlias.Tests.ps1" />
     <None Include="PowerShell\Infrastructure\GoPrtg\Uninstall-GoPrtgServer.Tests.ps1" />

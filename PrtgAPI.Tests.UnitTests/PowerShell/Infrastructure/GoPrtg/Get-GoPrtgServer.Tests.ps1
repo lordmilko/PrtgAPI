@@ -1,4 +1,4 @@
-﻿. $PSScriptRoot\..\..\..\Support\PowerShell\GoPrtg.Shared.ps1
+﻿. $PSScriptRoot\..\..\..\Support\PowerShell\GoPrtg.ps1
 
 Describe "Get-GoPrtgServer" -Tag @("PowerShell", "UnitTest") {
 
@@ -6,6 +6,8 @@ Describe "Get-GoPrtgServer" -Tag @("PowerShell", "UnitTest") {
 
     BeforeEach { GoPrtgBeforeEach }
     AfterEach { GoPrtgAfterEach }
+
+    AfterAll { GoPrtgAfterAll }
 
     It "can retrieve servers" {
         #todo: allow specifying the servers you want to get-goprtgserver, alias or server wildcard

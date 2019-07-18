@@ -119,19 +119,29 @@ function InstallInProfileFunctionWithoutHeaderFooter
 
 function GoPrtgBeforeAll
 {
-    if(!$Profile)
+    if($Profile)
     {
-        $Global:Profile = "$TestDrive\Microsoft.PowerShell_profile.ps1"
+        $script:originalProfile = $Profile
     }
+
+    $Global:Profile = Join-Path $TestDrive "Microsoft.PowerShell_profile.ps1"
 
     InitializeModules "PrtgAPI.Tests.UnitTests" $PSScriptRoot
 }
 
+function GoPrtgAfterAll
+{
+    if($script:originalProfile)
+    {
+        $Global:Profile = $script:originalProfile
+    }
+}
+
 function GoPrtgBeforeEach
 {
-    if(Test-Path $Profile)
+    if (Test-Path $Profile)
     {
-        if(Test-Path "$Profile.tmp")
+        if (Test-Path "$Profile.tmp")
         {
             throw "Cannot create temp profile; $Profile.tmp already exists"
         }

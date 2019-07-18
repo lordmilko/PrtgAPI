@@ -1,17 +1,19 @@
-﻿. $PSScriptRoot\..\..\..\Support\PowerShell\GoPrtg.Shared.ps1
+﻿. $PSScriptRoot\..\..\..\Support\PowerShell\GoPrtg.ps1
 
 Describe "Install-GoPrtgServer" -Tag @("PowerShell", "UnitTest") {
 
     $nl = [Environment]::NewLine
 
-    $baseExpected = ("########################### Start GoPrtg Servers ###########################$nl$nl" + 
-                    "function __goPrtgGetServers {@($nl    `"```"prtg.example.com```",,```"username```",```"*```"`"$nl)}$nl$nl" + 
+    $baseExpected = ("########################### Start GoPrtg Servers ###########################$nl$nl" +
+                    "function __goPrtgGetServers {@($nl    `"```"prtg.example.com```",,```"username```",```"*```"`"$nl)}$nl$nl" +
                     "############################ End GoPrtg Servers ############################$nl").Replace("``","````")
 
     BeforeAll { GoPrtgBeforeAll    }
 
     BeforeEach { GoPrtgBeforeEach }
     AfterEach { GoPrtgAfterEach }
+
+    AfterAll { GoPrtgAfterAll }
 
     It "creates a new profile and profile folder if one doesn't exist" {
 
@@ -288,7 +290,7 @@ Describe "Install-GoPrtgServer" -Tag @("PowerShell", "UnitTest") {
         $client = Get-PrtgClient
 
         Install-GoPrtgServer
-        
+
         { Install-GoPrtgServer } | Should Throw "Cannot add server '$($client.Server)': a record for the user '$($client.UserName)' already exists."
     }
 
