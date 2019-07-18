@@ -71,7 +71,9 @@ Describe "Set-ObjectProperty" -Tag @("PowerShell", "UnitTest") {
 
             $action = Get-NotificationAction -Count 1
 
-            SetAddressValidatorResponse "editsettings?id=300&active_=1"
+            SetAddressValidatorResponse @(
+                [Request]::EditSettings("id=300&active_=1")
+            )
 
             $action | Set-ObjectProperty Active $true
         }
@@ -81,7 +83,9 @@ Describe "Set-ObjectProperty" -Tag @("PowerShell", "UnitTest") {
 
             $schedule = Get-PrtgSchedule -Count 1
 
-            SetAddressValidatorResponse "editsettings?id=623&name_=New+Schedule"
+            SetAddressValidatorResponse @(
+                [Request]::EditSettings("id=623&name_=New+Schedule")
+            )
 
             $schedule | Set-ObjectProperty Name "New Schedule"
         }
@@ -96,7 +100,9 @@ Describe "Set-ObjectProperty" -Tag @("PowerShell", "UnitTest") {
 
             $sensors = Get-Sensor -Count 2
 
-            SetAddressValidatorResponse "editsettings?id=4000,4001&interval_=300%7C5+minutes&intervalgroup=0&"
+            SetAddressValidatorResponse @(
+                [Request]::EditSettings("id=4000,4001&interval_=300%7C5+minutes&intervalgroup=0")
+            )
 
             $sensors | Set-ObjectProperty Interval 00:05:00 -Batch:$true
         }
@@ -149,7 +155,9 @@ Describe "Set-ObjectProperty" -Tag @("PowerShell", "UnitTest") {
 
             $value.GetType().Name | Should Be $type
 
-            SetAddressValidatorResponse "id=4000&location_=1.234%2C+5.678&lonlat_=5.678%2C1.234&locationgroup=0"
+            SetAddressValidatorResponse @(
+                [Request]::EditSettings("id=4000&location_=1.234%2C+5.678&lonlat_=5.678%2C1.234&locationgroup=0")
+            )
 
             $sensor | Set-ObjectProperty Location $value
         }
@@ -186,7 +194,9 @@ Describe "Set-ObjectProperty" -Tag @("PowerShell", "UnitTest") {
 
             $sensors= Get-Sensor -Count 2
 
-            SetAddressValidatorResponse "editsettings?id=4000,4001&interval_=300%7C5+minutes&"
+            SetAddressValidatorResponse @(
+                [Request]::EditSettings("id=4000,4001&interval_=300%7C5+minutes")
+            )
 
             $sensors | Set-ObjectProperty -RawProperty "interval_" -RawValue "300|5 minutes" -Force
         }
@@ -196,7 +206,9 @@ Describe "Set-ObjectProperty" -Tag @("PowerShell", "UnitTest") {
 
             $device = Get-Device -Count 1
 
-            SetAddressValidatorResponse "editsettings?id=3000&trafficmode_=errors&trafficmode_=discards"
+            SetAddressValidatorResponse @(
+                [Request]::EditSettings("id=3000&trafficmode_=errors&trafficmode_=discards")
+            )
 
             $device | Set-ObjectProperty -RawProperty trafficmode_ -RawValue errors,discards -Force
         }
@@ -207,7 +219,9 @@ Describe "Set-ObjectProperty" -Tag @("PowerShell", "UnitTest") {
             $devices = Get-Device -Count 2
             $schedule = Get-PrtgSchedule | Select -First 1
 
-            SetAddressValidatorResponse "id=3000,3001&scheduledependency=0&schedule_=623%7CWeekdays+%5BGMT%2B0800%5D%7C"
+            SetAddressValidatorResponse @(
+                [Request]::EditSettings("id=3000,3001&scheduledependency=0&schedule_=623%7CWeekdays+%5BGMT%2B0800%5D%7C")
+            )
 
             $table = @{
                 scheduledependency = 0
@@ -253,7 +267,9 @@ Describe "Set-ObjectProperty" -Tag @("PowerShell", "UnitTest") {
 
             $devices = Get-Device -Count 2
 
-            SetAddressValidatorResponse "id=3000,3001&esxuser_=root&vmwareconnection=0&esxpassword_=topsecret&username"
+            SetAddressValidatorResponse @(
+                [Request]::EditSettings("id=3000,3001&esxuser_=root&vmwareconnection=0&esxpassword_=topsecret")
+            )
 
             $devices | Set-ObjectProperty -VMwareUserName root -VMwarePassword topsecret
         }
@@ -276,13 +292,29 @@ Describe "Set-ObjectProperty" -Tag @("PowerShell", "UnitTest") {
 
             $devices = Get-Device -Count 2
 
-            SetAddressValidatorResponse "id=3000,3001&interval_=30%7C30+seconds&intervalgroup=1"
+            SetAddressValidatorResponse @(
+                [Request]::EditSettings("id=3000,3001&interval_=30%7C30+seconds&intervalgroup=1")
+            )
 
             $devices | Set-ObjectProperty -Interval "00:00:30" -InheritInterval $true
         }
 
         It "doesn't specify any dynamic parameters" {
-            { $devices | Set-ObjectProperty } | Should Throw "Cannot process command because of one or more missing mandatory parameters: Property"
+
+            try
+            {
+                $devices | Set-ObjectProperty
+
+                throw "An exception should have been raised, however none occurred"
+            }
+            catch
+            {
+                if($_.Exception.Message -notlike "*Cannot process command because of one or more missing mandatory parameters: Property*" -and
+                   $_.Exception.Message -notlike "*Cannot convert value `"`" to type `"PrtgAPI.ObjectProperty`"*")
+                {
+                    throw
+                }
+            }
         }
 
         It "splats dynamic parameters" {
@@ -291,7 +323,14 @@ Describe "Set-ObjectProperty" -Tag @("PowerShell", "UnitTest") {
 
             $devices = Get-Device -Count 2
 
-            SetAddressValidatorResponse "id=3000,3001&esxuser_=root&vmwareconnection=0&esxpassword_=password"
+            $response = SetAddressValidatorResponse @(
+                [Request]::EditSettings("id=3000,3001&esxuser_=root&vmwareconnection=0&esxpassword_=password")
+            )
+
+            if($PSEdition -eq "Core")
+            {
+                $response.AllowReorder = $true
+            }
 
             $splat = @{
                 VMwareUserName = "root"

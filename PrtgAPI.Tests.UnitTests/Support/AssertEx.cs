@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -322,6 +323,37 @@ namespace PrtgAPI.Tests.UnitTests
 
             var japaneseClient = BaseTest.Initialize_Client(new BasicResponse(japanese));
             await ThrowsAsync<T>(async () => await action(japaneseClient), exceptionMessage);
+        }
+
+        internal static void UrlsEquivalent(string first, string second)
+        {
+            if (first.Length != second.Length)
+                Assert.Fail($"Url '{first}' is not equivalent to '{second}': lengths were different ({first.Length} vs {second.Length}).");
+
+            var firstSorted = OrderUri(first);
+            var secondSorted = OrderUri(second);
+
+            var result = Uri.Compare(firstSorted, secondSorted, UriComponents.AbsoluteUri, UriFormat.SafeUnescaped,
+                StringComparison.OrdinalIgnoreCase);
+
+            Assert.IsTrue(result == 0, "Urls were not equal");
+        }
+
+        private static Uri OrderUri(string str)
+        {
+            var sorted = new NameValueCollection();
+
+            var unsorted = UrlUtilities.CrackUrl(str);
+
+            foreach (var key in unsorted.AllKeys.OrderBy(k => k))
+            {
+                sorted.Add(key, unsorted[key]);
+            }
+
+            var builder = new UriBuilder(str);
+            builder.Query = UrlUtilities.QueryCollectionToString(sorted);
+
+            return builder.Uri;
         }
     }
 }

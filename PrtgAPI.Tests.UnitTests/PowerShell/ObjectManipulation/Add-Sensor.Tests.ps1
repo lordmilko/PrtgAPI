@@ -143,12 +143,17 @@ Describe "Add-Sensor" -Tag @("PowerShell", "UnitTest") {
     }
 
     It "synthesizes sensor query parameters" {
-        SetCustomAddressValidatorResponse "SensorQueryTargetParametersValidatorResponse" @(
+        $response = SetCustomAddressValidatorResponse "SensorQueryTargetParametersValidatorResponse" @(
             [Request]::Status(),
             [Request]::BeginAddSensorQuery(40, "oracletablespace")
             [Request]::ContinueAddSensorQuery(2055, 7, "database_=XE&sid_type_=0&prefix_=0"), # Response hardcodes 2055, however normally this will in fact match
             [Request]::AddSensor("name_=test&priority_=3&inherittriggers_=1&intervalgroup=1&interval_=60%7C60+seconds&errorintervalsdown_=1&sid_type=0&database=XE&prefix=0&sensortype=oracletablespace&id=40")
         )
+
+        if($PSEdition -eq "Core")
+        {
+            $response.AllowReorder = $true
+        }
 
         $params = New-SensorParameters -RawParameters @{
             name_ = "test"

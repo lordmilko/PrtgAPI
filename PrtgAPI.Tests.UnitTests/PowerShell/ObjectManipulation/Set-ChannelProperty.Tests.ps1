@@ -64,7 +64,9 @@ Describe "Set-ChannelProperty" -Tag @("PowerShell", "UnitTest") {
     
     It "clears channel limits by setting them to `$null" {
 
-        SetAddressValidatorResponse "id=1001&limitmaxerror_2=&limitmode_2=1"
+        SetAddressValidatorResponse @(
+            [Request]::EditSettings("id=1001&limitmaxerror_2=&limitmode_2=1")
+        )
 
         Set-ChannelProperty -SensorId 1001 -ChannelId 2 -UpperErrorLimit $null
     }
@@ -125,7 +127,9 @@ Describe "Set-ChannelProperty" -Tag @("PowerShell", "UnitTest") {
         It "sets multiple properties with -Batch:`$true" {
             $channel.Count | Should Be 2
 
-            SetAddressValidatorResponse "id=4000,4001&limitmaxerror_1=100&limitmode_1=1&limitminerror_1=20&valuelookup_1=test%7Ctest&limitmaxerror_1_factor=1&limitminerror_1_factor=1"
+            SetAddressValidatorResponse @(
+                [Request]::EditSettings("id=4000,4001&limitmaxerror_1=100&limitmode_1=1&limitminerror_1=20&valuelookup_1=test%7Ctest&limitmaxerror_1_factor=1&limitminerror_1_factor=1")
+            )
 
             $channel | Set-ChannelProperty -UpperErrorLimit 100 -LowerErrorLimit 20 -ValueLookup test
         }
@@ -164,7 +168,14 @@ Describe "Set-ChannelProperty" -Tag @("PowerShell", "UnitTest") {
 
             $channel.Count | Should Be 2
 
-            SetAddressValidatorResponse "id=4000,4001&limitmaxerror_1=100&limitmode_1=1&valuelookup_1=test%7Ctest&limitminerror_1=20&limitmaxerror_1_factor=1&limitminerror_1_factor=1"
+            $response = SetAddressValidatorResponse @(
+                [Request]::EditSettings("id=4000,4001&limitmaxerror_1=100&limitmode_1=1&valuelookup_1=test%7Ctest&limitminerror_1=20&limitmaxerror_1_factor=1&limitminerror_1_factor=1")
+            )
+
+            if($PSEdition -eq "Core")
+            {
+                $response.AllowReorder = $true
+            }
 
             $splat = @{
                 UpperErrorLimit = 100
@@ -260,17 +271,36 @@ Describe "Set-ChannelProperty" -Tag @("PowerShell", "UnitTest") {
             Set-ChannelProperty -SensorId 1001 -ChannelId 1 -UpperErrorLimit 100 -LowerErrorLimit 20 -ValueLookup test
         }
 
-        It "doesn't specify any dynamic parameters" {
-            { Set-ChannelProperty } | Should Throw "Cannot process command because of one or more missing mandatory parameters: Channel Property"
+        It "doesn't pipe an object or specify any dynamic parameters" {
+
+            try
+            {
+                Set-ChannelProperty
+
+                throw "An exception should have been raised, however none occurred"
+            }
+            catch
+            {
+                if($_.Exception.Message -notlike "*Cannot process command because of one or more missing mandatory parameters: Channel Property*" -and
+                   $_.Exception.Message -notlike "*Cannot convert the `"`" value of type `"System.String`" to type `"PrtgAPI.Channel`"*")
+                {
+                    throw
+                }
+            }
         }
 
         It "splats dynamic parameters" {
 
-            SetAddressValidatorResponse @(
+            $response = SetAddressValidatorResponse @(
                 [Request]::Channels(1001)
                 [Request]::ChannelProperties(1001, 1)
                 [Request]::EditSettings("id=1001&limitminerror_1=20&limitmode_1=1&limitmaxerror_1=100&valuelookup_1=test%7Ctest&limitminerror_1_factor=1&limitmaxerror_1_factor=1")
             )
+
+            if($PSEdition -eq "Core")
+            {
+                $response.AllowReorder = $true
+            }
 
             $splat = @{
                 SensorId = 1001
