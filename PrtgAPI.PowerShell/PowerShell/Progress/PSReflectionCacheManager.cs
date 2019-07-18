@@ -484,7 +484,7 @@ namespace PrtgAPI.PowerShell.Progress
         #endregion
 
         /// <summary>
-        /// Retrieves the <see cref="CommandProcessor"/> of the next cmdlet.
+        /// Retrieves the CommandProcessor of the next cmdlet.
         /// </summary>
         /// <returns></returns>
         public object GetDownstreamCmdletProcessor() => runtimeOutputPipeDownstreamCmdletProcessor.Value;

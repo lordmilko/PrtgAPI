@@ -7,7 +7,6 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PrtgAPI.Attributes;
 using PrtgAPI.Linq;
 using PrtgAPI.Parameters;
-using PrtgAPI.PowerShell;
 using PrtgAPI.Request;
 using PrtgAPI.Request.Serialization.FilterHandlers;
 using PrtgAPI.Request.Serialization.ValueConverters;

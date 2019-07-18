@@ -88,6 +88,6 @@ namespace PrtgAPI.PowerShell
 
         public PSHost Host => Owner.Host;
 
-        public PSTransactionContext CurrentPSTransaction => Owner.CurrentPSTransaction;
+        public PSTransactionContext CurrentPSTransaction => Owner.CommandRuntime.CurrentPSTransaction;
     }
 }

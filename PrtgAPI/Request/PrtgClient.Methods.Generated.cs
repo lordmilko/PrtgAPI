@@ -2739,12 +2739,10 @@ namespace PrtgAPI
         /// Creates a set of dynamic sensor parameters for creating a new sensor of a specified type.
         /// </summary>
         /// <param name="deviceOrId">The device or ID of a device that supports the specified sensor type.</param>
-        /// <param name="sensorType">The type of sensor to create sensor paramters for.<para/>
-        /// Note: sensor parameters cannot be created for types that require additional information
-        /// to be added before interrogating the target device.</param>
+        /// <param name="sensorType">The type of sensor to create sensor paramters for.</param>
         /// <param name="progressCallback">A callback function used to monitor the progress of the request. If this function returns false, the request is aborted and this method returns null.</param>
         /// <param name="timeout">Duration (in seconds) to wait for sensor parameters to resolve.</param>
-        /// <param name="queryParameters">A <see cref="SensorQueryTarget"/>, <see cref="SensorQueryTargetParameters"/> or <see cref="SensorMultiQueryTargetParameters"/> value specifying the parameters must be known prior to interrogating a sensor's dynamic parameters (such as the SNMP Library file to use or IPMI UserName and Password).</param>
+        /// <param name="queryParameters">A <see cref="SensorQueryTarget"/>, <see cref="SensorQueryTargetParameters"/> or <see cref="SensorMultiQueryTargetParameters"/> value specifying the parameters that must be known prior to interrogating a sensor's dynamic parameters (such as the SNMP Library file to use or IPMI UserName and Password).</param>
         /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="TimeoutException">Sensor parameters failed to resolve within the specified timespan.</exception>
         /// <returns>A dynamic set of sensor parameters that store the the parameters required to create a sensor of a specified type.</returns>
@@ -2755,12 +2753,10 @@ namespace PrtgAPI
         /// Asynchronously creates a set of dynamic sensor parameters for creating a new sensor of a specified type.
         /// </summary>
         /// <param name="deviceOrId">The device or ID of a device that supports the specified sensor type.</param>
-        /// <param name="sensorType">The type of sensor to create sensor paramters for.<para/>
-        /// Note: sensor parameters cannot be created for types that require additional information
-        /// to be added before interrogating the target device.</param>
+        /// <param name="sensorType">The type of sensor to create sensor paramters for.</param>
         /// <param name="progressCallback">A callback function used to monitor the progress of the request. If this function returns false, the request is aborted and this method returns null.</param>
         /// <param name="timeout">Duration (in seconds) to wait for sensor parameters to resolve.</param>
-        /// <param name="queryParameters">A <see cref="SensorQueryTarget"/>, <see cref="SensorQueryTargetParameters"/> or <see cref="SensorMultiQueryTargetParameters"/> value specifying the parameters must be known prior to interrogating a sensor's dynamic parameters (such as the SNMP Library file to use or IPMI UserName and Password).</param>
+        /// <param name="queryParameters">A <see cref="SensorQueryTarget"/>, <see cref="SensorQueryTargetParameters"/> or <see cref="SensorMultiQueryTargetParameters"/> value specifying the parameters that must be known prior to interrogating a sensor's dynamic parameters (such as the SNMP Library file to use or IPMI UserName and Password).</param>
         /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <exception cref="TimeoutException">Sensor parameters failed to resolve within the specified timespan.</exception>
         /// <returns>A dynamic set of sensor parameters that store the the parameters required to create a sensor of a specified type.</returns>

@@ -26,12 +26,12 @@ namespace PrtgAPI
         string IObject.Name => OnNotificationAction.Name;
 
         /// <summary>
-        /// The Object ID this notification trigger applies to.
+        /// The ID of the object this notification trigger was retrieved from and applies to.
         /// </summary>
         public int ObjectId { get; set; }
 
         /// <summary>
-        /// The Object ID notification trigger is defined on. If this value is not the same as the <see cref="ObjectId"/>, this indicates this notification trigger is inherited.
+        /// The ID of the object this notification trigger is defined on. If this value is not the same as the <see cref="ObjectId"/>, this indicates this notification trigger is inherited.
         /// </summary>
         public int ParentId
         {

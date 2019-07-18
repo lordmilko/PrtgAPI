@@ -62,7 +62,7 @@ namespace PrtgAPI.Tests.UnitTests.Support
 
             try
             {
-                instance.SetValue(null, new DefaultPSObjectUtilities());
+                instance.SetValue(null, utilities);
 
                 action();
             }

@@ -1,5 +1,4 @@
 ﻿New-Alias Add-Trigger Add-NotificationTrigger
-New-Alias Edit-TriggerProperty Edit-NotificationTriggerProperty
 New-Alias Get-Trigger Get-NotificationTrigger
 New-Alias Get-TriggerTypes Get-NotificationTriggerTypes
 New-Alias New-TriggerParameters New-NotificationTriggerParameters
