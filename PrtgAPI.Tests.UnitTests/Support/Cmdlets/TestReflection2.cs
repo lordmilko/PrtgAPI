@@ -23,6 +23,8 @@ namespace PrtgAPI.Tests.UnitTests.PowerShell.Cmdlets
 
         private PSReflectionCacheManager cacheManager;
 
+        private long sourceId = -1;
+
         public TestReflection2()
         {
             cacheManager = new PSReflectionCacheManager(this);
@@ -35,7 +37,7 @@ namespace PrtgAPI.Tests.UnitTests.PowerShell.Cmdlets
                 switch (ParameterSetName)
                 {
                     case "ChainSourceId":
-                        var sourceId = ProgressManager.GetLastSourceId();
+                        sourceId = ProgressManager.GetLastSourceId();
                         CommandRuntime.WriteProgress(sourceId, new ProgressRecord(2, $"Test-Reflection2 Activity for object '{Object}' with source ID '{sourceId}'", "Test-Reflection2 Description")
                         {
                             ParentActivityId = 1
@@ -55,6 +57,18 @@ namespace PrtgAPI.Tests.UnitTests.PowerShell.Cmdlets
                         throw new NotImplementedException(ParameterSetName);
                 }
             } 
+        }
+
+        protected override void EndProcessing()
+        {
+            if (sourceId >= 0)
+            {
+                CommandRuntime.WriteProgress(sourceId, new ProgressRecord(2, "Activity", "Description")
+                {
+                    ParentActivityId = 1,
+                    RecordType = ProgressRecordType.Completed
+                });
+            }
         }
 
         protected override void ProcessRecordEx()

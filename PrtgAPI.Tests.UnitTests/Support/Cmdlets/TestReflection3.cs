@@ -15,6 +15,8 @@ namespace PrtgAPI.Tests.UnitTests.PowerShell.Cmdlets
         [Parameter(Mandatory = true, ValueFromPipeline = true)]
         public object Object { get; set; }
 
+        private long sourceId = -1;
+
         protected override void ProcessRecord()
         {
             using (ProgressManager = new ProgressManager(this))
@@ -22,7 +24,7 @@ namespace PrtgAPI.Tests.UnitTests.PowerShell.Cmdlets
                 switch (ParameterSetName)
                 {
                     case "ChainSourceId":
-                        var sourceId = ProgressManager.GetLastSourceId();
+                        sourceId = ProgressManager.GetLastSourceId();
                         CommandRuntime.WriteProgress(sourceId, new ProgressRecord(3, $"Test-Reflection3 Activity for object '{Object}' with source ID '{sourceId}'", "Test-Reflection3 Description")
                         {
                             ParentActivityId = 2
@@ -34,6 +36,18 @@ namespace PrtgAPI.Tests.UnitTests.PowerShell.Cmdlets
                     default:
                         throw new NotImplementedException(ParameterSetName);
                 }
+            }
+        }
+
+        protected override void EndProcessing()
+        {
+            if (sourceId >= 0)
+            {
+                CommandRuntime.WriteProgress(sourceId, new ProgressRecord(3, "Activity", "Description")
+                {
+                    ParentActivityId = 2,
+                    RecordType = ProgressRecordType.Completed
+                });
             }
         }
 

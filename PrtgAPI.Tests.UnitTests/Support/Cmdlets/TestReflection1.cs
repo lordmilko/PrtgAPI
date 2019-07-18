@@ -32,6 +32,8 @@ namespace PrtgAPI.Tests.UnitTests.PowerShell.Cmdlets
 
         private PSReflectionCacheManager cacheManager;
 
+        ProgressRecord record;
+
         public TestReflection1()
         {
             cacheManager = new PSReflectionCacheManager(this);
@@ -47,7 +49,8 @@ namespace PrtgAPI.Tests.UnitTests.PowerShell.Cmdlets
                         WriteObject(ProgressManager.GetLastSourceId());
                         break;
                     case "ChainSourceId":
-                        WriteProgress(new ProgressRecord(1, "Test-Reflection1 Activity", "Test-Reflection1 Description"));
+                        record = new ProgressRecord(1, "Test-Reflection1 Activity", "Test-Reflection1 Description");
+                        WriteProgress(record);
                         Thread.Sleep(1);
                         WriteObject(new[] { 1, 2, 3 }, true);
                         break;
@@ -65,6 +68,16 @@ namespace PrtgAPI.Tests.UnitTests.PowerShell.Cmdlets
                     default:
                         throw new NotImplementedException(ParameterSetName);
                 }
+            }
+        }
+
+        protected override void EndProcessing()
+        {
+            if (record != null)
+            {
+                record.RecordType = ProgressRecordType.Completed;
+
+                WriteProgress(record);
             }
         }
 
