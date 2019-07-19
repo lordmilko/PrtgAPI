@@ -73,18 +73,17 @@ namespace PrtgAPI.PowerShell.Cmdlets
 
         internal void WriteColorOutput(string message, ConsoleColor color)
         {
-            var initialColor = Host.UI.RawUI.ForegroundColor;
+            ConsoleColor fg = Host.UI.RawUI.ForegroundColor;
 
-            if ((int)initialColor != -1)
+            Host.UI.RawUI.ForegroundColor = color;
+
+            try
             {
-                Host.UI.RawUI.ForegroundColor = color;
+                WriteObject(message);
             }
-
-            WriteObject(message);
-
-            if ((int)initialColor != -1)
+            finally
             {
-                Host.UI.RawUI.ForegroundColor = initialColor;
+                Host.UI.RawUI.ForegroundColor = fg;
             }
         }
 
