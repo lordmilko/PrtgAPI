@@ -6,7 +6,7 @@ environment:
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
   DOTNET_CLI_TELEMETRY_OPTOUT: 1
 cache:
-  - '%userprofile%\.nuget\packages -> appveyor.yml'
+  - '%userprofile%\.nuget\packages -> appveyor.yml, **\*.csproj'
 install:
   # Install NuGet Provider, Chocolatey dependencies
   - ps: |
