@@ -26,15 +26,13 @@ Describe "Remove-Object" -Tag @("PowerShell", "UnitTest") {
     }
     
     It "executes ShouldContinue" {
-        $sensor = Run Sensor { Get-Sensor }
 
-        try
-        {
-            $sensor | Remove-Object
-        }
-        catch
-        {
-        }
+        $command = @"
+`$sensor = New-Object PrtgAPI.Sensor
+`$sensor | Remove-Object
+"@
+
+        Invoke-Interactive $command
     }
 
     It "passes through with -Batch:`$false" {

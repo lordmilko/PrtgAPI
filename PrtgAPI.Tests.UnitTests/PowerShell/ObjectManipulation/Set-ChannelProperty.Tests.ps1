@@ -273,20 +273,12 @@ Describe "Set-ChannelProperty" -Tag @("PowerShell", "UnitTest") {
 
         It "doesn't pipe an object or specify any dynamic parameters" {
 
-            try
-            {
-                Set-ChannelProperty
+            $messages = @(
+                "*Cannot process command because of one or more missing mandatory parameters: Channel Property*"
+                "*Cannot convert the `"`" value of type `"System.String`" to type `"PrtgAPI.Channel`"*"
+            )
 
-                throw "An exception should have been raised, however none occurred"
-            }
-            catch
-            {
-                if($_.Exception.Message -notlike "*Cannot process command because of one or more missing mandatory parameters: Channel Property*" -and
-                   $_.Exception.Message -notlike "*Cannot convert the `"`" value of type `"System.String`" to type `"PrtgAPI.Channel`"*")
-                {
-                    throw
-                }
-            }
+            Invoke-Interactive "Set-ChannelProperty" -AlternateExceptionMessage $messages
         }
 
         It "splats dynamic parameters" {

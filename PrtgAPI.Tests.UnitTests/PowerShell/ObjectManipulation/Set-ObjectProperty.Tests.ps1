@@ -179,13 +179,11 @@ Describe "Set-ObjectProperty" -Tag @("PowerShell", "UnitTest") {
         }
 
         It "executes a raw property with ShouldContinue" {
-            try
-            {
-                $sensor | Set-ObjectProperty -RawProperty name_ -RawValue "testName"
-            }
-            catch
-            {
-            }
+
+            Invoke-Interactive @"
+`$sensor = New-Object PrtgAPI.Sensor
+`$sensor | Set-ObjectProperty -RawProperty name_ -RawValue 'testName'
+"@
         }
 
         It "sets raw properties on multiple objects with -Batch:`$true" {
@@ -301,20 +299,15 @@ Describe "Set-ObjectProperty" -Tag @("PowerShell", "UnitTest") {
 
         It "doesn't specify any dynamic parameters" {
 
-            try
-            {
-                $devices | Set-ObjectProperty
+            $messages = @(
+                "*Cannot process command because of one or more missing mandatory parameters: Property*"
+                "*Cannot convert value `"`" to type `"PrtgAPI.ObjectProperty`"*"
+            )
 
-                throw "An exception should have been raised, however none occurred"
-            }
-            catch
-            {
-                if($_.Exception.Message -notlike "*Cannot process command because of one or more missing mandatory parameters: Property*" -and
-                   $_.Exception.Message -notlike "*Cannot convert value `"`" to type `"PrtgAPI.ObjectProperty`"*")
-                {
-                    throw
-                }
-            }
+            Invoke-Interactive @"
+`$device = New-Object PrtgAPI.Device
+`$device | Set-ObjectProperty
+"@ -AlternateExceptionMessage $messages
         }
 
         It "splats dynamic parameters" {

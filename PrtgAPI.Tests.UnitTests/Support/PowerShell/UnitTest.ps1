@@ -273,3 +273,80 @@ function SetVersion($versionStr)
 
     $field.SetValue($client, $version)
 }
+
+function Invoke-Interactive
+{
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory = $true, Position = 0)]
+        [string]$Command,
+
+        [Parameter(Mandatory = $false, Position = 1)]
+        [string]$ExceptionMessage,
+
+        [Parameter(Mandatory = $false)]
+        [string[]]$AlternateExceptionMessage
+    )
+
+    if([string]::IsNullOrEmpty($ExceptionMessage))
+    {
+        if($PSEdition -eq "Core")
+        {
+            $ExceptionMessage = "PowerShell is in NonInteractive mode. Read and Prompt functionality is not available."
+        }
+        else
+        {
+            $ExceptionMessage = "Windows PowerShell is in NonInteractive mode. Read and Prompt functionality is not available."
+        }
+    }
+
+    $path = (gmo prtgapi).path
+
+    $exe = "powershell"
+
+    if($PSEdition -eq "Core")
+    {
+        $exe = "pwsh"
+    }
+
+    $expr = @"
+&{
+    import-module '$path'
+    `$secureString = ConvertTo-SecureString "12345678" -AsPlainText -Force
+    `$cred = New-Object System.Management.Automation.PSCredential -ArgumentList "username",`$secureString
+    Connect-PrtgServer prtg.example.com `$cred -PassHash
+    try
+    {
+        $command
+    }
+    catch
+    {
+        `$_.exception.message
+    }
+    }
+"@
+
+    $result = & $exe -NonInteractive -Command $expr
+
+    if($result -eq $ExceptionMessage)
+    {
+        $result | Should Be $ExceptionMessage
+        return
+    }
+    else
+    {
+        if($AlternateExceptionMessage)
+        {
+            foreach($message in $AlternateExceptionMessage)
+            {
+                if($result -like $message)
+                {
+                    $result | Should BeLike $message
+                    return
+                }
+            }
+        }
+    }
+
+    throw $result
+}
