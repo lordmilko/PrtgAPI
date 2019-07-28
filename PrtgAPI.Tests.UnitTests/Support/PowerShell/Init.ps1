@@ -84,14 +84,6 @@ function AnalyzeTestProject($testProjectName, $scriptRoot)
             PrtgAPIPath        = $null
         }
 
-        if($obj.Folder.Name -eq "PrtgAPI.Tests")
-        {
-            $obj.Folder = $obj.Folder.Parent
-            $obj.FolderSuffix = $obj.FolderSuffix.Substring(0, $obj.FolderSuffix.Length - "PrtgAPI.Tests".Length - 1) # Get rid of \PrtgAPI.Tests
-        }
-
-        #todo: support .net standard powershell dll with .net core unit test dll
-
         if($obj.Folder.Name.StartsWith("net"))
         {
             $obj.Configuration = $obj.Folder.Parent.Name

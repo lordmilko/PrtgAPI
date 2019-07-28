@@ -22,7 +22,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\PrtgAPI.Tests\</OutputPath>
+    <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -30,7 +30,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release\PrtgAPI.Tests\</OutputPath>
+    <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -86,6 +86,7 @@
     <Compile Include="CSharp\ObjectData\Query\FilterTests.cs" />
     <Compile Include="CSharp\ObjectData\Query\WhereTests.cs" />
     <Compile Include="Support\PrtgObjectComparer.cs" />
+    <Compile Include="Support\SensorTypeManager.cs" />
     <Compile Include="Support\ServerManager.cs" />
     <Compile Include="Support\AssertEx.cs" />
     <Compile Include="Support\BasePrtgClientTest.cs" />
@@ -192,16 +193,6 @@
     <None Include="Support\PowerShell\IntegrationTest.ps1" />
     <None Include="Support\PowerShell\IntegrationTestSafe.ps1" />
     <None Include="Support\PowerShell\ObjectProperty.ps1" />
-    <None Include="Tools\PowerShellTools.14.0.vsix" />
-    <None Include="Tools\PowerShell\Cmdlets\Get-MissingSensorTypes.ps1" />
-    <None Include="Tools\PowerShell\Cmdlets\Get-PrtgCoverage.ps1" />
-    <None Include="Tools\PowerShell\Cmdlets\Get-PrtgLog.ps1" />
-    <None Include="Tools\PowerShell\Cmdlets\Start-PrtgTest.ps1" />
-    <None Include="Tools\PowerShell\Cmdlets\Write-SensorTypes.ps1" />
-    <None Include="Tools\PowerShell\Resources\PrtgAPI.Tests.cmd" />
-    <None Include="Tools\PowerShell\Resources\PrtgAPI.Tests.Format.ps1xml" />
-    <None Include="Tools\PowerShell\Resources\PrtgAPI.Tests.psd1" />
-    <None Include="Tools\PowerShell\Resources\PrtgAPI.Tests.psm1" />
   </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
@@ -223,10 +214,6 @@
   </Choose>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PostBuildEvent>copy "$(ProjectDir)Tools\PowerShell\Resources\*.*" "$(TargetDir)"
-copy "$(ProjectDir)Tools\PowerShell\Cmdlets\*.ps1" "$(TargetDir)"</PostBuildEvent>
-  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

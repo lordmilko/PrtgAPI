@@ -1,1 +1,0 @@
-start powershell -executionpolicy bypass -noexit -command "import-module '%~dp0..\PrtgAPI.Tests'; cd $env:userprofile"

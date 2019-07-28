@@ -3,7 +3,7 @@
 Describe "Add Missing Sensor Types" -Tag @("PowerShell", "IntegrationTest") {
     It "generates missing sensor types" {
 
-        $types = Get-MissingSensorTypes
+        $types = [PrtgAPI.Tests.IntegrationTests.Support.SensorTypeManager]::GetMissingSensorTypes()
 
         $missingTypes = ($types|where missing -EQ $true).Count
 
@@ -25,7 +25,9 @@ Describe "Add Missing Sensor Types" -Tag @("PowerShell", "IntegrationTest") {
                 throw "File '$sensorTypeFile' cannot be found"
             }
 
-            ,@($types) | Write-SensorTypes | Out-File $sensorTypeFile
+            $text = [PrtgAPI.Tests.IntegrationTests.Support.SensorTypeManager]::GetSensorTypesInternalText($types)
+
+            $text | Out-File $sensorTypeFile
         }
         else
         {

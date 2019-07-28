@@ -49,12 +49,6 @@ function StartupSafe($testName)
     Write-Host "Performing startup tasks"
     InitializeModules "PrtgAPI.Tests.IntegrationTests" $PSScriptRoot
 
-    $path = (Get-Module "PrtgAPI.Tests.IntegrationTests").Path
-    $slash = $path.LastIndexOf("\")
-    $substr = $path.Substring(0, $slash + 1)
-    $psd1 = $substr + "PrtgAPI.Tests.psd1"
-    ipmo $psd1
-
     SetTestName $testName
 
     if(!(Get-PrtgClient))
