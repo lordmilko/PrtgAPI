@@ -358,6 +358,7 @@
     <None Include="PowerShell\Infrastructure\Build\Start-PrtgAPI.Tests.ps1" />
     <None Include="PowerShell\Infrastructure\Build\Update-PrtgVersion.Tests.ps1" />
     <None Include="PowerShell\Infrastructure\Set-PrtgClient.Tests.ps1" />
+    <None Include="PowerShell\Infrastructure\Solution.Tests.ps1" />
     <None Include="PowerShell\ObjectData\Get-Object.Tests.ps1" />
     <None Include="PowerShell\ObjectData\Get-PrtgSchedule.Tests.ps1" />
     <None Include="PowerShell\ObjectManipulation\Acknowledge-Sensor.Tests.ps1" />
@@ -407,6 +408,7 @@
     <None Include="PowerShell\ObjectManipulation\Simulate-ErrorStatus.Tests.ps1" />
     <None Include="PowerShell\ObjectManipulation\Sort-PrtgObject.Tests.ps1" />
     <None Include="PowerShell\ObjectManipulation\Start-AutoDiscovery.Tests.ps1" />
+    <None Include="Support\PowerShell\BuildCore.ps1" />
     <None Include="Support\PowerShell\Build.ps1" />
     <None Include="Support\PowerShell\GoPrtg.ps1" />
     <None Include="PowerShell\Infrastructure\GoPrtg\Install-GoPrtgServer.Tests.ps1" />

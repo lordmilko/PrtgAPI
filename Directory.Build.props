@@ -1,0 +1,56 @@
+﻿<Project>
+  <Import Project="build\Version.props" />
+
+  <!-- Don't apply to our non-core csproj files -->
+  <PropertyGroup Condition="
+                 '$(MSBuildProjectFile)' != 'PrtgAPI.csproj' AND
+                 '$(MSBuildProjectFile)' != 'PrtgAPI.PowerShell.csproj' AND
+                 '$(MSBuildProjectFile)' != 'PrtgAPI.Tests.UnitTests.csproj' AND
+                 '$(MSBuildProjectFile)' != 'PrtgAPI.Tests.IntegrationTests.csproj' AND
+                 '$(MSBuildProjectFile)' != 'PrtgAPI.CodeGenerator.csproj'
+                 ">
+    <!-- Project-->
+
+    <!-- Put project.assets.json files in per-configuration folder so we can change target frameworks
+         when switching between configurations -->
+    <MSBuildProjectExtensionsPath>obj\$(Configuration)\</MSBuildProjectExtensionsPath>
+
+    <SuppressNETCoreSdkPreviewMessage>true</SuppressNETCoreSdkPreviewMessage>
+
+    <Copyright>(c) 2015 lordmilko. All rights reserved.</Copyright>
+
+    <!-- Configuration -->
+
+    <IsDebug Condition="'$(Configuration)' == 'Debug'">true</IsDebug>
+    <IsDebug Condition="'$(IsDebug)' == ''">false</IsDebug>
+
+    <IsRelease Condition="'$(Configuration)' == 'Release'">true</IsRelease>
+    <IsRelease Condition="'$(IsRelease)' == ''">false</IsRelease>
+
+    <!-- Operating System-->
+
+    <IsWindows Condition="'$(OS)' == 'Windows_NT'">true</IsWindows>
+    <IsWindows Condition="'$(IsWindows)' == ''">false</IsWindows>
+
+    <IsUnix Condition="'$(IsWindows)' == 'false'">true</IsUnix>
+    <IsUnix Condition="'$(IsUnix)' == ''">false</IsUnix>
+
+    <DefineConstants Condition="$(IsWindows)">$(DefineConstants);WINDOWS</DefineConstants>
+    <DefineConstants Condition="$(IsUnix)">$(DefineConstants);UNIX</DefineConstants>
+
+    <!-- Target Framework Conditions -->
+
+    <BuildAllTargets Condition="$(IsDebug)">false</BuildAllTargets>
+
+    <BuildAllTargets Condition="$(IsRelease) OR '$(BuildAllTargets)' == 'true'">true</BuildAllTargets>
+    <BuildAllTargets Condition="'$(BuildAllTargets)' != 'true'">false</BuildAllTargets>
+
+    <!-- Target Frameworks -->
+
+    <!-- Default target framework for debugging on Windows. Release target frameworks will be defined in each project's csproj file -->
+    <TargetFrameworks Condition="$(IsWindows) AND '$(BuildAllTargets)' == 'false'">netstandard2.0</TargetFrameworks>
+
+    <!-- Override all target frameworks on Linux; only .NET Core is supported. Ignore .NET Standard, since we do releases on Windows -->
+    <TargetFrameworks Condition="$(IsUnix)">netcoreapp2.1</TargetFrameworks>
+  </PropertyGroup>  
+</Project>

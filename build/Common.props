@@ -1,0 +1,49 @@
+<Project>
+
+  <!-- Framework Constants -->
+  
+  <PropertyGroup Condition="$(TargetFramework.StartsWith('netcoreapp'))">
+    <FrameworkType>Core</FrameworkType>
+  </PropertyGroup>
+  <PropertyGroup Condition="$(TargetFramework.StartsWith('netstandard'))">
+    <FrameworkType>Standard</FrameworkType>
+  </PropertyGroup>
+  <PropertyGroup Condition="$(TargetFramework.StartsWith('net4'))">
+    <FrameworkType>Full</FrameworkType>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(IsTestProject)' == 'true'">
+    <DefineConstants>$(DefineConstants);MSTEST2</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="$(TargetFrameworks) == 'netstandard2.0' AND '$(IsTestProject)' == 'true'">
+    <TargetFrameworks>net461</TargetFrameworks>
+  </PropertyGroup>
+
+  <!-- Pester -->
+
+  <!-- Ensure external Pester can find Microsoft.VisualStudio.TestPlatform.TestFramework -->
+  <PropertyGroup Condition="'$(FrameworkType)' == 'Core' AND '$(IsTestProject)' == 'true'">
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+  </PropertyGroup>
+
+  <!-- Remove all copy local assemblies but the one we're actually interested in (MSTest.TestFramework) -->
+  <Target Name="FilterCopyLocalTestItems" AfterTargets="ResolveLockFileCopyLocalProjectDeps" Condition="'$(FrameworkType)' == 'Core' AND '$(IsTestProject)' == 'true'">
+    <ItemGroup>
+      <ReferenceCopyLocalPaths Remove="@(ReferenceCopyLocalPaths)" Condition="'%(ReferenceCopyLocalPaths.NuGetPackageId)' != 'MSTest.TestFramework'" />
+    </ItemGroup>
+  </Target>
+
+  <!-- Clear the TestResults directory under the project folder to prevent files/folders under this directory from accumulating -->
+  <Target Name="ClearTestResults" BeforeTargets="DispatchToInnerBuilds" Condition="'$(IsTestProject)' == 'true'">
+    <RemoveDir Directories="$(ProjectDir)TestResults" />
+    <RemoveDir Directories="$(SolutionDir)TestResults" />
+  </Target>
+
+  <!-- Contents -->
+
+  <ItemGroup>
+    <Compile Remove="$(ProjectDir)Properties\*.cs"/>
+      <None Remove="**\*.DotSettings"/>
+  </ItemGroup>
+</Project>

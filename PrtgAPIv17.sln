@@ -1,38 +1,52 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.572
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrtgAPI.PowerShell", "PrtgAPI.PowerShell\PrtgAPI.PowerShell.csproj", "{C55D8F50-71DE-42C6-A758-5EFF855F318D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PrtgAPIv17.PowerShell", "PrtgAPI.PowerShell\PrtgAPIv17.PowerShell.csproj", "{346DF177-CBB2-47DE-A815-B821BA8836E6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrtgAPI", "PrtgAPI\PrtgAPI.csproj", "{0F6F773A-7053-424E-89F8-43467A695433}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PrtgAPIv17", "PrtgAPI\PrtgAPIv17.csproj", "{ECA4FF62-8753-4B0B-B7A6-98684F334469}"
 	ProjectSection(ProjectDependencies) = postProject
-		{C4572A75-AC79-4E5E-B253-1A545446220A} = {C4572A75-AC79-4E5E-B253-1A545446220A}
+		{7524608A-7DC5-4695-8B20-FCAC950DEB6D} = {7524608A-7DC5-4695-8B20-FCAC950DEB6D}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrtgAPI.Tests.UnitTests", "PrtgAPI.Tests.UnitTests\PrtgAPI.Tests.UnitTests.csproj", "{2179C33F-C774-45AF-A664-338B8C3B799B}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{689DA577-54C5-47B2-81E2-4555E1CA0D6B}"
+	ProjectSection(SolutionItems) = preProject
+		Tools\README.md = Tools\README.md
+	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrtgAPI.Tests.IntegrationTests", "PrtgAPI.Tests.IntegrationTests\PrtgAPI.Tests.IntegrationTests.csproj", "{60277601-FF8C-4712-BE9B-972921F5C763}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PrtgAPIv17.CodeGenerator", "Tools\PrtgAPI.CodeGenerator\PrtgAPIv17.CodeGenerator.csproj", "{7524608A-7DC5-4695-8B20-FCAC950DEB6D}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{873CF2EE-4D15-4445-BAE9-33F1D82848A0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PrtgAPIv17.Tests.UnitTests", "PrtgAPI.Tests.UnitTests\PrtgAPIv17.Tests.UnitTests.csproj", "{D0883BBA-8623-4101-A943-B6E511BF00AC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrtgAPI.CodeGenerator", "Tools\PrtgAPI.CodeGenerator\PrtgAPI.CodeGenerator.csproj", "{C4572A75-AC79-4E5E-B253-1A545446220A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PrtgAPIv17.Tests.IntegrationTests", "PrtgAPI.Tests.IntegrationTests\PrtgAPIv17.Tests.IntegrationTests.csproj", "{B035855B-4211-4F89-A26B-5DA862679E92}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CI", "CI", "{704FF895-ABCF-4C13-A731-1BBFA890097F}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{F572D1D7-0D47-4FB2-96D6-5776A9501C3D}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+		.gitattributes = .gitattributes
+		.gitignore = .gitignore
+		.travis.yml = .travis.yml
+		appveyor.yml = appveyor.yml
+		README.md = README.md
+		ThirdPartyNotices.txt = ThirdPartyNotices.txt
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CI", "CI", "{2D0EA239-1748-48D3-8259-E71B4157932B}"
 	ProjectSection(SolutionItems) = preProject
 		Tools\CI\Appveyor.psm1 = Tools\CI\Appveyor.psm1
 		Tools\CI\ci.psm1 = Tools\CI\ci.psm1
 		Tools\CI\Travis.psm1 = Tools\CI\Travis.psm1
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PrtgAPI.Build", "PrtgAPI.Build", "{FD3FC018-16E2-4C03-B7B0-96053F7BBF15}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PrtgAPI.Build", "PrtgAPI.Build", "{AFC6B9D8-5973-47DD-98ED-CFF0B9D47850}"
 	ProjectSection(SolutionItems) = preProject
 		Tools\PrtgAPI.Build\PrtgAPI.Build.Format.ps1xml = Tools\PrtgAPI.Build\PrtgAPI.Build.Format.ps1xml
 		Tools\PrtgAPI.Build\PrtgAPI.Build.psd1 = Tools\PrtgAPI.Build\PrtgAPI.Build.psd1
 		Tools\PrtgAPI.Build\PrtgAPI.Build.psm1 = Tools\PrtgAPI.Build\PrtgAPI.Build.psm1
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Functions", "Functions", "{1F1BA813-E71F-4138-A6B9-E2B0AEBCD0F1}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Functions", "Functions", "{CCDEF4C8-830D-4A19-AC92-FF02EC60A0D6}"
 	ProjectSection(SolutionItems) = preProject
 		Tools\PrtgAPI.Build\Functions\Clear-PrtgBuild.ps1 = Tools\PrtgAPI.Build\Functions\Clear-PrtgBuild.ps1
 		Tools\PrtgAPI.Build\Functions\Get-PrtgCommand.ps1 = Tools\PrtgAPI.Build\Functions\Get-PrtgCommand.ps1
@@ -53,7 +67,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Functions", "Functions", "{
 		Tools\PrtgAPI.Build\Functions\Update-PrtgVersion.ps1 = Tools\PrtgAPI.Build\Functions\Update-PrtgVersion.ps1
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Appveyor", "Appveyor", "{7F7BFA04-D173-4D43-9BCC-AB6895F7C3F6}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Appveyor", "Appveyor", "{3CBA50F1-556D-40F0-BFB3-4C0F0DC053AF}"
 	ProjectSection(SolutionItems) = preProject
 		Tools\CI\Appveyor\Clear-AppveyorBuild.ps1 = Tools\CI\Appveyor\Clear-AppveyorBuild.ps1
 		Tools\CI\Appveyor\Get-AppveyorLocalConfig.ps1 = Tools\CI\Appveyor\Get-AppveyorLocalConfig.ps1
@@ -70,7 +84,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Appveyor", "Appveyor", "{7F
 		Tools\CI\Appveyor\Simulate-Appveyor.ps1 = Tools\CI\Appveyor\Simulate-Appveyor.ps1
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CI", "CI", "{CF5106EF-66EF-4167-81C5-069295265169}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CI", "CI", "{60CD3A77-AE9F-4E2C-B3D7-4F8586214884}"
 	ProjectSection(SolutionItems) = preProject
 		Tools\CI\CI\Clear-CIBuild.ps1 = Tools\CI\CI\Clear-CIBuild.ps1
 		Tools\CI\CI\Get-CIDependency.ps1 = Tools\CI\CI\Get-CIDependency.ps1
@@ -82,8 +96,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CI", "CI", "{CF5106EF-66EF-
 		Tools\CI\CI\New-PowerShellPackage.ps1 = Tools\CI\CI\New-PowerShellPackage.ps1
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Helpers", "Helpers", "{FBCD6DE6-11CC-4BC4-B88A-56CFFCFA9E97}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Helpers", "Helpers", "{704D9CE7-4C4D-4CAD-AD5A-5D994A7DA08F}"
 	ProjectSection(SolutionItems) = preProject
+		Tools\CI\CI\Get-CIDependency.ps1 = Tools\CI\CI\Get-CIDependency.ps1
 		Tools\CI\Helpers\Get-CodeCoverage.ps1 = Tools\CI\Helpers\Get-CodeCoverage.ps1
 		Tools\CI\Helpers\Get-SolutionRoot.ps1 = Tools\CI\Helpers\Get-SolutionRoot.ps1
 		Tools\CI\Helpers\Import-ModuleFunctions.ps1 = Tools\CI\Helpers\Import-ModuleFunctions.ps1
@@ -93,17 +108,14 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Helpers", "Helpers", "{FBCD
 		Tools\CI\Helpers\Write-Log.ps1 = Tools\CI\Helpers\Write-Log.ps1
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{4E3C0D88-95C4-4ECD-9C49-8CAC355D2731}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{A79B2120-9075-42C5-8282-00EF8E37ADC2}"
 	ProjectSection(SolutionItems) = preProject
 		Tools\CI\Tests\Appveyor.Tests.ps1 = Tools\CI\Tests\Appveyor.Tests.ps1
 		Tools\CI\Tests\CI.Tests.ps1 = Tools\CI\Tests\CI.Tests.ps1
 		Tools\CI\Tests\Travis.Tests.ps1 = Tools\CI\Tests\Travis.Tests.ps1
 	EndProjectSection
-	ProjectSection(FolderStartupServices) = postProject
-		{82A7F48D-3B50-4B1E-B82E-3ADA8210C358} = {82A7F48D-3B50-4B1E-B82E-3ADA8210C358}
-	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Travis", "Travis", "{7386C761-E5E4-429D-A5AF-58AE25646917}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Travis", "Travis", "{94386A4F-D6F7-4BA7-B734-948404EAD365}"
 	ProjectSection(SolutionItems) = preProject
 		Tools\CI\Travis\Clear-TravisBuild.ps1 = Tools\CI\Travis\Clear-TravisBuild.ps1
 		Tools\CI\Travis\Invoke-TravisBuild.ps1 = Tools\CI\Travis\Invoke-TravisBuild.ps1
@@ -113,18 +125,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Travis", "Travis", "{7386C7
 		Tools\CI\Travis\Simulate-Travis.ps1 = Tools\CI\Travis\Simulate-Travis.ps1
 	EndProjectSection
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{7AE797AC-853F-419D-9B53-800AD28046D8}"
-	ProjectSection(SolutionItems) = preProject
-		.editorconfig = .editorconfig
-		.gitattributes = .gitattributes
-		.gitignore = .gitignore
-		.travis.yml = .travis.yml
-		appveyor.yml = appveyor.yml
-		README.md = README.md
-		ThirdPartyNotices.txt = ThirdPartyNotices.txt
-	EndProjectSection
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PowerShell.TestAdapter", "Tools\PowerShell.TestAdapter\PowerShell.TestAdapter.csproj", "{F1311CFD-2E71-4379-80F2-3B7C5C66A3E2}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{9C910B54-023C-4775-8327-C043705A5DF4}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{5378ADF3-9228-4F11-8845-C98A8BB52F1D}"
 	ProjectSection(SolutionItems) = preProject
 		build\Common.props = build\Common.props
 		Directory.Build.props = Directory.Build.props
@@ -138,42 +141,47 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{C55D8F50-71DE-42C6-A758-5EFF855F318D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C55D8F50-71DE-42C6-A758-5EFF855F318D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C55D8F50-71DE-42C6-A758-5EFF855F318D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C55D8F50-71DE-42C6-A758-5EFF855F318D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0F6F773A-7053-424E-89F8-43467A695433}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0F6F773A-7053-424E-89F8-43467A695433}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0F6F773A-7053-424E-89F8-43467A695433}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0F6F773A-7053-424E-89F8-43467A695433}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2179C33F-C774-45AF-A664-338B8C3B799B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2179C33F-C774-45AF-A664-338B8C3B799B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2179C33F-C774-45AF-A664-338B8C3B799B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2179C33F-C774-45AF-A664-338B8C3B799B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{60277601-FF8C-4712-BE9B-972921F5C763}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{60277601-FF8C-4712-BE9B-972921F5C763}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{60277601-FF8C-4712-BE9B-972921F5C763}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{60277601-FF8C-4712-BE9B-972921F5C763}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C4572A75-AC79-4E5E-B253-1A545446220A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C4572A75-AC79-4E5E-B253-1A545446220A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C4572A75-AC79-4E5E-B253-1A545446220A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C4572A75-AC79-4E5E-B253-1A545446220A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{346DF177-CBB2-47DE-A815-B821BA8836E6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{346DF177-CBB2-47DE-A815-B821BA8836E6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{346DF177-CBB2-47DE-A815-B821BA8836E6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{346DF177-CBB2-47DE-A815-B821BA8836E6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ECA4FF62-8753-4B0B-B7A6-98684F334469}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ECA4FF62-8753-4B0B-B7A6-98684F334469}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ECA4FF62-8753-4B0B-B7A6-98684F334469}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ECA4FF62-8753-4B0B-B7A6-98684F334469}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7524608A-7DC5-4695-8B20-FCAC950DEB6D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7524608A-7DC5-4695-8B20-FCAC950DEB6D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7524608A-7DC5-4695-8B20-FCAC950DEB6D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7524608A-7DC5-4695-8B20-FCAC950DEB6D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D0883BBA-8623-4101-A943-B6E511BF00AC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D0883BBA-8623-4101-A943-B6E511BF00AC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D0883BBA-8623-4101-A943-B6E511BF00AC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D0883BBA-8623-4101-A943-B6E511BF00AC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B035855B-4211-4F89-A26B-5DA862679E92}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B035855B-4211-4F89-A26B-5DA862679E92}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B035855B-4211-4F89-A26B-5DA862679E92}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B035855B-4211-4F89-A26B-5DA862679E92}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F1311CFD-2E71-4379-80F2-3B7C5C66A3E2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F1311CFD-2E71-4379-80F2-3B7C5C66A3E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F1311CFD-2E71-4379-80F2-3B7C5C66A3E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F1311CFD-2E71-4379-80F2-3B7C5C66A3E2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{C4572A75-AC79-4E5E-B253-1A545446220A} = {873CF2EE-4D15-4445-BAE9-33F1D82848A0}
-		{704FF895-ABCF-4C13-A731-1BBFA890097F} = {873CF2EE-4D15-4445-BAE9-33F1D82848A0}
-		{FD3FC018-16E2-4C03-B7B0-96053F7BBF15} = {873CF2EE-4D15-4445-BAE9-33F1D82848A0}
-		{1F1BA813-E71F-4138-A6B9-E2B0AEBCD0F1} = {FD3FC018-16E2-4C03-B7B0-96053F7BBF15}
-		{7F7BFA04-D173-4D43-9BCC-AB6895F7C3F6} = {704FF895-ABCF-4C13-A731-1BBFA890097F}
-		{CF5106EF-66EF-4167-81C5-069295265169} = {704FF895-ABCF-4C13-A731-1BBFA890097F}
-		{FBCD6DE6-11CC-4BC4-B88A-56CFFCFA9E97} = {704FF895-ABCF-4C13-A731-1BBFA890097F}
-		{4E3C0D88-95C4-4ECD-9C49-8CAC355D2731} = {704FF895-ABCF-4C13-A731-1BBFA890097F}
-		{7386C761-E5E4-429D-A5AF-58AE25646917} = {704FF895-ABCF-4C13-A731-1BBFA890097F}
+		{7524608A-7DC5-4695-8B20-FCAC950DEB6D} = {689DA577-54C5-47B2-81E2-4555E1CA0D6B}
+		{2D0EA239-1748-48D3-8259-E71B4157932B} = {689DA577-54C5-47B2-81E2-4555E1CA0D6B}
+		{AFC6B9D8-5973-47DD-98ED-CFF0B9D47850} = {689DA577-54C5-47B2-81E2-4555E1CA0D6B}
+		{CCDEF4C8-830D-4A19-AC92-FF02EC60A0D6} = {AFC6B9D8-5973-47DD-98ED-CFF0B9D47850}
+		{3CBA50F1-556D-40F0-BFB3-4C0F0DC053AF} = {2D0EA239-1748-48D3-8259-E71B4157932B}
+		{60CD3A77-AE9F-4E2C-B3D7-4F8586214884} = {2D0EA239-1748-48D3-8259-E71B4157932B}
+		{704D9CE7-4C4D-4CAD-AD5A-5D994A7DA08F} = {2D0EA239-1748-48D3-8259-E71B4157932B}
+		{A79B2120-9075-42C5-8282-00EF8E37ADC2} = {2D0EA239-1748-48D3-8259-E71B4157932B}
+		{94386A4F-D6F7-4BA7-B734-948404EAD365} = {2D0EA239-1748-48D3-8259-E71B4157932B}
+		{F1311CFD-2E71-4379-80F2-3B7C5C66A3E2} = {689DA577-54C5-47B2-81E2-4555E1CA0D6B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {B0EB9399-62E4-4193-B251-6720C4D3D830}
+		SolutionGuid = {99041E2E-4E29-43EF-A62E-2BB38A14B1EC}
 	EndGlobalSection
 EndGlobal

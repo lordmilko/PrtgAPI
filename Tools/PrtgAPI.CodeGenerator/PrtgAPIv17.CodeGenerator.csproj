@@ -1,0 +1,31 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup Condition="$(IsWindows)">
+    <!-- Undefine targets specified in PrtgAPI.Common.props.
+
+         Cannot specify TargetFrameworks for this project as this causes issues with dotnet pack
+    -->
+    <TargetFrameworks Condition="'$(TargetFrameworks)' != ''"></TargetFrameworks>
+
+    <!-- If we are not Windows, the default netcoreapp TargetFrameworks value will be left as is (to ensure we can compile).
+         However, the code in this project will not actually be usable.
+    -->
+    <TargetFramework>net452</TargetFramework>
+  </PropertyGroup>
+
+  <Import Project="..\..\build\Common.props" />
+
+  <PropertyGroup>
+    <!-- .NET Core does not yet support generating T4 Templates in Visual Studio -->
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <AssemblyName>PrtgAPI.CodeGenerator</AssemblyName>
+    <RootNamespace>PrtgAPI.CodeGenerator</RootNamespace>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+      <_Parameter1>PrtgAPI.Tests.UnitTests</_Parameter1>
+    </AssemblyAttribute>
+  </ItemGroup>
+</Project>

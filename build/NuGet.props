@@ -1,0 +1,29 @@
+﻿<Project>
+  <PropertyGroup>
+    <Title>PrtgAPI</Title>
+    <Authors>lordmilko</Authors>
+    <Description>.NET interface for PRTG Network Monitor</Description>
+    <PackageReleaseNotes>Release Notes: https://github.com/lordmilko/PrtgAPI/releases/tag/v$(Version)
+
+---
+
+PrtgAPI is a C#/PowerShell library that abstracts away the complexity of interfacing with the PRTG HTTP API.
+
+PrtgAPI implements a collection of methods and enumerations that help create and execute the varying HTTP GET requests required to interface with PRTG. All responses from PRTG are automatically deserialized by PrtgAPI.
+
+Operations supported by PrtgAPI include enumerating channels, sensors, devices, groups and probes, modifying channel and sensor properties, creating and editing notification triggers, pausing, unpausing and acknowledging objects, renaming and removing items, and more.
+
+PrtgAPI includes full XML Documentation and supports synchronous, asynchronous and "streaming" request modes.
+
+This module can be installed in both Visual Studio and PowerShell via the Install-Package cmdlet. For PowerShell users, this module is also available on the PowerShell Gallery.
+
+For more information and usage examples, please see the Project Site.</PackageReleaseNotes>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <PackageProjectUrl>https://github.com/lordmilko/PrtgAPI</PackageProjectUrl>
+    <PackageTags>Prtg Sensor Device Group Probe Channel Notification Monitor</PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\LICENSE" Pack="true" PackagePath="" Visible="false"/>
+  </ItemGroup>
+</Project>
