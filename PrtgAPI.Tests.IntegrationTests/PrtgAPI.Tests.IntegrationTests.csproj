@@ -105,7 +105,7 @@
     <Compile Include="CSharp\ObjectData\SensorTests.cs" />
     <Compile Include="CSharp\ObjectManipulation\StateTests.cs" />
     <Compile Include="Settings.cs" />
-    <Compile Include="Settings.Local.cs" />
+    <Compile Include="Settings.Local.cs" Condition="Exists('Settings.Local.cs')" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\PrtgAPI.Tests.UnitTests\PrtgAPI.Tests.UnitTests.csproj">

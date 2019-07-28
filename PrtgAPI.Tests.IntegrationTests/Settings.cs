@@ -8,6 +8,19 @@ namespace PrtgAPI.Tests.IntegrationTests
         HTTPS
     }
 
+    /* Store settings in Settings.Local.cs to avoid syncing with GitHub
+     * 
+     * public static partial class Settings
+     * {
+     *     static Settings()
+     *     {
+     *         Server = "prtg.example.com";
+     *         UserName = "prtgadmin";
+     *         
+     *         //etc
+     *     }
+     * }
+     */
     public static partial class Settings
     {
 #pragma warning disable CS0649 //Ignore 'field' is never assigned to.
