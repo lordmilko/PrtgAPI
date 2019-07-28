@@ -1,1 +1,1 @@
-start powershell -executionpolicy bypass -noexit -command "import-module '%~dp0\PrtgAPI.psd1'; cd $env:userprofile"
+start powershell -executionpolicy bypass -noexit -command "import-module '%~dp0\PrtgAPI.psd1'; cd ~"
