@@ -1,0 +1,3 @@
+*.cs text=auto encoding=UTF-8
+*.ps1 text=auto encoding=UTF-8
+*.sh text eol=lf

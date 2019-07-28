@@ -1,6 +1,7 @@
 # PrtgAPI
 
-[![Build status](https://img.shields.io/appveyor/ci/lordmilko/prtgapi.svg)](https://ci.appveyor.com/project/lordmilko/prtgapi)
+[![Travis status](https://travis-ci.org/lordmilko/PrtgAPI.svg?branch=master)](https://travis-ci.org/lordmilko/PrtgAPI)
+[![Appveyor status](https://ci.appveyor.com/api/projects/status/m2q2r875yvewn7x9?svg=true)](https://ci.appveyor.com/project/lordmilko/prtgapi)
 [![NuGet](https://img.shields.io/nuget/v/PrtgAPI.svg)](https://www.nuget.org/packages/PrtgAPI/)
 [![Coverage](https://img.shields.io/codecov/c/github/lordmilko/PrtgAPI.svg)](https://codecov.io/gh/lordmilko/PrtgAPI)
 [![Donate](http://img.shields.io/liberapay/patrons/lordmilko.svg?logo=liberapay)](https://liberapay.com/lordmilko/donate)
@@ -23,7 +24,7 @@ Useful things you can do with PrtgAPI:
 
 For information on features that are currently in the pipeline, check out the [Roadmap](https://github.com/lordmilko/PrtgAPI/projects/1).
 
-PrtgAPI also provides a secondary, optional module *PrtgAPI.CustomSensors* which provides a collection of wrapper functions for generating output in *PRTG EXE/Script Advanced* custom sensors. For more information, see [PrtgAPI.CustomSensors](https://github.com/lordmilko/PrtgAPI.CustomSensors).
+Do you sometimes develop *EXE/Script Advanced* sensors for PRTG? Then you should also check out [PrtgXml](https://github.com/lordmilko/PrtgXml) which utilizes black magic to generate the XML required by these sensors for you. Wow!
 
 If, for some reason, you feel the need to throw money at me to show your appreciation for this project, you can do so anonymously by clicking [here](https://liberapay.com/lordmilko/donate).
 
@@ -35,7 +36,7 @@ If, for some reason, you feel the need to throw money at me to show your appreci
 Install-Package PrtgAPI
 ```
 
-PrtgAPI is available on both [nuget.org](https://www.nuget.org/packages/PrtgAPI/) and [PowerShell Gallery](https://www.powershellgallery.com/packages/PrtgAPI/). The nuget.org package also has corresponding symbols on symbolsource.org (for use with Visual Studio). In order to install PrtgAPI from the PowerShell Gallery you must be running PowerShell 5+.
+PrtgAPI is available on both [nuget.org](https://www.nuget.org/packages/PrtgAPI/) and [PowerShell Gallery](https://www.powershellgallery.com/packages/PrtgAPI/). PrtgAPI provides targets for both .NET Framework and .NET Standard and is SourceLink compatible. In order to install PrtgAPI from the PowerShell Gallery you must be running PowerShell 5.1+.
 
 If you have both the nuget.org and PowerShell Gallery package sources installed on your machine, you will need to specify the source you wish to install from, e.g.
 ```powershell
@@ -48,7 +49,7 @@ Install-Package PrtgAPI -Source PSGallery
 2. Right click **PrtgAPI.zip** -> **Properties**
 3. On the *General* tab, under *Security* select **Unblock**
 4. Unzip the file
-5. Add a reference to *PrtgAPI.dll* to your project, or import the *PrtgAPI* module into PowerShell via `Import-Module C:\path\to\PrtgAPI`. Alternatively, you can run the included **PrtgAPI.cmd** file to open a prompt and import the PrtgAPI module for you.
+5. Add a reference to *PrtgAPI.dll* to your project (fullclr: net452, coreclr: netstandard2.0), or import the *PrtgAPI* module into PowerShell via `Import-Module C:\path\to\PrtgAPI`. Alternatively, you can run the included **PrtgAPI.cmd** file to open a prompt and import the PrtgAPI module for you.
 
 ## Compilation
 
@@ -145,7 +146,7 @@ var channels = sensors.SelectMany(s => client.GetChannels(s, "Total"));
 
 foreach (var channel in channels)
 {
-    client.SetObjectProperty(channel, ChannelProperty.UpperErrorLimit, 90);
+    client.SetChannelProperty(channel, ChannelProperty.UpperErrorLimit, 90);
 }
 ```
 
@@ -400,6 +401,7 @@ Notification triggers can be [retrieved, added and modified](https://github.com/
 
 ## Interesting Things PrtgAPI Does
 
+* PowerShell Build Environment
 * [Custom Deserialization](https://github.com/lordmilko/PrtgAPI/wiki/Interesting-Techniques#deserialization)
 * Cmdlet Based Event Handlers
 * Inter-Cmdlet Progress

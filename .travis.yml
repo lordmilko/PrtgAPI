@@ -1,0 +1,32 @@
+language: csharp
+mono: none
+dotnet: 2.1.605
+
+env:
+  global:
+    - DOTNET_SKIP_FIRST_TIME_EXPERIENCE=1
+
+cache:
+  timeout: 360
+  directories:
+    - $HOME/.nuget
+
+matrix:
+  include:
+    - os: linux
+    - os: osx
+      osx_image: xcode10.2
+
+install:
+  - pwsh -c "ipmo ./Tools/CI/Travis.psm1 -DisableNameChecking; Invoke-TravisInstall"
+
+script:
+  - pwsh -c "ipmo ./Tools/CI/Travis.psm1 -DisableNameChecking; Invoke-TravisScript"
+
+addons:
+  snaps:
+  - name: powershell
+    confinement: classic
+  homebrew:
+    casks:
+    - powershell

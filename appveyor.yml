@@ -2,16 +2,16 @@ version: 'Build #{build}'
 image: Visual Studio 2017
 configuration: Release
 environment:
-  # Don't bother setting up a cache
+  # Don't bother setting up a package cache
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
-  
+  DOTNET_CLI_TELEMETRY_OPTOUT: 1
 cache:
   - '%userprofile%\.nuget\packages -> appveyor.yml'
 install:
   # Install NuGet Provider, Chocolatey dependencies
   - ps: |
-      Import-Module .\tools\build\Appveyor.psm1 -DisableNameChecking
-      Set-AppveyorBuildMode -IsCore:$false
+      Import-Module .\tools\ci\Appveyor.psm1 -DisableNameChecking
+      Set-AppveyorBuildMode -IsCore:$true
       Invoke-AppveyorInstall
 before_build:
   # Restore NuGet packages
@@ -21,22 +21,26 @@ build_script:
   - ps: Invoke-AppveyorBuild
 after_build:
   # Set Appveyor build from PrtgAPI version
-  - ps: Invoke-AppveyorAfterBuild 
+  - ps: Invoke-AppveyorAfterBuild
 before_test:
   # Build NuGet packages
   - ps: Invoke-AppveyorBeforeTest
 test_script:
   # Test all target frameworks
-  - ps: Invoke-AppveyorTest    
+  - ps: Invoke-AppveyorTest
 after_test:
   # Calculate .NET coverage
   - ps: Invoke-AppveyorAfterTest
+#on_finish:
+#  - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
 artifacts:
-  - path: PrtgAPI.PowerShell\bin\Release\PrtgAPI
+  - path: '*.zip'
   - path: '*.nupkg'
+  - path: '*.snupkg'
 skip_commits:
   files:
-    - README.md
+    - '**/*.md'
+    - '**/*.yml'
     - '**/*.nuspec'
     - assets/*
     - tools/*

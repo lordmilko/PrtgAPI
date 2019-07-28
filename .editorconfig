@@ -6,5 +6,5 @@ indent_size = 4
 insert_final_newline = true
 csharp_space_after_keywords_in_control_flow_statements = true:warning
 
-[*.yml]
+[*.{csproj,props,targets,yml,json}]
 indent_size = 2
