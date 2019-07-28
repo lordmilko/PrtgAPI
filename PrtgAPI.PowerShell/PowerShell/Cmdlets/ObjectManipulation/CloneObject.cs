@@ -34,7 +34,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// sensor, device or group, Clone-Object will throw an exception specifying that the specified object ID is not valid.</para>
     /// 
     /// <para type="description">When an object has been cloned, by default Clone-Object will attempt to automatically resolve the object
-    /// into its resultant <see cref="Sensor"/>, <see cref="Device"/>, <see cref="Group"/> or <see cref="NotificationTrigger"/>  object.
+    /// into its resultant <see cref="Sensor"/>, <see cref="Device"/>, <see cref="Group"/> or <see cref="NotificationTrigger"/> object.
     /// Based on the speed of your PRTG Server, this can sometimes result in a delay of 5-10 seconds due to the delay with which PRTG clones
     /// the object. If Clone-Object cannot resolve the resultant object on the first attempt, PrtgAPI will make a further
     /// 4 retries, pausing for a successively greater duration between each try. After each failed attempt a warning will be displayed indicating

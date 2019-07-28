@@ -101,7 +101,7 @@ namespace PrtgAPI
         DecimalPlaces,
 
         /// <summary>
-        /// Whether spike filtering is enabled for this object. If filtering is enabled, channel results outside expected ranges will be rounded to their <see cref="SpikeFilterMin"/>  or <see cref="SpikeFilterMax"/> values.
+        /// Whether spike filtering is enabled for this object. If filtering is enabled, channel results outside expected ranges will be rounded to their <see cref="SpikeFilterMin"/> or <see cref="SpikeFilterMax"/> values.
         /// </summary>
         SpikeFilterEnabled,
 

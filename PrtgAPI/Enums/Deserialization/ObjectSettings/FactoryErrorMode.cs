@@ -8,7 +8,7 @@ namespace PrtgAPI
     public enum FactoryErrorMode
     {
         /// <summary>
-        /// Show <see cref="Status.Down"/>  when one or more source sensors are in error.
+        /// Show <see cref="Status.Down"/> when one or more source sensors are in error.
         /// </summary>
         [XmlEnum("0")]
         ErrorOnError,

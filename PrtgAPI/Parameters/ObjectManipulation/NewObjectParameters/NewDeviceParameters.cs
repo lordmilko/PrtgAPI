@@ -102,7 +102,7 @@ namespace PrtgAPI.Parameters
 
         /// <summary>
         /// Gets or sets the device templates to use when performing an auto-discovery. If <see cref="PrtgAPI.AutoDiscoveryMode.Automatic"/> or
-        /// <see cref="PrtgAPI.AutoDiscoveryMode.AutomaticDetailed"/>  is specified, all templates will be used and this parameter will be ignored.<para/>
+        /// <see cref="PrtgAPI.AutoDiscoveryMode.AutomaticDetailed"/> is specified, all templates will be used and this parameter will be ignored.<para/>
         /// If <see cref="PrtgAPI.AutoDiscoveryMode.AutomaticTemplate"/> is specified, at least one template must be specified.
         /// </summary>
         [DependentProperty(ObjectProperty.AutoDiscoveryMode, AutoDiscoveryMode.AutomaticTemplate)]

@@ -15,7 +15,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <para type="description">When executed, Restart-PrtgCore will prompt to confirm you wish to restart the PRTG Core Service. To override this prompt, the -<see cref="Force"/>
     /// parameter can be specified.By default, Restart-PrtgCore will one hour for the PRTG Core Service to completely restart and come back online. If you do not wish
     /// to wait at all, this can be overridden by specifying -<see cref="Wait" />:$false. You may additionally specify a custom timeout duration (in seconds)
-    /// via the -<see cref="Timeout"/>  parameter. If Restart-PrtgCore times out waiting for the PRTG Core Service to restart, a <see cref="TimeoutException"/> 
+    /// via the -<see cref="Timeout"/> parameter. If Restart-PrtgCore times out waiting for the PRTG Core Service to restart, a <see cref="TimeoutException"/> 
     /// will be thrown. <para/>
     /// Extreme caution should be used when using Restart-PrtgCore. While smaller PRTG installs can restart in a matter of minutes,
     /// servers containing in excess of 10,000 sensors can take over half an hour to restart.</para>

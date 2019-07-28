@@ -8,7 +8,7 @@ namespace PrtgAPI
     public enum IntervalErrorMode
     {
         /// <summary>
-        /// Set the sensor to <see cref="Status.Down"/>  immediately.
+        /// Set the sensor to <see cref="Status.Down"/> immediately.
         /// </summary>
         [XmlEnum("0")]
         DownImmediately,

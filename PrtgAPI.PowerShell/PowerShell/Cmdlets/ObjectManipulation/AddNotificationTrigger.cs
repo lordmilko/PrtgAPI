@@ -17,8 +17,8 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// 
     /// <para type="description">The Add-NotificationTrigger/New-NotificationTrigger cmdlet adds a new notification  trigger to an object in PRTG.
     /// When adding a notification trigger, you can either specify the settings for the trigger as parameters to the cmdlet (PowerShell style),
-    /// or must first create  a <see cref="TriggerParameters"/>  object that defines the settings to use (object-oriented style).
-    /// <see cref="TriggerParameters"/>  can be defined from existing notification triggers or created from scratch.
+    /// or must first create  a <see cref="TriggerParameters"/> object that defines the settings to use (object-oriented style).
+    /// <see cref="TriggerParameters"/> can be defined from existing notification triggers or created from scratch.
     /// Certain objects do support certain types of notification triggers (e.g. different types of sensors).</para>
     /// 
     /// <para type="description">Attempting to add a notification trigger to an object that does not supported that trigger

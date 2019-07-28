@@ -18,7 +18,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// values can be averaged together to provide a higher level view of a larger time span. Any number of seconds can be specified as the <see cref="Average"/>,
     /// however note that depending on the interval of the sensor, certain time spans may result in blank values within the sensor results.</para>
     /// 
-    /// <para type="description">Historic data values can be retrieved over any time period via the -<see cref="StartDate"/>  and -<see cref="EndDate"/>
+    /// <para type="description">Historic data values can be retrieved over any time period via the -<see cref="StartDate"/> and -<see cref="EndDate"/>
     /// parameters. If these values are not specified, records will be returned from between now and 60 minutes ago.
     /// If PRTG finds it does not have enough monitoring data to return for the specified time span, an exception will be thrown. To work around this,
     /// you can request date for a larger time frame and then potentially filter the data with the Where-Object and Select-Object cmdlets.</para>
