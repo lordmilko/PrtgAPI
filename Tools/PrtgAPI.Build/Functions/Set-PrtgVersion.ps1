@@ -95,14 +95,8 @@ function SetVersionProps($version, $isCore)
     $assemblyVersion = "$major.$minor.0.0"
     $fileVersion = "$major.$minor.$build.$revision"
 
-    if($isCore)
-    {
-        SetVersionPropsCore $version $assemblyVersion $fileVersion
-    }
-    else
-    {
-        SetVersionPropsDesktop $version $assemblyVersion $fileVersion
-    }
+    SetVersionPropsCore $version $assemblyVersion $fileVersion
+    SetVersionPropsDesktop $version $assemblyVersion $fileVersion
 }
 
 function SetVersionPropsCore($version, $assemblyVersion, $fileVersion)
