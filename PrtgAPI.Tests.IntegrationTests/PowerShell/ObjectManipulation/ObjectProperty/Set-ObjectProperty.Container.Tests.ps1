@@ -14,7 +14,7 @@ Describe "Set-ObjectProperty_Containers_IT" -Tag @("PowerShell", "IntegrationTes
         $object = (& $obj)
 
         SetValue "Name"       "TestName"
-        #SetValue "Tags" "TestTag"
+        SetValue "Tags" "TestTag1","TestTag2"
         SetValue "Active"     $false
         SetValue "Priority"   5
     }
