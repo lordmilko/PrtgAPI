@@ -13,7 +13,7 @@
     "Build Environment (Core)": {
         "commandName": "Executable",
         "executablePath": "C:\\Program Files\\PowerShell\\6\\pwsh.exe",
-        "commandLineArgs": "-noexit -noninteractive -command \"&{ ipmo psreadline; import-module ..\\..\\..\\..\\..\\Tools\\PrtgAPI.Build -Verbose; cd \\; }\""
+        "commandLineArgs": "-noexit -noninteractive -command \"&{ ipmo psreadline; import-module ..\\..\\..\\..\\..\\..\\build\\PrtgAPI.Build -Verbose; cd \\; }\""
     },
   }
 }

@@ -1,5 +1,5 @@
 ﻿<Project>
-  <Import Project="build\Version.props" />
+  <Import Project="..\build\Version.props" />
 
   <!-- Don't apply to our non-core csproj files -->
   <PropertyGroup Condition="

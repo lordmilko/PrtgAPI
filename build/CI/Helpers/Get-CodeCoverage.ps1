@@ -1,4 +1,4 @@
-﻿. $PSScriptRoot\..\..\..\PrtgAPI.Tests.UnitTests\Support\PowerShell\Init.ps1
+﻿. $PSScriptRoot\..\..\..\src\PrtgAPI.Tests.UnitTests\Support\PowerShell\Init.ps1
 
 function Get-CodeCoverage
 {
@@ -116,7 +116,7 @@ class CodeCoverage
 
         if($this.IsCore)
         {
-            $csproj = Join-PathEx $this.BuildFolder PrtgAPI.Tests.UnitTests PrtgAPIv17.Tests.UnitTests.csproj
+            $csproj = Join-PathEx $this.BuildFolder src PrtgAPI.Tests.UnitTests PrtgAPIv17.Tests.UnitTests.csproj
 
             $testParams = @(
                 "test"
@@ -131,7 +131,7 @@ class CodeCoverage
         }
         else
         {
-            $dll = Join-PathEx $this.BuildFolder PrtgAPI.Tests.UnitTests bin $($this.Configuration) PrtgAPI.Tests.UnitTests.dll
+            $dll = Join-PathEx $this.BuildFolder src PrtgAPI.Tests.UnitTests bin $($this.Configuration) PrtgAPI.Tests.UnitTests.dll
 
             $testParams = @(
                 "/TestCaseFilter:$filter"
@@ -204,7 +204,7 @@ class CodeCoverage
 
     [void]AssertHasPowerShellDll()
     {
-        $candidates = @((AnalyzeTestProject "PrtgAPI.Tests.UnitTests" (Resolve-Path "$PSScriptRoot\..\..\..\PrtgAPI.Tests.UnitTests\Support\PowerShell").Path).Candidates)
+        $candidates = @((AnalyzeTestProject "PrtgAPI.Tests.UnitTests" (Resolve-Path "$PSScriptRoot\..\..\..\src\PrtgAPI.Tests.UnitTests\Support\PowerShell").Path).Candidates)
 
         if(!($candidates|where Edition -EQ "Desktop"))
         {
@@ -246,7 +246,7 @@ class CodeCoverage
         $testsStr = $tests -join " "
         $vstestParams = $null
 
-        $testAdapterPath = Join-PathEx $this.BuildFolder Tools PowerShell.TestAdapter bin Release netstandard2.0
+        $testAdapterPath = Join-PathEx $this.BuildFolder src Tools PowerShell.TestAdapter bin Release netstandard2.0
 
         $testParams = "/TestAdapterPath:\`"$testAdapterPath\`""
 
@@ -267,7 +267,7 @@ class CodeCoverage
 
     [object]GetPowerShellTests()
     {
-        $testRoot = Join-Path $this.BuildFolder "PrtgAPI.Tests.UnitTests\PowerShell"
+        $testRoot = Join-Path $this.BuildFolder "src\PrtgAPI.Tests.UnitTests\PowerShell"
 
         $tests = gci $testRoot -Recurse -Filter *.Tests.ps1 | where {
             # Blacklist Solution.Tests.ps1 as this invokes Invoke-PrtgAnalyzer which causes vstest.console to hang on completion
@@ -302,11 +302,11 @@ class CodeCoverage
 
     [void]InstallPowerShellAdapter()
     {
-        $adapterPath = Join-Path $this.BuildFolder "Tools\PowerShell.TestAdapter\bin\Release\netstandard2.0\PowerShell.TestAdapter.dll"
+        $adapterPath = Join-Path $this.BuildFolder "src\Tools\PowerShell.TestAdapter\bin\Release\netstandard2.0\PowerShell.TestAdapter.dll"
 
         if(!(Test-Path $adapterPath))
         {
-            $csproj = Join-Path $this.BuildFolder "Tools\PowerShell.TestAdapter\PowerShell.TestAdapter.csproj"
+            $csproj = Join-Path $this.BuildFolder "src\Tools\PowerShell.TestAdapter\PowerShell.TestAdapter.csproj"
 
             Write-Host $csproj
 

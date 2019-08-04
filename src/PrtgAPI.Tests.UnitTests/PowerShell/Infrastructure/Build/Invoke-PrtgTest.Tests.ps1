@@ -8,9 +8,9 @@ function MockInvokePester($action)
             $root = Get-SolutionRoot
 
             $PassThru | Should be $true
-            $OutputFile | Should BeLike (Join-PathEx $root PrtgAPI.Tests.UnitTests TestResults "PrtgAPI_PowerShell_*.xml")
+            $OutputFile | Should BeLike (Join-PathEx $root src PrtgAPI.Tests.UnitTests TestResults "PrtgAPI_PowerShell_*.xml")
             $OutputFormat | Should Be "NUnitXml"
-            $Script | Should Be (Join-PathEx $root PrtgAPI.Tests.UnitTests PowerShell)
+            $Script | Should Be (Join-PathEx $root src PrtgAPI.Tests.UnitTests PowerShell)
 
         } -Verifiable
     }
@@ -26,12 +26,12 @@ Describe "Invoke-PrtgTest" -Tag @("PowerShell", "Build") {
 
         Mock-InstallDotnet -Windows
 
-        $solutionRoot = Get-SolutionRoot
+        $sourceRoot = Get-SourceRoot
 
         $expected = @(
             "& `"dotnet`""
             "test"
-            Join-PathEx $solutionRoot PrtgAPI.Tests.UnitTests PrtgAPIv17.Tests.UnitTests.csproj
+            Join-PathEx $sourceRoot PrtgAPI.Tests.UnitTests PrtgAPIv17.Tests.UnitTests.csproj
             "-nologo"
             "--no-restore"
             "--no-build"
@@ -59,11 +59,11 @@ Describe "Invoke-PrtgTest" -Tag @("PowerShell", "Build") {
             return $true
         }
 
-        $solutionRoot = Get-SolutionRoot
+        $sourceRoot = Get-SourceRoot
 
         $expected = @(
             "& C:\vstest.console.exe"
-            Join-PathEx $solutionRoot PrtgAPI.Tests.UnitTests bin Debug PrtgAPI.Tests.UnitTests.dll
+            Join-PathEx $sourceRoot PrtgAPI.Tests.UnitTests bin Debug PrtgAPI.Tests.UnitTests.dll
             "/logger:trx;LogFileName=PrtgAPI_C#.trx"
             "/TestCaseFilter:FullyQualifiedName~dynamic"
         )
@@ -90,12 +90,12 @@ Describe "Invoke-PrtgTest" -Tag @("PowerShell", "Build") {
 
         Mock-InstallDotnet -Windows
 
-        $solutionRoot = Get-SolutionRoot
+        $sourceRoot = Get-SourceRoot
 
         $expected = @(
             "& `"dotnet`""
             "test"
-            Join-PathEx $solutionRoot PrtgAPI.Tests.UnitTests PrtgAPIv17.Tests.UnitTests.csproj
+            Join-PathEx $sourceRoot PrtgAPI.Tests.UnitTests PrtgAPIv17.Tests.UnitTests.csproj
             "-nologo"
             "--no-restore"
             "--no-build"
@@ -117,12 +117,12 @@ Describe "Invoke-PrtgTest" -Tag @("PowerShell", "Build") {
 
         Mock-InstallDotnet -Windows
 
-        $solutionRoot = Get-SolutionRoot
+        $sourceRoot = Get-SourceRoot
 
         $expected = @(
             "& `"dotnet`""
             "test"
-            Join-PathEx $solutionRoot PrtgAPI.Tests.UnitTests PrtgAPIv17.Tests.UnitTests.csproj
+            Join-PathEx $sourceRoot PrtgAPI.Tests.UnitTests PrtgAPIv17.Tests.UnitTests.csproj
             "-nologo"
             "--no-restore"
             "--no-build"
@@ -158,12 +158,12 @@ Describe "Invoke-PrtgTest" -Tag @("PowerShell", "Build") {
         
         Mock-InstallDotnet -Windows
 
-        $solutionRoot = Get-SolutionRoot
+        $sourceRoot = Get-SourceRoot
         
         $expected = @(
             "& `"dotnet`""
             "test"
-            Join-PathEx $solutionRoot PrtgAPI.Tests.IntegrationTests PrtgAPIv17.Tests.IntegrationTests.csproj
+            Join-PathEx $sourceRoot PrtgAPI.Tests.IntegrationTests PrtgAPIv17.Tests.IntegrationTests.csproj
             "-nologo"
             "--no-restore"
             "--no-build"
@@ -185,12 +185,12 @@ Describe "Invoke-PrtgTest" -Tag @("PowerShell", "Build") {
 
         Mock-InstallDotnet -Windows
 
-        $solutionRoot = Get-SolutionRoot
+        $sourceRoot = Get-SourceRoot
 
         $expected = @(
             "& `"dotnet`""
             "test"
-            Join-PathEx $solutionRoot PrtgAPI.Tests.UnitTests PrtgAPIv17.Tests.UnitTests.csproj
+            Join-PathEx $sourceRoot PrtgAPI.Tests.UnitTests PrtgAPIv17.Tests.UnitTests.csproj
             "-nologo"
             "--no-restore"
             "--no-build"
@@ -216,9 +216,9 @@ Describe "Invoke-PrtgTest" -Tag @("PowerShell", "Build") {
                 $root = Get-SolutionRoot
 
                 $PassThru | Should be $true
-                $OutputFile | Should BeLike (Join-PathEx $root PrtgAPI.Tests.UnitTests TestResults "PrtgAPI_PowerShell_*.xml")
+                $OutputFile | Should BeLike (Join-PathEx $root src PrtgAPI.Tests.UnitTests TestResults "PrtgAPI_PowerShell_*.xml")
                 $OutputFormat | Should Be "NUnitXml"
-                $Script | Should Be (Join-PathEx $root PrtgAPI.Tests.UnitTests PowerShell)
+                $Script | Should Be (Join-PathEx $root src PrtgAPI.Tests.UnitTests PowerShell)
                 $Tag[0] | Should Be "UnitTest"
                 $Tag[1] | Should Be "IntegrationTest"
 
@@ -234,12 +234,12 @@ Describe "Invoke-PrtgTest" -Tag @("PowerShell", "Build") {
 
         Mock-InstallDotnet -Windows
 
-        $solutionRoot = Get-SolutionRoot
+        $sourceRoot = Get-SourceRoot
 
         $expected = @(
             "& `"dotnet`""
             "test"
-            Join-PathEx $solutionRoot PrtgAPI.Tests.UnitTests PrtgAPIv17.Tests.UnitTests.csproj
+            Join-PathEx $sourceRoot PrtgAPI.Tests.UnitTests PrtgAPIv17.Tests.UnitTests.csproj
             "-nologo"
             "--no-restore"
             "--no-build"

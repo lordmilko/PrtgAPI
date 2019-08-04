@@ -23,7 +23,7 @@
 
   <!-- Common Definitions -->
 
-  <Import Project="..\build\Common.props" />
+  <Import Project="..\..\build\Common.props" />
 
   <PropertyGroup>
     <DocumentationFile>$(OutputPath)PrtgAPI.PowerShell.xml</DocumentationFile>

@@ -93,7 +93,7 @@ Describe "Invoke-PrtgBuild" -Tag @("PowerShell", "Build") {
         $expected3 = @(
             "dotnet"
             "build"
-            Join-PathEx (Get-SolutionRoot) PrtgAPI PrtgAPIv17.csproj
+            Join-PathEx (Get-SourceRoot) PrtgAPI PrtgAPIv17.csproj
             "-nologo"
             "-c"
             "Debug"
@@ -118,7 +118,7 @@ Describe "Invoke-PrtgBuild" -Tag @("PowerShell", "Build") {
         $expected2 = @(
             "&"
             "C:\msbuild.exe"
-            Join-PathEx (Get-SolutionRoot) PrtgAPI PrtgAPI.csproj
+            Join-PathEx (Get-SourceRoot) PrtgAPI PrtgAPI.csproj
             "/verbosity:minimal"
             "/p:Configuration=Debug"
         )
@@ -177,7 +177,7 @@ Describe "Invoke-PrtgBuild" -Tag @("PowerShell", "Build") {
         $expected2 = @(
             "&"
             "C:\msbuild.exe"
-            Join-PathEx (Get-SolutionRoot) PrtgAPI PrtgAPI.csproj
+            Join-PathEx (Get-SourceRoot) PrtgAPI PrtgAPI.csproj
             "/verbosity:minimal"
             "/p:Configuration=Debug"
             "/bl:$expected2"

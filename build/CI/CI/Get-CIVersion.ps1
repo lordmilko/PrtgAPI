@@ -41,7 +41,7 @@ function Get-CIVersionInternal($BuildFolder, $IsCore)
     }
     else
     {
-        $versionPath = Join-Path $BuildFolder "PrtgAPI\Properties\Version.cs"
+        $versionPath = Join-Path $BuildFolder "src\PrtgAPI\Properties\Version.cs"
 
         if(!(Test-Path $versionPath))
         {
@@ -55,7 +55,7 @@ function Get-CIVersionInternal($BuildFolder, $IsCore)
         $package = ([Version]$file).ToString(3)
     }
 
-    $psd1Path = Join-Path $BuildFolder "PrtgAPI.PowerShell\PowerShell\Resources\PrtgAPI.psd1"
+    $psd1Path = Join-Path $BuildFolder "src\PrtgAPI.PowerShell\PowerShell\Resources\PrtgAPI.psd1"
 
     if(!(Test-Path $psd1Path))
     {

@@ -18,10 +18,10 @@ matrix:
       osx_image: xcode10.2
 
 install:
-  - pwsh -c "ipmo ./Tools/CI/Travis.psm1 -DisableNameChecking; Invoke-TravisInstall"
+  - pwsh -c "ipmo ./build/CI/Travis.psm1 -DisableNameChecking; Invoke-TravisInstall"
 
 script:
-  - pwsh -c "ipmo ./Tools/CI/Travis.psm1 -DisableNameChecking; Invoke-TravisScript"
+  - pwsh -c "ipmo ./build/CI/Travis.psm1 -DisableNameChecking; Invoke-TravisScript"
 
 addons:
   snaps:

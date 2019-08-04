@@ -1,1 +1,1 @@
-start powershell -executionpolicy bypass -noexit -noninteractive -command "ipmo psreadline; import-module '%~dp0\Tools\PrtgAPI.Build' -Args $true"
+start powershell -executionpolicy bypass -noexit -noninteractive -command "ipmo psreadline; import-module '%~dp0\Build\PrtgAPI.Build' -Args $true"

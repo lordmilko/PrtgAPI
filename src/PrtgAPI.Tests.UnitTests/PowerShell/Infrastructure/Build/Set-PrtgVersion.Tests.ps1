@@ -35,7 +35,7 @@ function MockVersion
 </Project>
 "@
 
-    $versionFile = "$TestDrive\PrtgAPI\Properties\Version.cs"
+    $versionFile = "$TestDrive\src\PrtgAPI\Properties\Version.cs"
     New-Item $versionFile -ItemType File -Force | Out-Null
 
     Set-Content $versionFile @"
@@ -49,7 +49,7 @@ using System.Reflection;
 
 "@
 
-    $psd1 = "$TestDrive\PrtgAPI.PowerShell\PowerShell\Resources\PrtgAPI.psd1"
+    $psd1 = "$TestDrive\src\PrtgAPI.PowerShell\PowerShell\Resources\PrtgAPI.psd1"
     New-Item $psd1 -ItemType File -Force | Out-Null
 
 

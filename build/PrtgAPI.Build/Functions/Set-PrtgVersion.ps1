@@ -135,7 +135,7 @@ using System.Reflection;
 
     $root = Get-SolutionRoot
 
-    $props = Join-Path $root "PrtgAPI\Properties\Version.cs"
+    $props = Join-Path $root "src\PrtgAPI\Properties\Version.cs"
 
     Set-Content $props $newContent
 }
@@ -143,7 +143,7 @@ using System.Reflection;
 function SetPsd1Props($version)
 {
     $root = Get-SolutionRoot
-    $psd1Path = Join-Path $root "PrtgAPI.PowerShell\PowerShell\Resources\PrtgAPI.psd1"
+    $psd1Path = Join-Path $root "src\PrtgAPI.PowerShell\PowerShell\Resources\PrtgAPI.psd1"
 
     if(!(Test-Path $psd1Path))
     {

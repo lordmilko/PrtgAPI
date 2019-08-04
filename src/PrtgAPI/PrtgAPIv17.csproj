@@ -1,5 +1,5 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  <Import Project="..\build\NuGet.props" />
+  <Import Project="..\..\build\NuGet.props" />
 
   <!-- Project Configuration -->
 
@@ -28,7 +28,7 @@
   
   <!-- Common Definitions -->
 
-  <Import Project="..\build\Common.props" />
+  <Import Project="..\..\build\Common.props" />
 
   <!-- References -->
   

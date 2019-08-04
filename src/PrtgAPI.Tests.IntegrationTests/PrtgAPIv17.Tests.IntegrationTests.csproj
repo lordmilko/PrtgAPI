@@ -10,16 +10,16 @@
     <RootNamespace>PrtgAPI.Tests.IntegrationTests</RootNamespace>
   </PropertyGroup>
 
-  <Import Project="..\build\Common.props" />
+  <Import Project="..\..\build\Common.props" />
 
   <!-- Content -->
 
   <ItemGroup>
     <Compile Include="..\PrtgAPI\Enums\Serialization\ObjectPropertyCategory.cs" Link="Support\ObjectPropertyCategory.cs" />
 
-    <None Include="..\Tools\CI\Tests\Appveyor.Tests.ps1" Link="PowerShell\Infrastructure\Appveyor.Tests.ps1" />
-    <None Include="..\Tools\CI\Tests\CI.Tests.ps1" Link="PowerShell\Infrastructure\CI.Tests.ps1" />
-    <None Include="..\Tools\CI\Tests\Travis.Tests.ps1" Link="PowerShell\Infrastructure\Travis.Tests.ps1" />
+    <None Include="..\..\Build\CI\Tests\Appveyor.Tests.ps1" Link="PowerShell\Infrastructure\Appveyor.Tests.ps1" />
+    <None Include="..\..\Build\CI\Tests\CI.Tests.ps1" Link="PowerShell\Infrastructure\CI.Tests.ps1" />
+    <None Include="..\..\Build\CI\Tests\Travis.Tests.ps1" Link="PowerShell\Infrastructure\Travis.Tests.ps1" />
   </ItemGroup>
   
   <!-- References -->

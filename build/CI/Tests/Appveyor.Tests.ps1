@@ -2,7 +2,7 @@ Import-Module $PSScriptRoot\..\ci.psm1 -Scope Local
 Import-Module $PSScriptRoot\..\Appveyor.psm1 -DisableNameChecking -Scope Local
 
 $skipBuildModule = $true
-. $PSScriptRoot\..\..\..\PrtgAPI.Tests.UnitTests\Support\PowerShell\BuildCore.ps1
+. $PSScriptRoot\..\..\..\src\PrtgAPI.Tests.UnitTests\Support\PowerShell\BuildCore.ps1
 
 #region Support
 

@@ -1,9 +1,9 @@
 ﻿if(!$skipBuildModule)
 {
-    ipmo $PSScriptRoot\..\..\..\Tools\PrtgAPI.Build -Scope Local
+    ipmo $PSScriptRoot\..\..\..\..\build\PrtgAPI.Build -Scope Local
 }
 
-ipmo $PSScriptRoot\..\..\..\Tools\CI\ci.psm1 -Scope Local
+ipmo $PSScriptRoot\..\..\..\..\build\CI\ci.psm1 -Scope Local
 
 Install-CIDependency pester
 
@@ -43,7 +43,12 @@ function WithoutTestDrive($script)
 
 function Get-SolutionRoot
 {
-    return Resolve-Path "$PSScriptRoot\..\..\.."
+    return Resolve-Path "$PSScriptRoot\..\..\..\.."
+}
+
+function Get-SourceRoot
+{
+    Join-Path (Get-SolutionRoot) "src"
 }
 
 function Get-ProcessTree

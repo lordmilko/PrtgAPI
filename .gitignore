@@ -3,7 +3,7 @@
 #################
 
 # Local Settings
-PrtgAPI.Tests.IntegrationTests/Settings.Local.cs
+Settings.Local.cs
 appveyor.local.json
 
 #################

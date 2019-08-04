@@ -55,7 +55,7 @@ Describe "Get-PrtgCommand" -Tag @("PowerShell", "Build") {
 
         $root = Get-SolutionRoot
 
-        $psd1Folder = Join-Path $root "Tools\PrtgAPI.Build"
+        $psd1Folder = Join-Path $root "build\PrtgAPI.Build"
         $psd1Path = Join-Path $psd1Folder "PrtgAPI.Build.psd1"
         $buildFunctions = Join-Path $psd1Folder "Functions"
 

@@ -106,7 +106,7 @@ function Get-TestProject($IsCore, $integration = $false)
         $name = "Integration"
     }
 
-    $folder = "PrtgAPI.Tests.$($name)Tests"
+    $folder = Join-Path "src" "PrtgAPI.Tests.$($name)Tests"
     $csproj = "PrtgAPI.Tests.$($name)Tests.csproj"
     $powerShell = Join-Path $folder "PowerShell"
 
@@ -153,7 +153,7 @@ function Get-PowerShellOutputDir
         $IsCore
     )
 
-    $base = Join-Path $BuildFolder "PrtgAPI.PowerShell\bin\$Configuration\"
+    $base = Join-Path $BuildFolder "src\PrtgAPI.PowerShell\bin\$Configuration\"
 
     if($IsCore)
     {

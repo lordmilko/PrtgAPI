@@ -23,7 +23,7 @@ function Enable-AppveyorRDPAccess
 
 function Get-DebugTargetFramework
 {
-    [xml]$xml = gc (Join-Path $env:APPVEYOR_BUILD_FOLDER "Directory.Build.props")
+    [xml]$xml = gc (Join-Path $env:APPVEYOR_BUILD_FOLDER "src\Directory.Build.props")
     
     $debugVersion = ($xml.project.PropertyGroup.targetframeworks|where condition -ne "`$(IsUnix)")."#text"
 

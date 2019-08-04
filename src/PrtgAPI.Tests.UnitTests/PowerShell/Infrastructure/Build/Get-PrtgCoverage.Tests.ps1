@@ -8,7 +8,7 @@ function GetPowerShellCommand
 
     $temp = [IO.Path]::GetTempPath()
 
-    $root = Get-SolutionRoot
+    $root = Get-SourceRoot
 
     $expected = @(
         "&"
@@ -34,7 +34,7 @@ function GetCSharpCoreCommand($configuration = "Debug")
 
     $temp = [IO.Path]::GetTempPath()
 
-    $root = Get-SolutionRoot
+    $root = Get-SourceRoot
 
     return @(
         "&"
@@ -57,7 +57,7 @@ function GetCSharpFullCommand($configuration = "Debug")
         return "C:\vstest.console.exe"
     } -ModuleName CI
 
-    $root = Get-SolutionRoot
+    $root = Get-SourceRoot
     $temp = [IO.Path]::GetTempPath()
 
     $expected = @(
@@ -224,7 +224,7 @@ Describe "Get-PrtgCoverage" -Tag @("PowerShell", "Build") {
 
         $dotnet = (gcm dotnet).Source
         $temp = [IO.Path]::GetTempPath()
-        $root = Get-SolutionRoot
+        $root = Get-SourceRoot
 
         $expected1 = @(
             "&"
@@ -257,7 +257,7 @@ Describe "Get-PrtgCoverage" -Tag @("PowerShell", "Build") {
         } -ModuleName CI
 
         $temp = [IO.Path]::GetTempPath()
-        $root = Get-SolutionRoot
+        $root = Get-SourceRoot
 
         $expected1 = @(
             "&"

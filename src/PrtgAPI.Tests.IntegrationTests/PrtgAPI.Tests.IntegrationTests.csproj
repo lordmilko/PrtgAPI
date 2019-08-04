@@ -118,16 +118,13 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\Tools\CI\Tests\Appveyor.Tests.ps1">
+    <None Include="..\..\Build\CI\Tests\Appveyor.Tests.ps1">
       <Link>PowerShell\Infrastructure\Appveyor.Tests.ps1</Link>
     </None>
-    <None Include="..\Tools\CI\Tests\Build.Tests.ps1">
-      <Link>PowerShell\Infrastructure\Build.Tests.ps1</Link>
-    </None>
-    <None Include="..\Tools\CI\Tests\CI.Tests.ps1">
+    <None Include="..\..\Build\CI\Tests\CI.Tests.ps1">
       <Link>PowerShell\Infrastructure\CI.Tests.ps1</Link>
     </None>
-    <None Include="..\Tools\CI\Tests\Travis.Tests.ps1">
+    <None Include="..\..\Build\CI\Tests\Travis.Tests.ps1">
       <Link>PowerShell\Infrastructure\Travis.Tests.ps1</Link>
     </None>
     <None Include="New-TestSettings.ps1" />

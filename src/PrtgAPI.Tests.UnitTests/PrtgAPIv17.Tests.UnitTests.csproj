@@ -16,7 +16,7 @@
     </AssemblyAttribute>
   </ItemGroup>
 
-  <Import Project="..\build\Common.props" />
+  <Import Project="..\..\build\Common.props" />
 
   <!-- Content -->
 

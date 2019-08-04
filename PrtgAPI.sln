@@ -3,115 +3,20 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrtgAPI.PowerShell", "PrtgAPI.PowerShell\PrtgAPI.PowerShell.csproj", "{C55D8F50-71DE-42C6-A758-5EFF855F318D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrtgAPI.PowerShell", "src\PrtgAPI.PowerShell\PrtgAPI.PowerShell.csproj", "{C55D8F50-71DE-42C6-A758-5EFF855F318D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrtgAPI", "PrtgAPI\PrtgAPI.csproj", "{0F6F773A-7053-424E-89F8-43467A695433}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrtgAPI", "src\PrtgAPI\PrtgAPI.csproj", "{0F6F773A-7053-424E-89F8-43467A695433}"
 	ProjectSection(ProjectDependencies) = postProject
 		{C4572A75-AC79-4E5E-B253-1A545446220A} = {C4572A75-AC79-4E5E-B253-1A545446220A}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrtgAPI.Tests.UnitTests", "PrtgAPI.Tests.UnitTests\PrtgAPI.Tests.UnitTests.csproj", "{2179C33F-C774-45AF-A664-338B8C3B799B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrtgAPI.Tests.UnitTests", "src\PrtgAPI.Tests.UnitTests\PrtgAPI.Tests.UnitTests.csproj", "{2179C33F-C774-45AF-A664-338B8C3B799B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrtgAPI.Tests.IntegrationTests", "PrtgAPI.Tests.IntegrationTests\PrtgAPI.Tests.IntegrationTests.csproj", "{60277601-FF8C-4712-BE9B-972921F5C763}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrtgAPI.Tests.IntegrationTests", "src\PrtgAPI.Tests.IntegrationTests\PrtgAPI.Tests.IntegrationTests.csproj", "{60277601-FF8C-4712-BE9B-972921F5C763}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{873CF2EE-4D15-4445-BAE9-33F1D82848A0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrtgAPI.CodeGenerator", "Tools\PrtgAPI.CodeGenerator\PrtgAPI.CodeGenerator.csproj", "{C4572A75-AC79-4E5E-B253-1A545446220A}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CI", "CI", "{704FF895-ABCF-4C13-A731-1BBFA890097F}"
-	ProjectSection(SolutionItems) = preProject
-		Tools\CI\Appveyor.psm1 = Tools\CI\Appveyor.psm1
-		Tools\CI\ci.psm1 = Tools\CI\ci.psm1
-		Tools\CI\Travis.psm1 = Tools\CI\Travis.psm1
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PrtgAPI.Build", "PrtgAPI.Build", "{FD3FC018-16E2-4C03-B7B0-96053F7BBF15}"
-	ProjectSection(SolutionItems) = preProject
-		Tools\PrtgAPI.Build\PrtgAPI.Build.Format.ps1xml = Tools\PrtgAPI.Build\PrtgAPI.Build.Format.ps1xml
-		Tools\PrtgAPI.Build\PrtgAPI.Build.psd1 = Tools\PrtgAPI.Build\PrtgAPI.Build.psd1
-		Tools\PrtgAPI.Build\PrtgAPI.Build.psm1 = Tools\PrtgAPI.Build\PrtgAPI.Build.psm1
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Functions", "Functions", "{1F1BA813-E71F-4138-A6B9-E2B0AEBCD0F1}"
-	ProjectSection(SolutionItems) = preProject
-		Tools\PrtgAPI.Build\Functions\Clear-PrtgBuild.ps1 = Tools\PrtgAPI.Build\Functions\Clear-PrtgBuild.ps1
-		Tools\PrtgAPI.Build\Functions\Get-PrtgCommand.ps1 = Tools\PrtgAPI.Build\Functions\Get-PrtgCommand.ps1
-		Tools\PrtgAPI.Build\Functions\Get-PrtgCoverage.ps1 = Tools\PrtgAPI.Build\Functions\Get-PrtgCoverage.ps1
-		Tools\PrtgAPI.Build\Functions\Get-PrtgHelp.ps1 = Tools\PrtgAPI.Build\Functions\Get-PrtgHelp.ps1
-		Tools\PrtgAPI.Build\Functions\Get-PrtgLog.ps1 = Tools\PrtgAPI.Build\Functions\Get-PrtgLog.ps1
-		Tools\PrtgAPI.Build\Functions\Get-PrtgTestResult.ps1 = Tools\PrtgAPI.Build\Functions\Get-PrtgTestResult.ps1
-		Tools\PrtgAPI.Build\Functions\Get-PrtgVersion.ps1 = Tools\PrtgAPI.Build\Functions\Get-PrtgVersion.ps1
-		Tools\PrtgAPI.Build\Functions\Initialize-BuildEnvironment.ps1 = Tools\PrtgAPI.Build\Functions\Initialize-BuildEnvironment.ps1
-		Tools\PrtgAPI.Build\Functions\Install-PrtgDependency.ps1 = Tools\PrtgAPI.Build\Functions\Install-PrtgDependency.ps1
-		Tools\PrtgAPI.Build\Functions\Invoke-PrtgAnalyzer.ps1 = Tools\PrtgAPI.Build\Functions\Invoke-PrtgAnalyzer.ps1
-		Tools\PrtgAPI.Build\Functions\Invoke-PrtgBuild.ps1 = Tools\PrtgAPI.Build\Functions\Invoke-PrtgBuild.ps1
-		Tools\PrtgAPI.Build\Functions\Invoke-PrtgTest.ps1 = Tools\PrtgAPI.Build\Functions\Invoke-PrtgTest.ps1
-		Tools\PrtgAPI.Build\Functions\New-PrtgPackage.ps1 = Tools\PrtgAPI.Build\Functions\New-PrtgPackage.ps1
-		Tools\PrtgAPI.Build\Functions\Set-PrtgVersion.ps1 = Tools\PrtgAPI.Build\Functions\Set-PrtgVersion.ps1
-		Tools\PrtgAPI.Build\Functions\Simulate-PrtgCI.ps1 = Tools\PrtgAPI.Build\Functions\Simulate-PrtgCI.ps1
-		Tools\PrtgAPI.Build\Functions\Start-PrtgAPI.ps1 = Tools\PrtgAPI.Build\Functions\Start-PrtgAPI.ps1
-		Tools\PrtgAPI.Build\Functions\Update-PrtgVersion.ps1 = Tools\PrtgAPI.Build\Functions\Update-PrtgVersion.ps1
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Appveyor", "Appveyor", "{7F7BFA04-D173-4D43-9BCC-AB6895F7C3F6}"
-	ProjectSection(SolutionItems) = preProject
-		Tools\CI\Appveyor\Clear-AppveyorBuild.ps1 = Tools\CI\Appveyor\Clear-AppveyorBuild.ps1
-		Tools\CI\Appveyor\Get-AppveyorLocalConfig.ps1 = Tools\CI\Appveyor\Get-AppveyorLocalConfig.ps1
-		Tools\CI\Appveyor\Invoke-AppveyorAfterBuild.ps1 = Tools\CI\Appveyor\Invoke-AppveyorAfterBuild.ps1
-		Tools\CI\Appveyor\Invoke-AppveyorAfterTest.ps1 = Tools\CI\Appveyor\Invoke-AppveyorAfterTest.ps1
-		Tools\CI\Appveyor\Invoke-AppveyorBeforeBuild.ps1 = Tools\CI\Appveyor\Invoke-AppveyorBeforeBuild.ps1
-		Tools\CI\Appveyor\Invoke-AppveyorBeforeTest.ps1 = Tools\CI\Appveyor\Invoke-AppveyorBeforeTest.ps1
-		Tools\CI\Appveyor\Invoke-AppveyorBuild.ps1 = Tools\CI\Appveyor\Invoke-AppveyorBuild.ps1
-		Tools\CI\Appveyor\Invoke-AppveyorInstall.ps1 = Tools\CI\Appveyor\Invoke-AppveyorInstall.ps1
-		Tools\CI\Appveyor\Invoke-AppveyorTest.ps1 = Tools\CI\Appveyor\Invoke-AppveyorTest.ps1
-		Tools\CI\Appveyor\Measure-AppveyorCoverage.ps1 = Tools\CI\Appveyor\Measure-AppveyorCoverage.ps1
-		Tools\CI\Appveyor\New-AppveyorPackage.ps1 = Tools\CI\Appveyor\New-AppveyorPackage.ps1
-		Tools\CI\Appveyor\Set-AppveyorVersion.ps1 = Tools\CI\Appveyor\Set-AppveyorVersion.ps1
-		Tools\CI\Appveyor\Simulate-Appveyor.ps1 = Tools\CI\Appveyor\Simulate-Appveyor.ps1
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CI", "CI", "{CF5106EF-66EF-4167-81C5-069295265169}"
-	ProjectSection(SolutionItems) = preProject
-		Tools\CI\CI\Clear-CIBuild.ps1 = Tools\CI\CI\Clear-CIBuild.ps1
-		Tools\CI\CI\Get-CIDependency.ps1 = Tools\CI\CI\Get-CIDependency.ps1
-		Tools\CI\CI\Get-CIVersion.ps1 = Tools\CI\CI\Get-CIVersion.ps1
-		Tools\CI\CI\Install-CIDependency.ps1 = Tools\CI\CI\Install-CIDependency.ps1
-		Tools\CI\CI\Invoke-CIBuild.ps1 = Tools\CI\CI\Invoke-CIBuild.ps1
-		Tools\CI\CI\Invoke-CITest.ps1 = Tools\CI\CI\Invoke-CITest.ps1
-		Tools\CI\CI\New-CSharpPackage.ps1 = Tools\CI\CI\New-CSharpPackage.ps1
-		Tools\CI\CI\New-PowerShellPackage.ps1 = Tools\CI\CI\New-PowerShellPackage.ps1
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Helpers", "Helpers", "{FBCD6DE6-11CC-4BC4-B88A-56CFFCFA9E97}"
-	ProjectSection(SolutionItems) = preProject
-		Tools\CI\Helpers\Get-CodeCoverage.ps1 = Tools\CI\Helpers\Get-CodeCoverage.ps1
-		Tools\CI\Helpers\Get-SolutionRoot.ps1 = Tools\CI\Helpers\Get-SolutionRoot.ps1
-		Tools\CI\Helpers\Import-ModuleFunctions.ps1 = Tools\CI\Helpers\Import-ModuleFunctions.ps1
-		Tools\CI\Helpers\Install-Dependency.ps1 = Tools\CI\Helpers\Install-Dependency.ps1
-		Tools\CI\Helpers\Invoke-Process.ps1 = Tools\CI\Helpers\Invoke-Process.ps1
-		Tools\CI\Helpers\PackageManager.ps1 = Tools\CI\Helpers\PackageManager.ps1
-		Tools\CI\Helpers\Write-Log.ps1 = Tools\CI\Helpers\Write-Log.ps1
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{4E3C0D88-95C4-4ECD-9C49-8CAC355D2731}"
-	ProjectSection(SolutionItems) = preProject
-		Tools\CI\Tests\Appveyor.Tests.ps1 = Tools\CI\Tests\Appveyor.Tests.ps1
-		Tools\CI\Tests\CI.Tests.ps1 = Tools\CI\Tests\CI.Tests.ps1
-		Tools\CI\Tests\Travis.Tests.ps1 = Tools\CI\Tests\Travis.Tests.ps1
-	EndProjectSection
-	ProjectSection(FolderStartupServices) = postProject
-		{82A7F48D-3B50-4B1E-B82E-3ADA8210C358} = {82A7F48D-3B50-4B1E-B82E-3ADA8210C358}
-	EndProjectSection
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Travis", "Travis", "{7386C761-E5E4-429D-A5AF-58AE25646917}"
-	ProjectSection(SolutionItems) = preProject
-		Tools\CI\Travis\Clear-TravisBuild.ps1 = Tools\CI\Travis\Clear-TravisBuild.ps1
-		Tools\CI\Travis\Invoke-TravisBuild.ps1 = Tools\CI\Travis\Invoke-TravisBuild.ps1
-		Tools\CI\Travis\Invoke-TravisInstall.ps1 = Tools\CI\Travis\Invoke-TravisInstall.ps1
-		Tools\CI\Travis\Invoke-TravisScript.ps1 = Tools\CI\Travis\Invoke-TravisScript.ps1
-		Tools\CI\Travis\Invoke-TravisTest.ps1 = Tools\CI\Travis\Invoke-TravisTest.ps1
-		Tools\CI\Travis\Simulate-Travis.ps1 = Tools\CI\Travis\Simulate-Travis.ps1
-	EndProjectSection
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PrtgAPI.CodeGenerator", "src\Tools\PrtgAPI.CodeGenerator\PrtgAPI.CodeGenerator.csproj", "{C4572A75-AC79-4E5E-B253-1A545446220A}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{7AE797AC-853F-419D-9B53-800AD28046D8}"
 	ProjectSection(SolutionItems) = preProject
@@ -127,9 +32,101 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{9C910B54-023C-4775-8327-C043705A5DF4}"
 	ProjectSection(SolutionItems) = preProject
 		build\Common.props = build\Common.props
-		Directory.Build.props = Directory.Build.props
+		src\Directory.Build.props = src\Directory.Build.props
 		build\NuGet.props = build\NuGet.props
 		build\Version.props = build\Version.props
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CI", "CI", "{80527A83-DA54-44F6-B778-2EC2285752EC}"
+	ProjectSection(SolutionItems) = preProject
+		build\CI\Appveyor.psm1 = build\CI\Appveyor.psm1
+		build\CI\ci.psm1 = build\CI\ci.psm1
+		build\CI\Travis.psm1 = build\CI\Travis.psm1
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "PrtgAPI.Build", "PrtgAPI.Build", "{2EA81F72-9AD4-4C27-BA07-0D023A898B34}"
+	ProjectSection(SolutionItems) = preProject
+		build\PrtgAPI.Build\PrtgAPI.Build.Format.ps1xml = build\PrtgAPI.Build\PrtgAPI.Build.Format.ps1xml
+		build\PrtgAPI.Build\PrtgAPI.Build.psd1 = build\PrtgAPI.Build\PrtgAPI.Build.psd1
+		build\PrtgAPI.Build\PrtgAPI.Build.psm1 = build\PrtgAPI.Build\PrtgAPI.Build.psm1
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Appveyor", "Appveyor", "{2AFD6A85-7D35-47B1-BA52-2B1D5E5FC116}"
+	ProjectSection(SolutionItems) = preProject
+		build\CI\Appveyor\Clear-AppveyorBuild.ps1 = build\CI\Appveyor\Clear-AppveyorBuild.ps1
+		build\CI\Appveyor\Get-AppveyorLocalConfig.ps1 = build\CI\Appveyor\Get-AppveyorLocalConfig.ps1
+		build\CI\Appveyor\Invoke-AppveyorAfterBuild.ps1 = build\CI\Appveyor\Invoke-AppveyorAfterBuild.ps1
+		build\CI\Appveyor\Invoke-AppveyorAfterTest.ps1 = build\CI\Appveyor\Invoke-AppveyorAfterTest.ps1
+		build\CI\Appveyor\Invoke-AppveyorBeforeBuild.ps1 = build\CI\Appveyor\Invoke-AppveyorBeforeBuild.ps1
+		build\CI\Appveyor\Invoke-AppveyorBeforeTest.ps1 = build\CI\Appveyor\Invoke-AppveyorBeforeTest.ps1
+		build\CI\Appveyor\Invoke-AppveyorBuild.ps1 = build\CI\Appveyor\Invoke-AppveyorBuild.ps1
+		build\CI\Appveyor\Invoke-AppveyorInstall.ps1 = build\CI\Appveyor\Invoke-AppveyorInstall.ps1
+		build\CI\Appveyor\Invoke-AppveyorTest.ps1 = build\CI\Appveyor\Invoke-AppveyorTest.ps1
+		build\CI\Appveyor\Measure-AppveyorCoverage.ps1 = build\CI\Appveyor\Measure-AppveyorCoverage.ps1
+		build\CI\Appveyor\New-AppveyorPackage.ps1 = build\CI\Appveyor\New-AppveyorPackage.ps1
+		build\CI\Appveyor\Set-AppveyorVersion.ps1 = build\CI\Appveyor\Set-AppveyorVersion.ps1
+		build\CI\Appveyor\Simulate-Appveyor.ps1 = build\CI\Appveyor\Simulate-Appveyor.ps1
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CI", "CI", "{BB80643E-F1C3-49B2-8201-DD62B9D57B57}"
+	ProjectSection(SolutionItems) = preProject
+		build\CI\CI\Clear-CIBuild.ps1 = build\CI\CI\Clear-CIBuild.ps1
+		build\CI\CI\Get-CIDependency.ps1 = build\CI\CI\Get-CIDependency.ps1
+		build\CI\CI\Get-CIVersion.ps1 = build\CI\CI\Get-CIVersion.ps1
+		build\CI\CI\Install-CIDependency.ps1 = build\CI\CI\Install-CIDependency.ps1
+		build\CI\CI\Invoke-CIBuild.ps1 = build\CI\CI\Invoke-CIBuild.ps1
+		build\CI\CI\Invoke-CITest.ps1 = build\CI\CI\Invoke-CITest.ps1
+		build\CI\CI\New-CSharpPackage.ps1 = build\CI\CI\New-CSharpPackage.ps1
+		build\CI\CI\New-PowerShellPackage.ps1 = build\CI\CI\New-PowerShellPackage.ps1
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Helpers", "Helpers", "{AA803D07-FAA3-4BE2-8532-8CD804A7F51A}"
+	ProjectSection(SolutionItems) = preProject
+		build\CI\Helpers\Get-CodeCoverage.ps1 = build\CI\Helpers\Get-CodeCoverage.ps1
+		build\CI\Helpers\Get-SolutionRoot.ps1 = build\CI\Helpers\Get-SolutionRoot.ps1
+		build\CI\Helpers\Import-ModuleFunctions.ps1 = build\CI\Helpers\Import-ModuleFunctions.ps1
+		build\CI\Helpers\Install-Dependency.ps1 = build\CI\Helpers\Install-Dependency.ps1
+		build\CI\Helpers\Invoke-Process.ps1 = build\CI\Helpers\Invoke-Process.ps1
+		build\CI\Helpers\PackageManager.ps1 = build\CI\Helpers\PackageManager.ps1
+		build\CI\Helpers\Write-Log.ps1 = build\CI\Helpers\Write-Log.ps1
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{39EA8634-FFF5-4A36-8572-9291665EC48D}"
+	ProjectSection(SolutionItems) = preProject
+		build\CI\Tests\Appveyor.Tests.ps1 = build\CI\Tests\Appveyor.Tests.ps1
+		build\CI\Tests\CI.Tests.ps1 = build\CI\Tests\CI.Tests.ps1
+		build\CI\Tests\Travis.Tests.ps1 = build\CI\Tests\Travis.Tests.ps1
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Travis", "Travis", "{BEC2E09D-7A00-4759-AB7B-BA7CFE140C7A}"
+	ProjectSection(SolutionItems) = preProject
+		build\CI\Travis\Clear-TravisBuild.ps1 = build\CI\Travis\Clear-TravisBuild.ps1
+		build\CI\Travis\Invoke-TravisBuild.ps1 = build\CI\Travis\Invoke-TravisBuild.ps1
+		build\CI\Travis\Invoke-TravisInstall.ps1 = build\CI\Travis\Invoke-TravisInstall.ps1
+		build\CI\Travis\Invoke-TravisScript.ps1 = build\CI\Travis\Invoke-TravisScript.ps1
+		build\CI\Travis\Invoke-TravisTest.ps1 = build\CI\Travis\Invoke-TravisTest.ps1
+		build\CI\Travis\Simulate-Travis.ps1 = build\CI\Travis\Simulate-Travis.ps1
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Functions", "Functions", "{0CE03635-7072-48A4-AD5A-7B50C62E2694}"
+	ProjectSection(SolutionItems) = preProject
+		build\PrtgAPI.Build\Functions\Clear-PrtgBuild.ps1 = build\PrtgAPI.Build\Functions\Clear-PrtgBuild.ps1
+		build\PrtgAPI.Build\Functions\Get-PrtgCommand.ps1 = build\PrtgAPI.Build\Functions\Get-PrtgCommand.ps1
+		build\PrtgAPI.Build\Functions\Get-PrtgCoverage.ps1 = build\PrtgAPI.Build\Functions\Get-PrtgCoverage.ps1
+		build\PrtgAPI.Build\Functions\Get-PrtgHelp.ps1 = build\PrtgAPI.Build\Functions\Get-PrtgHelp.ps1
+		build\PrtgAPI.Build\Functions\Get-PrtgLog.ps1 = build\PrtgAPI.Build\Functions\Get-PrtgLog.ps1
+		build\PrtgAPI.Build\Functions\Get-PrtgTestResult.ps1 = build\PrtgAPI.Build\Functions\Get-PrtgTestResult.ps1
+		build\PrtgAPI.Build\Functions\Get-PrtgVersion.ps1 = build\PrtgAPI.Build\Functions\Get-PrtgVersion.ps1
+		build\PrtgAPI.Build\Functions\Initialize-BuildEnvironment.ps1 = build\PrtgAPI.Build\Functions\Initialize-BuildEnvironment.ps1
+		build\PrtgAPI.Build\Functions\Install-PrtgDependency.ps1 = build\PrtgAPI.Build\Functions\Install-PrtgDependency.ps1
+		build\PrtgAPI.Build\Functions\Invoke-PrtgAnalyzer.ps1 = build\PrtgAPI.Build\Functions\Invoke-PrtgAnalyzer.ps1
+		build\PrtgAPI.Build\Functions\Invoke-PrtgBuild.ps1 = build\PrtgAPI.Build\Functions\Invoke-PrtgBuild.ps1
+		build\PrtgAPI.Build\Functions\Invoke-PrtgTest.ps1 = build\PrtgAPI.Build\Functions\Invoke-PrtgTest.ps1
+		build\PrtgAPI.Build\Functions\New-PrtgPackage.ps1 = build\PrtgAPI.Build\Functions\New-PrtgPackage.ps1
+		build\PrtgAPI.Build\Functions\Set-PrtgVersion.ps1 = build\PrtgAPI.Build\Functions\Set-PrtgVersion.ps1
+		build\PrtgAPI.Build\Functions\Simulate-PrtgCI.ps1 = build\PrtgAPI.Build\Functions\Simulate-PrtgCI.ps1
+		build\PrtgAPI.Build\Functions\Start-PrtgAPI.ps1 = build\PrtgAPI.Build\Functions\Start-PrtgAPI.ps1
+		build\PrtgAPI.Build\Functions\Update-PrtgVersion.ps1 = build\PrtgAPI.Build\Functions\Update-PrtgVersion.ps1
 	EndProjectSection
 EndProject
 Global
@@ -164,14 +161,14 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{C4572A75-AC79-4E5E-B253-1A545446220A} = {873CF2EE-4D15-4445-BAE9-33F1D82848A0}
-		{704FF895-ABCF-4C13-A731-1BBFA890097F} = {873CF2EE-4D15-4445-BAE9-33F1D82848A0}
-		{FD3FC018-16E2-4C03-B7B0-96053F7BBF15} = {873CF2EE-4D15-4445-BAE9-33F1D82848A0}
-		{1F1BA813-E71F-4138-A6B9-E2B0AEBCD0F1} = {FD3FC018-16E2-4C03-B7B0-96053F7BBF15}
-		{7F7BFA04-D173-4D43-9BCC-AB6895F7C3F6} = {704FF895-ABCF-4C13-A731-1BBFA890097F}
-		{CF5106EF-66EF-4167-81C5-069295265169} = {704FF895-ABCF-4C13-A731-1BBFA890097F}
-		{FBCD6DE6-11CC-4BC4-B88A-56CFFCFA9E97} = {704FF895-ABCF-4C13-A731-1BBFA890097F}
-		{4E3C0D88-95C4-4ECD-9C49-8CAC355D2731} = {704FF895-ABCF-4C13-A731-1BBFA890097F}
-		{7386C761-E5E4-429D-A5AF-58AE25646917} = {704FF895-ABCF-4C13-A731-1BBFA890097F}
+		{80527A83-DA54-44F6-B778-2EC2285752EC} = {9C910B54-023C-4775-8327-C043705A5DF4}
+		{2EA81F72-9AD4-4C27-BA07-0D023A898B34} = {9C910B54-023C-4775-8327-C043705A5DF4}
+		{2AFD6A85-7D35-47B1-BA52-2B1D5E5FC116} = {80527A83-DA54-44F6-B778-2EC2285752EC}
+		{BB80643E-F1C3-49B2-8201-DD62B9D57B57} = {80527A83-DA54-44F6-B778-2EC2285752EC}
+		{AA803D07-FAA3-4BE2-8532-8CD804A7F51A} = {80527A83-DA54-44F6-B778-2EC2285752EC}
+		{39EA8634-FFF5-4A36-8572-9291665EC48D} = {80527A83-DA54-44F6-B778-2EC2285752EC}
+		{BEC2E09D-7A00-4759-AB7B-BA7CFE140C7A} = {80527A83-DA54-44F6-B778-2EC2285752EC}
+		{0CE03635-7072-48A4-AD5A-7B50C62E2694} = {2EA81F72-9AD4-4C27-BA07-0D023A898B34}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B0EB9399-62E4-4193-B251-6720C4D3D830}

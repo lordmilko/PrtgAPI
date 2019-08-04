@@ -135,7 +135,7 @@ Describe "Simulate-PrtgCI" -Tag @("PowerShell", "Build") {
                 }
             }
 
-            $root = Get-SolutionRoot
+            $root = Get-SourceRoot
 
             $tempRepository = Join-Path ([IO.Path]::GetTempPath()) "TempRepository"
 
@@ -164,7 +164,7 @@ Describe "Simulate-PrtgCI" -Tag @("PowerShell", "Build") {
 
             Mock-InstallDotnet -Windows
 
-            $root = Get-SolutionRoot
+            $root = Get-SourceRoot
 
             try
             {
@@ -214,7 +214,7 @@ Describe "Simulate-PrtgCI" -Tag @("PowerShell", "Build") {
             $dotnet = (gcm dotnet).Source
             $temp = [IO.Path]::GetTempPath()
 
-            $root = Get-SolutionRoot
+            $root = Get-SourceRoot
 
             $expected1 = @(
                 "&"
@@ -635,7 +635,7 @@ Describe "Simulate-PrtgCI" -Tag @("PowerShell", "Build") {
                 "&"
                 "`"dotnet`""
                 "test"
-                Join-PathEx $root PrtgAPI.Tests.UnitTests PrtgAPIv17.Tests.UnitTests.csproj
+                Join-PathEx $root src PrtgAPI.Tests.UnitTests PrtgAPIv17.Tests.UnitTests.csproj
                 "-nologo"
                 "--no-restore"
                 "--no-build"

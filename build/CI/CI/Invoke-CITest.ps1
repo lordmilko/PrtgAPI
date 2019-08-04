@@ -51,7 +51,10 @@ function Invoke-CICSharpTest
         Invoke-CICSharpTestCore $csproj $Configuration $AdditionalArgs
     }
     else
-        $dll = Join-Path $BuildFolder "$($testProjectDetails.Directory)\bin\$Configuration\$($testProjectDetails.Directory).dll"
+    {
+        $ch = [IO.Path]::DirectorySeparatorChar
+
+        $dll = Join-Path $BuildFolder "$($testProjectDetails.Directory)\bin\$Configuration\$($testProjectDetails.Directory.Replace("src$ch",'')).dll"
         Write-Verbose "Using DLL '$dll'"
 
         Invoke-CICSharpTestFull $dll $BuildFolder $Configuration $AdditionalArgs

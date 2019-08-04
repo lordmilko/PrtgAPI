@@ -144,12 +144,12 @@ Describe "Clear-PrtgBuild" -Tag @("PowerShell", "Build") {
         foreach($project in $projects)
         {
             $expectedRemovals += @(
-                "$project\bin\foo.txt"
-                "$project\bin\bar"
-                "$project\bin"
-                "$project\obj\foo.txt"
-                "$project\obj\bar"
-                "$project\obj"
+                "src\$project\bin\foo.txt"
+                "src\$project\bin\bar"
+                "src\$project\bin"
+                "src\$project\obj\foo.txt"
+                "src\$project\obj\bar"
+                "src\$project\obj"
             )
         }
 

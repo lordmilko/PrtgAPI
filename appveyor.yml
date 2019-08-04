@@ -10,7 +10,7 @@ cache:
 install:
   # Install NuGet Provider, Chocolatey dependencies
   - ps: |
-      Import-Module .\tools\ci\Appveyor.psm1 -DisableNameChecking
+      Import-Module .\build\ci\Appveyor.psm1 -DisableNameChecking
       Set-AppveyorBuildMode -IsCore:$true
       Invoke-AppveyorInstall
 before_build:

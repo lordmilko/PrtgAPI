@@ -12,7 +12,7 @@ Describe "New-PrtgPackage" -Tag @("PowerShell", "Build") {
 
         Mock-InstallDotnet -Windows
 
-        $root = Get-SolutionRoot
+        $root = Get-SourceRoot
         $tempRepository = Join-Path ([IO.Path]::GetTempPath()) "TempRepository"
 
         Mock "Get-PrtgVersion" {
@@ -52,7 +52,7 @@ Describe "New-PrtgPackage" -Tag @("PowerShell", "Build") {
 
         Mock-NuGet
 
-        $root = Get-SolutionRoot
+        $root = Get-SourceRoot
         $tempRepository = Join-Path ([IO.Path]::GetTempPath()) "TempRepository"
 
         Mock "Get-PrtgVersion" {

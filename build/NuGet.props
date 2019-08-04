@@ -24,6 +24,6 @@ For more information and usage examples, please see the Project Site.</PackageRe
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="..\LICENSE" Pack="true" PackagePath="" Visible="false"/>
+    <None Include="..\..\LICENSE" Pack="true" PackagePath="" Visible="false"/>
   </ItemGroup>
 </Project>

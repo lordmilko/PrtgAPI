@@ -13,7 +13,7 @@
     <TargetFramework>net452</TargetFramework>
   </PropertyGroup>
 
-  <Import Project="..\..\build\Common.props" />
+  <Import Project="..\..\..\build\Common.props" />
 
   <PropertyGroup>
     <!-- .NET Core does not yet support generating T4 Templates in Visual Studio -->

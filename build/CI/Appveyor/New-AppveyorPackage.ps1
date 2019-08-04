@@ -13,9 +13,9 @@ function New-AppveyorPackage
 
     $config = [PSCustomObject]@{
         SolutionRoot          = "$env:APPVEYOR_BUILD_FOLDER"
-        CSharpProjectRoot     = "$env:APPVEYOR_BUILD_FOLDER\PrtgAPI"
-        CSharpOutputDir       = "$env:APPVEYOR_BUILD_FOLDER\PrtgAPI\bin\$env:CONFIGURATION"
-        PowerShellProjectRoot = "$env:APPVEYOR_BUILD_FOLDER\PrtgAPI.PowerShell"
+        CSharpProjectRoot     = "$env:APPVEYOR_BUILD_FOLDER\src\PrtgAPI"
+        CSharpOutputDir       = "$env:APPVEYOR_BUILD_FOLDER\src\PrtgAPI\bin\$env:CONFIGURATION"
+        PowerShellProjectRoot = "$env:APPVEYOR_BUILD_FOLDER\src\PrtgAPI.PowerShell"
         PowerShellOutputDir   = Get-PowerShellOutputDir $env:APPVEYOR_BUILD_FOLDER $env:CONFIGURATION $IsCore
         Manager               = New-PackageManager
         Configuration         = $env:CONFIGURATION
