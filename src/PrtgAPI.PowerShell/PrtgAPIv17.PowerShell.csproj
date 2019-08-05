@@ -43,7 +43,7 @@
   <ItemGroup Condition="'$(FrameworkType)' == 'Full'">
     <Reference Include="Microsoft.CSharp" />
     <PackageReference Include="Microsoft.PowerShell.5.ReferenceAssemblies" Version="1.1.0" />
-    <PackageReference Include="XmlDoc2CmdletDoc" Version="0.2.12" PrivateAssets="all" />
+    <PackageReference Include="XmlDoc2CmdletDoc" Version="0.2.13" PrivateAssets="all" />
     <Reference Include="System.Net.Http" />
   </ItemGroup>
 
