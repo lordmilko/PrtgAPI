@@ -210,7 +210,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
                 var plural = vals.Count > 1 ? "s" : "";
 
                 continueStr = $"property '{RawProperty}' to value{plural} {string.Join(", ", vals)}";
-                whatIfStr = "{RawProperty} = '{RawValue}'";
+                whatIfStr = $"{RawProperty} = {RawValue.ToQuotedList()}"; //todo: bug? progress said it was setting property to system.object[] (it just did rawp.tostring()); we need to expand it to a quoted list or something
             }
             else if (ParameterSetName == ParameterSet.Raw)
             {
@@ -253,7 +253,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
                 if (ParameterSetName == ParameterSet.RawProperty)
                 {
                     var parameter = new CustomParameter(RawProperty, RawValue, ParameterType.MultiParameter);
-                    ExecuteOperation(() => client.SetObjectPropertyRaw(Object.Id, parameter), $"Setting object '{Object.Name}' (ID: {Object.Id}) setting '{RawProperty}' to '{RawValue}'");
+                    ExecuteOperation(() => client.SetObjectPropertyRaw(Object.Id, parameter), $"Setting object '{Object.Name}' (ID: {Object.Id}) setting '{RawProperty}' to {RawValue.ToQuotedList()}");
                 }
                 else
                 {
@@ -284,7 +284,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
                 if (ParameterSetName == ParameterSet.RawProperty)
                 {
                     var parameter = new CustomParameter(RawProperty, RawValue, ParameterType.MultiParameter);
-                    ExecuteMultiOperation(() => client.SetObjectPropertyRaw(ids, parameter), $"Setting {GetMultiTypeListSummary()} setting '{RawProperty}' to '{RawValue}'");
+                    ExecuteMultiOperation(() => client.SetObjectPropertyRaw(ids, parameter), $"Setting {GetMultiTypeListSummary()} setting '{RawProperty}' to {RawValue.ToQuotedList()}");
                 }
                 else
                 {

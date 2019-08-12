@@ -48,6 +48,9 @@ namespace PrtgAPI.Utilities
 
         public static string ToQuotedList<T>(this IEnumerable<T> list)
         {
+            if (list == null)
+                return "''";
+
             return string.Join(", ", list.Select(l => $"'{l}'"));
         }
     }
