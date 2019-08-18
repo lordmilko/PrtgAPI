@@ -14,6 +14,13 @@ using PrtgAPI.Request;
 using PrtgAPI.Request.Serialization;
 using PrtgAPI.Utilities;
 
+/* Static code used by the PrtgClient class
+ *
+ * See also:
+ * - Request\PrtgClient.Generated
+ * - Request\PrtgClient.Methods.Generated
+ */
+
 namespace PrtgAPI
 {
     /// <summary>
@@ -128,7 +135,7 @@ namespace PrtgAPI
         /// <param name="password">The password or passhash to authenticate with.</param>
         /// <param name="authMode">Whether the <paramref name="password"/> refers to a password or passhash. If a password is specified,
         /// this will automatically be resolved to a passhash.</param>
-        /// <param name="ignoreSSL">Whether to ignore all SSL errors retuned by <paramref name="server"/>. Affects all requests to your server for the life of your program.</param>
+        /// <param name="ignoreSSL">Whether to ignore all SSL errors retuned by <paramref name="server"/>. In .NET Framework affects all requests to your server for the life of your program.</param>
         public PrtgClient(string server, string username, string password, AuthMode authMode = AuthMode.Password, bool ignoreSSL = false)
             : this(server, username, password, authMode, new PrtgWebClient(ignoreSSL, server))
         {

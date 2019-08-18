@@ -31,20 +31,33 @@ namespace PrtgAPI.Request
                 this.server = Regex.Replace(server, "(.+?://)?(.+?)(:.*)?", "$2");
             }
 
+            //Bypass SSL validation errors if requested
             if (ignoreSSL)
+            {
+#if NETFRAMEWORK
                 ServicePointManager.ServerCertificateValidationCallback += IgnoreSSLCallback;
+#else
+                handler.ServerCertificateCustomValidationCallback = IgnoreSSLCallback;
+#endif
+            }
 
-            handler.CookieContainer = cookies;
-
-            //.NET Core should use DefaultProxyCredentials
+            //Configure any proxies to use default network credentials for automatic
+            //authentication
             var proxy = WebRequest.DefaultWebProxy;
 
             if (proxy != null && proxy.Credentials == null)
+            {
+#if NETFRAMEWORK
                 proxy.Credentials = CredentialCache.DefaultNetworkCredentials;
+#else
+                handler.DefaultProxyCredentials = CredentialCache.DefaultNetworkCredentials;
+#endif
+            }
             
             asyncClient = new HttpClient(handler);
         }
 
+#if NETFRAMEWORK
         private bool IgnoreSSLCallback(object sender, X509Certificate certificate, X509Chain chain,
             SslPolicyErrors sslPolicyErrors)
         {
@@ -64,6 +77,19 @@ namespace PrtgAPI.Request
 
             return false;
         }
+#else
+        private bool IgnoreSSLCallback(HttpRequestMessage request, X509Certificate2 certificate, X509Chain chain,
+            SslPolicyErrors sslPolicyErrors)
+        {
+            if (sslPolicyErrors == SslPolicyErrors.None)
+                return true;
+
+            if (request.RequestUri.Host.ToLower() == server)
+                return true;
+
+            return false;
+        }
+#endif
 
         public Task<HttpResponseMessage> SendSync(PrtgRequestMessage request, CancellationToken token)
         {

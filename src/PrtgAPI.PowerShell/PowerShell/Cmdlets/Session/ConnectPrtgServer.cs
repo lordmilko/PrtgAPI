@@ -147,7 +147,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
 
         /// <summary>
         /// <para type="description">Whether to ignore SSL certificate errors encountered when communicating with your <see cref="Server"/>.
-        /// Affects all requests for the life of your process.</para>
+        /// In Windows PowerShell affects all requests for the life of your process.</para>
         /// </summary>
         [Parameter(Mandatory = false)]
         public SwitchParameter IgnoreSSL { get; set; }
