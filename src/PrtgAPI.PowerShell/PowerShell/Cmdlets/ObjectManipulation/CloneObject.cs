@@ -176,7 +176,14 @@ namespace PrtgAPI.PowerShell.Cmdlets
         {
             config = GetCmdletConfig();
 
-            if (ShouldProcess($"{config.NameDescrption} ({config.IdDescription}, Destination: {DestinationId})"))
+            string destinationDescription;
+
+            if (Destination != null)
+                destinationDescription = $"'{Destination.Name}' (ID: {Destination.Id})";
+            else
+                destinationDescription = DestinationId.ToString();
+
+            if (ShouldProcess($"'{config.NameDescrption}' ({config.IdDescription}), Destination: {destinationDescription}"))
                 ExecuteOperation(Clone);
         }
 
@@ -334,7 +341,16 @@ namespace PrtgAPI.PowerShell.Cmdlets
 
         private void ExecuteOperation(Action action)
         {
-            ExecuteOperation(action, $"Cloning {config.TypeDescription.ToLower()} '{config.NameDescrption}' ({config.IdDescription})");
+            string destinationDescription;
+
+            if (Destination != null)
+            {
+                destinationDescription = $"{Destination.GetType().Name.ToLower()} '{Destination.Name}' (ID: {Destination.Id})";
+            }
+            else
+                destinationDescription = $"object ID {DestinationId}";
+
+            ExecuteOperation(action, $"Cloning {config.TypeDescription.ToLower()} '{config.NameDescrption}' ({config.IdDescription}) to {destinationDescription}");
         }
 
         private void ResolveObject<T>(int id, Func<int, List<T>> getObjects, Type trueType)
