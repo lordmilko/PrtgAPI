@@ -89,28 +89,70 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
 
         [TestMethod]
         [TestCategory("IntegrationTest")]
-        public void Data_GetObjectProperties_IllegalCharacter_NormalEndpoint()
+        public void Data_GetObjectProperties_IllegalXmlCharacter_NormalEndpoint()
         {
-            TestIllegalCharacter(Settings.CommentSensor, ObjectProperty.Name, s => s.Name);
+            TestIllegalXmlCharacter("first & second", Settings.CommentSensor, ObjectProperty.Name, s => s.Name);
         }
 
         [TestMethod]
         [TestCategory("IntegrationTest")]
-        public void Data_GetObjectProperties_IllegalCharacter_AlternateEndpoint()
+        public void Data_GetObjectProperties_IllegalXmlCharacter_AlternateEndpoint()
         {
-            TestIllegalCharacter(Settings.CommentSensor, ObjectProperty.Comments, s => s.Comments);
+            TestIllegalXmlCharacter("first & second", Settings.CommentSensor, ObjectProperty.Comments, s => s.Comments);
         }
 
         [TestMethod]
         [TestCategory("IntegrationTest")]
-        public void Data_GetObjectProperties_IllegalCharacter_RawProperty()
+        public void Data_GetObjectProperties_IllegalHtmlCharacter_NormalProperty()
+        {
+            TestIllegalXmlCharacter("Z:\\", Settings.UpSensor, ObjectProperty.Name, s => s.Name);
+        }
+
+        private void TestIllegalXmlCharacter(string str, int objectId, ObjectProperty property, Func<Sensor, string> getValue)
+        {
+            var originalProperty = client.GetObjectProperty<string>(objectId, property);
+            var originalValue = getValue(client.GetSensor(objectId));
+
+            AssertEx.AreEqual(originalValue, originalProperty, "Original value did not match original property value");
+
+            try
+            {
+                client.SetObjectProperty(objectId, property, str);
+
+                var newProperty = client.GetObjectProperty<string>(objectId, property);
+                var newValue = getValue(client.GetSensor(objectId));
+
+                Assert.AreNotEqual(originalProperty, newProperty);
+                Assert.AreNotEqual(newValue, originalValue);
+
+                Assert.AreEqual(newProperty, newValue);
+            }
+            finally
+            {
+                client.SetObjectProperty(objectId, property, originalValue);
+            }
+        }
+
+        [TestMethod]
+        [TestCategory("IntegrationTest")]
+        public void Data_GetObjectProperties_IllegalXmlCharacter_RawProperty()
+        {
+            TestIllegalCharacter_RawProperty("first & second");
+        }
+
+        [TestMethod]
+        [TestCategory("IntegrationTest")]
+        public void Data_GetObjectProperties_IllegalHtmlCharacter_RawProperty()
+        {
+            TestIllegalCharacter_RawProperty("Z:\\");
+        }
+
+        private void TestIllegalCharacter_RawProperty(string str)
         {
             var originalProperty = client.GetObjectPropertyRaw(Settings.UpSensor, "name_");
             var originalValue = client.GetSensor(Settings.UpSensor).Name;
 
             AssertEx.AreEqual(originalValue, originalProperty, "Original value did not match original property value");
-
-            var str = "first & second";
 
             try
             {
@@ -152,33 +194,6 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
             await action(async () => await readOnlyClient.GetDevicePropertiesAsync(Settings.Device));
             await action(async () => await readOnlyClient.GetGroupPropertiesAsync(Settings.Group));
             await action(async () => await readOnlyClient.GetProbePropertiesAsync(Settings.Probe));
-        }
-
-        private void TestIllegalCharacter(int objectId, ObjectProperty property, Func<Sensor, string> getValue)
-        {
-            var originalProperty = client.GetObjectProperty<string>(objectId, property);
-            var originalValue = getValue(client.GetSensor(objectId));
-
-            AssertEx.AreEqual(originalValue, originalProperty, "Original value did not match original property value");
-
-            var str = "first & second";
-
-            try
-            {
-                client.SetObjectProperty(objectId, property, str);
-
-                var newProperty = client.GetObjectProperty<string>(objectId, property);
-                var newValue = getValue(client.GetSensor(objectId));
-
-                Assert.AreNotEqual(originalProperty, newProperty);
-                Assert.AreNotEqual(newValue, originalValue);
-
-                Assert.AreEqual(newProperty, newValue);
-            }
-            finally
-            {
-                client.SetObjectProperty(objectId, property, originalValue);
-            }
         }
 
         private List<Tuple<string, SensorOrDeviceOrGroupOrProbe, object>> GetPropertiesForAnalysis(List<ObjectProperty> blacklist)

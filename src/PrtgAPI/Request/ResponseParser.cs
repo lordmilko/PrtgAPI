@@ -235,7 +235,7 @@ namespace PrtgAPI.Request
                 var version = Regex.Replace(versionMatch.Value, versionRegex, "$1", RegexOptions.Multiline);
                 var result = Regex.Replace(resultMatch.Value, resultRegex, "$1", RegexOptions.Multiline);
 
-                var newResult = result.Replace("&apos;", "'").Replace("&quot;", "\"").Replace("&gt;", ">").Replace("&lt;", "<").Replace("&amp;", "&");
+                var newResult = WebUtility.HtmlDecode(result);
 
                 var xml = new XElement("prtg",
                     new XElement("version", version),

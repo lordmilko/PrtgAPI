@@ -127,6 +127,45 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             AssertEx.AllPropertiesRetrieveValues(settings);
         }
 
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void GetObjectProperty_Deserializes_EncodedXml()
+        {
+            TestEncodedProperty("&gt;", ">");
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void GetObjectProperty_Deserializes_UnencodedXml()
+        {
+            TestEncodedProperty(">", ">");
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void GetObjectProperty_Deserializes_EncodedHtml()
+        {
+            TestEncodedProperty("&#92;", "\\");
+        }
+
+        //todo: also need a new integration test for the html backslash business
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void GetObjectProperty_Deserializes_UnencodedHtml()
+        {
+            TestEncodedProperty("\\", "\\");
+        }
+
+        private void TestEncodedProperty(string value, string expected)
+        {
+            var client = Initialize_Client(new BasicResponse($"<prtg><version>1.2.3.4</version><result>{value}</result></prtg>"));
+
+            var actual = client.GetObjectPropertyRaw(1001, "exeparams");
+
+            Assert.AreEqual(expected, actual);
+        }
+
         private void GetObjectProperty<T>(Func<PrtgClient, T> getProperty, string expected = "testName")
         {
             var client = Initialize_Client(new MultiTypeResponse());
