@@ -127,6 +127,36 @@ Describe "Clone-Object" -Tag @("PowerShell", "UnitTest") {
         }
     }
 
+    It "skips cloning to the -SourceId's parent with -SkipParent" {
+
+        try
+        {
+            SetMultiTypeResponse
+
+            $devices = Get-Device -Count 2
+            $sensor = Get-Sensor -Id 4000
+
+            $devices.Count | Should Be 2
+            $devices[0].Id = 2193
+            $devices[1].Id = 2194
+            $sensor.ParentId | Should Be 2193
+
+            SetAddressValidatorResponse @(
+                (GetLookup @("sensors") @($sensorProperties) 4000)
+                [Request]::Get("api/duplicateobject.htm?id=4000&name=Volume+IO+_Total0&targetid=2194")
+                [Request]::Get("api/table.xml?content=sensors&columns=$sensorProperties&count=*&filter_objid=9999")
+            )
+
+            $output = [string]::Join("`n",(&{try { ($devices | Clone-Object -SourceId 4000 -SkipParent | Out-Null) 3>&1 | %{$_.Message} } catch [exception] { }}))
+
+            $output | Should Be "Skipping 'Probe Device0' (ID: 2193) as it is the parent of clone source 'Volume IO _Total0' (ID: 4000)."
+        }
+        finally
+        {
+            SetCloneResponse
+        }
+    }
+
     It "doesn't resolve a sensor/group" {
         $sensor = Run Sensor { Get-Sensor }
 

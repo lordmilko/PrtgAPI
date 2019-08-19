@@ -31,7 +31,8 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <para type="description">To clone a single child object to multiple destination objects, the -SourceId parameter can be specified. When operating
     /// in Clone To mode, Clone-Object will automatically assign the newly created object the same name as the source object. When Clone-Object executes,
     /// it will automatically attempt to resolve the target object specified by the -SourceId parameter. If -SourceId cannot be resolved to a valid
-    /// sensor, device or group, Clone-Object will throw an exception specifying that the specified object ID is not valid.</para>
+    /// sensor, device or group, Clone-Object will throw an exception specifying that the specified object ID is not valid. If the list of objects piped
+    /// to Clone-Object includes the parent of the object specified to -SourceId, you can skip this parent by specifying -SkipParent.</para>
     /// 
     /// <para type="description">When an object has been cloned, by default Clone-Object will attempt to automatically resolve the object
     /// into its resultant <see cref="Sensor"/>, <see cref="Device"/>, <see cref="Group"/> or <see cref="NotificationTrigger"/> object.
@@ -142,6 +143,13 @@ namespace PrtgAPI.PowerShell.Cmdlets
         public int SourceId { get; set; }
 
         /// <summary>
+        /// <para type="description">Indicates that the -<see cref="Destination"/> specified for -<see cref="SourceId"/> should be skipped if it
+        /// is the -<see cref="SourceId"/>'s parent.</para> 
+        /// </summary>
+        [Parameter(Mandatory = false, ParameterSetName = ParameterSet.TargetForSource)]
+        public SwitchParameter SkipParent { get; set; }
+
+        /// <summary>
         /// <para type="description">The object to clone the object specified by the <see cref="SourceId"/> to.</para>
         /// </summary>
         [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = ParameterSet.TargetForSource)]
@@ -178,6 +186,17 @@ namespace PrtgAPI.PowerShell.Cmdlets
             {
                 CloneTrigger();
                 return;
+            }
+
+            if (SkipParent && ParameterSetName == ParameterSet.TargetForSource)
+            {
+                var source = config.Object as IPrtgObject;
+
+                if (source != null && source.ParentId == DestinationId)
+                {
+                    WriteWarning($"Skipping '{Destination}' (ID: {DestinationId}) as it is the parent of clone source '{source}' (ID: {source.Id}).");
+                    return;
+                }
             }
 
             var id = config.Cloner(client, DestinationId);
