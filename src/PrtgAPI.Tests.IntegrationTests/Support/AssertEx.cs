@@ -110,6 +110,9 @@ namespace PrtgAPI.Tests.IntegrationTests
 
         public static void AreEqualLists<T>(List<T> first, List<T> second, string message) => AreEqualLists(first, second, null, message);
 
+        public static void AreNotEqualLists<T>(List<T> first, List<T> second, string message) =>
+            ExecuteAssert(() => UnitTests.AssertEx.AreNotEqualLists(first, second, message), "AssertEx.AreNotEqualLists");
+
         public static void AllListElementsUnique<T>(List<T> list, IEqualityComparer<T> comparer) => ExecuteAssert(() => UnitTests.AssertEx.AllListElementsUnique(list, comparer), "AssertEx.AllListElementsUnique");
     }
 }

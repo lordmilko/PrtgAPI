@@ -27,7 +27,7 @@ namespace PrtgAPI
         /// Corresponds to Basic Settings -> Tags.
         /// </summary>
         [XmlElement("injected_tags")]
-        [SplittableString(' ')]
+        [StandardSplittableString]
         public string[] Tags { get; set; }
 
         /// <summary>

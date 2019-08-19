@@ -18,7 +18,7 @@ namespace PrtgAPI.Tests.UnitTests.Support.Serialization
     class DummyElement<T> : IDummy<T>
     {
         [XmlElement("property")]
-        [SplittableString(' ')]
+        [StandardSplittableString]
         public T Property { get; set; }
     }
 

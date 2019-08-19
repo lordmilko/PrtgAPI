@@ -147,7 +147,7 @@ namespace PrtgAPI
         /// Tags contained on the object this event pertains to.
         /// </summary>
         [XmlElement("tags")]
-        [SplittableString(' ')]
+        [StandardSplittableString]
         [PropertyParameter(Property.Tags)]
         public string[] Tags { get; set; }
 

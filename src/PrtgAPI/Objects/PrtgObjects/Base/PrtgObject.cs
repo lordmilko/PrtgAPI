@@ -50,7 +50,7 @@ namespace PrtgAPI
         /// </summary>
         [XmlElement("tags")]
         [XmlElement("injected_tags")]
-        [SplittableString(' ')]
+        [StandardSplittableString]
         [PropertyParameter(Property.Tags)]
         public string[] Tags
         {

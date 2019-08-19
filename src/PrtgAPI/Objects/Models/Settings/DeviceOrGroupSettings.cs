@@ -12,7 +12,7 @@ namespace PrtgAPI
         /// Tags that are inherited from this object's parent.
         /// </summary>
         [XmlElement("injected_parenttags")]
-        [SplittableString(' ')]
+        [StandardSplittableString]
         public string[] ParentTags { get; set; }
 
         /// <summary>

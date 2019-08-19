@@ -409,6 +409,14 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
         [TestCategory("UnitTest")]
         public void Serializer_Engine_StringArray_Missing() => DeserializeElementDummy<string[]>(null, null, false);
 
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void Serializer_Engine_StringArray_AlternateSeparator() => DeserializeElementDummy("first,second", new[] { "first", "second" });
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void Serializer_Engine_StringArray_HybridSeparator() => DeserializeElementDummy("first second,third", new[] { "first", "second", "third" });
+
         #endregion
         #region Attribute
 

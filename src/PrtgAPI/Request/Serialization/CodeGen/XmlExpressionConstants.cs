@@ -130,9 +130,9 @@ namespace PrtgAPI.Linq.Expressions.Serialization
             return Expression.Call(XmlSerializerMembers.TypeHelpers_ConvertFromPrtgTimeSpan, Expression.Convert(integer, typeof(double)));
         }
 
-        internal static MethodCallExpression ToSplittableStringArray(Expression readStr, Expression ch)
+        internal static MethodCallExpression ToSplittableStringArray(Expression readStr, Expression chars)
         {
-            return Expression.Call(XmlSerializerMembers.ToSplittableStringArray, readStr, ch);
+            return Expression.Call(XmlSerializerMembers.ToSplittableStringArray, readStr, chars);
         }
 
         #endregion

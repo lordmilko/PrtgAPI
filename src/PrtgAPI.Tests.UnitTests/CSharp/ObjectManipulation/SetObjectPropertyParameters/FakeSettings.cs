@@ -54,7 +54,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         [XmlElement("injected_typelookupwithoutiformattable")]
         public string TypeWithoutIFormattable { get; set; }
 
-        [SplittableString(' ')]
+        [StandardSplittableString]
         [XmlElement("injected_arrayproperty")]
         public string[] ArrayProperty { get; set; }
 

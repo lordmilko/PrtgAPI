@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Xml;
+using PrtgAPI.Attributes;
 using PrtgAPI.Request.Serialization;
 
 namespace PrtgAPI.Tests.UnitTests.Support.Serialization
@@ -106,7 +107,7 @@ namespace PrtgAPI.Tests.UnitTests.Support.Serialization
             if (typeof(TValue) == typeof(TimeSpan?))
                 return (TValue)(object)ToNullableTimeSpan(getString());
             if (typeof(TValue) == typeof(string[]))
-                return (TValue)(object)ToSplittableStringArray(getString(), ' ');
+                return (TValue)(object)ToSplittableStringArray(getString(), new StandardSplittableString().Characters);
             if (typeof(TValue) == typeof(Status))
                 return (TValue)(object)ReadStatus(getString());
             if (typeof(TValue) == typeof(HttpMode))

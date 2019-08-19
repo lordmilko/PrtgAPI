@@ -201,7 +201,9 @@ namespace PrtgAPI.Parameters.Helpers
 
                     isArray = true;
 
-                    splittableStringChar = Cache.GetAttribute<SplittableStringAttribute>()?.Character.ToString();
+                    //The first character is considered canon. All subsequent characters are for alternate characters that
+                    //could somehow get thrown into the mix
+                    splittableStringChar = Cache.GetAttribute<SplittableStringAttribute>(true)?.Characters[0].ToString();
 
                     if (splittableStringChar == null)
                         throw new NotSupportedException($"Cannot serialize value for array property {Property} as the property is missing a {nameof(SplittableStringAttribute)}.");

@@ -34,7 +34,7 @@ namespace PrtgAPI
         /// Tags that are inherited from this objects parent.<para/>
         /// Corresponds to Basic Sensor Settings -> Parent Tags
         /// </summary>
-        [SplittableString(' ')]
+        [StandardSplittableString]
         [XmlElement("injected_parenttags")]
         public string[] ParentTags { get; set; }
 
@@ -42,7 +42,7 @@ namespace PrtgAPI
         /// Tags that are defined on this object.<para/>
         /// Corresponds to Basic Sensor Settings -> Tags
         /// </summary>
-        [SplittableString(' ')]
+        [StandardSplittableString]
         [XmlElement("injected_tags")]
         public string[] Tags { get; set; }
 

@@ -44,12 +44,15 @@ namespace PrtgAPI.Reflection.Cache
             return new TAttribute[0];
         }
 
-        public TAttribute GetAttribute<TAttribute>() where TAttribute : Attribute
+        public TAttribute GetAttribute<TAttribute>(bool allowBase = false) where TAttribute : Attribute
         {
             Attribute[] value;
 
             if (Attributes.TryGetValue(typeof(TAttribute), out value))
                 return (TAttribute) value[0];
+
+            if (allowBase)
+                return Attributes.Values.SelectMany(v => v).OfType<TAttribute>().FirstOrDefault();
 
             return null;
         }

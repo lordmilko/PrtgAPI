@@ -230,9 +230,12 @@ namespace PrtgAPI.Linq.Expressions.Serialization
             }
         }
 
-        protected internal static string[] ToSplittableStringArray(string s, char ch)
+        protected internal static string[] ToSplittableStringArray(string s, params char[] chars)
         {
-            return ToNullableString(s)?.Split(new[] { ch }, StringSplitOptions.RemoveEmptyEntries);
+            if (chars.Length == 0)
+                throw new ArgumentException("At least one character must be specified.", nameof(chars));
+
+            return ToNullableString(s)?.Split(chars, StringSplitOptions.RemoveEmptyEntries);
         }
 
         #endregion

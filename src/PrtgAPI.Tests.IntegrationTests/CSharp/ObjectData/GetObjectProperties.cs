@@ -196,6 +196,57 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
             await action(async () => await readOnlyClient.GetProbePropertiesAsync(Settings.Probe));
         }
 
+        [TestMethod]
+        [TestCategory("IntegrationTest")]
+        public void Data_ObjectProperties_SplitsSpaceArray()
+        {
+            TestSplittableString("first second", new[] { "first", "second" });
+        }
+
+        [TestMethod]
+        [TestCategory("IntegrationTest")]
+        public void Data_ObjectProperties_SplitsCommaArray()
+        {
+            TestSplittableString("first,second", new[] { "first", "second" });
+        }
+
+        private void TestSplittableString(string serialized, string[] deserialized)
+        {
+            var sensor = client.GetSensor(Settings.UpSensor);
+
+            var properties = client.GetSensorProperties(sensor);
+
+            var originalObjectTags = sensor.Tags.Except(properties.ParentTags).ToList();
+            var originalSettingsTags = properties.Tags.ToList();
+            var originalPropertyTags = client.GetObjectProperty<string[]>(sensor, ObjectProperty.Tags).ToList();
+
+            AssertEx.AreEqualLists(originalObjectTags, originalSettingsTags, "Original object tags and settings tags were not equal");
+            AssertEx.AreEqualLists(originalObjectTags, originalPropertyTags, "Original object tags and property tags were not equal");
+
+            try
+            {
+                var expected = deserialized.ToList();
+
+                AssertEx.AreNotEqualLists(originalSettingsTags, expected.ToList(), "Original and proposed new lists were the same");
+
+                client.SetObjectProperty(Settings.UpSensor, ObjectProperty.Tags, serialized);
+
+                var newProperties = client.GetSensorProperties(sensor);
+
+                var newObjectTags = client.GetSensor(Settings.UpSensor).Tags.Except(newProperties.ParentTags).ToList();
+                var newSettingsTags = newProperties.Tags.ToList();
+                var newPropertyTags = client.GetObjectProperty<string[]>(sensor, ObjectProperty.Tags).ToList();
+
+                AssertEx.AreEqualLists(expected, newObjectTags, "New object tags did were not correct");
+                AssertEx.AreEqualLists(expected, newSettingsTags, "New settings tags were not correct");
+                AssertEx.AreEqualLists(expected, newPropertyTags, "New property tags were not correct");
+            }
+            finally
+            {
+                client.SetObjectProperty(Settings.UpSensor, ObjectProperty.Tags, originalSettingsTags);
+            }
+        }
+
         private List<Tuple<string, SensorOrDeviceOrGroupOrProbe, object>> GetPropertiesForAnalysis(List<ObjectProperty> blacklist)
         {
             var list = GetObjectPropertyMaps();

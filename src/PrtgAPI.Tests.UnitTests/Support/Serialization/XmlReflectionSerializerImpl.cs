@@ -170,7 +170,7 @@ namespace PrtgAPI.Request.Serialization
 
         private void ProcessNonListEnumerableXmlElement(object obj, XmlMapping mapping, XElement elm)
         {
-            var attribute = mapping.PropertyCache.GetAttribute<SplittableStringAttribute>();
+            var attribute = mapping.PropertyCache.GetAttribute<SplittableStringAttribute>(true);
 
             if (attribute != null)
             {
@@ -182,7 +182,7 @@ namespace PrtgAPI.Request.Serialization
 
                 if (value != null)
                 {
-                    finalVal = value.Value.Trim().Split(new[] { attribute.Character }, StringSplitOptions.RemoveEmptyEntries);
+                    finalVal = value.Value.Trim().Split(attribute.Characters, StringSplitOptions.RemoveEmptyEntries);
                 }
 
                 mapping.PropertyCache.Property.SetValue(obj, finalVal);
