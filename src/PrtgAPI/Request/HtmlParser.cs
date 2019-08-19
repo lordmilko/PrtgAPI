@@ -17,7 +17,7 @@ namespace PrtgAPI.Request
 
         internal const string DefaultBasicMatchRegex = "<input.+?name=\".*?\".+?value=\".*?\".*?>";
         internal const string DefaultBackwardsMatchRegex = "<input.+?value=\".*?\".+?name=\".*?\".*?>";
-        internal const string DefaultStandardNameRegex = "(.+?name=\")(.+?)(_*\".+)";
+        internal const string DefaultStandardNameRegex = "(.+?name=\")(.*?)(_*\".+)";
         internal const string DefaultDropDownListRegex = "<select.+?>.*?<\\/select>";
         internal const string DefaultTextAreaRegex = "(<textarea.+?>)(.*?)(<\\/textarea>)";
         internal const string DefaultDependencyDiv = "(<div.+?data-inputname=\"dependency_\")(.+?>)";
@@ -286,6 +286,10 @@ namespace PrtgAPI.Request
 
         private List<Input> GetProperties(List<string> inputs, string nameRegex, Func<string, string> nameTransformer)
         {
+            //If PRTG bugs out and returns an input tag with an empty name, that's not our fault and we have no way of
+            //reliably determining which property it actually is, so simply omit that property and let's hope it was a nullable
+            //value (this is known to happen with SummaryPeriod, which is an int?)
+
             var properties = inputs.Select(input => new Input
             {
                 Name = nameTransformer(Regex.Replace(input, nameRegex, "$2")).Replace("/", "_").Replace(" ", "_"), // Forward slash and space are not valid characters for an XElement name
@@ -294,7 +298,7 @@ namespace PrtgAPI.Request
                 Checked = Regex.Match(input, "checked").Success,
                 Hidden = Regex.Match(input, "type=\"hidden\"").Success,
                 Html = input
-            }).ToList();
+            }).Where(i => i.Name != string.Empty).ToList();
 
             return properties; //todo: allow hidden items, and in the filter if theres a conflict overwrite the hidden one
         }

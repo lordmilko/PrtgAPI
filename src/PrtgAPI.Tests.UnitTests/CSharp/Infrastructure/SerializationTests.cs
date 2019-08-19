@@ -1252,6 +1252,23 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             );
         }
 
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void HtmlParser_Ignores_HtmlWithMissingInputTagName()
+        {
+            var builder = new StringBuilder();
+
+            builder.Append("<input name=\"propertyName\" type=\"radio\" value=\"1\"/>");
+            builder.Append("<input name=\"\" type=\"radio\" value=\"2\"/>");
+
+            var client = BaseTest.Initialize_Client(new BasicResponse(builder.ToString()));
+
+            var result = client.GetObjectPropertiesRaw(1001);
+
+            Assert.AreEqual(result.Count, 1);
+            Assert.AreEqual(result["propertyName"], "1");
+        }
+
         private void CheckScanningIntervalSerializedValue(ScanningInterval interval, string value)
         {
             Assert.AreEqual(((ISerializable) interval).GetSerializedFormat(), value, "Serialized format was not correct");
