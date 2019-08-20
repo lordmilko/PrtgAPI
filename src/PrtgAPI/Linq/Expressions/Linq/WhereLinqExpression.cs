@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Linq.Expressions;
 using PrtgAPI.Linq.Expressions.Visitors;
@@ -23,6 +24,7 @@ namespace PrtgAPI.Linq.Expressions
             return visitor.VisitWhere(this);
         }
 
+        [ExcludeFromCodeCoverage]
         public override string ToString()
         {
             return $"{Source}.WhereExpr({Predicate})";

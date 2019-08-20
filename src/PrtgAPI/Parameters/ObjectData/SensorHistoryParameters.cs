@@ -71,6 +71,7 @@ namespace PrtgAPI.Parameters
             return newParameters;
         }
 
+        [ExcludeFromCodeCoverage]
         object IShallowCloneable.ShallowClone() => ((IShallowCloneable<SensorHistoryParameters>)this).ShallowClone();
     }
 }

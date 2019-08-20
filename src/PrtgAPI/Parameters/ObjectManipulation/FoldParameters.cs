@@ -1,5 +1,8 @@
-﻿namespace PrtgAPI.Parameters
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace PrtgAPI.Parameters
 {
+    [ExcludeFromCodeCoverage]
     class FoldParameters : BaseActionParameters, ICommandParameters
     {
         CommandFunction ICommandParameters.Function => CommandFunction.FoldObject;

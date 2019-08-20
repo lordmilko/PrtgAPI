@@ -86,6 +86,7 @@ namespace PrtgAPI.Parameters
             return str;
         }
 
+        [ExcludeFromCodeCoverage]
         object IShallowCloneable.ShallowClone() => ShallowClone();
 
         public SetChannelPropertyParameters ShallowClone()

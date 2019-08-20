@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using PrtgAPI.Reflection.Cache;
 using PrtgAPI.Parameters.Helpers;
@@ -72,6 +73,7 @@ namespace PrtgAPI.Parameters
             }
         }
 
+        [ExcludeFromCodeCoverage]
         int[] IMultiTargetParameters.ObjectIds
         {
             get { return ObjectIdsInternal; }

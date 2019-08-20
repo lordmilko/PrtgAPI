@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using PrtgAPI.Linq.Expressions;
 using PrtgAPI.Parameters;
@@ -79,6 +80,7 @@ namespace PrtgAPI.Linq
             }
         }
 
+        [ExcludeFromCodeCoverage]
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }
 }

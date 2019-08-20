@@ -117,10 +117,12 @@ namespace PrtgAPI.Linq
 
         public Log Current { get; private set; }
 
+        [ExcludeFromCodeCoverage]
         object IEnumerator.Current => Current;
 
         public IEnumerator<Log> GetEnumerator() => this;
 
+        [ExcludeFromCodeCoverage]
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Net.Http;
 using System.Xml;
@@ -31,6 +32,7 @@ namespace PrtgAPI.Request
 
         private Stream streamValue;
 
+        [ExcludeFromCodeCoverage]
         internal Stream GetStreamUnsafe()
         {
             if (Type != PrtgResponseType.Stream)

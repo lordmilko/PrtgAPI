@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
 
 namespace PrtgAPI.Utilities
@@ -15,6 +16,7 @@ namespace PrtgAPI.Utilities
         Six = 6
     }
 
+    [ExcludeFromCodeCoverage]
     static class Logger
     {
         [Conditional("DEBUG")]

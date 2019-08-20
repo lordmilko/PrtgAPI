@@ -1,9 +1,11 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 namespace PrtgAPI.Utilities
 {
+    [ExcludeFromCodeCoverage]
     internal static class StringExtensions
     {
         public static string Plural(this string str, int count)

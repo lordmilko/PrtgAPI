@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 namespace PrtgAPI.Request
@@ -13,6 +14,7 @@ namespace PrtgAPI.Request
 
         public ChannelProperty Property { get; }
 
+        [ExcludeFromCodeCoverage]
         private string ChannelsStr => string.Join(", ", Channels.Select(c => c.SensorId));
 
         public ChannelLimitAnalysis(double? limitValue, List<Channel> channels, ChannelProperty property)

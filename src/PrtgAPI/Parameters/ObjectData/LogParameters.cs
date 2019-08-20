@@ -142,6 +142,7 @@ namespace PrtgAPI.Parameters
             return newParameters;
         }
 
+        [ExcludeFromCodeCoverage]
         object IShallowCloneable.ShallowClone() => ((IShallowCloneable<LogParameters>)this).ShallowClone();
     }
 }

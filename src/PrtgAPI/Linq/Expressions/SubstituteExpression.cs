@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
 using PrtgAPI.Linq.Expressions.Visitors;
 
@@ -29,6 +30,7 @@ namespace PrtgAPI.Linq.Expressions
             Replacement = replacement;
         }
 
+        [ExcludeFromCodeCoverage]
         public override string ToString() => $"SubstExpr({Replacement})";
 
         public static Expression Strip(Expression expr)

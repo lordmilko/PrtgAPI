@@ -1,4 +1,6 @@
-﻿namespace PrtgAPI.Parameters
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace PrtgAPI.Parameters
 {
     internal sealed class CommandFunctionParameters : BaseParameters, ICommandParameters
     {
@@ -20,6 +22,7 @@
         }
     }
 
+    [ExcludeFromCodeCoverage]
     internal sealed class JsonFunctionParameters : BaseParameters, IJsonParameters
     {
         public JsonFunction Function { get; }

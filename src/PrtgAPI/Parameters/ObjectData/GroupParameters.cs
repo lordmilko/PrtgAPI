@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using PrtgAPI.Request;
 
 namespace PrtgAPI.Parameters
@@ -33,6 +34,7 @@ namespace PrtgAPI.Parameters
             return newParameters;
         }
 
+        [ExcludeFromCodeCoverage]
         object IShallowCloneable.ShallowClone() => ((IShallowCloneable<GroupParameters>)this).ShallowClone();
     }
 }

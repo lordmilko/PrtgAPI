@@ -1,4 +1,5 @@
-﻿using System.Linq.Expressions;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Linq.Expressions;
 using PrtgAPI.Linq.Expressions.Visitors;
 
 namespace PrtgAPI.Linq.Expressions
@@ -30,6 +31,7 @@ namespace PrtgAPI.Linq.Expressions
             return Reduce(source, Selector);
         }
 
+        [ExcludeFromCodeCoverage]
         public override string ToString()
         {
             return $"{Source}.SelectExpr({Selector})";
