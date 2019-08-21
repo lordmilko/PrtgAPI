@@ -665,4 +665,21 @@ Describe "New-Sensor" -Tag @("PowerShell", "UnitTest") {
 
         GetSensorTypeContexts $PSCommandPath $true
     }
+
+    It "allows null when assigned to a dynamic parameter" {
+
+        # All parameters of an object are typically initialized with their default values in the sensor parameter's constructor,
+        # so these parameters are always included anyway
+
+        $device = Run Device { Get-Device }
+        $device.Count | Should Be 1
+
+        SetAddressValidatorResponse @(
+            [Request]::Status()
+            [Request]::BeginAddSensorQuery(40, "exexml")
+            [Request]::AddSensor("name_=test&priority_=3&inherittriggers_=1&intervalgroup=1&interval_=60%7C60+seconds&errorintervalsdown_=1&tags_=xmlexesensor&exefile_=test.ps1%7Ctest.ps1%7C%7C&exeparams_=&environment_=0&usewindowsauthentication_=0&mutexname_=&timeout_=60&writeresult_=0&sensortype=exexml&id=40")
+        )
+
+        $device | New-Sensor -ExeXml test test.ps1 -Resolve:$false -Mutex $null
+    }
 }

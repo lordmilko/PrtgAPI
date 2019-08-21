@@ -824,7 +824,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         {
             AssertEx.Throws<ArgumentException>(
                 () => TestDeserialization(property, null, null),
-                $"Value 'null' could not be assigned to property '{property}' of type '{propertyType}'. Null may only be assigned to properties of type string, int and double."
+                $"Value 'null' could not be assigned to property '{property}' of type '{propertyType}'. Null may only be assigned to properties of type 'System.String', 'System.Int32' and 'System.Double'."
             );
         }
 

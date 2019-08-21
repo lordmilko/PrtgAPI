@@ -17,11 +17,14 @@ Describe "Set-ChannelProperty" -Tag @("PowerShell", "UnitTest") {
     }
 
     It "sets a property with null on a type that allows null" {
-        $channel | Set-ChannelProperty LowerErrorLimit $null
+
+        WithResponseArgs "AddressValidatorResponse" ([Request]::EditSettings("id=4000,4001&limitminerror_1=&limitmode_1=1")) {
+            $channel | Set-ChannelProperty LowerErrorLimit $null
+        }
     }
 
     It "sets a property with null on a type that disallows null" {
-        { $channel | Set-ChannelProperty ColorMode $null } | Should Throw "Null may only be assigned to properties of type string, int and double"
+        { $channel | Set-ChannelProperty ColorMode $null } | Should Throw "Null may only be assigned to properties of type 'System.String', 'System.Int32' and 'System.Double'."
     }
 
     It "sets a nullable type with its underlying type" {

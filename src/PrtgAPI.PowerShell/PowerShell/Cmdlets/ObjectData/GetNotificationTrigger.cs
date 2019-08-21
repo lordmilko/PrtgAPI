@@ -233,7 +233,9 @@ namespace PrtgAPI.PowerShell.Cmdlets
         {
             if (dynamicParameterSet != null)
             {
-                var boundParameters = dynamicParameterSet.GetBoundParameters(this, Tuple.Create);
+                //Our NotificationAction parameters are defined as "real" parameters, so we will filter on them elsewhere,
+                //not that it matters however, as they too don't support filtering where their values are null
+                var boundParameters = dynamicParameterSet.GetBoundParameters(this, Tuple.Create).Where(t => t.Item2 != null);
 
                 foreach (var parameter in boundParameters)
                 {

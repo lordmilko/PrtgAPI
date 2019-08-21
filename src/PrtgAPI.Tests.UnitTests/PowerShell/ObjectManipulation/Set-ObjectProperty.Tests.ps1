@@ -22,11 +22,14 @@ Describe "Set-ObjectProperty" -Tag @("PowerShell", "UnitTest") {
         }
 
         It "sets a property with null on a type that allows null" {
-            $sensor | Set-ObjectProperty Name $null
+
+            WithResponseArgs "AddressValidatorResponse" ([Request]::EditSettings("id=4000,4001&name_=")) {
+                $sensor | Set-ObjectProperty Name $null
+            }
         }
 
         It "sets a property with null on a type that disallows null" {
-            { $sensor | Set-ObjectProperty InheritAccess $null } | Should Throw "Null may only be assigned to properties of type string, int and double"
+            { $sensor | Set-ObjectProperty InheritAccess $null } | Should Throw "Null may only be assigned to properties of type 'System.String', 'System.Int32' and 'System.Double'."
         }
 
         It "sets a nullable type with its underlying type" {

@@ -74,7 +74,12 @@ namespace PrtgAPI.PowerShell
             if (@object.Value.Type == ObjectType.Sensor && !string.IsNullOrWhiteSpace(str))
                 UpdateChannelFromChannel(parameter, @object, str);
             else
+            {
+                if (str == null)
+                    throw new ArgumentNullException($"Cannot specify 'null' for parameter '{parameter.Property}'. Value must non-null and convertable to one of {typeof(StandardTriggerChannel).FullName}, {typeof(Channel).FullName} or {typeof(int).FullName}.", (Exception) null);
+
                 parameter.Value = TriggerChannel.Parse(parameter.Value);
+            }
         }
 
         private void UpdateChannelFromChannel(TriggerParameter parameter, Lazy<PrtgObject> @object, string str)

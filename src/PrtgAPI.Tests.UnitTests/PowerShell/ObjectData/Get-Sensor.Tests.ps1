@@ -422,7 +422,7 @@ Describe "Get-Sensor" -Tag @("PowerShell", "UnitTest") {
             Get-Sensor -Comments hello*
         }
 
-        It "specifies null to a a dynamic parameter" {
+        It "ignores null when assigned to a dynamic parameter" {
             SetAddressValidatorResponse "active&count=2&username"
 
             Get-Sensor -Comments $null -Count 2

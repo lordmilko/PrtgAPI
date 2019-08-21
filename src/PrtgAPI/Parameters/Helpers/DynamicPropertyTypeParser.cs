@@ -14,6 +14,8 @@ namespace PrtgAPI.Parameters.Helpers
         public object Value { get; }
         public PropertyCache Cache { get; }
 
+        public bool AllowNull { get; set; } = true;
+
         public TypeCategory? Type { get; set; }
 
         public DynamicPropertyTypeParser(Enum property, PropertyCache cache, object value)

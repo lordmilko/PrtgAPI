@@ -29,6 +29,11 @@ namespace PrtgAPI.Parameters.Helpers
 
         public object OriginalValue => parser.Value;
 
+        public bool AllowNull => parser.AllowNull;
+
+        public ConversionState ValueConversionWithMaybeNullCheck =>
+            AllowNull ? ConversionState.ValueConversion : ConversionState.ValueConversionWithNullCheck;
+
         public object NewValue;
 
         public SerializationMode Mode { get; }
@@ -312,13 +317,13 @@ namespace PrtgAPI.Parameters.Helpers
 
                 NewValue = OriginalValue?.ToString();
 
-                return ConversionState.ValueConversion;
+                return ValueConversionWithMaybeNullCheck;
             }
             else if (PropertyType == typeof(double) || PropertyType == typeof(int))
             {
                 NewValue = ParseNumericValue();
 
-                return ConversionState.ValueConversion;
+                return ValueConversionWithMaybeNullCheck;
             }
 
             return MoveNext();
@@ -573,7 +578,10 @@ namespace PrtgAPI.Parameters.Helpers
             if (expectedType == null)
                 expectedType = PropertyType;
 
-            return new ArgumentNullException(nameof(OriginalValue), $"Value 'null' could not be assigned to property '{Cache.Property.Name}' of type '{expectedType}'. Null may only be assigned to properties of type string, int and double.");
+            if(AllowNull)
+                return new ArgumentNullException($"Value 'null' could not be assigned to property '{Cache.Property.Name}' of type '{expectedType}'. Null may only be assigned to properties of type '{typeof(string)}', '{typeof(int)}' and '{typeof(double)}'.", (Exception) null);
+            else
+                return new ArgumentNullException($"Value 'null' could not be assigned to property '{Cache.Property.Name}' of type '{expectedType}'. Value cannot be null.", (Exception) null);
         }
 
         private Exception GetEnumArgumentException()

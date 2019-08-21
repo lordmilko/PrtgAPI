@@ -499,6 +499,10 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
                                 {
                                     AssertEndsInPeriod(syntax, str.First(), file);
                                 }
+                                else if (str.Count == 2 && str[1] == "(Exception) null")
+                                {
+                                    AssertEndsInPeriod(syntax, str.First(), file);
+                                }
                                 else
                                 {
                                     var exceptionType = ((IdentifierNameSyntax) syntax.Type).Identifier.ToString();

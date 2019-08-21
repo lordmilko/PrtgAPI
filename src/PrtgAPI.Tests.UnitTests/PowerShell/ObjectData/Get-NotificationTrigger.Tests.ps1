@@ -52,6 +52,17 @@ Describe "Get-NotificationTrigger" -Tag @("PowerShell", "UnitTest") { # notifica
         }
     }
 
+    It "ignores null when assigned to a dynamic parameter" {
+        WithResponse "MultiTypeResponse" {
+            $device = Get-Device -Count 1
+
+            $withoutFilters = $device | Get-Trigger
+            $withFilters = $device | Get-Trigger -Threshold $null
+
+            $withoutFilters.Count | Should Be $withFilters.Count
+        }
+    }
+
     function SetChannelObjectResponse
     {
         $triggerItem = [PrtgAPI.Tests.UnitTests.Support.TestItems.NotificationTriggerItem]::ThresholdTrigger("60", "301|Email to all members of group PRTG Users Group", "Backup State")
@@ -194,7 +205,7 @@ Describe "Get-NotificationTrigger" -Tag @("PowerShell", "UnitTest") { # notifica
             $triggers.Count | Should Be 1
             $triggers.Channel.ToString() | Should Be "Backup State"
         }
-    }    
+    }
 
     # should we maybe make getitem return an array, and have everyone use it?
 }

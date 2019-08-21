@@ -2,7 +2,7 @@
 
 function GetTrigger($type)
 {
-    $sensor = Get-Sensor
+    $sensor = Get-Sensor -Count 1
     $sensor.Id = 1
 
     $trigger = Run NotificationTrigger {
@@ -41,7 +41,7 @@ Describe "Set-NotificationTriggerProperty" -Tag @("PowerShell", "UnitTest") {
     SetResponseAndClient "SetNotificationTriggerResponse"
 
     It "sets a TriggerChannel from a property" {
-        $sensor = Get-Sensor
+        $sensor = Get-Sensor -Count 1
         $sensor.Id = 1
 
         $trigger = Run NotificationTrigger {
@@ -55,7 +55,7 @@ Describe "Set-NotificationTriggerProperty" -Tag @("PowerShell", "UnitTest") {
     }
 
     It "sets an invalid property" {
-        $sensor = Get-Sensor
+        $sensor = Get-Sensor -Count 1
 
         $sensor.Id = 0
 
@@ -67,7 +67,7 @@ Describe "Set-NotificationTriggerProperty" -Tag @("PowerShell", "UnitTest") {
     }
 
     It "processes a state trigger" {
-        $sensor = Get-Sensor
+        $sensor = Get-Sensor -Count 1
         $sensor.Id = 1
 
         $trigger = Run NotificationTrigger {
@@ -347,5 +347,57 @@ Describe "Set-NotificationTriggerProperty" -Tag @("PowerShell", "UnitTest") {
         }
 
         $trigger | Set-TriggerProperty Channel "total"
+    }
+
+    It "converts null to the None NotificationAction via a static property" {
+        SetMultiTypeResponse
+
+        $trigger = GetTrigger "Volume"
+
+        SetAddressValidatorResponse ([Request]::EditSettings("id=1&subid=6&onnotificationid_6=-1%7CNone"))
+
+        $trigger | Set-TriggerProperty OnNotificationAction $null
+    }
+
+    It "converts null to the None NotificationAction via a dynamic property" {
+        SetMultiTypeResponse
+
+        $trigger = GetTrigger "Volume"
+
+        SetAddressValidatorResponse ([Request]::EditSettings("id=1&subid=6&onnotificationid_6=-1%7CNone"))
+
+        $trigger | Set-TriggerProperty -OnNotificationAction $null
+    }
+
+    It "throws when null is assigned to a channel via a static property" {
+        SetMultiTypeResponse
+
+        $trigger = GetTrigger "Volume"
+
+        { $trigger | Set-TriggerProperty Channel $null } | Should Throw "Cannot specify 'null' for parameter 'Channel'"
+    }
+
+    It "throws when null is assigned to a channel via a dynamic property" {
+        SetMultiTypeResponse
+
+        $trigger = GetTrigger "Volume"
+
+        { $trigger | Set-TriggerProperty -Channel $null } | Should Throw "Cannot specify 'null' for parameter 'Channel'"
+    }
+
+    It "throws when null is assigned to a non-nullable type via a static property" {
+        SetMultiTypeResponse
+
+        $trigger = GetTrigger "Volume"
+
+        { $trigger | Set-TriggerProperty Threshold $null } | Should Throw "Value 'null' could not be assigned to property 'Threshold' of type 'System.Int32'. Value cannot be null."
+    }
+
+    It "throws when null is assigned to a non-nullable type via a dynamic property" {
+        SetMultiTypeResponse
+
+        $trigger = GetTrigger "Volume"
+
+        { $trigger | Set-TriggerProperty -Threshold $null } | Should Throw "Value 'null' could not be assigned to property 'Threshold' of type 'System.Int32'. Value cannot be null."
     }
 }

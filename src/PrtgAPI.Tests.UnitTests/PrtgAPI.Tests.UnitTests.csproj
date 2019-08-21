@@ -81,6 +81,7 @@
     <Compile Include="CSharp\ObjectManipulation\SetObjectPropertyParameters\FakeSerializable.cs" />
     <Compile Include="CSharp\ObjectManipulation\SetObjectPropertyParameters\ValueConverterWithNullConversionConverter.cs" />
     <Compile Include="CSharp\ObjectManipulation\SetObjectPropertyParameters\ValueConverterWithoutNullConversionConverter.cs" />
+    <Compile Include="CSharp\ObjectManipulation\SetTriggerPropertyTests.cs" />
     <Compile Include="Support\AssertEx.cs" />
     <Compile Include="Support\EventValidator.cs" />
     <Compile Include="Support\Request.cs" />

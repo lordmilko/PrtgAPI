@@ -430,5 +430,25 @@ Describe "Add-NotificationTrigger" -Tag @("PowerShell", "UnitTest") {
 
             { $device | New-Trigger -Type Threshold -Channel test } | Should Throw "Cannot convert value 'test' of type 'System.String' to type 'TriggerChannel'. Value type must be convertable to one of PrtgAPI.StandardTriggerChannel, PrtgAPI.Channel or System.Int32."
         }
+
+        It "throws when a null channel is specified" {
+            SetMultiTypeResponse
+
+            $device = Get-Device -Count 1
+
+            { $device | New-Trigger -Type Threshold -Channel $null } | Should Throw "Cannot specify 'null' for parameter 'Channel'"
+        }
+
+        It "ignores null when assigned to a property that doesn't convert it" {
+
+            # Note: as of writing we don't have any nullable NotificationTrigger properties besides *NotificationAction
+            # and Channel, which are both special cases
+
+            SetMultiTypeResponse
+
+            $device = Get-Device -Count 1
+
+            { $device | New-Trigger -Type State -State $null } | Should Throw "Value 'null' could not be assigned to property 'State' of type 'PrtgAPI.TriggerSensorState'"
+        }
     }
 }
