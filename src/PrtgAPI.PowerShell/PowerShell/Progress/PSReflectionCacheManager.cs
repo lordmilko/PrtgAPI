@@ -456,15 +456,28 @@ namespace PrtgAPI.PowerShell.Progress
             }
             else //Piping from a variable
             {
-                var array = ((object[])enumerator.GetInternalField("_array")).Select(o =>
-                {
-                    if (o is PSObject)
-                        return o;
-                    else
-                        return new PSObject(o);
-                }).Cast<PSObject>();
+                var declaringType = enumerator.GetType().DeclaringType;
 
-                return new Pipeline(current, array.Select(e => e.BaseObject).ToList());
+                IEnumerable<object> list;
+
+                if (declaringType == typeof(Array)) //It's a SZArrayEnumerator (piping straight from a variable)
+                    list = ((object[]) enumerator.GetInternalField("_array"));
+                else if (declaringType == typeof(List<>)) //It's a List<T>.Enumerator (piping from $groups[0].Group)
+                    list = enumerator.PSGetInternalField("_list", "list").ToIEnumerable();
+                else
+                    throw new NotImplementedException($"Don't know how to extract the pipeline input from a '{enumerator.GetType()}' enumerator from type '{declaringType}'.");
+
+                list = list.Select(o =>
+                {
+                    var pso = o as PSObject;
+
+                    if (pso != null)
+                        return pso.BaseObject;
+
+                    return o;
+                });
+
+                return new Pipeline(current, list.ToList());
             }
         }
 

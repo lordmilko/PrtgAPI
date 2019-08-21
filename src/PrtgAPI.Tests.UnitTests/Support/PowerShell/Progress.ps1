@@ -63,6 +63,11 @@ function Validate($list)    {
 
     $last = $list|Select -Last 1
 
+    if($last -eq $null)
+    {
+        throw "No records were specified to Validate, and no progress was queued. If no progress is expected please Assert-NoProgress"
+    }
+
     if(!($last.Contains("Completed")))
     {
         throw "Processed all records, however last record did not contain `"Completed`". PrtgAPI is not completing the specified chain properly"

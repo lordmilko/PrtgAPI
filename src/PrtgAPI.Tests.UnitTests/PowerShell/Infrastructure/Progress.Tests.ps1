@@ -12138,6 +12138,33 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         ))
     }
 
+    It "pipes a single grouping to a table" {
+        
+        $groups = Get-Device -Count 2 | group Probe
+
+        $groups[0].Group | Get-Sensor
+
+        Validate(@(
+            (Gen "PRTG Sensor Search" "Processing device 'Probe Device0' (1/2)" 50 "Retrieving all sensors")
+            (Gen "PRTG Sensor Search" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
+            (Gen "PRTG Sensor Search (Completed)" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
+        ))
+    }
+
+    It "pipes a single grouping to an action" {
+        
+        $groups = Get-Device -Count 2 | group Probe
+
+        $groups[0].Group | Pause-Object -Forever
+
+        Validate(@(
+            (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device0' (1/2)" 50)
+            (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device1' (2/2)" 100)
+            (Gen "Pausing PRTG Objects" "Pausing devices 'Probe Device0' and 'Probe Device1' forever (2/2)" 100)
+            (Gen "Pausing PRTG Objects (Completed)" "Pausing devices 'Probe Device0' and 'Probe Device1' forever (2/2)" 100)
+        ))
+    }
+
         #region No Progress
 
     It "Doesn't stream when the number of returned objects is below the threshold" {
