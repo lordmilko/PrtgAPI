@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Xml.Serialization;
+using PrtgAPI.Attributes;
 using PrtgAPI.Request.Serialization;
 
 namespace PrtgAPI
@@ -11,6 +13,31 @@ namespace PrtgAPI
     {
         const string TimeFormat = "yyyy,MM,dd,HH,mm,ss";
 
+        #region Basic Settings
+
+        /// <summary>
+        /// The name of the PRTG Object.<para/>
+        /// Corresponds to Basic Settings -> Name.
+        /// </summary>
+        [XmlElement("injected_name")]
+        public string Name { get; set; }
+
+        /// <summary>
+        /// Tags that have been applied to this object.<para/>
+        /// Corresponds to Basic Settings -> Tags.
+        /// </summary>
+        [XmlElement("injected_tags")]
+        [StandardSplittableString]
+        public string[] Tags { get; set; }
+
+        /// <summary>
+        /// The priority of the object.<para/>
+        /// Corresponds to Basic Settings -> Priority.
+        /// </summary>
+        [XmlElement("injected_priority")]
+        public Priority? Priority { get; set; }
+
+        #endregion
         #region Proxy Settings for HTTP Sensors
 
         /// <summary>
@@ -230,5 +257,15 @@ namespace PrtgAPI
         public DataVolumeUnit? FileSizeUnit { get; set; }
 
         #endregion
+
+        /// <summary>
+        /// Returns a string that represents the current object.
+        /// </summary>
+        /// <returns>A string that represents the current object.</returns>
+        [ExcludeFromCodeCoverage]
+        public override string ToString()
+        {
+            return Name ?? base.ToString();
+        }
     }
 }

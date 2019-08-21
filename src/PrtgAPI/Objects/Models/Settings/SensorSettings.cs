@@ -24,34 +24,12 @@ namespace PrtgAPI
         #region Basic Sensor Settings
 
         /// <summary>
-        /// The name of this sensor.<para/>
-        /// Corresponds to Basic Sensor Settings -> Name
-        /// </summary>
-        [XmlElement("injected_name")]
-        public string Name { get; set; }
-
-        /// <summary>
         /// Tags that are inherited from this objects parent.<para/>
         /// Corresponds to Basic Sensor Settings -> Parent Tags
         /// </summary>
         [StandardSplittableString]
         [XmlElement("injected_parenttags")]
         public string[] ParentTags { get; set; }
-
-        /// <summary>
-        /// Tags that are defined on this object.<para/>
-        /// Corresponds to Basic Sensor Settings -> Tags
-        /// </summary>
-        [StandardSplittableString]
-        [XmlElement("injected_tags")]
-        public string[] Tags { get; set; }
-
-        /// <summary>
-        /// The priority of this sensor.<para/>
-        /// Corresponds to Basic Sensor Settings -> Priority
-        /// </summary>
-        [XmlElement("injected_priority")]
-        public Priority? Priority { get; set; }
 
         #endregion
         #region Debug Options
@@ -383,14 +361,5 @@ namespace PrtgAPI
         public SqlTransactionMode? SqlTransactionMode { get; set; }
 
         #endregion
-
-        /// <summary>
-        /// Returns a string that represents the current object.
-        /// </summary>
-        /// <returns>A string that represents the current object.</returns>
-        public override string ToString()
-        {
-            return Name;
-        }
     }
 }
