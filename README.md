@@ -49,7 +49,7 @@ Install-Package PrtgAPI -Source PSGallery
 2. Right click **PrtgAPI.zip** -> **Properties**
 3. On the *General* tab, under *Security* select **Unblock**
 4. Unzip the file
-5. Add a reference to *PrtgAPI.dll* to your project (fullclr: net452, coreclr: netstandard2.0), or import the *PrtgAPI* module into PowerShell via `Import-Module C:\path\to\PrtgAPI`. Alternatively, you can run the included **PrtgAPI.cmd** file to open a prompt and import the PrtgAPI module for you.
+5. Add a reference to *PrtgAPI.dll* to your project (fullclr: *net452*, coreclr: *netstandard2.0*), or import the *PrtgAPI* module into PowerShell via `Import-Module C:\path\to\PrtgAPI`. Alternatively, you can run the included **PrtgAPI.cmd** or **PrtgAPI.sh** file to open a prompt and import the PrtgAPI module for you.
 
 ## Compilation
 
