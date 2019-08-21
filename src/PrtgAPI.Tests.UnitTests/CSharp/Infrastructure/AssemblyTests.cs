@@ -466,14 +466,6 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             WithTree(AllExceptionMessages_EndInAPeriodInternal, true);
         }
 
-        [TestMethod]
-        [TestCategory("SlowCoverage")]
-        [TestCategory("UnitTest")]
-        public void AllExceptionMessages_EndInAPeriod()
-        {
-            WithTree(AllExceptionMessages_EndInAPeriodInternal);
-        }
-
         private void AllExceptionMessages_EndInAPeriodInternal(string file, SyntaxTree tree, Lazy<SemanticModel> model)
         {
             foreach (var item in tree.GetRoot().DescendantNodes())

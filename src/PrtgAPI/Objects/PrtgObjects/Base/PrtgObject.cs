@@ -129,7 +129,7 @@ namespace PrtgAPI
         /// <returns>A string that represents the current object.</returns>
         public override string ToString()
         {
-            return Name;
+            return Name ?? base.ToString();
         }
 
         /// <summary>

@@ -42,7 +42,7 @@ Describe "Set-ObjectProperty" -Tag @("PowerShell", "UnitTest") {
 
         It "setting an invalid enum value lists all valid possibilities" {
 
-            $expected = "'test' is not a valid value for enum IntervalErrorMode. Please specify one of " +
+            $expected = "'test' is not a valid value for type 'PrtgAPI.IntervalErrorMode'. Please specify one of " +
                 "'DownImmediately', 'OneWarningThenDown', 'TwoWarningsThenDown', 'ThreeWarningsThenDown', 'FourWarningsThenDown' or 'FiveWarningsThenDown'"
 
             { $sensor | Set-ObjectProperty IntervalErrorMode "test" } | Should Throw $expected

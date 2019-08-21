@@ -434,7 +434,7 @@ Describe "Get-Sensor" -Tag @("PowerShell", "UnitTest") {
     }
 
     It "throws filtering by Status 0" {
-        { Get-Sensor -Status 0 } | Should Throw "is not a member of type PrtgAPI.Status"
+        { Get-Sensor -Status 0 } | Should Throw "is not a member of type 'PrtgAPI.Status'"
     }
 
     It "throws specifying an illegal string filter" {

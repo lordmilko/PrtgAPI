@@ -27,7 +27,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         {
             AssertEx.Throws<ArgumentException>(
                 () => SetObjectProperty(ObjectProperty.IntervalErrorMode, 1),
-                "'1' is not a valid value for enum IntervalErrorMode. Please specify one of 'DownImmediately'"
+                "'1' is not a valid value for type 'PrtgAPI.IntervalErrorMode'. Please specify one of 'DownImmediately'"
             );
         }
 
@@ -820,7 +820,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
 
         [TestMethod]
         [TestCategory("UnitTest")]
-        public void SetObjectProperty_Array()
+        public void SetObjectProperty_Array_WithArray()
         {
             var channels = new[]
             {
@@ -836,7 +836,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         private void SetObjectProperty(ObjectProperty property, object value, string expectedSerializedValue = null)
         {
             if (expectedSerializedValue == null)
-                expectedSerializedValue = value.ToString();
+                expectedSerializedValue = value?.ToString();
 
             var response = new SetObjectPropertyResponse<ObjectProperty>(property, expectedSerializedValue);
 

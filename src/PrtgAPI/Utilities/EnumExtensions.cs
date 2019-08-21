@@ -192,7 +192,7 @@ namespace PrtgAPI.Utilities
             var cache = element.GetEnumFieldCache();
 
             if (cache == null)
-                throw new InvalidOperationException($"Cannot retrieve {typeof(TAttribute)} from element '{element}'; value is not a member of type {element.GetType()}.");
+                throw new InvalidOperationException($"Cannot retrieve {typeof(TAttribute)} from element '{element}'; value is not a member of type '{element.GetType()}'.");
 
             var attribute = cache.GetAttributes<TAttribute>();
 
@@ -209,8 +209,8 @@ namespace PrtgAPI.Utilities
         {
             var cache = element.GetEnumFieldCache();
             
-            if(cache == null)
-                throw new InvalidOperationException($"Cannot retrieve {typeof(TAttribute)} from element '{element}'; value is not a member of type {element.GetType()}.");
+            if (cache == null)
+                throw new InvalidOperationException($"Cannot retrieve {typeof(TAttribute)} from element '{element}'; value is not a member of type '{element.GetType()}'.");
 
             var attribute = cache.GetAttribute<TAttribute>();
 

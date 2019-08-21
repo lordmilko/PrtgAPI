@@ -203,7 +203,7 @@ Describe "Set-NotificationTriggerProperty" -Tag @("PowerShell", "UnitTest") {
         $trigger = Get-Sensor -Count 1 | Get-Trigger | Select -First 1
         $trigger.ObjectId = 0
 
-        { $trigger | Set-TriggerProperty OnNotificationAction $true } | Should Throw "Expected a value of type 'PrtgAPI.NotificationAction' while parsing property 'OnNotificationAction' however received a value of type 'System.Boolean'."
+        { $trigger | Set-TriggerProperty OnNotificationAction $true } | Should Throw "Value 'True' could not be assigned to property 'OnNotificationAction'. Expected type: 'PrtgAPI.NotificationAction'. Actual type: 'System.Boolean'."
     }
 
     It "specifies a Channel wildcard to a normal parameter" {

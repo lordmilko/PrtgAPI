@@ -110,9 +110,7 @@ namespace PrtgAPI
             else
             {
                 if (value is DateTime)
-                {
                     val = TypeHelpers.ConvertToPrtgDateTime((DateTime) value).ToString(CultureInfo.InvariantCulture);
-                }
                 else if (value is TimeSpan)
                     val = TypeHelpers.ConvertToPrtgTimeSpan((TimeSpan) value).ToString(CultureInfo.InvariantCulture);
                 else if (value is bool)

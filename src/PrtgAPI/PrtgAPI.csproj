@@ -129,6 +129,8 @@
     <Compile Include="Enums\RequestVersion.cs" />
     <Compile Include="Enums\SystemInfoType.cs" />
     <Compile Include="Objects\Models\Either.cs" />
+    <Compile Include="Parameters\Helpers\ConversionState.cs" />
+    <Compile Include="Parameters\Helpers\TypeConversionStateMachine.cs" />
     <Compile Include="Parameters\Interfaces\ISensorQueryTargetParameters.cs" />
     <Compile Include="Parameters\ObjectManipulation\AddSensor\ContinueAddSensorQueryParameters.cs" />
     <Compile Include="Parameters\ObjectManipulation\AddSensor\SensorMultiQueryTargetParameters.cs" />

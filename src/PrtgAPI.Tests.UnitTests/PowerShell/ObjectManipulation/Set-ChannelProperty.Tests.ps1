@@ -37,7 +37,7 @@ Describe "Set-ChannelProperty" -Tag @("PowerShell", "UnitTest") {
 
     It "setting an invalid enum value lists all valid possibilities" {
 
-        $expected = "'banana' is not a valid value for enum AutoMode. Please specify one of 'Automatic' or 'Manual'"
+        $expected = "'banana' is not a valid value for type 'PrtgAPI.AutoMode'. Please specify one of 'Automatic' or 'Manual'"
 
         { $channel | Set-ChannelProperty ColorMode "banana" } | Should Throw $expected
     }

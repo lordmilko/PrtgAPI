@@ -40,7 +40,7 @@ namespace PrtgAPI.Exceptions.Internal
 
         private static string GetMessage(Parameter parameter)
         {
-            return $"Parameter '{parameter.ToString()}' is missing a '{nameof(Attributes.ParameterTypeAttribute)}' attribute. This error message indicates an internal bug that must be corrected.";
+            return $"Parameter '{parameter.ToString()}' is missing a '{nameof(ParameterTypeAttribute)}' attribute. This error message indicates an internal bug that must be corrected.";
         }
     }
 }
