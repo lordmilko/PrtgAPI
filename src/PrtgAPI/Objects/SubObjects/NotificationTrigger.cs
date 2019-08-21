@@ -209,7 +209,7 @@ namespace PrtgAPI
         /// </summary>
         [PropertyParameter(TriggerProperty.Threshold)]
         [DataMember(Name = "threshold")]
-        public int? Threshold { get; set; }
+        public double? Threshold { get; set; }
 
         [DataMember(Name = "condition")]
         private string conditionStr;

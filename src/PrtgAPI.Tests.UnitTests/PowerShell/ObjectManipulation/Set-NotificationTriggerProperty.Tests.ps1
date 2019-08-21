@@ -390,7 +390,7 @@ Describe "Set-NotificationTriggerProperty" -Tag @("PowerShell", "UnitTest") {
 
         $trigger = GetTrigger "Volume"
 
-        { $trigger | Set-TriggerProperty Threshold $null } | Should Throw "Value 'null' could not be assigned to property 'Threshold' of type 'System.Int32'. Value cannot be null."
+        { $trigger | Set-TriggerProperty Threshold $null } | Should Throw "Value 'null' could not be assigned to property 'Threshold' of type 'System.Double'. Value cannot be null."
     }
 
     It "throws when null is assigned to a non-nullable type via a dynamic property" {
@@ -398,6 +398,6 @@ Describe "Set-NotificationTriggerProperty" -Tag @("PowerShell", "UnitTest") {
 
         $trigger = GetTrigger "Volume"
 
-        { $trigger | Set-TriggerProperty -Threshold $null } | Should Throw "Value 'null' could not be assigned to property 'Threshold' of type 'System.Int32'. Value cannot be null."
+        { $trigger | Set-TriggerProperty -Threshold $null } | Should Throw "Value 'null' could not be assigned to property 'Threshold' of type 'System.Double'. Value cannot be null."
     }
 }

@@ -49,9 +49,9 @@ namespace PrtgAPI.Parameters
         /// Gets or sets the value which, once reached, will cause this trigger will activate.
         /// </summary>
         [PropertyParameter(TriggerProperty.Threshold)]
-        public int? Threshold
+        public double? Threshold
         {
-            get { return (int?)GetCustomParameterValue(TriggerProperty.Threshold); }
+            get { return (double?)GetCustomParameterValue(TriggerProperty.Threshold); }
             set { UpdateCustomParameter(TriggerProperty.Threshold, value); }
         }
 

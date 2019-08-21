@@ -44,10 +44,10 @@ namespace PrtgAPI.Tests.UnitTests.CSharp.ObjectManipulation
 
             Execute(
                 c => c.SetTriggerProperty(trigger,
-                    new TriggerParameter(TriggerProperty.Threshold, 20),
+                    new TriggerParameter(TriggerProperty.Threshold, 20.1),
                     new TriggerParameter(TriggerProperty.Latency, 30)
                 ),
-                UnitRequest.EditSettings("id=1&subid=7&threshold_7=20&latency_7=30")
+                UnitRequest.EditSettings("id=1&subid=7&threshold_7=20.1&latency_7=30")
             );
         }
 
