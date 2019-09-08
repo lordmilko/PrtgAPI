@@ -92,7 +92,7 @@ namespace PrtgAPI
         /// Applies to: State Triggers
         /// </summary>
         [PropertyParameter(TriggerProperty.State)]
-        public TriggerSensorState? State => stateTrigger == null ? null : (TriggerSensorState?)EnumExtensions.XmlToEnumAnyAttrib(stateTrigger, typeof(TriggerSensorState));
+        public TriggerSensorState? State => stateTrigger?.XmlToEnumAnyAttrib<TriggerSensorState>();
 
         /// <summary>
         /// Delay (in seconds) before this notification is activated after activation requirements have been met.
@@ -143,7 +143,7 @@ namespace PrtgAPI
         /// Applies to: Volume, Speed Triggers
         /// </summary>
         [PropertyParameter(TriggerProperty.UnitSize)]
-        public DataUnit? UnitSize => unitSizeStr?.DescriptionToEnum<DataUnit>();
+        public DataUnit? UnitSize => unitSizeStr?.XmlToEnumAnyAttrib<DataUnit>();
 
         [DataMember(Name = "unittime")]
         private string unitTimeStr;
@@ -153,7 +153,7 @@ namespace PrtgAPI
         /// Applies to: Speed Triggers
         /// </summary>
         [PropertyParameter(TriggerProperty.UnitTime)]
-        public TimeUnit? UnitTime => unitTimeStr?.DescriptionToEnum<TimeUnit>();
+        public TimeUnit? UnitTime => unitTimeStr?.XmlToEnumAnyAttrib<TimeUnit>();
 
         [DataMember(Name = "period")]
         private string periodStr;
@@ -163,7 +163,7 @@ namespace PrtgAPI
         /// Applies to: Volume Triggers
         /// </summary>
         [PropertyParameter(TriggerProperty.Period)]
-        public TriggerPeriod? Period => periodStr?.DescriptionToEnum<TriggerPeriod>();
+        public TriggerPeriod? Period => periodStr?.XmlToEnumAnyAttrib<TriggerPeriod>();
 
         [DataMember(Name = "onnotificationid")]
         private string onNotificationActionStr;
@@ -219,7 +219,7 @@ namespace PrtgAPI
         /// Applies to: Speed, Threshold Triggers
         /// </summary>
         [PropertyParameter(TriggerProperty.Condition)]
-        public TriggerCondition? Condition => conditionStr?.DescriptionToEnum<TriggerCondition>() ?? TriggerCondition.Equals;
+        public TriggerCondition? Condition => conditionStr?.XmlToEnumAnyAttrib<TriggerCondition>() ?? TriggerCondition.Equals;
 
         /// <summary>
         /// Delay (in seconds) before the <see cref="EscalationNotificationAction"/> occurs after this trigger has been activated.

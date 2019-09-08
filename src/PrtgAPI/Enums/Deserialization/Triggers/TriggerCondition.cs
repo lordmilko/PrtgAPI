@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System.Xml.Serialization;
+using PrtgAPI.Attributes;
 
 namespace PrtgAPI
 {
@@ -10,31 +11,35 @@ namespace PrtgAPI
         /// <summary>
         /// Trigger when sensor's value is above the threshold.
         /// </summary>
-        [Description("above")]
+        [XmlEnum("0")]
+        [XmlEnumAlternateName("above")]
         Above,
 
         /// <summary>
         /// Trigger when the sensor's value is below the threshold.
         /// </summary>
-        [Description("below")]
+        [XmlEnum("1")]
+        [XmlEnumAlternateName("below")]
         Below,
 
         /// <summary>
         /// Trigger when the sensor's value is equal to the threshold.
         /// </summary>
-        [Description("Equal to")]
+        [XmlEnum("2")]
+        [XmlEnumAlternateName("Equal to")]
         Equals,
 
         /// <summary>
         /// Trigger when the sensor's value is not equal to the threshold.
         /// </summary>
-        [Description("Not Equal to")]
+        [XmlEnum("3")]
+        [XmlEnumAlternateName("Not Equal to")]
         NotEquals,
 
         /// <summary>
         /// Trigger whenever the sensor's value changes. For use in <see cref="TriggerType.Change"/> triggers only.
         /// </summary>
-        [Description("change")]
+        [XmlEnum("change")]
         Change
     }
 }

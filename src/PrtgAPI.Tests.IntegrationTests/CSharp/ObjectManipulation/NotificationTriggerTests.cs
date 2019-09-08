@@ -127,7 +127,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
                 Latency = 100,
                 Condition = TriggerCondition.NotEquals,
                 Threshold = 3,
-                UnitTime = TimeUnit.Min,
+                UnitTime = TimeUnit.Minute,
                 UnitSize = DataUnit.Gbit
             };
 

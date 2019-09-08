@@ -1,5 +1,5 @@
-﻿using System.ComponentModel;
-using System.Xml.Serialization;
+﻿using System.Xml.Serialization;
+using PrtgAPI.Attributes;
 
 namespace PrtgAPI
 {
@@ -14,28 +14,28 @@ namespace PrtgAPI
         /// Seconds
         /// </summary>
         [XmlEnum("1")]
-        [Description("s")]
-        Sec,
+        [XmlEnumAlternateName("s")]
+        Second,
 
         /// <summary>
         /// Minutes
         /// </summary>
         [XmlEnum("2")]
-        [Description("m")]
-        Min,
+        [XmlEnumAlternateName("m")]
+        Minute,
 
         /// <summary>
         /// Hours
         /// </summary>
         [XmlEnum("3")]
-        [Description("h")]
+        [XmlEnumAlternateName("h")]
         Hour,
 
         /// <summary>
         /// Days
         /// </summary>
         [XmlEnum("4")]
-        [Description("d")]
+        [XmlEnumAlternateName("d")]
         Day
     }
 }

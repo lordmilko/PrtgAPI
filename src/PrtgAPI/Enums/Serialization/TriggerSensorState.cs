@@ -11,23 +11,39 @@ namespace PrtgAPI
         /// <summary>
         /// Trigger when the sensor is <see cref="Status.Down"/>.
         /// </summary>
-        Down = 0,
+        [XmlEnum("0")]
+        Down,
 
         /// <summary>
         /// Trigger when the sensor is <see cref="Status.Warning"/>.
         /// </summary>
-        Warning = 1,
+        [XmlEnum("1")]
+        Warning,
 
         /// <summary>
         /// Trigger when the sensor is <see cref="Status.Unusual"/>.
         /// </summary>
-        Unusual = 2,
+        [XmlEnum("2")]
+        Unusual,
 
         /// <summary>
         /// Trigger when the sensor is <see cref="Status.DownPartial"/>.
         /// </summary>
-        [XmlEnum("Partial Down")]
+        [XmlEnum("3")]
+        [XmlEnumAlternateName("Partial Down")]
         [XmlEnumAlternateName("Down (Partial)")]
-        DownPartial = 3
+        DownPartial,
+
+        /// <summary>
+        /// Trigger when the sensor is <see cref="Status.Up"/>.
+        /// </summary>
+        [XmlEnum("4")]
+        Up,
+
+        /// <summary>
+        /// Trigger when the sensor is <see cref="Status.Unknown"/>.
+        /// </summary>
+        [XmlEnum("5")]
+        Unknown
     }
 }

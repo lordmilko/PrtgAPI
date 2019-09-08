@@ -47,17 +47,19 @@ namespace PrtgAPI.Reflection.Cache
                 {
                     if (attrib.Key == typeof (XmlEnumAttribute) || attrib.Key == typeof (XmlEnumAlternateName))
                     {
-                        var val = (XmlEnumAttribute) attrib.Value.First();
-
-                        Dictionary<Type, EnumValue> dict;
-
-                        if (!map.TryGetValue(val.Name, out dict))
+                        foreach (var val in attrib.Value.Cast<XmlEnumAttribute>())
                         {
-                            dict = new Dictionary<Type, EnumValue>();
-                            map[val.Name] = dict;
-                        }
+                            Dictionary<Type, EnumValue> dict;
 
-                        dict[attrib.Key] = new EnumValue(field.Field);
+                            if (!map.TryGetValue(val.Name, out dict))
+                            {
+                                dict = new Dictionary<Type, EnumValue>();
+
+                                map[val.Name] = dict;
+                            }
+
+                            dict[attrib.Key] = new EnumValue(field.Field);
+                        }
                     }
                 }
             }

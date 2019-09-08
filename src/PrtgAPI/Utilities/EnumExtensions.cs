@@ -91,6 +91,11 @@ namespace PrtgAPI.Utilities
             return (T) XmlToEnum<XmlEnumAlternateName>(value, typeof (T));
         }
 
+        internal static T XmlToEnumAnyAttrib<T>(this string value)
+        {
+            return (T) XmlToEnumAnyAttrib(value, typeof(T));
+        }
+
         internal static object XmlToEnumAnyAttrib(string value, Type type, Type[] attribTypes = null, bool requireValue = true, bool allowFlags = true, bool allowParse = true)
         {
             if (attribTypes == null)
@@ -112,9 +117,9 @@ namespace PrtgAPI.Utilities
             return null;
         }
 
-        internal static object XmlToEnum<TXmlEnumAttribute>(string value, Type type, bool requireValue = true, bool allowFlags = true) where TXmlEnumAttribute : XmlEnumAttribute
+        internal static object XmlToEnum<TXmlEnumAttribute>(string value, Type type, bool requireValue = true, bool allowFlags = true, bool allowParse = true) where TXmlEnumAttribute : XmlEnumAttribute
         {
-            return XmlToEnum(value, type, typeof (TXmlEnumAttribute), requireValue, allowFlags);
+            return XmlToEnum(value, type, typeof (TXmlEnumAttribute), requireValue, allowFlags, allowParse);
         }
 
         internal static object XmlToEnum(string value, Type type, Type attribType, bool requireValue = true, bool allowFlags = true, bool allowParse = true, bool allowNumeric = false)
