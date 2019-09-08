@@ -52,10 +52,11 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
                 case Content.Triggers:
                     return base.GetResponseText(ref address);
                 case Content.Channels:
-
-                    if (Convert.ToInt32(components["id"]) >= 4000)
-                        return new ChannelResponse(channels).GetResponseText(ref address);
-                    return new ChannelResponse().GetResponseText(ref address);
+                    return new ChannelResponse(channels).GetResponseText(ref address);
+                case Content.Objects:
+                    if (Convert.ToInt32(components["filter_objid"]) >= 4000)
+                        return new ObjectResponse(new SensorItem()).GetResponseText(ref address);
+                    return new ObjectResponse(new DeviceItem()).GetResponseText(ref address);
                 case Content.Notifications:
                     return new NotificationActionResponse(new NotificationActionItem("301"), new NotificationActionItem("302"), new NotificationActionItem("303")).GetResponseText(ref address);
                 case Content.Schedules:

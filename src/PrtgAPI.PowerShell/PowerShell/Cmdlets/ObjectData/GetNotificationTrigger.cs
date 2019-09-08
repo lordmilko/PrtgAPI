@@ -147,7 +147,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
 
         private PSObject GetNotificationTriggerTypes()
         {
-            var types = client.GetNotificationTriggerTypes(Object.Id);
+            var types = client.GetNotificationTriggerTypes(Object);
 
             var names = Enum.GetValues(typeof(TriggerType)).Cast<TriggerType>().ToList();
 
@@ -171,7 +171,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// <returns>A list of all notification triggers.</returns>
         protected override IEnumerable<NotificationTrigger> GetRecords()
         {
-            IEnumerable<NotificationTrigger> triggers = client.GetNotificationTriggers(Object.Id);
+            IEnumerable<NotificationTrigger> triggers = client.GetNotificationTriggers(Object);
 
             if (Inherited == false)
                 triggers = triggers.Where(a => a.Inherited == false);

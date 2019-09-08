@@ -204,17 +204,32 @@ for(int i = 0; i < 2; i++)
 for(int i = 0; i < 2; i++)
 {
 #>
-        private <#= GetSignature("UpdateTriggerChannels", "void", i) #>(List<NotificationTrigger> triggers, CancellationToken token)
+        private <#= GetSignature("UpdateTriggerChannels", "void", i) #>(Either<IPrtgObject, int> objectOrId, List<NotificationTrigger> triggers, CancellationToken token)
         {
+            var isSensor = false;
+            var sensorChannels = new List<Channel>();
+
+            if (triggers.Any(t => t.HasChannel()))
+            {
+                isSensor = <#= CallFunction("IsSensor", "objectOrId", i) #>;
+
+                if (isSensor)
+                {
+                    Log($"Retrieving channels for sensor specific, channel based Notification Triggers (Object ID: {objectOrId.GetId()})", LogLevel.Trace);
+                    sensorChannels = (<#= CallFunction("GetChannelsInternal", "objectOrId.GetId(), n => triggers.Any(t => t.channelName == n), token: token", i) #>);
+                }
+            }
+
             foreach (var trigger in triggers)
             {
                 if (trigger.HasChannel())
                 {
-                    Log($"Retrieving Channel for sensor specific, channel based Notification Trigger (Sub ID: {trigger.SubId}", LogLevel.Trace);
-
-                    bool isSensor = false;
-
-                    trigger.channelObj = (<#= CallFunction("GetChannelsInternal", "trigger.ObjectId, n => { isSensor = true; return n == trigger.channelName; }, token: token", i) #>).FirstOrDefault();
+                    if (isSensor)
+                    {
+                        //If we're an inherited trigger, we still could be requesting the "Total" channel or something of a sensor,
+                        //in which case we want to return the Channel object.
+                        trigger.channelObj = sensorChannels.FirstOrDefault(c => c.Name == trigger.channelName);
+                    }
 
                     if (trigger.channelObj == null)
                     {
@@ -224,7 +239,7 @@ for(int i = 0; i < 2; i++)
                         //then maybe we're a sensor with zero channels or something?
 
                         if ((isSensor && !trigger.Inherited) || !trigger.SetEnumChannel())
-                            throw new InvalidStateException($"Could not deserialize channel of {trigger.Type.ToString().ToLower()} trigger '{trigger.SubId}' of object ID '{trigger.ObjectId}'. Object may be in a corrupted state. Please check the notification triggers of object ID {trigger.ObjectId} in the PRTG UI.");
+                            throw new InvalidStateException($"Could not deserialize channel '{trigger.channelName}' of {trigger.Type.ToString().ToLower()} trigger '{trigger.SubId}' of object ID '{trigger.ObjectId}'. Object may be in a corrupted state. Please check the notification triggers of object ID {trigger.ObjectId} in the PRTG UI.");
                     }
                 }
             }

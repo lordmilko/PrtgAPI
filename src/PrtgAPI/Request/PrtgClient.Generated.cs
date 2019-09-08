@@ -289,17 +289,32 @@ namespace PrtgAPI
         // UpdateTriggerChannels
         //######################################
 
-        private void UpdateTriggerChannels(List<NotificationTrigger> triggers, CancellationToken token)
+        private void UpdateTriggerChannels(Either<IPrtgObject, int> objectOrId, List<NotificationTrigger> triggers, CancellationToken token)
         {
+            var isSensor = false;
+            var sensorChannels = new List<Channel>();
+
+            if (triggers.Any(t => t.HasChannel()))
+            {
+                isSensor = IsSensor(objectOrId);
+
+                if (isSensor)
+                {
+                    Log($"Retrieving channels for sensor specific, channel based Notification Triggers (Object ID: {objectOrId.GetId()})", LogLevel.Trace);
+                    sensorChannels = (GetChannelsInternal(objectOrId.GetId(), n => triggers.Any(t => t.channelName == n), token: token));
+                }
+            }
+
             foreach (var trigger in triggers)
             {
                 if (trigger.HasChannel())
                 {
-                    Log($"Retrieving Channel for sensor specific, channel based Notification Trigger (Sub ID: {trigger.SubId}", LogLevel.Trace);
-
-                    bool isSensor = false;
-
-                    trigger.channelObj = (GetChannelsInternal(trigger.ObjectId, n => { isSensor = true; return n == trigger.channelName; }, token: token)).FirstOrDefault();
+                    if (isSensor)
+                    {
+                        //If we're an inherited trigger, we still could be requesting the "Total" channel or something of a sensor,
+                        //in which case we want to return the Channel object.
+                        trigger.channelObj = sensorChannels.FirstOrDefault(c => c.Name == trigger.channelName);
+                    }
 
                     if (trigger.channelObj == null)
                     {
@@ -309,23 +324,38 @@ namespace PrtgAPI
                         //then maybe we're a sensor with zero channels or something?
 
                         if ((isSensor && !trigger.Inherited) || !trigger.SetEnumChannel())
-                            throw new InvalidStateException($"Could not deserialize channel of {trigger.Type.ToString().ToLower()} trigger '{trigger.SubId}' of object ID '{trigger.ObjectId}'. Object may be in a corrupted state. Please check the notification triggers of object ID {trigger.ObjectId} in the PRTG UI.");
+                            throw new InvalidStateException($"Could not deserialize channel '{trigger.channelName}' of {trigger.Type.ToString().ToLower()} trigger '{trigger.SubId}' of object ID '{trigger.ObjectId}'. Object may be in a corrupted state. Please check the notification triggers of object ID {trigger.ObjectId} in the PRTG UI.");
                     }
                 }
             }
         }
 
-        private async Task UpdateTriggerChannelsAsync(List<NotificationTrigger> triggers, CancellationToken token)
+        private async Task UpdateTriggerChannelsAsync(Either<IPrtgObject, int> objectOrId, List<NotificationTrigger> triggers, CancellationToken token)
         {
+            var isSensor = false;
+            var sensorChannels = new List<Channel>();
+
+            if (triggers.Any(t => t.HasChannel()))
+            {
+                isSensor = await IsSensorAsync(objectOrId).ConfigureAwait(false);
+
+                if (isSensor)
+                {
+                    Log($"Retrieving channels for sensor specific, channel based Notification Triggers (Object ID: {objectOrId.GetId()})", LogLevel.Trace);
+                    sensorChannels = (await GetChannelsInternalAsync(objectOrId.GetId(), n => triggers.Any(t => t.channelName == n), token: token).ConfigureAwait(false));
+                }
+            }
+
             foreach (var trigger in triggers)
             {
                 if (trigger.HasChannel())
                 {
-                    Log($"Retrieving Channel for sensor specific, channel based Notification Trigger (Sub ID: {trigger.SubId}", LogLevel.Trace);
-
-                    bool isSensor = false;
-
-                    trigger.channelObj = (await GetChannelsInternalAsync(trigger.ObjectId, n => { isSensor = true; return n == trigger.channelName; }, token: token).ConfigureAwait(false)).FirstOrDefault();
+                    if (isSensor)
+                    {
+                        //If we're an inherited trigger, we still could be requesting the "Total" channel or something of a sensor,
+                        //in which case we want to return the Channel object.
+                        trigger.channelObj = sensorChannels.FirstOrDefault(c => c.Name == trigger.channelName);
+                    }
 
                     if (trigger.channelObj == null)
                     {
@@ -335,7 +365,7 @@ namespace PrtgAPI
                         //then maybe we're a sensor with zero channels or something?
 
                         if ((isSensor && !trigger.Inherited) || !trigger.SetEnumChannel())
-                            throw new InvalidStateException($"Could not deserialize channel of {trigger.Type.ToString().ToLower()} trigger '{trigger.SubId}' of object ID '{trigger.ObjectId}'. Object may be in a corrupted state. Please check the notification triggers of object ID {trigger.ObjectId} in the PRTG UI.");
+                            throw new InvalidStateException($"Could not deserialize channel '{trigger.channelName}' of {trigger.Type.ToString().ToLower()} trigger '{trigger.SubId}' of object ID '{trigger.ObjectId}'. Object may be in a corrupted state. Please check the notification triggers of object ID {trigger.ObjectId} in the PRTG UI.");
                     }
                 }
             }

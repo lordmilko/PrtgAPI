@@ -420,7 +420,7 @@ namespace PrtgAPI
 
             var parsed = ResponseParser.ParseNotificationTriggerResponse(objectOrId, xmlResponse);
 
-            UpdateTriggerChannels(parsed, token);
+            UpdateTriggerChannels(objectOrId, parsed, token);
             UpdateTriggerActions(parsed, token);
 
             return parsed;
@@ -432,7 +432,7 @@ namespace PrtgAPI
 
             var parsed = ResponseParser.ParseNotificationTriggerResponse(objectOrId, xmlResponse);
 
-            var updateTriggerChannels = UpdateTriggerChannelsAsync(parsed, token);
+            var updateTriggerChannels = UpdateTriggerChannelsAsync(objectOrId, parsed, token);
             var updateTriggerActions = UpdateTriggerActionsAsync(parsed, token);
 
             await Task.WhenAll(updateTriggerChannels, updateTriggerActions).ConfigureAwait(false);
@@ -546,6 +546,32 @@ namespace PrtgAPI
                 ParseNotificationTriggerTypesAsync,
                 token
             ).ConfigureAwait(false);
+
+        private bool IsSensor(Either<IPrtgObject, int> objectOrId)
+        {
+            if (objectOrId.IsLeft)
+                return IsSensorObject(objectOrId.Left);
+            else
+                return GetObjects(Property.Id, objectOrId.Right).FirstOrDefault()?.Type.Value == ObjectType.Sensor;
+        }
+
+        private async Task<bool> IsSensorAsync(Either<IPrtgObject, int> objectOrId)
+        {
+            if (objectOrId.IsLeft)
+                return IsSensorObject(objectOrId.Left);
+            else
+                return (await GetObjectsAsync(Property.Id, objectOrId.Right).ConfigureAwait(false)).FirstOrDefault()?.Type.Value == ObjectType.Sensor;
+        }
+
+        private bool IsSensorObject(IPrtgObject obj)
+        {
+            var prtgObject = obj as PrtgObject;
+
+            if (prtgObject?.Type.Value == ObjectType.Sensor)
+                return true;
+            else
+                return false;
+        }
 
         #endregion
         #region Sensor History
