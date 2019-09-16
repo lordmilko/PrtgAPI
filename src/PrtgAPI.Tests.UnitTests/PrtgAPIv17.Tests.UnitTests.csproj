@@ -45,7 +45,7 @@
   </ItemGroup>
 
   <ItemGroup Condition="'$(FrameworkType)' == 'Core'">
-    <PackageReference Include="System.Management.Automation" Version="6.1.5" />
+    <PackageReference Include="System.Management.Automation" Version="6.1.6" />
     <PackageReference Include="System.Net.Http" Version="4.3.4" />
   </ItemGroup>
 
