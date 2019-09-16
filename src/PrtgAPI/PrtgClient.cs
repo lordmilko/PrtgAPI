@@ -886,7 +886,7 @@ namespace PrtgAPI
         {
             var restartTime = waitForRestart ? (DateTime?)GetStatus().DateTime : null;
 
-            RequestEngine.ExecuteRequest(new CommandFunctionParameters(CommandFunction.RestartServer));
+            RequestEngine.ExecuteRequest(new CommandFunctionParameters(CommandFunction.RestartServer), token: token);
 
             if (waitForRestart)
                 WaitForCoreRestart(restartTime.Value, progressCallback, token);
@@ -894,9 +894,9 @@ namespace PrtgAPI
 
         private async Task RestartCoreInternalAsync(bool waitForRestart, Func<RestartCoreStage, bool> progressCallback, CancellationToken token)
         {
-            var restartTime = waitForRestart ? (DateTime?)(await GetStatusAsync().ConfigureAwait(false)).DateTime : null;
+            var restartTime = waitForRestart ? (DateTime?)(await GetStatusAsync(token).ConfigureAwait(false)).DateTime : null;
 
-            await RequestEngine.ExecuteRequestAsync(new CommandFunctionParameters(CommandFunction.RestartServer)).ConfigureAwait(false);
+            await RequestEngine.ExecuteRequestAsync(new CommandFunctionParameters(CommandFunction.RestartServer), token: token).ConfigureAwait(false);
 
             if (waitForRestart)
                 await WaitForCoreRestartAsync(restartTime.Value, progressCallback, token).ConfigureAwait(false);
@@ -906,7 +906,7 @@ namespace PrtgAPI
             RequestEngine.ExecuteRequest(new ApproveProbeParameters(probeOrId, action));
 
         internal async Task ApproveProbeInternalAsync(Either<Probe, int> probeOrId, ProbeApproval action, CancellationToken token) =>
-            await RequestEngine.ExecuteRequestAsync(new ApproveProbeParameters(probeOrId, action)).ConfigureAwait(false);
+            await RequestEngine.ExecuteRequestAsync(new ApproveProbeParameters(probeOrId, action), token: token).ConfigureAwait(false);
 
         #endregion
     #endregion

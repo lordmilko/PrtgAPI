@@ -725,7 +725,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             return methods.ToList();
         }
 
-        private MethodInfo GetCustomMethod(MethodInfo method)
+        internal static MethodInfo GetCustomMethod(MethodInfo method)
         {
             if (method.ContainsGenericParameters)
             {
@@ -738,7 +738,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             return method;
         }
 
-        private PrtgClient GetDefaultClient()
+        internal static PrtgClient GetDefaultClient()
         {
             var client = Initialize_Client(new MultiTypeResponse
             {
@@ -967,6 +967,8 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
                 return new Either<Sensor, int>(1001);
             if (t == typeof(Either<Device, int>))
                 return new Either<Device, int>(1001);
+            if (t == typeof(Either<Group, int>))
+                return new Either<Group, int>(1001);
             if (t == typeof(Either<Probe, int>))
                 return new Either<Probe, int>(1001);
             if (t == typeof(Either<GroupOrProbe, int>))

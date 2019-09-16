@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Xml.Serialization;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -267,6 +268,51 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
                 {
                     if (!subGroup.Any(m => m.GetParameters().Any(p => p.ParameterType == typeof(CancellationToken))))
                         Assert.Fail($"{group.Key}({subGroup.Key}) does not accept a {nameof(CancellationToken)} or have an overload that does");
+                }
+            }
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public async Task AllPublicAsyncMethods_FailWithACancelledCancellationToken()
+        {
+            var methods = typeof(PrtgClient).GetMethods().Where(m => m.Name.EndsWith("Async"));
+            var groups = methods.GroupBy(m => m.Name);
+
+            var client = PrtgClientTests.GetDefaultClient();
+
+            foreach (var group in groups)
+            {
+                var subGroups = group.GroupBy(m => string.Join(", ",
+                    m.GetParameters().Where(p => p.ParameterType != typeof(CancellationToken))
+                        .Select(p => p.ParameterType.Name + " " + p.Name)));
+
+                foreach (var subGroup in subGroups)
+                {
+                    var overloads = subGroup.Where(m =>
+                        m.GetParameters().Any(p => p.ParameterType == typeof(CancellationToken)));
+
+                    foreach (var overload in overloads)
+                    {
+                        var m = PrtgClientTests.GetCustomMethod(overload);
+
+                        var cts = new CancellationTokenSource();
+                        cts.Cancel();
+
+                        var parameters = PrtgClientTests.GetParameters(overload);
+                        parameters[parameters.Length - 1] = cts.Token;
+
+                        var task = (Task)m.Invoke(client, parameters);
+
+                        try
+                        {
+                            await AssertEx.ThrowsAsync<TaskCanceledException>(async () => await task, "A task was canceled.");
+                        }
+                        catch (AssertFailedException)
+                        {
+                            Assert.Fail($"Method '{m}' did not throw an exception");
+                        }
+                    }
                 }
             }
         }
