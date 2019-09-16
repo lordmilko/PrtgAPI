@@ -175,6 +175,9 @@ namespace PrtgAPI
         /// <param name="channel"></param>
         public TriggerChannel(Channel channel)
         {
+            if (channel == null)
+                throw new ArgumentNullException(nameof(channel));
+
             this.channel = channel;
         }
 
@@ -183,7 +186,7 @@ namespace PrtgAPI
         /// </summary>
         public TriggerChannel(int channelId)
         {
-            this.channel = channelId;
+            channel = channelId;
         }
 
         private TriggerChannel(StandardTriggerChannel channel)
@@ -283,8 +286,6 @@ namespace PrtgAPI
         {
             return ((ISerializable)this).GetSerializedFormat() == ((Request.ISerializable)other).GetSerializedFormat();
         }
-
-        //todo: this NEEDS unit tests
 
         /// <summary>
         /// Returns a hash code for this object. If two trigger channels target
