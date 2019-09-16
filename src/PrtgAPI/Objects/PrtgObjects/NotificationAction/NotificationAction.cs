@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Xml.Linq;
 using System.Xml.Serialization;
@@ -12,7 +11,7 @@ namespace PrtgAPI
     /// <summary>
     /// <para type="description">An action to be performed by PRTG when a <see cref="NotificationTrigger"/> activates.</para>
     /// </summary>
-    [Description("Notification Action")]
+    [AlternateDescription("Notification Action")]
     public class NotificationAction : PrtgObject, ISerializable, ILazy
     {
         private string url;

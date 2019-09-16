@@ -64,7 +64,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         {
             if (ShouldProcess($"'{obj.Name}' (ID: {obj.Id}) (Destination ID: {DestinationId})"))
             {
-                ExecuteOperation(() => client.MoveObject(obj.Id, DestinationId), $"Moving {obj.BaseType.ToString().ToLower()} {obj.Name} (ID: {obj.Id}) to object ID {DestinationId}");
+                ExecuteOperation(() => client.MoveObject(obj.Id, DestinationId), $"Moving {obj.BaseType.ToString().ToLower()} '{obj.Name}' (ID: {obj.Id}) to object ID {DestinationId}");
             }
         }
 

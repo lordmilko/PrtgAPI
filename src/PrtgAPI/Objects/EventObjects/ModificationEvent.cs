@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Xml.Serialization;
 using PrtgAPI.Attributes;
@@ -9,7 +8,7 @@ namespace PrtgAPI
     /// <summary>
     /// <para type="description">Represents a modification event of a PRTG Object.</para>
     /// </summary>
-    [Description("Modification Event")]
+    [AlternateDescription("Modification Event")]
     public class ModificationEvent : IEventObject
     {
         [ExcludeFromCodeCoverage]

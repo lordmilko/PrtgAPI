@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.Serialization;
@@ -15,7 +14,7 @@ namespace PrtgAPI
     /// <para type="description">Causes notification actions to occur when a sensor exhibits a specified behaviour.</para>
     /// </summary>
     [DataContract]
-    [Description("Notification Trigger")]
+    [AlternateDescription("Notification Trigger")]
     [DebuggerDisplay("Type = {Type}, SubId = {SubId}, Inherited = {Inherited}, OnNotificationAction = {OnNotificationAction}")]
     public class NotificationTrigger : ISubObject
     {

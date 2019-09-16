@@ -1,16 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Xml.Serialization;
+using PrtgAPI.Attributes;
 
 namespace PrtgAPI
 {
     /// <summary>
     /// Represents historical monitoring data for a sensor at a specified time period.
     /// </summary>
-    [Description("Sensor History")]
+    [AlternateDescription("Sensor History")]
     public class SensorHistoryRecord : IEventObject
     {
         [ExcludeFromCodeCoverage]

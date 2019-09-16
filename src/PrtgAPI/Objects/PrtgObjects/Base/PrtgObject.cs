@@ -10,6 +10,7 @@ namespace PrtgAPI
     /// <summary>
     /// <para type="description">Represents a uniquely identifiable object within PRTG.</para>
     /// </summary>
+    [AlternateDescription("Object")]
     public class PrtgObject : IPrtgObject, ITableObject, ISerializable
     {
         // ################################## All Object Tables ##################################
