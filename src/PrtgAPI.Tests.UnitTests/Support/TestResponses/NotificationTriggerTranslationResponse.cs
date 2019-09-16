@@ -1,26 +1,31 @@
 ﻿using System;
+using System.Linq;
 using System.Xml.Linq;
-using PrtgAPI.Utilities;
 using PrtgAPI.Tests.UnitTests.Support.TestItems;
+using PrtgAPI.Utilities;
 
 namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
 {
-    public class NotificationTriggerResponse : BaseResponse<NotificationTriggerItem>
+    class NotificationTriggerTranslationResponse : BaseResponse<NotificationTriggerItem>
     {
-        private ChannelItem[] channels;
+        private NotificationTriggerItem[][] xml;
+        private NotificationTriggerJsonItem[][] json;
 
-        private int notificationActionId = 300;
+        private int jsonIndex = -1;
+        private int xmlIndex = -1;
 
-        public int[] HasSchedule { get; set; }
+        private bool isEnglish;
 
-        internal NotificationTriggerResponse(params NotificationTriggerItem[] triggers) : base("triggers", triggers)
+        public NotificationTriggerTranslationResponse(NotificationTriggerItem xml, NotificationTriggerJsonItem json, bool isEnglish) :
+            this(new[] { new[] { xml } }, new[] { new[] { json } }, isEnglish)
         {
-            channels = new[] {new ChannelItem()};
         }
 
-        public NotificationTriggerResponse(NotificationTriggerItem[] triggers, ChannelItem[] channels) : this(triggers)
+        public NotificationTriggerTranslationResponse(NotificationTriggerItem[][] xml, NotificationTriggerJsonItem[][] json, bool isEnglish) : base("triggers", new NotificationTriggerItem[] {})
         {
-            this.channels = channels;
+            this.xml = xml;
+            this.json = json;
+            this.isEnglish = isEnglish;
         }
 
         public override string GetResponseText(ref string address)
@@ -31,11 +36,17 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
             {
                 case nameof(XmlFunction.TableData):
                     return GetTableText(address);
-                case nameof(HtmlFunction.ChannelEdit):
-                    return new ChannelResponse(channels).GetResponseText(ref address);
-                case nameof(HtmlFunction.EditNotification):
+                case nameof(JsonFunction.Triggers):
+                    if (json.Length == 1)
+                        jsonIndex = 0;
+                    else
+                        jsonIndex++;
+
+                    return new NotificationTriggerJsonResponse(json[jsonIndex]).GetResponseText(ref address);
                 case nameof(HtmlFunction.ObjectData):
                     return GetObjectDataResponse(address).GetResponseText(ref address);
+                case nameof(HtmlFunction.ChannelEdit):
+                    return new ChannelResponse().GetResponseText(ref address);
                 default:
                     throw new NotImplementedException($"Unknown function '{function}' passed to {nameof(NotificationTriggerResponse)}");
             }
@@ -50,17 +61,23 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
             switch (content)
             {
                 case Content.Triggers:
+                    if (xml.Length == 1)
+                        xmlIndex = 0;
+                    else
+                        xmlIndex++;
+
+                    Items = xml[xmlIndex].ToList();
+
                     return base.GetResponseText(ref address);
                 case Content.Channels:
-                    return new ChannelResponse(channels).GetResponseText(ref address);
+                    return new ChannelResponse(new[] {new ChannelItem()}).GetResponseText(ref address);
                 case Content.Objects:
                     if (Convert.ToInt32(components["filter_objid"]) >= 4000)
                         return new ObjectResponse(new SensorItem()).GetResponseText(ref address);
                     return new ObjectResponse(new DeviceItem()).GetResponseText(ref address);
                 case Content.Notifications:
-                    return new NotificationActionResponse(new NotificationActionItem("301"), new NotificationActionItem("302"), new NotificationActionItem("303")).GetResponseText(ref address);
                 case Content.Schedules:
-                    return new ScheduleResponse(new ScheduleItem()).GetResponseText(ref address);
+                    return new NotificationActionResponse(new NotificationActionItem("301"), new NotificationActionItem("302"), new NotificationActionItem("303")).GetResponseText(ref address);
                 default:
                     throw new NotImplementedException($"Unknown content '{content}' requested from {nameof(NotificationTriggerResponse)}");
             }
@@ -77,17 +94,11 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
 
             switch (objectType)
             {
-                case ObjectType.Notification:
-                    notificationActionId++;
-
-                    return new NotificationActionResponse(new NotificationActionItem(notificationActionId.ToString()))
-                    {
-                        HasSchedule = HasSchedule
-                    };
-                case ObjectType.Schedule:
-                    return new ScheduleResponse();
                 case ObjectType.WebServerOptions:
-                    return new WebServerOptionsResponse();
+                    return new WebServerOptionsResponse(isEnglish);
+                case ObjectType.Notification:
+                case ObjectType.Schedule:
+                    return new NotificationActionResponse(new NotificationActionItem("301"), new NotificationActionItem("302"), new NotificationActionItem("303"));
                 default:
                     throw new NotImplementedException($"Unknown object type '{objectType}' requested from {nameof(MultiTypeResponse)}");
             }

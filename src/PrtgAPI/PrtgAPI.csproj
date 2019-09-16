@@ -138,6 +138,8 @@
     <Compile Include="Parameters\ObjectManipulation\AddSensor\SensorQueryTargetParameters.cs" />
     <Compile Include="Parameters\TriggerParameter.cs" />
     <Compile Include="Properties\Version.cs" />
+    <Compile Include="Request\EnumTranslation.cs" />
+    <Compile Include="Request\ForeignEnumValue.cs" />
     <Compile Include="Request\HtmlParser.cs" />
     <Compile Include="Request\LogVerboseEventArgs.cs" />
     <Compile Include="Exceptions\HttpDeserializationException.cs" />
@@ -156,8 +158,10 @@
     <Compile Include="Parameters\Interfaces\ICustomParameterContainer.cs" />
     <Compile Include="Parameters\ObjectManipulation\ApproveProbeParameters.cs" />
     <Compile Include="Parameters\ObjectManipulation\NewObjectParameters\Sensors\FactorySensorParameters.cs" />
+    <Compile Include="Request\NotificationTriggerTranslator.cs" />
     <Compile Include="Request\Serialization\ValueConverters\NotificationActionValueConverter.cs" />
     <Compile Include="Request\Serialization\ValueConverters\ValueLookupConverter.cs" />
+    <Compile Include="Request\TriggerPropertyEntry.cs" />
     <Compile Include="Request\Version\ChannelLimitAnalysis.cs" />
     <Compile Include="Request\Version\SetChannelPropertyGrouping.cs" />
     <Compile Include="Request\Version\SetChannelPropertyTask.cs" />

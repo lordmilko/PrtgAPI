@@ -194,7 +194,7 @@ namespace PrtgAPI
         {
             RequestVersion max = RequestVersion.v14_4;
 
-            foreach(var pair in VersionMap.Map)
+            foreach (var pair in VersionMap.Map)
             {
                 if (Version >= pair.Value)
                     max = pair.Key;
@@ -414,30 +414,76 @@ namespace PrtgAPI
         #endregion
         #region Notification Triggers
 
+        private bool? isEnglish;
+
+        private bool IsEnglish
+        {
+            get
+            {
+                if (isEnglish == null)
+                {
+                    string language;
+
+                    if (GetObjectPropertiesRaw(810).TryGetValue("languagefile", out language))
+                    {
+                        isEnglish = language == "english.lng";
+                    }
+                    else
+                        isEnglish = false;
+                }
+
+                return isEnglish.Value;
+            }
+        }
+
         private List<NotificationTrigger> GetNotificationTriggersInternal(Either<IPrtgObject, int> objectOrId, CancellationToken token)
         {
             var xmlResponse = ObjectEngine.GetObjectsXml(new NotificationTriggerParameters(objectOrId), token: token);
 
-            var parsed = ResponseParser.ParseNotificationTriggerResponse(objectOrId, xmlResponse);
+            var typed = ResponseParser.ParseNotificationTriggerResponse(objectOrId, xmlResponse);
 
-            UpdateTriggerChannels(objectOrId, parsed, token);
-            UpdateTriggerActions(parsed, token);
+            if (!IsEnglish)
+            {
+                var helper = new NotificationTriggerTranslator(typed, objectOrId.GetId());
 
-            return parsed;
+                NotificationTriggerDataTrigger[] raw = null;
+
+                int parentId;
+
+                while (helper.TranslateTriggers(raw, out parentId))
+                    raw = GetNotificationTriggerData(parentId, token).Triggers;                
+            }
+
+            UpdateTriggerChannels(objectOrId, typed, token);
+            UpdateTriggerActions(typed, token);
+
+            return typed;
         }
 
         private async Task<List<NotificationTrigger>> GetNotificationTriggersInternalAsync(Either<IPrtgObject, int> objectOrId, CancellationToken token)
         {
             var xmlResponse = await ObjectEngine.GetObjectsXmlAsync(new NotificationTriggerParameters(objectOrId), token: token).ConfigureAwait(false);
 
-            var parsed = ResponseParser.ParseNotificationTriggerResponse(objectOrId, xmlResponse);
+            var typed = ResponseParser.ParseNotificationTriggerResponse(objectOrId, xmlResponse);
 
-            var updateTriggerChannels = UpdateTriggerChannelsAsync(objectOrId, parsed, token);
-            var updateTriggerActions = UpdateTriggerActionsAsync(parsed, token);
+            if (!IsEnglish)
+            {
+                var helper = new NotificationTriggerTranslator(typed, objectOrId.GetId());
+
+                NotificationTriggerDataTrigger[] raw = null;
+
+                int parentId;
+
+                while (helper.TranslateTriggers(raw, out parentId))
+                    raw = (await GetNotificationTriggerDataAsync(parentId, token).ConfigureAwait(false)).Triggers;
+            }
+
+            var updateTriggerChannels = UpdateTriggerChannelsAsync(objectOrId, typed, token);
+            var updateTriggerActions = UpdateTriggerActionsAsync(typed, token);
 
             await Task.WhenAll(updateTriggerChannels, updateTriggerActions).ConfigureAwait(false);
 
-            return parsed;
+            return typed;
         }
 
         private void UpdateTriggerActions(List<NotificationTrigger> triggers, CancellationToken token)

@@ -100,6 +100,7 @@
     <Compile Include="Support\Serialization\XmlReflectionSerializerImpl.cs" />
     <Compile Include="Support\Serialization\XmlSerializerManual.cs" />
     <Compile Include="Support\PrtgAPIHelpers.cs" />
+    <Compile Include="Support\TestItems\NotificationTriggerJsonItem.cs" />
     <Compile Include="Support\TestReflectionUtilities.cs" />
     <Compile Include="Support\TestHelpers.cs" />
     <Compile Include="CSharp\Infrastructure\AssemblyTests.cs" />
@@ -118,6 +119,8 @@
     <Compile Include="Support\TestResponses\InfiniteLogPostProcessValidatorResponse.cs" />
     <Compile Include="Support\TestResponses\InfiniteLogResponse.cs" />
     <Compile Include="Support\TestResponses\InfiniteLogValidatorResponse.cs" />
+    <Compile Include="Support\TestResponses\NotificationTriggerJsonResponse.cs" />
+    <Compile Include="Support\TestResponses\NotificationTriggerTranslationResponse.cs" />
     <Compile Include="Support\TestResponses\ProgressOwnershipResponse.cs" />
     <Compile Include="Support\TestResponses\ReadOnlyResponse.cs" />
     <Compile Include="Support\TestResponses\SensorQueryTargetParametersResponse.cs" />
@@ -153,6 +156,7 @@
     <Compile Include="Support\TestResponses\TakeIterator\TakeScenario.cs" />
     <Compile Include="Support\TestResponses\TakeIterator\SensorScenarios\Group\TakeUnfilteredSensorsFromGroupScenario.cs" />
     <Compile Include="Support\TestResponses\TakeIterator\SensorScenarios\Normal\TakeUnfilteredSensorsScenario.cs" />
+    <Compile Include="Support\TestResponses\WebServerOptionsResponse.cs" />
     <Compile Include="Support\TreeNodes\DeviceNode.cs" />
     <Compile Include="Support\TreeNodes\GroupNode.cs" />
     <Compile Include="Support\TreeNodes\IDeviceContainer.cs" />
@@ -329,6 +333,8 @@
     <Compile Include="CSharp\Infrastructure\SearchFilterTests.cs" />
     <Compile Include="Support\TestResponses\PassHashResponse.cs" />
     <Compile Include="Support\TestItems\SensorItem.cs" />
+    <Compile Include="Support\TriggerTranslation.cs" />
+    <Compile Include="Support\TriggerTranslator.cs" />
     <Compile Include="Support\WellKnownObjectId.cs" />
   </ItemGroup>
   <ItemGroup>

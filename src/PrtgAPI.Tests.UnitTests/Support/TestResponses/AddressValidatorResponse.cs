@@ -15,6 +15,8 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
 
         private int arrayPos;
 
+        private IWebResponse alternateResponse;
+
         public bool AllowReorder { get; set; }
 
         [Obsolete("Do not create AddressValidatorResponse objects directly; use BaseTest.Execute instead")]
@@ -45,6 +47,13 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
 #endif
         }
 
+#pragma warning disable 618
+        public AddressValidatorResponse(string[] str, bool exactMatch, IWebResponse response) : this(str, exactMatch)
+#pragma warning restore 618
+        {
+            alternateResponse = response;
+        }
+
         [Obsolete("Do not create AddressValidatorResponse objects directly; use BaseTest.Execute instead")]
         public AddressValidatorResponse(object[] str) : this(str, true)
         {
@@ -54,14 +63,20 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
         {
             ValidateAddress(address);
 
-            return base.GetResponse(ref address, function);
+            if (alternateResponse != null)
+                return new BasicResponse(alternateResponse.GetResponseText(ref address));
+            else
+                return base.GetResponse(ref address, function);
         }
 
         protected override IWebStreamResponse GetResponseStream(string address, string function)
         {
             ValidateAddress(address);
 
-            return base.GetResponseStream(address, function);
+            if (alternateResponse != null)
+                return new BasicResponse(alternateResponse.GetResponseText(ref address));
+            else
+                return base.GetResponseStream(address, function);
         }
 
         internal void ValidateAddress(string address)

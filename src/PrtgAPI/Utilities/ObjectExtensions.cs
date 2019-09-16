@@ -13,6 +13,9 @@ namespace PrtgAPI.Utilities
 
         public static IEnumerable<object> ToIEnumerable(this object obj)
         {
+            if (obj is IEnumerable<object>)
+                return (IEnumerable<object>) obj;
+
             return ((IEnumerable) obj).Cast<object>();
         }
     }

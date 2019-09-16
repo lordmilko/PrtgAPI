@@ -2,11 +2,11 @@
 
 function GetTrigger($type)
 {
-    $sensor = Get-Sensor -Count 1
-    $sensor.Id = 1
+    $device = Get-Device -Count 1
+    $device.Id = 1
 
     $trigger = Run NotificationTrigger {
-        $sensor | Get-Trigger -Type $type | Select -First 1
+        $device | Get-Trigger -Type $type | Select -First 1
     }
 
     return $trigger
@@ -41,11 +41,11 @@ Describe "Set-NotificationTriggerProperty" -Tag @("PowerShell", "UnitTest") {
     SetResponseAndClient "SetNotificationTriggerResponse"
 
     It "sets a TriggerChannel from a property" {
-        $sensor = Get-Sensor -Count 1
-        $sensor.Id = 1
+        $device = Get-Device -Count 1
+        $device.Id = 1
 
         $trigger = Run NotificationTrigger {
-            $sensor | Get-Trigger -Type Threshold
+            $device | Get-Trigger -Type Threshold
         }
 
         $trigger.Count | Should Be 1
@@ -67,11 +67,11 @@ Describe "Set-NotificationTriggerProperty" -Tag @("PowerShell", "UnitTest") {
     }
 
     It "processes a state trigger" {
-        $sensor = Get-Sensor -Count 1
-        $sensor.Id = 1
+        $device = Get-Device -Count 1
+        $device.Id = 1
 
         $trigger = Run NotificationTrigger {
-            $sensor | Get-Trigger -Type Threshold
+            $device | Get-Trigger -Type Threshold
         }
 
         $trigger | Set-NotificationTriggerProperty OffNotificationAction $null

@@ -517,6 +517,9 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
 
             var objectType = components["objecttype"]?.ToEnum<ObjectType>() ?? ObjectType.Sensor;
 
+            if (components["id"] == "810")
+                objectType = ObjectType.WebServerOptions;
+
             switch (objectType)
             {
                 case ObjectType.Sensor:
@@ -530,6 +533,8 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
                     };
                 case ObjectType.Schedule:
                     return new ScheduleResponse();
+                case ObjectType.WebServerOptions:
+                    return new WebServerOptionsResponse();
                 default:
                     throw new NotImplementedException($"Unknown object type '{objectType}' requested from {nameof(MultiTypeResponse)}");
             }

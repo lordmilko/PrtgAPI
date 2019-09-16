@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
 using PrtgAPI.Reflection.Cache;
 
@@ -207,6 +208,44 @@ namespace PrtgAPI.Reflection
             var prtgAPIAssembly = typeof(PrtgClient).Assembly.FullName;
 
             return propertyAssembly == thisAssembly || propertyAssembly == prtgAPIAssembly;
+        }
+
+        internal static Func<object, object> CreateGetValue(MemberInfo member)
+        {
+            var @this = Expression.Parameter(typeof(object), "obj");
+            var val = Expression.Parameter(typeof(object), "val");
+
+            var thisCast = Expression.Convert(@this, member.DeclaringType);
+
+            var access = Expression.MakeMemberAccess(thisCast, member);
+            var accessCast = Expression.Convert(access, typeof(object));
+
+            var lambda = Expression.Lambda<Func<object, object>>(
+                accessCast,
+                @this
+            );
+
+            return lambda.Compile();
+        }
+
+        internal static Action<object, object> CreateSetValue(MemberInfo member, Type memberType)
+        {
+            var @this = Expression.Parameter(typeof(object), "obj");
+            var val = Expression.Parameter(typeof(object), "val");
+
+            var thisCast = Expression.Convert(@this, member.DeclaringType);
+            var valCast = Expression.Convert(val, memberType);
+
+            var access = Expression.MakeMemberAccess(thisCast, member);
+            var assignment = Expression.Assign(access, valCast);
+
+            var lambda = Expression.Lambda<Action<object, object>>(
+                assignment,
+                @this,
+                val
+            );
+
+            return lambda.Compile();
         }
     }
 }

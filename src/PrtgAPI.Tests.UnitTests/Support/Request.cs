@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace PrtgAPI.Tests.UnitTests.Support
 {
@@ -94,6 +91,9 @@ namespace PrtgAPI.Tests.UnitTests.Support
 
         static string RequestObjectData(int id, string objectType) =>
             Get($"controls/objectdata.htm?id={id}&objecttype={objectType}");
+
+        public static string RequestObjectData(int id) =>
+            Get($"controls/objectdata.htm?id={id}");
 
         #region Columns
 

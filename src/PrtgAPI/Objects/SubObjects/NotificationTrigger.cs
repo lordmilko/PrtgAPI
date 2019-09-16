@@ -16,7 +16,7 @@ namespace PrtgAPI
     /// </summary>
     [DataContract]
     [Description("Notification Trigger")]
-    [DebuggerDisplay("Type = {Type}, Inherited = {Inherited}, OnNotificationAction = {OnNotificationAction}")]
+    [DebuggerDisplay("Type = {Type}, SubId = {SubId}, Inherited = {Inherited}, OnNotificationAction = {OnNotificationAction}")]
     public class NotificationTrigger : ISubObject
     {
         [DataMember(Name = "type")]
@@ -104,6 +104,8 @@ namespace PrtgAPI
 
         [DataMember(Name = "channel")]
         internal string channelName;
+
+        internal string translatedChannelName;
 
         //Manually assigned to by GetNotificationTriggers
         internal Channel channelObj;
@@ -256,7 +258,7 @@ namespace PrtgAPI
 
         internal bool HasChannel()
         {
-            switch(Type)
+            switch (Type)
             {
                 case TriggerType.Speed:
                 case TriggerType.Threshold:
@@ -266,10 +268,10 @@ namespace PrtgAPI
                     return false;
             }
         }
-        
+
         internal bool SetEnumChannel()
         {
-            var @enum = EnumExtensions.XmlToEnum<XmlEnumAlternateName>(channelName, typeof(StandardTriggerChannel), false);
+            var @enum = EnumExtensions.XmlToEnum<XmlEnumAlternateName>(translatedChannelName ?? channelName, typeof(StandardTriggerChannel), false);
 
             if (@enum != null)
             {

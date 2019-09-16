@@ -34,7 +34,10 @@ namespace PrtgAPI.Reflection.Cache
 
         private List<FieldCache> GetFields()
         {
-            return Type.GetFields().Select(f => new FieldCache(f)).ToList();
+            if (Type.IsEnum)
+                return Type.GetFields().Select(f => new FieldCache(f)).ToList();
+
+            return Type.GetFields(BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic).Select(f => new FieldCache(f)).ToList();
         }
 
         protected override MemberInfo attributeSource => Type;

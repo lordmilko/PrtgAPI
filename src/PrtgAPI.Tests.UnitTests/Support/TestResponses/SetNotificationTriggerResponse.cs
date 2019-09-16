@@ -52,6 +52,8 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
                     if (CountOverride != null && CountOverride[Content.Sensors] == 0)
                         return new SensorResponse();
                     return new SensorResponse(new SensorItem());
+                case Content.Devices:
+                    return new DeviceResponse(new DeviceItem());
                 case Content.Channels:
                     return new ChannelResponse(new ChannelItem());
                 case Content.Triggers:
@@ -74,7 +76,10 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
         {
             var components = UrlUtilities.CrackUrl(address);
 
-            var objectType = components["objecttype"].ToEnum<ObjectType>();
+            var objectType = components["objecttype"]?.DescriptionToEnum<ObjectType>();
+
+            if (objectType == null && components["id"] == "810")
+                objectType = ObjectType.WebServerOptions;
 
             switch (objectType)
             {
@@ -82,6 +87,8 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
                     return new NotificationActionResponse(new NotificationActionItem());
                 case ObjectType.Schedule:
                     return new ScheduleResponse();
+                case ObjectType.WebServerOptions:
+                    return new WebServerOptionsResponse();
                 default:
                     throw new NotImplementedException($"Unknown object type '{objectType}' requested from {nameof(MultiTypeResponse)}");
             }

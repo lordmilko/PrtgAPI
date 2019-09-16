@@ -338,6 +338,7 @@ namespace PrtgAPI.Request
                     {
                         Value = Regex.Replace(match, "(.+?value=\")(.*?)(\".+)", "$2"),
                         Selected = Regex.Match(match, "selected").Success,
+                        InnerHtml = Regex.Replace(match, "(<.+?>)(.*?)(</.+>)", "$2"),
                         Html = match
                     });
                 }
