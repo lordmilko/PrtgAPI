@@ -1277,6 +1277,39 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             Assert.AreEqual(result["propertyName"], "1");
         }
 
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void HtmlParser_Decodes_InputTags()
+        {
+            var client = BaseTest.Initialize_Client(new BasicResponse("<input name=\"propertyName\" type=\"text\" value=\"1 &amp; 2\"/>"));
+
+            var result = client.GetObjectPropertiesRaw(1001);
+
+            Assert.AreEqual("1 & 2", result["propertyName"]);
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void HtmlParser_Decodes_TextAreaTags()
+        {
+            var client = BaseTest.Initialize_Client(new BasicResponse("<textarea class=\"textarea\"  id=\"propertyName\" name=\"propertyName\" rows=\"2\" >1 &amp; 2</textarea>"));
+
+            var result = client.GetObjectPropertiesRaw(1001);
+
+            Assert.AreEqual("1 & 2", result["propertyName"]);
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void HtmlParser_Decodes_DropDownListTags()
+        {
+            var client = BaseTest.Initialize_Client(new BasicResponse("<select name=\"propertyName\"><option value=\"1 &amp; 2\" selected=\"selected\">Yes</option></select>"));
+
+            var result = client.GetObjectPropertiesRaw(1001);
+
+            Assert.AreEqual("1 & 2", result["propertyName"]);
+        }
+
         private void CheckScanningIntervalSerializedValue(ScanningInterval interval, string value)
         {
             Assert.AreEqual(((ISerializable) interval).GetSerializedFormat(), value, "Serialized format was not correct");

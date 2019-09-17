@@ -269,7 +269,7 @@ namespace PrtgAPI.Request
             var namesAndValues = matches.Select(m => new
             {
                 Name = Regex.Replace(m, nameRegex, "$2", RegexOptions.Singleline),
-                Value = Regex.Replace(m, TextAreaRegex, "$2", RegexOptions.Singleline)
+                Value = WebUtility.HtmlDecode(Regex.Replace(m, TextAreaRegex, "$2", RegexOptions.Singleline))
             }).ToDictionary(i => i.Name, i => i.Value);
 
             return namesAndValues;
@@ -293,7 +293,7 @@ namespace PrtgAPI.Request
             var properties = inputs.Select(input => new Input
             {
                 Name = nameTransformer(Regex.Replace(input, nameRegex, "$2")).Replace("/", "_").Replace(" ", "_"), // Forward slash and space are not valid characters for an XElement name
-                Value = WebUtility.HtmlDecode(Regex.Replace(input, "(.+?value=\")(.*?)(\".+)", "$2")), //todo: should we maybe be decoding the value for all other input types? (text, ddl). test put \\ and " in a sensor factor definition and see if prtg encoded it
+                Value = WebUtility.HtmlDecode(Regex.Replace(input, "(.+?value=\")(.*?)(\".+)", "$2")),
                 Type = GetInputType(input),
                 Checked = Regex.Match(input, "checked").Success,
                 Hidden = Regex.Match(input, "type=\"hidden\"").Success,
@@ -336,9 +336,9 @@ namespace PrtgAPI.Request
                 {
                     ddl.Options.Add(new Option
                     {
-                        Value = Regex.Replace(match, "(.+?value=\")(.*?)(\".+)", "$2"),
+                        Value = WebUtility.HtmlDecode(Regex.Replace(match, "(.+?value=\")(.*?)(\".+)", "$2")),
                         Selected = Regex.Match(match, "selected").Success,
-                        InnerHtml = Regex.Replace(match, "(<.+?>)(.*?)(</.+>)", "$2"),
+                        InnerHtml = WebUtility.HtmlDecode(Regex.Replace(match, "(<.+?>)(.*?)(</.+>)", "$2")),
                         Html = match
                     });
                 }
@@ -369,7 +369,7 @@ namespace PrtgAPI.Request
         private void ReplaceExistingItem(Dictionary<string, Input> dictionary, Input prop)
         {
             //If our new item has the same as our existing item of the same name
-            if (prop.Type == dictionary[prop.Name].Type) 
+            if (prop.Type == dictionary[prop.Name].Type)
             {
                 if (prop.Checked && !dictionary[prop.Name].Checked)
                 {
