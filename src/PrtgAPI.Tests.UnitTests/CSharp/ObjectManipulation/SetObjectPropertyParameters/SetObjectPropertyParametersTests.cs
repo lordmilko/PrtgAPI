@@ -4,6 +4,7 @@ using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PrtgAPI.Exceptions.Internal;
 using PrtgAPI.Parameters.Helpers;
+using PrtgAPI.Targets;
 
 namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
 {
@@ -61,7 +62,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         [TestCategory("UnitTest")]
         public void SetObjectPropertyParameters_WithTypeLookup_HasSecondaryProperty()
         {
-            ExecuteWithTypeLookupInternal(FakeObjectProperty.HasSecondaryProperty, new FakeMultipleSerializable(), "hassecondaryproperty_=firstValue", "SecondaryProperty_=secondValue");
+            ExecuteWithTypeLookupInternal(FakeObjectProperty.HasSecondaryProperty, new FakeMultipleSerializable(), "hassecondaryproperty_=firstValue", "secondaryproperty_=secondValue");
         }
 
         [TestMethod]
@@ -451,6 +452,26 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         [TestCategory("UnitTest")]
         public void DynamicPropertyTypeParser_Serializes_Double_WithStringDouble() =>
             ExecuteWithTypeLookupInternal(FakeObjectProperty.DoubleProperty, "1.2", "doubleproperty_=1.2");
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void DynamicPropertyTypeParser_Serializes_Implicit_FromCorrectType() =>
+            ExecuteWithTypeLookupInternal(FakeObjectProperty.ImplicitlyConvertable, "test.ps1", "implicitlyconvertable_=test.ps1|test.ps1||");
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void DynamicPropertyTypeParser_Serializes_Implicit_FromNull() =>
+            TestIllegalNullDeserialization(FakeObjectProperty.ImplicitlyConvertable, typeof(ExeFileTarget));
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void DynamicPropertyTypeParser_Serializes_Implicit_FromIncorrectType() =>
+            ExecuteExceptionWithTypeLookupAndValue<InvalidTypeException>(FakeObjectProperty.ImplicitlyConvertable, 2, "Expected type: 'PrtgAPI.Targets.ExeFileTarget'. Actual type: 'System.Int32'.");
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void DynamicPropertyTypeParser_Serializes_Implicit_FromFinalType() =>
+            ExecuteWithTypeLookupInternal(FakeObjectProperty.ImplicitlyConvertable, (ExeFileTarget)"test.ps1", "implicitlyconvertable_=test.ps1|test.ps1||");
 
         #region Deserialization
 

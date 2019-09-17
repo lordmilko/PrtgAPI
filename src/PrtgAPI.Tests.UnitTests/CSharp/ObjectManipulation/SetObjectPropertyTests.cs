@@ -3312,6 +3312,20 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
 
         [TestMethod]
         [TestCategory("UnitTest")]
+        public void SetObjectProperty_ExeFile_IncludesSecondaryProperty()
+        {
+            Execute(
+                c => c.SetObjectProperty(
+                    1001,
+                    ObjectProperty.ExeFile,
+                    "test.ps1"
+                ),
+                UnitRequest.EditSettings("id=1001&exefile_=test.ps1%7Ctest.ps1%7C%7C&exefilelabel_=test.ps1%7Ctest.ps1%7C%7C")
+            );
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
         public void SetChannelProperty_Throws_ResolvingNonExistentChannel()
         {
             var client = Initialize_Client(new MultiTypeResponse());

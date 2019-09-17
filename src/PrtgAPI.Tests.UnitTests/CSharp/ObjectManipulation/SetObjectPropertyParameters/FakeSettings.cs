@@ -1,5 +1,6 @@
 using System.Xml.Serialization;
 using PrtgAPI.Attributes;
+using PrtgAPI.Targets;
 
 namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
 {
@@ -103,6 +104,9 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
 
         [XmlElement("injected_serializablevalueconverter")]
         public string SerializableValueConverter { get; set; }
+
+        [XmlElement("injected_implicitlyconvertable")]
+        public ExeFileTarget ImplicitlyConvertable { get; set; }
 
         #endregion
     }

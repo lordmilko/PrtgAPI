@@ -201,13 +201,21 @@ namespace PrtgAPI.Reflection
             return false;
         }
 
-        internal static bool IsPrtgAPIProperty(Type thisType, PropertyInfo property)
+        internal static bool IsPrtgAPIProperty(Type callerType, PropertyInfo property)
         {
-            var propertyAssembly = property.PropertyType.Assembly.FullName;
-            var thisAssembly = thisType.Assembly.FullName;
+            return IsPrtgAPIType(callerType, property.PropertyType);
+        }
+
+        internal static bool IsPrtgAPIType(Type callerType, Type unknownType)
+        {
+            //Any type that calls this method is implicitly part of PrtgAPI. Therefore, any type
+            //that is either in our assembly or the PrtgAPI.dll assembly is considered part of PrtgAPI
+
+            var unknownTypeAssembly = unknownType.Assembly.FullName;
+            var callerAssembly = callerType.Assembly.FullName;
             var prtgAPIAssembly = typeof(PrtgClient).Assembly.FullName;
 
-            return propertyAssembly == thisAssembly || propertyAssembly == prtgAPIAssembly;
+            return unknownTypeAssembly == callerAssembly || unknownTypeAssembly == prtgAPIAssembly;
         }
 
         internal static Func<object, object> CreateGetValue(MemberInfo member)

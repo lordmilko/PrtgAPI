@@ -21,7 +21,9 @@ namespace PrtgAPI
         ChannelUnit,
 
         [TypeLookup(typeof(ProbeSettings))]
-        ProbeApproved
+        ProbeApproved,
+
+        ExeFileLabel
     }
 
     /// <summary>
@@ -59,7 +61,7 @@ namespace PrtgAPI
         [Type(typeof(Location))]
         [TypeLookup(typeof(ContainerSettings))]
         [DependentProperty(InheritLocation, false)]
-        [SecondaryProperty(ObjectPropertyInternal.LonLat)]
+        [SecondaryProperty(ObjectPropertyInternal.LonLat, SecondaryPropertyStrategy.MultipleSerializable)]
         [Category(ObjectPropertyCategory.Location)]
         Location,
 
@@ -1055,6 +1057,7 @@ namespace PrtgAPI
         /// </summary>
         [Description("exefile")]
         [TypeLookup(typeof(SensorSettings))]
+        [SecondaryProperty(ObjectPropertyInternal.ExeFileLabel, SecondaryPropertyStrategy.SameValue)]
         [Category(ObjectPropertyCategory.SensorSettingsExeXml)]
         ExeFile,
 

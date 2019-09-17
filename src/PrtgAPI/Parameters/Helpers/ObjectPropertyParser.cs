@@ -171,11 +171,25 @@ namespace PrtgAPI.Parameters.Helpers
 
             if (secondaryPropertyAttrib != null)
             {
-                if (parser.Value is IMultipleSerializable)
-                {
-                    var val2 = ((IMultipleSerializable)parser.Value).GetSerializedFormats().Last();
+                var secondaryPropertyName = $"{secondaryPropertyAttrib.Property.ToString().ToLower()}_";
 
-                    container.AddParameter(new CustomParameter($"{secondaryPropertyAttrib.Property}_", val2));
+                switch (secondaryPropertyAttrib.Strategy)
+                {
+                    case SecondaryPropertyStrategy.MultipleSerializable:
+                        if (parser.Value is IMultipleSerializable)
+                        {
+                            var val2 = ((IMultipleSerializable)parser.Value).GetSerializedFormats().Last();
+
+                            container.AddParameter(new CustomParameter(secondaryPropertyName, val2));
+                        }
+                        break;
+
+                    case SecondaryPropertyStrategy.SameValue:
+                        container.AddParameter(new CustomParameter(secondaryPropertyName, parameter.Value));
+                        break;
+
+                    default:
+                        throw new NotImplementedException($"Don't know how to handle {nameof(SecondaryPropertyStrategy)} '{secondaryPropertyAttrib.Strategy}'.");
                 }
             }
         }

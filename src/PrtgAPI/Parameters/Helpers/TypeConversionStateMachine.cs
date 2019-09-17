@@ -77,6 +77,9 @@ namespace PrtgAPI.Parameters.Helpers
                 case ConversionState.Nullable:
                     return ProcessNullable();
 
+                case ConversionState.ImplicitConversion:
+                    return ProcessImplicitConversion();
+
                 case ConversionState.NonNullable:
                     return ProcessNonNullable();
 
@@ -555,6 +558,26 @@ namespace PrtgAPI.Parameters.Helpers
 
                 return ConversionState.Completed;
             }
+        }
+
+        #endregion
+        #region ImplicitConversion
+
+        private ConversionState ProcessImplicitConversion()
+        {
+            if (OriginalValue != null && ReflectionExtensions.IsPrtgAPIType(GetType(), PropertyType))
+            {
+                var implicitMethod = PropertyType.GetMethod("op_Implicit", new[] {ValueType});
+
+                if (implicitMethod != null)
+                {
+                    NewValue = implicitMethod.Invoke(null, new object[] {OriginalValue});
+
+                    return ConversionState.ValueConversion;
+                }
+            }
+
+            return MoveNext();
         }
 
         #endregion

@@ -6,11 +6,12 @@
         Serializable = 1,
         Enumerable = 2,
         Nullable = 3,
-        NonNullable = 4,
-        ValueConversion = 5,
-        Completed = 6,
+        ImplicitConversion = 4,
+        NonNullable = 5,
+        ValueConversion = 6,
+        Completed = 7,
 
         //We don't want to be able to MoveNext into special conditions
-        ValueConversionWithNullCheck = 7
+        ValueConversionWithNullCheck = 8
     }
 }

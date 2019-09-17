@@ -58,6 +58,9 @@ namespace PrtgAPI.Parameters
         /// <returns>The formatted representation of this parameter.</returns>
         public override string ToString()
         {
+            if (Value is ISerializable)
+                return $"{Name}={((ISerializable) Value).GetSerializedFormat()}";
+
             return $"{Name}={Value}";
         }
     }

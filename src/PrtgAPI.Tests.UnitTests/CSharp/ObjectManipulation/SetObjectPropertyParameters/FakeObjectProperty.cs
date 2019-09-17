@@ -19,7 +19,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         MissingTypeLookup,
 
         [TypeLookup(typeof(FakeSettings))]
-        [SecondaryProperty(nameof(SecondaryProperty), typeof(FakeObjectProperty))]
+        [SecondaryProperty(nameof(SecondaryProperty), typeof(FakeObjectProperty), SecondaryPropertyStrategy.MultipleSerializable)]
         HasSecondaryProperty,
 
         SecondaryProperty,
@@ -126,7 +126,10 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         [Type(typeof(FakeSerializable))]
         [TypeLookup(typeof(FakeSettings))]
         [ValueConverter(typeof(ValueConverterWithNullConversionConverter))]
-        SerializableValueConverter
+        SerializableValueConverter,
+
+        [TypeLookup(typeof(FakeSettings))]
+        ImplicitlyConvertable
 
         #endregion
     }
