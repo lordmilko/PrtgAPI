@@ -405,9 +405,9 @@ namespace PrtgAPI.PowerShell.Cmdlets
                     if (candidates.Count == 1)
                         return candidates.Single();
                     else if (candidates.Count > 1)
-                        throw new InvalidOperationException($"Query target wildcard '{queryTarget}' is ambiguous between the following parameters: {candidates.ToQuotedList()}. Please specify a more specific identifier.");
+                        throw new NonTerminatingException($"Query target wildcard '{queryTarget}' is ambiguous between the following parameters: {candidates.ToQuotedList()}. Please specify a more specific identifier.");
                     else
-                        throw new InvalidOperationException($"Could not find a query target matching the wildcard expression '{queryTarget}'. Please specify one of the following parameters: {desiredType.QueryTargets.ToQuotedList()}.");
+                        throw new NonTerminatingException($"Could not find a query target matching the wildcard expression '{queryTarget}'. Please specify one of the following parameters: {desiredType.QueryTargets.ToQuotedList()}.");
                 }
             }
 
@@ -451,7 +451,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
                 }
                 else
                 {
-                    throw new InvalidOperationException("Cannot filter targets as multiple target fields are present. Please filter targets manually after parameter creation.");
+                    throw new NonTerminatingException("Cannot filter targets as multiple target fields are present. Please filter targets manually after parameter creation.");
                 }
             }
 

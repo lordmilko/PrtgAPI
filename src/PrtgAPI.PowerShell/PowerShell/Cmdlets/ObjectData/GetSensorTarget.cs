@@ -310,7 +310,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         private T EnsureSingle<T>(List<T> items)
         {
             if (items.Count > 1)
-                throw new InvalidOperationException($"Parameters for sensor type {Type} cannot be used against multiple targets in a single request. Please filter objects further with -Name, or create parameters manually with New-SensorParameters.");
+                throw new NonTerminatingException($"Parameters for sensor type {Type} cannot be used against multiple targets in a single request. Please filter objects further with -Name, or create parameters manually with New-SensorParameters.");
 
             if (items.Count == 1)
                 return items.First();

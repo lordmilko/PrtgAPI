@@ -369,7 +369,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
                         fin = ScriptBlock.Create($"\"($acc) / {summarySensors.Count}\"");
                         break;
                     default:
-                        throw new NotImplementedException();
+                        throw new NotImplementedException($"Don't know how to handle summary mode '{summary.Value}'.");
                 }
             }
             else
@@ -400,10 +400,10 @@ namespace PrtgAPI.PowerShell.Cmdlets
 
         private Tuple<string, string> MakeChannel(NameOrScriptBlock name, Sensor sensor, string value)
         {
-            var processedName = GetChannelName(name, sensor);
-
             if (string.IsNullOrWhiteSpace(value))
                 throw new InvalidOperationException($"'{value}' is not a valid channel expression. Expression must not be null, empty or whitespace.");
+
+            var processedName = GetChannelName(name, sensor);
 
             var tuple = Tuple.Create($"#{id}:{processedName}", value);
             id++;

@@ -77,6 +77,14 @@ namespace PrtgAPI.PowerShell.Base
                     {
                         action();
                     }
+                    catch (NonTerminatingException ex)
+                    {
+                        WriteInvalidOperation(ex.InnerException, ex.TargetObject, ex.ErrorCategory);
+                    }
+                    catch (PrtgRequestException ex)
+                    {
+                        WriteInvalidOperation(ex);
+                    }
                     catch (Exception ex)
                     {
                         if (!(PipeToSelectObject() && ex is PipelineStoppedException))
@@ -110,6 +118,21 @@ namespace PrtgAPI.PowerShell.Base
             {
                 UnregisterEvents(true);
             }
+        }
+
+        internal void WriteInvalidOperation(Exception ex, object targetObject = null, ErrorCategory errorCategory = ErrorCategory.InvalidOperation)
+        {
+            WriteError(new ErrorRecord(
+                ex,
+                ex.GetType().Name,
+                errorCategory,
+                targetObject
+            ));
+        }
+
+        internal void WriteInvalidOperation(string message, object targetObject = null)
+        {
+            WriteInvalidOperation(new InvalidOperationException(message), targetObject);
         }
 
         /// <summary>

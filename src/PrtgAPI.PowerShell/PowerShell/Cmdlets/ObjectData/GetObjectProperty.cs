@@ -242,11 +242,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         private object WarnReadOnly(object value)
         {
             if (value == null)
-                WriteError(new ErrorRecord(
-                    new InvalidOperationException($"Cannot retrieve properties for read only object '{Object}' (ID: {Object.Id}). Consider requesting a specific -{nameof(Property)}."),
-                    nameof(InvalidOperationException),
-                    ErrorCategory.InvalidOperation, null
-                ));
+                WriteInvalidOperation($"Cannot retrieve properties for read only object '{Object}' (ID: {Object.Id}). Consider requesting a specific -{nameof(Property)}.");
 
             return value;
         }
@@ -261,12 +257,9 @@ namespace PrtgAPI.PowerShell.Cmdlets
                 }
                 catch(Exception ex) when (ex is PrtgRequestException)
                 {
-                    WriteError(new ErrorRecord(
-                        ex,
-                        nameof(PrtgRequestException),
-                        ErrorCategory.InvalidOperation,
-                        null
-                    ));
+                    //Handle exception here instead of in PrtgCmdlet handler
+                    //so that WriteObjectWithProgress can do PostUpdateProgress
+                    WriteInvalidOperation(ex);
 
                     return null;
                 }

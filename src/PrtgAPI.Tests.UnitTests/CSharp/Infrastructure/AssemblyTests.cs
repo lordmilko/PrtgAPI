@@ -12,6 +12,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PrtgAPI.Attributes;
+using PrtgAPI.PowerShell;
 using PrtgAPI.PowerShell.Base;
 using PrtgAPI.Request;
 using PrtgAPI.Utilities;
@@ -249,6 +250,132 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
                         InspectMethodCall(item, model.Value);
                 }
             });
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void AllPowerShell_UsesErrorRecords()
+        {
+            var allowedUsages = new object[]
+            {
+                Tuple.Create("NewSensorDynamicParameterCategory.cs", "ValidateParameters",  "new InvalidOperationException(newMessage, ex)"),
+                Tuple.Create("NewNotificationTriggerParameters.cs",  "CreateParameters",    "ex.InnerException"),
+                Tuple.Create("PrtgCmdlet.cs",                        "BeginProcessing",     "new InvalidOperationException(\"You are not connected to a PRTG Server. Please connect first using Connect-PrtgServer.\")"),
+                Tuple.Create("GetSensorHistory.cs",                  "ProcessRecordEx",     "new InvalidOperationException($\"Cannot retrieve downtime with an {nameof(Average)} of 0.\")"),
+                Tuple.Create("NewSensorParameters.cs",               "CreateRawParameters", "new InvalidOperationException($\"Hashtable record '{NameParameter}' is mandatory, however a value was not specified.\")"),
+                Tuple.Create("NewSensorParameters.cs",               "CreateRawParameters", "new InvalidOperationException($\"Hashtable record '{SensorTypeParameter}' is mandatory, however a value was not specified.\")"),
+                Tuple.Create("ConnectPrtgServer.cs",                 "Connect",             "new InvalidOperationException($\"Already connected to server {PrtgSessionState.Client.Server}. To override please specify -Force.\")"),
+                Tuple.Create("RestartProbe.cs",                      "WriteProbeProgress",  "new TimeoutException($\"Timed out waiting for {remaining} {(\"probe\".Plural(remaining))} to restart.\")"),
+                Tuple.Create("RestartPrtgCore.cs",                   "WriteProgress",       "new TimeoutException($\"Timed out waiting for PRTG Core Service to restart.\")"),
+                Tuple.Create("NewSensorFactoryDefinition.cs",        "MakeChannel",         "new InvalidOperationException($\"'{value}' is not a valid channel expression. Expression must not be null, empty or whitespace.\")"),
+                Tuple.Create("NewSensorFactoryDefinition.cs",        "GetChannelName",      "new InvalidOperationException($\"'{finalName}' is not a valid channel name. Name must not be null, empty or whitespace.\")"),
+                Tuple.Create("SetObjectPosition.cs",                 "ProcessRecordEx",     "new InvalidOperationException($\"Cannot modify position of object '{obj}' (ID: {obj.Id}, Type: {obj.Type}). Object must be a sensor, device, group or probe.\")"),
+                Tuple.Create("NewSensorParameters.cs",               "GetImplicit"),
+                Tuple.Create("TriggerParameterParser.cs",            "UpdateNotificationAction"),
+                Tuple.Create("UpdateGoPrtgCredential.cs"),
+                Tuple.Create("GoPrtgCmdlet.cs"),
+                Tuple.Create("InstallGoPrtgServer.cs"),
+                Tuple.Create("UninstallGoPrtgServer.cs"),
+                Tuple.Create("SetGoPrtgAlias.cs"),
+                Tuple.Create("ProgressManager.cs")
+            };
+
+            var found = new List<Tuple<string, string, string>>();
+
+            var allowedTypes = new[]
+            {
+                nameof(NotImplementedException),
+                nameof(ArgumentNullException),
+                nameof(ArgumentException),
+                nameof(UnknownParameterSetException),
+                nameof(PipelineStoppedException),
+                nameof(NotSupportedException),
+                nameof(ParameterBindingException),
+                nameof(PSArgumentException),
+                nameof(NonTerminatingException)
+            };
+
+            Func<string, bool> IsFileAllowed = f => allowedUsages.OfType<Tuple<string>>().Any(a => a.Item1 == f);
+            Func<string, string, bool> IsMethodAllowed = (f, m) => allowedUsages.OfType<Tuple<string, string>>().Any(a => a.Item1 == f && a.Item2 == m);
+            Func<string, string, string, bool> IsExceptionAllowed = (f, m, e) => allowedUsages.OfType<Tuple<string, string, string>>().Any(a => a.Item1 == f && a.Item2 == m && a.Item3 == e);
+
+            Func<string, string, string, bool> IsAllowed = (f, m, e) => IsFileAllowed(f) || IsMethodAllowed(f, m) || IsExceptionAllowed(f, m, e);
+
+            WithTree((file, tree, model) =>
+            {
+                var fileName = Path.GetFileName(file);
+
+                foreach (var item in tree.GetRoot().DescendantNodes())
+                {
+                    if (item.IsKind(SyntaxKind.ThrowStatement))
+                    {
+                        var memberName = GetMemberName(item);
+
+                        var throwSyntax = item as ThrowStatementSyntax;
+                        var objectCreationSyntax = throwSyntax.Expression as ObjectCreationExpressionSyntax;
+
+                        if (throwSyntax.Expression == null)
+                            continue;
+
+                        if (objectCreationSyntax == null)
+                        {
+                            var exceptionStr = throwSyntax.Expression.ToString();
+
+                            if (IsAllowed(fileName, memberName, throwSyntax.Expression.ToString()))
+                                continue;
+
+                            found.Add(Tuple.Create(fileName, memberName, exceptionStr));
+                        }
+                        else
+                        {
+                            var type = ((IdentifierNameSyntax)objectCreationSyntax.Type).Identifier.ValueText;
+                            var exceptionStr = objectCreationSyntax.ToString();
+
+                            if (!allowedTypes.Contains(type))
+                            {
+                                if (IsAllowed(fileName, memberName, exceptionStr))
+                                    continue;
+
+                                found.Add(Tuple.Create(fileName, memberName, exceptionStr));
+                            }
+                        }
+                    }
+                }
+            }, true);
+
+            if (found.Count > 0)
+            {
+                var str = string.Join("\n\n", found.Select(f => $"{f.Item1} -> {f.Item2} -> {f.Item3}"));
+
+                Assert.Fail($"Found {found.Count} potentially illegal exceptions:\n\n{str}\n\nPlease convert these exceptions to ErrorRecords or whitelist these items.");
+            }
+        }
+
+        private string GetMemberName(SyntaxNode item)
+        {
+            string memberName = null;
+
+            var member = item.FirstAncestorOrSelf<MemberDeclarationSyntax>();
+
+            var method = member as MethodDeclarationSyntax;
+
+            if (method != null)
+                memberName = method.Identifier.ValueText;
+
+            var constructor = member as ConstructorDeclarationSyntax;
+
+            if (constructor != null)
+                memberName = constructor.Identifier.ValueText;
+
+            var property = member as PropertyDeclarationSyntax;
+
+            if (property != null)
+                memberName = property.Identifier.ValueText;
+
+            if (memberName != null)
+                return memberName;
+
+            throw new InvalidOperationException($"Don't know how to get the member name of {member}");
         }
 
         [TestMethod]
@@ -537,15 +664,20 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
                             }
                             else
                             {
+                                var secondParameter = new[]
+                                {
+                                    "paramName",
+                                    "ex",
+                                    "(Exception) null",
+                                    "Object",
+                                    "Parameters"
+                                };
+
                                 if (str[0] == "paramName" && str.Count == 2)
                                 {
                                     AssertEndsInPeriod(syntax, str.Last(), file);
                                 }
-                                else if ((str[1] == "paramName" || str[1] == "ex") && str.Count == 2)
-                                {
-                                    AssertEndsInPeriod(syntax, str.First(), file);
-                                }
-                                else if (str.Count == 2 && str[1] == "(Exception) null")
+                                else if (str.Count == 2 && secondParameter.Contains(str[1]))
                                 {
                                     AssertEndsInPeriod(syntax, str.First(), file);
                                 }

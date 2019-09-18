@@ -44,6 +44,7 @@
     <Compile Include="..\PrtgAPI\Properties\Version.cs">
       <Link>Properties\Version.cs</Link>
     </Compile>
+    <Compile Include="Exceptions\NonTerminatingException.cs" />
     <Compile Include="PowerShell\AlternateParameterSet.cs" />
     <Compile Include="PowerShell\AlternateSensorTargetParameter.cs" />
     <Compile Include="PowerShell\Base\InternalNotificationTriggerCommand.cs" />
