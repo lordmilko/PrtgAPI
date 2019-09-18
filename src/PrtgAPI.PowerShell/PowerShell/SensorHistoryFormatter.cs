@@ -94,11 +94,18 @@ namespace PrtgAPI.PowerShell
             {
                 foreach (var channel in first.ChannelRecords)
                 {
-                    var unitValue = firstResponse
+                    if (cmdlet.Raw)
+                    {
+                        channelUnitMap[channel.Name] = null;
+                        continue;
+                    }
+
+                    var unitValueChannel = firstResponse
                         .SelectMany(r => r.ChannelRecords
                             .Where(v => v.Name == channel.Name && !string.IsNullOrEmpty(v.DisplayValue))
-                            .Select(v2 => v2.DisplayValue)
                         ).FirstOrDefault();
+
+                    var unitValue = unitValueChannel?.DisplayValue;
 
                     if (unitValue != null)
                     {
@@ -114,12 +121,78 @@ namespace PrtgAPI.PowerShell
                                 unitValue = unitValue.Substring(secondIndex).Trim();
                             }
                             else
-                                unitValue = unitValue.Substring(unitValue.IndexOf(' ') + 1).Trim();
+                            {
+                                if (unitValue.ToCharArray().Count(c => c == ' ') <= 1 && !IsTimeSpan(unitValueChannel))
+                                {
+                                    unitValue = unitValue.Substring(unitValue.IndexOf(' ') + 1).Trim();
+                                }
+                                else
+                                    unitValue = null;
+                            }
                         }
                     }
 
                     channelUnitMap[channel.Name] = unitValue;
                 }
+            }
+        }
+
+        private bool IsTimeSpan(ChannelHistoryRecord record)
+        {
+            if (record.DisplayValue != null)
+            {
+                var split = record.DisplayValue.Split(new[] {' '}, StringSplitOptions.RemoveEmptyEntries);
+
+                var units = split.Where((v, i) => i % 2 != 0).ToArray(); //Due to 0 based indexing 0, 2, 4, etc has the number, 1, 3, 5, etc has the unit
+
+                if (units.Length > 0 && units.All(v => v == "d" || v == "h" || v == "m" || v == "s") && split.Length % 2 == 0)
+                {
+                    var total = 0;
+
+                    for (var i = 0; i < split.Length - 1; i += 2)
+                    {
+                        int intValue;
+
+                        if (!int.TryParse(split[i], out intValue))
+                            return false;
+
+                        var unit = split[i + 1];
+                        var unitSeconds = GetSecondsForTimeSpanUnit(unit);
+
+                        total += intValue * unitSeconds;
+                    }
+
+                    //With large units (such as days) the display value will almost never be the same as the raw value
+                    if (total == record.Value)
+                        return true;
+
+                    var largestUnit = GetSecondsForTimeSpanUnit(split[1]);
+
+                    //If we elapse the next hour or day, etc and it turns out we're bigger,
+                    //then perhaps we are in fact a TimeSpan. Otherwise, whatever our units mean they don't
+                    //relate to TimeSpans
+                    if(total < record.Value && total + largestUnit > record.Value)
+                        return true;
+                }
+            }
+
+            return false;
+        }
+
+        private int GetSecondsForTimeSpanUnit(string unit)
+        {
+            switch (unit)
+            {
+                case "s":
+                    return 1;
+                case "m":
+                    return 60;
+                case "h":
+                    return 3600;
+                case "d":
+                    return 86400;
+                default:
+                    throw new NotImplementedException($"Don't know how to handle unit '{unit}'.");
             }
         }
 
@@ -154,7 +227,10 @@ namespace PrtgAPI.PowerShell
 
         private bool GetOrCreateTypeName(List<string> channels)
         {
-            var key = string.Join("", channels);
+            var key = string.Join(string.Empty, channels);
+
+            if (cmdlet.Raw)
+                key += "_raw";
 
             if (typeNameMap.ContainsKey(key))
             {
@@ -187,15 +263,16 @@ namespace PrtgAPI.PowerShell
 
             foreach (var channel in date.ChannelRecords)
             {
-                if (channelUnitMap[channel.Name] != null)
+                if (!cmdlet.Raw && (channelUnitMap[channel.Name] != null || IsTimeSpan(channel)))
                 {
+                    //Implicitly not Raw if we have a channel unit
                     var value = GetChannelValue(channel);
 
                     obj.Properties.Add(new PSNoteProperty(channel.Name, value));
                 }
                 else
                 {
-                    obj.Properties.Add(new PSNoteProperty(channel.Name, channel.DisplayValue));
+                    obj.Properties.Add(new PSNoteProperty(channel.Name, cmdlet.Raw ? channel.Value?.ToString() : channel.DisplayValue));
                 }
             }
 
@@ -212,6 +289,9 @@ namespace PrtgAPI.PowerShell
 
             if (channel.DisplayValue != null)
             {
+                if (channel.Value != null && IsTimeSpan(channel))
+                    return TimeSpan.FromSeconds(channel.Value.Value);
+
                 if (IsValueLookup(channel.DisplayValue))
                     return channel.DisplayValue;
 

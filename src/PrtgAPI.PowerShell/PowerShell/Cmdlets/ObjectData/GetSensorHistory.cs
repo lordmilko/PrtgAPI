@@ -37,7 +37,8 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// 
     /// <para type="description">PrtgAPI will automatically display all numeric channel values as numbers, with the unit of the channel
     /// displayed in brackets next to the channel header (e.g. "Total(%)"). These units are for display purposes only, and so can be ignored
-    /// when attempting to extract certain columns from the sensor history result.</para>
+    /// when attempting to extract certain columns from the sensor history result. If the -<see cref="Raw"/> parameter is specified Get-SensorHistory
+    /// will ignore the units of each channel and instead display all values in their raw format (e.g. Bytes for a unit stored in MegaBytes).</para>
     /// 
     /// <para type="description">Note that while Get-SensorHistory considers the "start time" as being the point in time closest to now
     /// and the "end time" as the point in time furthest away from now, PRTG's underlying API actually defines these in the opposite way.
@@ -115,6 +116,12 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// </summary>
         [Parameter(Mandatory = false, ParameterSetName = ParameterSet.Default)]
         public SwitchParameter Downtime { get; set; }
+
+        /// <summary>
+        /// <para type="description">Specifies that the raw numeric values for each channel should be displayed using the base unit of the channel.</para>
+        /// </summary>
+        [Parameter(Mandatory = false)]
+        public SwitchParameter Raw { get; set; }
 
         /// <summary>
         /// <para type="description">Limits results to the specified number of items within the specified time period.</para> 

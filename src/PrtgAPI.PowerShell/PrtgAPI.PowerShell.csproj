@@ -230,7 +230,7 @@ xcopy /Y "$(ProjectDir)PowerShell\Functions\*.*" "$(TargetDir)Functions\"</PostB
   <!-- When XmlDoc2CmdletDoc is first restored in VS2017+, for some reason (maybe due to the conditional import)
        none of the items in its targets property groupo are evaluated. So we manually define them here -->
   <PropertyGroup>
-    <XmlDoc2CmdletDocStrict>false</XmlDoc2CmdletDocStrict>   
+    <XmlDoc2CmdletDocStrict>false</XmlDoc2CmdletDocStrict>
     <XmlDocExeName Condition="'$(PlatformTarget)' == 'x86'">XmlDoc2CmdletDoc32.exe</XmlDocExeName>
     <XmlDocExeName Condition="'$(XmlDocExeName)' == ''">XmlDoc2CmdletDoc.exe</XmlDocExeName>
   </PropertyGroup>

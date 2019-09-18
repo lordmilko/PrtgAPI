@@ -1,29 +1,29 @@
 ﻿. $PSScriptRoot\..\..\Support\PowerShell\Standalone.ps1
 
-function CreateData($name1, $name2, $val1, $val2)
+function CreateData
 {
-    if($name1 -eq $null)
-    {
-        $name1 = "Percent Available Memory"
-    }
+    param(
+        [Parameter(Mandatory = $false, Position = 0)]
+        $Name1 = "Percent Available Memory",
 
-    if($name2 -eq $null)
-    {
-        $name2 = "Available Memory"
-    }
+        [Parameter(Mandatory = $false, Position = 1)]
+        $Name2 = "Available Memory",
 
-    if($val1 -eq $null)
-    {
-        $val1 = "<1 %"
-    }
+        [Parameter(Mandatory = $false, Position = 2)]
+        $DisplayValue1 = "<1 %",
 
-    if($val2 -eq $null)
-    {
-        $val2 = "< 1 MByte"
-    }
+        [Parameter(Mandatory = $false, Position = 3)]
+        $DisplayValue2 = "< 1 MByte",
 
-    $channel1 = New-Object PrtgAPI.Tests.UnitTests.Support.TestItems.SensorHistoryChannelItem -ArgumentList @("0", $name1, $val1, "0")
-    $channel2 = New-Object PrtgAPI.Tests.UnitTests.Support.TestItems.SensorHistoryChannelItem -ArgumentList @("1", $name2, $val2, "0")
+        [Parameter(Mandatory = $false, Position = 4)]
+        $Value1 = "0",
+
+        [Parameter(Mandatory = $false, Position = 5)]
+        $Value2 = "0"
+    )
+
+    $channel1 = New-Object PrtgAPI.Tests.UnitTests.Support.TestItems.SensorHistoryChannelItem -ArgumentList @("0", $Name1, $DisplayValue1, $Value1)
+    $channel2 = New-Object PrtgAPI.Tests.UnitTests.Support.TestItems.SensorHistoryChannelItem -ArgumentList @("1", $Name2, $DisplayValue2, $Value2)
 
     $item2 = New-Object PrtgAPI.Tests.UnitTests.Support.TestItems.SensorHistoryItem -ArgumentList @("22/10/2017 3:19:54 PM", "43030.1804871528", @($channel1, $channel2), "100 %", "0000010000")
 
@@ -62,6 +62,37 @@ function ValidateChannels($file, $labels, $properties)
             }
         }
     }
+}
+
+function GetTableColumnHeader($obj, $propertyName)
+{
+    $properties = @($obj.PSObject.Properties)
+
+    $propertyIndex = $null
+
+    for($i = 0; $i -lt $properties.Length; $i++)
+    {
+        if($properties[$i].Name -eq $propertyName)
+        {
+            $propertyIndex = $i
+            break
+        }
+    }
+
+    if(!$propertyIndex)
+    {
+        throw "A property '$propertyName' could not be found on object '$obj'"
+    }
+
+    $typeName = $obj.PSObject.TypeNames[0]
+
+    $format = Get-FormatData $typeName
+
+    $headers = $format.FormatViewDefinition[0].Control.Headers
+
+    $header = $headers[$propertyIndex]
+
+    return $header.Label
 }
 
 Describe "Get-SensorHistory" -Tag @("PowerShell", "UnitTest") {
@@ -131,6 +162,90 @@ Describe "Get-SensorHistory" -Tag @("PowerShell", "UnitTest") {
         $items = $sensor | Get-SensorHistory -StartDate $start -EndDate $end
 
         $items.Count | Should Be 2
+    }
+
+    It "ignores display values that have multiple spaces" {
+    
+        $data = CreateData -Name1 "PercentAvailableMemory1" -DisplayValue1 "9 a 5 b" -Value1 "32700"
+
+        SetResponseAndClientWithArguments "SensorHistoryResponse" $data
+
+        $history = $sensor | Get-SensorHistory
+
+        $timeSpanLabel = GetTableColumnHeader $history "PercentAvailableMemory1"
+        $regularLabel = GetTableColumnHeader $history "AvailableMemory"
+
+        $timeSpanLabel | Should Be "PercentAvailableMemory1"
+        $regularLabel | Should Be "AvailableMemory(MByte)"
+
+        $history.PercentAvailableMemory1 | Should Be "9 a 5 b"
+    }
+
+    It "converts display values that look like TimeSpans" {
+        $data = CreateData -Name1 "PercentAvailableMemory2" -DisplayValue1 "9 h 5 m" -Value1 "32700"
+
+        SetResponseAndClientWithArguments "SensorHistoryResponse" $data
+
+        $history = $sensor | Get-SensorHistory
+
+        $timeSpanLabel = GetTableColumnHeader $history "PercentAvailableMemory2"
+        $regularLabel = GetTableColumnHeader $history "AvailableMemory"
+
+        $timeSpanLabel | Should Be "PercentAvailableMemory2"
+        $regularLabel | Should Be "AvailableMemory(MByte)"
+
+        $history."PercentAvailableMemory2" | Should Be "09:05:00"
+    }
+
+    It "ignores display values that look like TimeSpans but also contain unknown units" {
+        $data = CreateData -Name1 "PercentAvailableMemory3" -DisplayValue1 "9 d 5 h 3 t" -Value1 "32700"
+
+        SetResponseAndClientWithArguments "SensorHistoryResponse" $data
+
+        $history = $sensor | Get-SensorHistory
+
+        $timeSpanLabel = GetTableColumnHeader $history "PercentAvailableMemory3"
+        $regularLabel = GetTableColumnHeader $history "AvailableMemory"
+
+        $timeSpanLabel | Should Be "PercentAvailableMemory3"
+        $regularLabel | Should Be "AvailableMemory(MByte)"
+
+        $history.PercentAvailableMemory3 | Should Be "9 d 5 h 3 t"
+    }
+
+    It "displays raw values" {
+
+        $data = CreateData -Name1 "PercentAvailableMemory4" -DisplayValue1 "9 h 5 m" -Value1 "32700"
+
+        SetResponseAndClientWithArguments "SensorHistoryResponse" $data
+
+        $normal = $sensor | Get-SensorHistory
+
+        $normalUnitLabel = GetTableColumnHeader $normal "AvailableMemory"
+        $normalUnitLabel | Should Be "AvailableMemory(MByte)"
+
+        $normal.PercentAvailableMemory4 | Should Be "09:05:00"
+        $normal.PSObject.TypeNames[0] | Should Match "PrtgAPI.DynamicFormatPSObject\d+"
+
+        $raw = $sensor | Get-SensorHistory -Raw
+
+        $rawUnitLabel = GetTableColumnHeader $raw "AvailableMemory"
+        $rawUnitLabel | Should Be "AvailableMemory"
+
+        $raw.PercentAvailableMemory4 | Should Be 32700
+        $raw.PSObject.TypeNames[0] | Should Match "PrtgAPI.DynamicFormatPSObject\d+"
+
+        $normal.PSObject.TypeNames[0] | Should Not Be $raw.PSObject.TypeNames[0]
+    }
+
+    It "doesn't convert display values into TimeSpans when the display and raw value aren't roughly equivalent" {
+        $data = CreateData -Name1 "PercentAvailableMemory5" -DisplayValue1 "9 h 5 m" -Value1 "132700"
+
+        SetResponseAndClientWithArguments "SensorHistoryResponse" $data
+
+        $history = $sensor | Get-SensorHistory
+
+        $history.PercentAvailableMemory5 | Should Be "9 h 5 m"
     }
 
     Context "Count" {
