@@ -1,5 +1,6 @@
 ﻿using System.Management.Automation;
 using PrtgAPI.PowerShell.Base;
+using PrtgAPI.Utilities;
 
 namespace PrtgAPI.PowerShell.Cmdlets
 {
@@ -36,6 +37,11 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <example>
     ///     <code>C:\> Get-Device dc-1 | Remove-Object -Force</code>
     ///     <para>Remove all devices with name 'dc-1' without prompting for confirmation.</para>
+    ///     <para/>
+    /// </example>
+    /// <example>
+    ///     <code>C:\> Remove-Object -Id 1001 -Force</code>
+    ///     <para>Removes the object with ID 1001 without prompting for confirmation.</para>
     /// </example>
     ///
     /// <para type="link" uri="https://github.com/lordmilko/PrtgAPI/wiki/Object-Organization#removing-1">Online version:</para>
@@ -44,14 +50,20 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <para type="link">Get-Group</para>
     /// <para type="link">Get-Probe</para>
     /// </summary>
-    [Cmdlet(VerbsCommon.Remove, "Object", SupportsShouldProcess = true)]
+    [Cmdlet(VerbsCommon.Remove, "Object", SupportsShouldProcess = true, DefaultParameterSetName = ParameterSet.Default)]
     public class RemoveObject : PrtgMultiOperationCmdlet
     {
         /// <summary>
         /// <para type="description">The object to remove.</para>
         /// </summary>
-        [Parameter(Mandatory = true, ValueFromPipeline = true)]
+        [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = ParameterSet.Default)]
         public PrtgObject Object { get; set; }
+
+        /// <summary>
+        /// <para type="description">The ID of the object to remove.</para>
+        /// </summary>
+        [Parameter(Mandatory = true, ParameterSetName = ParameterSet.Manual)]
+        public int[] Id { get; set; }
 
         /// <summary>
         /// <para type="description">Forces an object to be removed without displaying a confirmation prompt.</para>
@@ -74,9 +86,9 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// </summary>
         protected override void ProcessRecordEx()
         {
-            if (ShouldProcess($"'{Object.Name}' (ID: {Object.Id})"))
+            if (ShouldProcess(GetShouldProcessMessage(Object, Id)))
             {
-                if (Force.IsPresent || ShouldContinue($"Are you sure you want to delete {Object.GetTypeDescription().ToLower()} '{Object.Name}' (ID: {Object.Id})", "WARNING!"))
+                if (Force.IsPresent || ShouldContinue(GetShouldContinueMessage(), "WARNING!"))
                 {
                     if (Force.IsPresent && batch == null)
                         Batch = true;
@@ -86,12 +98,27 @@ namespace PrtgAPI.PowerShell.Cmdlets
             }
         }
 
+        private string GetShouldContinueMessage()
+        {
+            var str = "Are you sure you want to delete ";
+
+            if (Object != null)
+                str += $"{Object.GetTypeDescription().ToLower()} '{Object.Name}' (ID: {Object.Id})";
+            else
+                str += $"object {("ID".Plural(Id))} {(string.Join(", ", Id))}";
+
+            return str;
+        }
+
         /// <summary>
         /// Invokes this cmdlet's action against the current object in the pipeline.
         /// </summary>
         protected override void PerformSingleOperation()
         {
-            ExecuteOperation(() => client.RemoveObject(Object.Id), $"Removing {Object.GetTypeDescription().ToLower()} '{Object.Name}' (ID: {Object.Id})");
+            ExecuteOperation(() => client.RemoveObject(
+                GetSingleOperationId(Object, Id)),
+                GetSingleOperationProgressMessage(Object, Id, "Removing", TypeDescriptionOrDefault(Object))
+            );
         }
 
         /// <summary>

@@ -110,6 +110,71 @@ namespace PrtgAPI.PowerShell.Base
             }
         }
 
+        internal string GetShouldProcessMessage(PrtgObject obj, int[] ids, string details = null)
+        {
+            if (obj == null && ids.Length == 0)
+                throw new ArgumentException($"{nameof(ids)} must be specified when {nameof(obj)} is null.");
+
+            if (obj != null)
+            {
+                var str = $"'{obj.Name}' (ID: {obj.Id}";
+
+                if (details != null)
+                    str += $", {details})";
+                else
+                    str += ")";
+
+                return str;
+            }
+
+            string idStr;
+
+            if (ids.Length == 1)
+                idStr = $"ID {ids[0]}";
+            else
+                idStr = $"{("ID".Plural(ids))} {(string.Join(", ", ids))}";
+
+            if (details != null)
+                idStr += $" ({details})";
+
+            return idStr;
+        }
+
+        internal string GetSingleOperationProgressMessage(PrtgObject obj, int[] ids, string action, string typeDescription, string operationDescription = null)
+        {
+            if (obj == null && ids.Length == 0)
+                throw new ArgumentException($"{nameof(ids)} must be specified when {nameof(obj)} is null.");
+
+            string str;
+
+            //e.g. Acknowledging sensor 'Ping' forever
+            if (obj != null)
+                str = $"{action} {typeDescription} '{obj.Name}' (ID: {obj.Id})";
+            else
+                str = $"{action} {typeDescription} {("ID".Plural(ids))} {(string.Join(", ", ids))}";
+
+            if (operationDescription != null)
+                str += $" {operationDescription}";
+
+            return str;
+        }
+
+        internal string TypeDescriptionOrDefault(PrtgObject obj, string @default = "object")
+        {
+            if (obj == null)
+                return @default;
+
+            return obj.GetTypeDescription().ToLower();
+        }
+
+        internal int[] GetSingleOperationId(PrtgObject obj, int[] id)
+        {
+            if (obj != null)
+                return new[] { obj.Id };
+
+            return id;
+        }
+
         internal abstract string ProgressActivity { get; }
     }
 }

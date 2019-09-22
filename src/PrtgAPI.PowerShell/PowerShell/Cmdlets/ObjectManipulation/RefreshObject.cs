@@ -31,6 +31,11 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <example>
     ///     <code>C:\> Get-Device -Id 2000 | Refresh-Object</code>
     ///     <para>Refresh all sensors under the device with ID 2000.</para>
+    ///     <para/>
+    /// </example>
+    /// <example>
+    ///     <code>C:\> Refresh-Object -Id 2001</code>
+    ///     <para>Refreshes the object with the ID 2001</para>
     /// </example>
     ///
     /// <para type="link" uri="https://github.com/lordmilko/PrtgAPI/wiki/State-Manipulation#refresh-1">Online version:</para>
@@ -39,14 +44,20 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <para type="link">Get-Group</para>
     /// <para type="link">Get-Probe</para>
     /// </summary>
-    [Cmdlet(VerbsData.Update, "Object", SupportsShouldProcess = true)]
+    [Cmdlet(VerbsData.Update, "Object", SupportsShouldProcess = true, DefaultParameterSetName = ParameterSet.Default)]
     public class RefreshObject : PrtgMultiOperationCmdlet
     {
         /// <summary>
         /// <para type="description">The object to refresh.</para>
         /// </summary>
-        [Parameter(Mandatory = true, ValueFromPipeline = true, HelpMessage = "The object to refresh.")]
+        [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = ParameterSet.Default, HelpMessage = "The object to refresh.")]
         public SensorOrDeviceOrGroupOrProbe Object { get; set; }
+
+        /// <summary>
+        /// <para type="description">ID of the object to refresh.</para>
+        /// </summary>
+        [Parameter(Mandatory = true, ParameterSetName = ParameterSet.Manual)]
+        public int[] Id { get; set; }
 
         internal override string ProgressActivity => "Refreshing PRTG Objects";
 
@@ -55,7 +66,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// </summary>
         protected override void ProcessRecordEx()
         {
-            if (ShouldProcess($"'{Object.Name}' (ID: {Object.Id})"))
+            if (ShouldProcess(GetShouldProcessMessage(Object, Id)))
                 ExecuteOrQueue(Object);
         }
 
@@ -64,7 +75,10 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// </summary>
         protected override void PerformSingleOperation()
         {
-            ExecuteOperation(() => client.RefreshObject(Object.Id), $"Refreshing object '{Object.Name}'");
+            ExecuteOperation(
+                () => client.RefreshObject(GetSingleOperationId(Object, Id)),
+                GetSingleOperationProgressMessage(Object, Id, "Refreshing", "object")
+            );
         }
 
         /// <summary>

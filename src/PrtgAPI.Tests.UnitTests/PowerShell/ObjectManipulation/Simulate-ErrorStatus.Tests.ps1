@@ -61,4 +61,12 @@ Describe "Simulate-ErrorStatus" -Tag @("PowerShell", "UnitTest") {
 
         $newSensor | Should Be $sensor
     }
+
+    It "specifies an ID" {
+        SetAddressValidatorResponse @(
+            [Request]::Get("api/simulate.htm?id=1001&action=1")
+        )
+
+        Simulate-ErrorStatus -Id 1001
+    }
 }

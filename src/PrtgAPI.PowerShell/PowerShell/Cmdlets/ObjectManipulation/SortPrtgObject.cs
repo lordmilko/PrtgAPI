@@ -12,7 +12,12 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// 
     /// <example>
     ///     <code>C:\> Get-Group -Id 0 | Sort-PrtgObject</code>
-    ///     <para>Sort all probes under the root PRTG Group</para>
+    ///     <para>Sort all probes under the root PRTG Group.</para>
+    ///     <para/>
+    /// </example>
+    /// <example>
+    ///     <code>C:\> Sort-PrtgObject -Id 0</code>
+    ///     <para>Sorts all probes under the root PRTG Group.</para>
     /// </example>
     ///
     /// <para type="link" uri="https://github.com/lordmilko/PrtgAPI/wiki/Object-Organization#sorting-1">Online version:</para>
@@ -20,22 +25,35 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <para type="link">Get-Group</para>
     /// <para type="link">Get-Probe</para>
     /// </summary>
-    [Cmdlet(VerbsLifecycle.Start, "SortPrtgObject", SupportsShouldProcess = true)]
+    [Cmdlet(VerbsLifecycle.Invoke, "SortPrtgObject", SupportsShouldProcess = true, DefaultParameterSetName = ParameterSet.Default)]
     public class SortPrtgObject : PrtgPassThruCmdlet
     {
         /// <summary>
         /// <para type="description">The device, group or probe whose children should be sorted.</para>
         /// </summary>
-        [Parameter(Mandatory = true, ValueFromPipeline = true)]
+        [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = ParameterSet.Default)]
         public DeviceOrGroupOrProbe Object { get; set; }
+
+        /// <summary>
+        /// <para type="description">ID of the object whose children should be sorted.</para>
+        /// </summary>
+        [Parameter(Mandatory = true, ParameterSetName = ParameterSet.Manual)]
+        public int Id { get; set; }
 
         /// <summary>
         /// Performs enhanced record-by-record processing functionality for the cmdlet.
         /// </summary>
         protected override void ProcessRecordEx()
         {
-            if (ShouldProcess($"'{Object.Name}' (ID: {Object.Id})"))
-                ExecuteOperation(() => client.SortAlphabetically(Object.Id), $"Sorting children of object '{Object.Name}' (ID: {Object.Id})");
+            var ids = new[] {Id};
+
+            if (ShouldProcess(GetShouldProcessMessage(Object, ids)))
+            {
+                ExecuteOperation(
+                    () => client.SortAlphabetically(GetSingleOperationId(Object, ids)[0]),
+                    GetSingleOperationProgressMessage(Object, ids, "Sorting children of", "object")
+                );
+            }
         }
 
         internal override string ProgressActivity => "Sorting PRTG Objects";

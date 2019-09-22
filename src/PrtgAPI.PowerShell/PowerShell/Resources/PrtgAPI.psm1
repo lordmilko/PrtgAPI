@@ -17,7 +17,7 @@ New-Alias Pause-Object Suspend-Object
 New-Alias Refresh-Object Update-Object
 New-Alias Refresh-SystemInfo Update-SystemInfo
 New-Alias Clone-Object Copy-Object
-New-Alias Sort-PrtgObject Start-SortPrtgObject
+New-Alias Sort-PrtgObject Invoke-SortPrtgObject
 New-Alias Simulate-ErrorStatus Test-ErrorStatus
 New-Alias Load-PrtgConfigFile Sync-PrtgConfigFile
 

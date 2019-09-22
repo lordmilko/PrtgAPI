@@ -22,6 +22,11 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <example>
     ///     <code>C:\> Get-Sensor -Status PausedByUser | Resume-Object</code>
     ///     <para>Resume all sensors that have been paused by the user. Note: if parent object has been manually paused, child objects will appear PausedByUser but will not be able to be unpaused.</para>
+    ///     <para/>
+    /// </example>
+    /// <example>
+    ///     <code>C:\> Resume-Object -Id 1001</code>
+    ///     <para>Resumes the object with ID 1001.</para>
     /// </example>
     ///
     /// <para type="link" uri="https://github.com/lordmilko/PrtgAPI/wiki/State-Manipulation#resume-1">Online version:</para>
@@ -30,14 +35,20 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <para type="link">Get-Group</para>
     /// <para type="link">Get-Probe</para>
     /// </summary>
-    [Cmdlet(VerbsLifecycle.Resume, "Object", SupportsShouldProcess = true)]
+    [Cmdlet(VerbsLifecycle.Resume, "Object", SupportsShouldProcess = true, DefaultParameterSetName = ParameterSet.Default)]
     public class ResumeObject : PrtgMultiOperationCmdlet
     {
         /// <summary>
         /// <para type="description">The object to resume.</para>
         /// </summary>
-        [Parameter(Mandatory = true, ValueFromPipeline = true)]
+        [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = ParameterSet.Default)]
         public SensorOrDeviceOrGroupOrProbe Object { get; set; }
+
+        /// <summary>
+        /// <para type="description">ID of the object to resume.</para>
+        /// </summary>
+        [Parameter(Mandatory = true, ParameterSetName = ParameterSet.Manual)]
+        public int[] Id { get; set; }
 
         internal override string ProgressActivity => "Resuming PRTG Objects";
 
@@ -46,7 +57,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// </summary>
         protected override void ProcessRecordEx()
         {
-            if (ShouldProcess($"{Object.Name} (ID: {Object.Id})"))
+            if (ShouldProcess(GetShouldProcessMessage(Object, Id)))
                 ExecuteOrQueue(Object);
         }
 
@@ -55,7 +66,10 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// </summary>
         protected override void PerformSingleOperation()
         {
-            ExecuteOperation(() => client.ResumeObject(Object.Id), $"Resuming {Object.BaseType.ToString().ToLower()} '{Object}'");
+            ExecuteOperation(
+                () => client.ResumeObject(GetSingleOperationId(Object, Id)),
+                GetSingleOperationProgressMessage(Object, Id, "Resuming", TypeDescriptionOrDefault(Object))
+            );
         }
 
         /// <summary>

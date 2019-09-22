@@ -102,4 +102,30 @@ Describe "Pause-Object" -Tag @("PowerShell", "UnitTest") {
 
         $newSensor | Should Be $sensor
     }
+
+    It "pauses for a duration with an ID" {
+
+        SetAddressValidatorResponse @(
+            [Request]::Get("api/pauseobjectfor.htm?id=4000&duration=10")
+        )
+
+        Pause-Object -Id 4000 -Duration 10
+    }
+
+    It "pauses until a specified time with an ID" {
+
+        SetAddressValidatorResponse @(
+            [Request]::Get("api/pauseobjectfor.htm?id=4000,4001&duration=1440")
+        )
+
+        Pause-Object -Id 4000,4001 -Until (get-date).AddDays(1)
+    }
+
+    It "pauses forever with an ID" {
+        SetAddressValidatorResponse @(
+            [Request]::Get("api/pause.htm?id=4000&action=0")
+        )
+
+        Pause-Object -Id 4000 -Forever
+    }
 }

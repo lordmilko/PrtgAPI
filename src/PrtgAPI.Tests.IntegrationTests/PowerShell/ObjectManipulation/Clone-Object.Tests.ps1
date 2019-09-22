@@ -159,4 +159,40 @@ Describe "Clone-Object_IT" -Tag @("PowerShell", "IntegrationTest") {
             $devicesAfter.Count | Should Be 2
         }
     }
+
+    Context "Manual" {
+        It "clones an object" {
+            $newAction = Clone-Object -Id 300 -DestinationId -3 "testAction"
+
+            try
+            {
+                $newAction.Name | Should Be "testAction"
+                $newAction.Type | Should Be "Notification"
+                $newAction.ParentId | Should Be -3
+            }
+            finally
+            {
+                $newAction | Remove-Object -Force
+            }
+        }
+
+        It "a Notification Action specifying a parent ID" {
+            $newAction = Clone-Object -Id 300 "testAction"
+
+            try
+            {
+                $newAction.Name | Should Be "testAction"
+                $newAction.Type | Should Be "Notification"
+                $newAction.ParentId | Should Be -3
+            }
+            finally
+            {
+                $newAction | Remove-Object -Force
+            }
+        }
+
+        It "throws attempting to clone a special object" {
+            { Clone-Object -Id 1 } | Should Throw "You can only clone"
+        }
+    }
 }

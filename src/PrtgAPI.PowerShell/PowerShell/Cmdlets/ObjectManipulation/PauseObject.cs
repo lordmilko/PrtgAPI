@@ -38,6 +38,11 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <example>
     ///     <code>C:\> Get-Device fw-1 | Pause-Object -Forever -Message "Decomissioning"</code>
     ///     <para>Pause all devices named "fw-1" forever with a message explaining the reason the object was paused.</para>
+    ///     <para/>
+    /// </example>
+    /// <example>
+    ///     <code>C:\> Pause-Object -Id 1001 -Duration 10</code>
+    ///     <para>Pause the object with ID 1001 for 10 minutes.</para>
     /// </example>
     ///
     /// <para type="link" uri="https://github.com/lordmilko/PrtgAPI/wiki/State-Manipulation#pause-1">Online version:</para>
@@ -47,8 +52,8 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <para type="link">Get-Group</para>
     /// <para type="link">Get-Probe</para>
     /// </summary>
-    [Cmdlet(VerbsLifecycle.Suspend, "Object", SupportsShouldProcess = true)]
-    public class PauseObject : PrtgMultiOperationCmdlet
+    [Cmdlet(VerbsLifecycle.Suspend, "Object", SupportsShouldProcess = true, DefaultParameterSetName = ParameterSet.Default)]
+    public class PauseObject : PrtgTimedStateCmdlet
     {
         /// <summary>
         /// <para type="description">The object to pause.</para>
@@ -56,99 +61,70 @@ namespace PrtgAPI.PowerShell.Cmdlets
         [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = ParameterSet.Default)]
         [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = ParameterSet.Until)]
         [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = ParameterSet.Forever)]
-        public SensorOrDeviceOrGroupOrProbe Object { get; set; }
+        public SensorOrDeviceOrGroupOrProbe Object
+        {
+            get { return (Sensor) ObjectInternal; }
+            set { ObjectInternal = value; }
+        }
 
         /// <summary>
-        /// <para type="description">A message to display on the object indicating the reason it is paused.</para>
+        /// <para type="description">ID of the object to pause.</para>
         /// </summary>
-        [Parameter(Mandatory = false, ParameterSetName = ParameterSet.Default)]
-        [Parameter(Mandatory = false, ParameterSetName = ParameterSet.Until)]
-        [Parameter(Mandatory = false, ParameterSetName = ParameterSet.Forever)]
-        public string Message { get; set; }
+        [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = ParameterSet.Manual)]
+        [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = ParameterSet.UntilManual)]
+        [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = ParameterSet.ForeverManual)]
+        public int[] Id
+        {
+            get { return IdInternal; }
+            set { IdInternal = value; }
+        }
 
         /// <summary>
         /// <para type="description">The duration to pause the object for, in minutes.</para>
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = ParameterSet.Default, HelpMessage = "The duration to pause the object for, in minutes.")]
-        public int Duration { get; set; }
+        [Parameter(Mandatory = true, ParameterSetName = ParameterSet.Manual, HelpMessage = "The duration to pause the object for, in minutes.")]
+        public int Duration
+        {
+            get { return DurationInternal; }
+            set { DurationInternal = value; }
+        }
 
         /// <summary>
         /// <para type="description">The datetime at which the object should be unpaused.</para>
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = ParameterSet.Until)]
-        public DateTime Until { get; set; }
+        [Parameter(Mandatory = true, ParameterSetName = ParameterSet.UntilManual)]
+        public DateTime Until
+        {
+            get { return UntilInternal; }
+            set { UntilInternal = value; }
+        }
 
         /// <summary>
         /// <para type="description">Indicates the object should be paused indefinitely.</para>
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = ParameterSet.Forever)]
-        public SwitchParameter Forever { get; set; }
-
-        private int? duration;
-        private string minutesDescription;
-        private string durationDescription;
-        private string whatIfDescription;
-
-        internal override string ProgressActivity => "Pausing PRTG Objects";
-
-        /// <summary>
-        /// Provides an enhanced one-time, preprocessing functionality for the cmdlet.
-        /// </summary>
-        protected override void BeginProcessingEx()
+        [Parameter(Mandatory = true, ParameterSetName = ParameterSet.ForeverManual)]
+        public SwitchParameter Forever
         {
-            switch (ParameterSetName)
-            {
-                case ParameterSet.Default:
-                    duration = Duration;
-                    break;
-
-                case ParameterSet.Until:
-                    duration = (int)Math.Ceiling((Until - DateTime.Now).TotalMinutes);
-                    break;
-
-                case ParameterSet.Forever:
-                    break;
-                default:
-                    throw new UnknownParameterSetException(ParameterSetName);
-            }
-
-            if (duration < 1)
-                throw new ArgumentException("Duration evaluated to less than one minute. Please specify -Forever or a duration greater than or equal to one minute.");
-
-            minutesDescription = duration == 1 ? "minute" : "minutes";
-            durationDescription = Forever.IsPresent ? "forever" : $"for {duration} {minutesDescription}";
-            whatIfDescription = Forever.IsPresent ? "forever" : $"{duration} {minutesDescription}";
+            get { return ForeverInternal; }
+            set { ForeverInternal = value; }
         }
 
         /// <summary>
-        /// Performs enhanced record-by-record processing functionality for the cmdlet.
+        /// <para type="description">A message to display on the object indicating the reason it is paused.</para>
         /// </summary>
-        protected override void ProcessRecordEx()
-        {
-            if (ShouldProcess($"{Object.Name} (ID: {Object.Id}) (Duration: {whatIfDescription})"))
-                ExecuteOrQueue(Object);
-        }
+        [Parameter(Mandatory = false)]
+        public string Message { get; set; }
+
+        internal override void Action(int[] ids) => client.PauseObject(ids, duration, Message);
 
         /// <summary>
-        /// Invokes this cmdlet's action against the current object in the pipeline.
+        /// Initializes a new instance of the <see cref="AcknowledgeSensor"/> class.
         /// </summary>
-        protected override void PerformSingleOperation()
+        public PauseObject() : base("Pausing", "object", true)
         {
-            ExecuteOperation(() => client.PauseObject(Object.Id, duration, Message), $"Pausing {Object.BaseType.ToString().ToLower()} '{Object.Name}' {durationDescription}");
         }
-
-        /// <summary>
-        /// Invokes this cmdlet's action against all queued items from the pipeline.
-        /// </summary>
-        /// <param name="ids">The Object IDs of all queued items.</param>
-        protected override void PerformMultiOperation(int[] ids)
-        {
-            ExecuteMultiOperation(() => client.PauseObject(ids, duration, Message), $"Pausing {GetMultiTypeListSummary()} {durationDescription}");
-        }
-
-        /// <summary>
-        /// Returns the current object that should be passed through this cmdlet.
-        /// </summary>
-        public override object PassThruObject => Object;
     }
 }

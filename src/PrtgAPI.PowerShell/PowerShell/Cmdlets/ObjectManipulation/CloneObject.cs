@@ -46,6 +46,12 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// cloning triggers, is -Resolve:$false is specified, no summary will be returned (as PRTG does not automatically return any information
     /// regarding cloned triggers). As PRTG pauses all cloned sensors, devices and groups by default, it is generally recommended to resolve
     /// the new object so that you may unpause the object with Resume-Object.</para>
+    ///
+    /// <para type="description">Object types that are not conventionally supported by the Clone-Object cmdlet can still be cloned by specifying
+    /// both a -<see cref="SourceId"/> and -<see cref="DestinationId"/>. When cloning objects that fall outside the conventional object tree (such as
+    /// Maps and Notification Actions) the -<see cref="DestinationId"/> will always be ignored in favour of the appropriate System object for that
+    /// object type (such as the Notifications (ID: -3) object for Notification Actions). If a -<see cref="DestinationId"/> is not specified alongside
+    /// a -<see cref="SourceId"/>, the source ID's parent will automatically be used.</para> 
     /// 
     /// <example>
     ///     <code>C:\> Get-Sensor -Id 1234 | Clone-Object -DestinationId 5678</code>
@@ -75,6 +81,16 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <example>
     ///     <code>C:\> Get-Probe -Id 1234 | Get-Trigger | Clone-Object -DestinationId 5678</code>
     ///     <para>Clone all notification triggers (both inherited and explicitly defined) on the probe with ID 1234 to the object with ID 5678</para>
+    ///     <para/>
+    /// </example>
+    /// <example>
+    ///     <code>C:\> Clone-Object -Id 1001 -DestinationId 2002</code>
+    ///     <para>Clone the object with ID 1001 to under the object with ID 2002.</para>
+    ///     <para/>
+    /// </example>
+    /// <example>
+    ///     <code>C:\> Clone-Object -Id 300 "New Notification Trigger"</code>
+    ///     <para>Clone the Notification Trigger with ID 300, automatically placing the trigger under the "Notifications" system object.</para>
     /// </example>
     ///
     /// <para type="link" uri="https://github.com/lordmilko/PrtgAPI/wiki/Object-Creation#cloning-1">Online version:</para>
@@ -96,6 +112,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         [Parameter(Mandatory = true, Position = 0, ParameterSetName = ParameterSet.DeviceToDestination)]
         [Parameter(Mandatory = true, Position = 0, ParameterSetName = ParameterSet.GroupToDestination)]
         [Parameter(Mandatory = true, Position = 0, ParameterSetName = ParameterSet.TriggerToDestination)]
+        [Parameter(Mandatory = false, ParameterSetName = ParameterSet.Manual)]
         public int DestinationId { get; set; }
 
         /// <summary>
@@ -104,6 +121,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         [Parameter(Mandatory = false, Position = 1, ParameterSetName = ParameterSet.SensorToDestination)]
         [Parameter(Mandatory = false, Position = 1, ParameterSetName = ParameterSet.DeviceToDestination)]
         [Parameter(Mandatory = false, Position = 1, ParameterSetName = ParameterSet.GroupToDestination)]
+        [Parameter(Mandatory = false, Position = 0, ParameterSetName = ParameterSet.Manual)]
         public string Name { get; set; }
 
         /// <summary>
@@ -139,7 +157,9 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// <summary>
         /// <para type="description">The ID of the object to clone.</para>
         /// </summary>
+        [Alias("Id")]
         [Parameter(Mandatory = true, ParameterSetName = ParameterSet.TargetForSource)]
+        [Parameter(Mandatory = true, ParameterSetName = ParameterSet.Manual)]
         public int SourceId { get; set; }
 
         /// <summary>
@@ -155,7 +175,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = ParameterSet.TargetForSource)]
         public DeviceOrGroupOrProbe Destination { get; set; }
 
-        private SensorOrDeviceOrGroupOrProbe sourceObj;
+        private PrtgObject sourceObj;
         private Func<int, List<IObject>> sourceObjResolver;
 
         private CloneCmdletConfig config;
@@ -297,6 +317,14 @@ namespace PrtgAPI.PowerShell.Cmdlets
                     DestinationId = Destination.Id;
                     parameters = new CloneCmdletConfig(sourceObj, sourceObj.Name, sourceObjResolver);
                     break;
+                case ParameterSet.Manual:
+                    sourceObj = client.GetObject(SourceId);
+
+                    if (!MyInvocation.BoundParameters.ContainsKey(nameof(DestinationId)))
+                        DestinationId = sourceObj.ParentId;
+
+                    parameters = new CloneCmdletConfig(sourceObj, Name ?? $"Clone of {sourceObj.Name}", GetObjects);
+                    break;
                 default:
                     throw new UnknownParameterSetException(ParameterSetName);
             }
@@ -372,6 +400,8 @@ namespace PrtgAPI.PowerShell.Cmdlets
         private Func<int, List<IObject>> GetSensors => id => client.GetSensors(Property.Id, id).Cast<IObject>().ToList();
         private Func<int, List<IObject>> GetDevices => id => client.GetDevices(Property.Id, id).Cast<IObject>().ToList();
         private Func<int, List<IObject>> GetGroups => id => client.GetGroups(Property.Id, id).Cast<IObject>().ToList();
+
+        private Func<int, List<IObject>> GetObjects => id => GetObject.LiftObjects(client, client.GetObjects(Property.Id, id)).Cast<IObject>().ToList();
 
         internal override string ProgressActivity => $"Cloning PRTG {config.TypeDescription}s";
     }

@@ -31,6 +31,11 @@ namespace PrtgAPI.PowerShell.Cmdlets
     ///         What if: Performing the operation "Rename-Object" on target "'Memory' (ID: 2001)"
     ///     </code>
     ///     <para>Preview what will happen when you attempt to rename all objects named "Memory"</para>
+    ///     <para/>
+    /// </example>
+    /// <example>
+    ///     <code>C:\> Rename-Object -Id 1001 "Memory Free"</code>
+    ///     <para>Rename the object with ID 1001 to "Memory Free"</para>
     /// </example>
     ///
     /// <para type="link" uri="https://github.com/lordmilko/PrtgAPI/wiki/Object-Organization#renaming-1">Online version:</para>
@@ -39,14 +44,20 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <para type="link">Get-Group</para>
     /// <para type="link">Get-Probe</para>
     /// </summary>
-    [Cmdlet(VerbsCommon.Rename, "Object", SupportsShouldProcess = true)]
+    [Cmdlet(VerbsCommon.Rename, "Object", SupportsShouldProcess = true, DefaultParameterSetName = ParameterSet.Default)]
     public class RenameObject : PrtgMultiOperationCmdlet
     {
         /// <summary>
         /// <para type="description">The object to rename.</para>
         /// </summary>
-        [Parameter(Mandatory = true, ValueFromPipeline = true)]
+        [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = ParameterSet.Default)]
         public PrtgObject Object { get; set; }
+
+        /// <summary>
+        /// <para type="description">The ID of the object to rename.</para>
+        /// </summary>
+        [Parameter(Mandatory = true, ParameterSetName = ParameterSet.Manual)]
+        public int[] Id { get; set; }
 
         /// <summary>
         /// <para type="description">The new name to give the object.</para>
@@ -61,7 +72,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// </summary>
         protected override void ProcessRecordEx()
         {
-            if (ShouldProcess($"'{Object.Name}' (ID: {Object.Id}) (New Name: {Name})"))
+            if (ShouldProcess(GetShouldProcessMessage(Object, Id, $"New Name: '{Name}'")))
                 ExecuteOrQueue(Object);                
         }
 
@@ -70,7 +81,10 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// </summary>
         protected override void PerformSingleOperation()
         {
-            ExecuteOperation(() => client.RenameObject(Object.Id, Name), $"Renaming {Object.GetTypeDescription().ToLower()} '{Object.Name}' to '{Name}'");
+            ExecuteOperation(
+                () => client.RenameObject(GetSingleOperationId(Object, Id), Name),
+                GetSingleOperationProgressMessage(Object, Id, "Renaming", TypeDescriptionOrDefault(Object), $"to '{Name}'")
+            );
         }
 
         /// <summary>

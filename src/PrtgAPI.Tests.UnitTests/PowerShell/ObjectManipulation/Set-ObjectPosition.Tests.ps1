@@ -42,4 +42,20 @@ Describe "Set-ObjectPosition" -Tag @("PowerShell", "UnitTest") {
 
         $newDevice | Should Be $device
     }
+
+    It "specifies an ID" {
+        SetAddressValidatorResponse @(
+            [Request]::Objects("filter_objid=4000", [Request]::DefaultObjectFlags)
+            [Request]::Sensors("filter_objid=4000", [Request]::DefaultObjectFlags)
+            [Request]::Get("api/setposition.htm?id=4000&newpos=up")
+        )
+
+        Set-ObjectPosition -Id 4000 Up
+    }
+
+    It "throws when a specified ID is not a valid object type" {
+        SetMultiTypeResponse
+
+        { Set-ObjectPosition -Id 6000 Up } | Should Throw "Object must be a sensor, device, group or probe."
+    }
 }

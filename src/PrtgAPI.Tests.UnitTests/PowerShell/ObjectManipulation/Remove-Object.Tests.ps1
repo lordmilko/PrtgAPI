@@ -54,4 +54,12 @@ Describe "Remove-Object" -Tag @("PowerShell", "UnitTest") {
 
         $newSensor | Should Be $sensor
     }
+
+    It "specifies an ID" {
+        SetAddressValidatorResponse @(
+            [Request]::Get("api/deleteobject.htm?id=1001&approve=1")
+        )
+
+        Remove-Object -Id 1001 -Force
+    }
 }

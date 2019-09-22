@@ -31,4 +31,13 @@ Describe "Move-Object" -Tag @("PowerShell", "UnitTest") {
 
         $newDevice | Should Be $device
     }
+
+    It "specifies an ID" {
+
+        SetAddressValidatorResponse @(
+            [Request]::Get("moveobjectnow.htm?id=1234&targetid=5678")
+        )
+
+        Move-Object -Id 1234 -DestinationId 5678
+    }
 }

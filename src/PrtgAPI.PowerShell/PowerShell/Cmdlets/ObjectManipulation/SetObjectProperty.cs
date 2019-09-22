@@ -63,7 +63,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     ///     <para/>
     /// </example>
     /// <example>
-    ///     <code>C:\> Get-Sensor -Id | 1001 | Set-ObjectProperty -RawProperty name_ -RawValue newName</code>
+    ///     <code>C:\> Get-Sensor -Id 1001 | Set-ObjectProperty -RawProperty name_ -RawValue newName</code>
     ///     <para>Set raw property "name" to value "newName"</para>
     ///     <para/>
     /// </example>
@@ -77,6 +77,11 @@ namespace PrtgAPI.PowerShell.Cmdlets
     ///         >>   }
     ///     </code>
     ///     <para>Apply the schedule with ID 621 to the sensor with ID 2024</para>
+    ///     <para/>
+    /// </example>
+    /// <example>
+    ///     <code>C:\> Set-ObjectProperty -Id 1001 Name "New Name"</code>
+    ///     <para>Set the name of the object with ID 1001 to "New Name"</para>
     /// </example>
     ///
     /// <para type="link" uri="https://github.com/lordmilko/PrtgAPI/wiki/Property-Manipulation#set-1">Online version:</para>
@@ -96,19 +101,33 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// <summary>
         /// <para type="description">The object to modify the properties of.</para>
         /// </summary>
-        [Parameter(Mandatory = true, ValueFromPipeline = true)]
+        [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = ParameterSet.Default)]
+        [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = ParameterSet.RawProperty)]
+        [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = ParameterSet.Raw)]
+        [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = ParameterSet.Dynamic)]
         public PrtgObject Object { get; set; }
+
+        /// <summary>
+        /// <para type="description">ID of the object to modify properties of.</para>
+        /// </summary>
+        [Parameter(Mandatory = true, ParameterSetName = ParameterSet.Manual)]
+        [Parameter(Mandatory = true, ParameterSetName = ParameterSet.RawPropertyManual)]
+        [Parameter(Mandatory = true, ParameterSetName = ParameterSet.RawManual)]
+        [Parameter(Mandatory = true, ParameterSetName = ParameterSet.DynamicManual)]
+        public int[] Id { get; set; }
 
         /// <summary>
         /// <para type="description">The property to modify.</para>
         /// </summary>
         [Parameter(Mandatory = true, Position = 0, ParameterSetName = ParameterSet.Default)]
+        [Parameter(Mandatory = true, Position = 0, ParameterSetName = ParameterSet.Manual)]
         public ObjectProperty Property { get; set; }
 
         /// <summary>
         /// <para type="description">The value to set for the specified property.</para>
         /// </summary>
         [Parameter(Mandatory = false, Position = 1, ParameterSetName = ParameterSet.Default)]
+        [Parameter(Mandatory = false, Position = 1, ParameterSetName = ParameterSet.Manual)]
         public object Value { get; set; }
 
         /// <summary>
@@ -116,6 +135,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// This value typically ends in an underscore.
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = ParameterSet.RawProperty)]
+        [Parameter(Mandatory = true, ParameterSetName = ParameterSet.RawPropertyManual)]
         public string RawProperty { get; set; }
 
         /// <summary>
@@ -123,19 +143,23 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// WARNING: If an invalid value is set for a property, minor corruption may occur.</para>
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = ParameterSet.RawProperty)]
+        [Parameter(Mandatory = true, ParameterSetName = ParameterSet.RawPropertyManual)]
         public object[] RawValue { get; set; }
 
         /// <summary>
         /// <para type="description">A collection of parameters for modifying multiple raw properties.</para>
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = ParameterSet.Raw)]
+        [Parameter(Mandatory = true, ParameterSetName = ParameterSet.RawManual)]
         public Hashtable RawParameters { get; set; }
 
         /// <summary>
         /// <para type="description">Sets an unsafe object property without prompting for confirmation. WARNING: Setting an invalid value for a property can cause minor corruption. Only use if you know what you are doing.</para>
         /// </summary>
         [Parameter(Mandatory = false, ParameterSetName = ParameterSet.Raw)]
+        [Parameter(Mandatory = false, ParameterSetName = ParameterSet.RawManual)]
         [Parameter(Mandatory = false, ParameterSetName = ParameterSet.RawProperty)]
+        [Parameter(Mandatory = false, ParameterSetName = ParameterSet.RawPropertyManual)]
         public SwitchParameter Force { get; set; }
 
         internal override string ProgressActivity => "Modify PRTG Object Settings";
@@ -146,12 +170,19 @@ namespace PrtgAPI.PowerShell.Cmdlets
 
         private CustomParameter[] parameters;
 
+        private bool IsNormalParameterSet => IsAnyParameterSet(ParameterSet.Default, ParameterSet.Manual);
+        private bool IsDynamicParameterSet => IsAnyParameterSet(ParameterSet.Dynamic, ParameterSet.DynamicManual);
+        private bool IsRawPropertyParameterSet => IsAnyParameterSet(ParameterSet.RawProperty, ParameterSet.RawPropertyManual);
+        private bool IsRawParameterSet => IsAnyParameterSet(ParameterSet.Raw, ParameterSet.RawManual);
+
+        private string BasicShouldProcessMessage => GetShouldProcessMessage(Object, Id);
+
         /// <summary>
         /// Provides an enhanced one-time, preprocessing functionality for the cmdlet.
         /// </summary>
         protected override void BeginProcessingEx()
         {
-            if (ParameterSetName == ParameterSet.Default)
+            if (IsNormalParameterSet)
             {
                 //Value is not required, but is required in that we need to explicitly say null
                 if (!MyInvocation.BoundParameters.ContainsKey("Value"))
@@ -159,15 +190,18 @@ namespace PrtgAPI.PowerShell.Cmdlets
 
                 ParseValue();
             }
-            else if (ParameterSetName == ParameterSet.Dynamic)
+            else if (IsDynamicParameterSet)
             {
                 dynamicParameters = dynamicParams.GetBoundParameters(this, (p, v) => new PropertyParameter(p, PSObjectUtilities.CleanPSObject(v))).ToArray();
+
+                if (dynamicParameters.Length == 0)
+                    throw new ParameterBindingException($"At least one dynamic property or -{nameof(Property)} and -{nameof(Value)} must be specified.");
             }
-            else if (ParameterSetName == ParameterSet.RawProperty)
+            else if (IsRawPropertyParameterSet)
             {
                 RawValue = PSObjectUtilities.CleanPSObject(RawValue);
             }
-            else if (ParameterSetName == ParameterSet.Raw)
+            else if (IsRawParameterSet)
             {
                 parameters = RawParameters.Keys.Cast<object>()
                     .Select(k => new CustomParameter(k.ToString(), PSObjectUtilities.CleanPSObject(RawParameters[k]), ParameterType.MultiParameter))
@@ -177,22 +211,27 @@ namespace PrtgAPI.PowerShell.Cmdlets
             base.BeginProcessingEx();
         }
 
+        private bool IsAnyParameterSet(params string[] sets)
+        {
+            return sets.Any(s => ParameterSetName == s);
+        }
+
         /// <summary>
         /// Performs enhanced record-by-record processing functionality for the cmdlet.
         /// </summary>
         protected override void ProcessRecordEx()
         {
-            if (ParameterSetName == ParameterSet.Default)
+            if (IsNormalParameterSet)
             {
-                if (ShouldProcess($"{Object.Name} (ID: {Object.Id})", $"Set-ObjectProperty {Property} = '{Value}'"))
+                if (ShouldProcess(BasicShouldProcessMessage, $"{MyInvocation.MyCommand} {Property} = '{Value}'"))
                     ExecuteOrQueue(Object);
             }
-            else if (ParameterSetName == ParameterSet.Dynamic)
+            else if (IsDynamicParameterSet)
             {
                 var strActions = dynamicParameters.Select(p => $"{p.Property} = '{p.Value}'");
                 var str = string.Join(", ", strActions);
 
-                if (ShouldProcess($"{Object.Name} (ID: {Object.Id})", $"Set-ObjectProperty {str}"))
+                if (ShouldProcess(BasicShouldProcessMessage, $"{MyInvocation.MyCommand} {str}"))
                     ExecuteOrQueue(Object);
             }
             else
@@ -204,7 +243,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
             string continueStr;
             string whatIfStr;
 
-            if (ParameterSetName == ParameterSet.RawProperty)
+            if (IsRawPropertyParameterSet)
             {
                 var vals = RawValue.Select(v => $"'{v}'").ToList();
                 var plural = vals.Count > 1 ? "s" : "";
@@ -212,7 +251,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
                 continueStr = $"property '{RawProperty}' to value{plural} {string.Join(", ", vals)}";
                 whatIfStr = $"{RawProperty} = {RawValue.ToQuotedList()}"; //todo: bug? progress said it was setting property to system.object[] (it just did rawp.tostring()); we need to expand it to a quoted list or something
             }
-            else if (ParameterSetName == ParameterSet.Raw)
+            else if (IsRawParameterSet)
             {
                 var vals = parameters.Select(p => $"{p.Name} = '{p.Value}'");
                 whatIfStr = $"{string.Join(", ", vals)}";
@@ -221,9 +260,11 @@ namespace PrtgAPI.PowerShell.Cmdlets
             else
                 throw new NotImplementedException($"Don't know how to handle parameter set '{ParameterSetName}'.");
 
-            if (Force || ShouldContinue($"Are you sure you want to set raw object {continueStr} on {Object.GetTypeDescription().ToLower()} '{Object.Name}'? This may cause minor corruption if the specified value is not valid for the target property. Only proceed if you know what you are doing.", "WARNING!"))
+            var objectNameStr = Object != null ? $"'{Object.Name}'" : $"{("ID".Plural(Id))} {(string.Join(", ", Id))}";
+
+            if (Force || ShouldContinue($"Are you sure you want to set raw object {continueStr} on {TypeDescriptionOrDefault(Object)} {objectNameStr}? This may cause minor corruption if the specified value is not valid for the target property. Only proceed if you know what you are doing.", "WARNING!"))
             {
-                if (ShouldProcess($"{Object.Name} (ID: {Object.Id})", $"Set-ObjectProperty {whatIfStr}"))
+                if (ShouldProcess(BasicShouldProcessMessage, $"{MyInvocation.MyCommand} {whatIfStr}"))
                     ExecuteOrQueue(Object);
             }
         }
@@ -239,27 +280,29 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// </summary>
         protected override void PerformSingleOperation()
         {
-            if (ParameterSetName == ParameterSet.Default)
-                ExecuteOperation(() => client.SetObjectProperty(Object.Id, Property, Value), $"Setting object '{Object.Name}' (ID: {Object.Id}) setting '{Property}' to '{Value}'");
-            else if (ParameterSetName == ParameterSet.Dynamic)
+            var ids = GetSingleOperationId(Object, Id);
+
+            if (IsNormalParameterSet)
+                ExecuteOperation(() => client.SetObjectProperty(ids, Property, Value), $"Setting object {BasicShouldProcessMessage} setting '{Property}' to '{Value}'");
+            else if (IsDynamicParameterSet)
             {
                 var strActions = dynamicParameters.Select(p => $"'{p.Property}' to '{p.Value}'");
                 var str = string.Join(", ", strActions);
 
-                ExecuteOperation(() => client.SetObjectProperty(Object.Id, dynamicParameters), $"Setting object '{Object.Name}' (ID: {Object.Id}) setting {str}");
+                ExecuteOperation(() => client.SetObjectProperty(ids, dynamicParameters), $"Setting object {BasicShouldProcessMessage} setting {str}");
             }
             else
             {
-                if (ParameterSetName == ParameterSet.RawProperty)
+                if (IsRawPropertyParameterSet)
                 {
                     var parameter = new CustomParameter(RawProperty, RawValue, ParameterType.MultiParameter);
-                    ExecuteOperation(() => client.SetObjectPropertyRaw(Object.Id, parameter), $"Setting object '{Object.Name}' (ID: {Object.Id}) setting '{RawProperty}' to {RawValue.ToQuotedList()}");
+                    ExecuteOperation(() => client.SetObjectPropertyRaw(ids, parameter), $"Setting object {BasicShouldProcessMessage} setting '{RawProperty}' to {RawValue.ToQuotedList()}");
                 }
                 else
                 {
                     var settingsStr = string.Join(", ", parameters.Select(p => $"{p.Name} = '{p.Value}'"));
 
-                    ExecuteOperation(() => client.SetObjectPropertyRaw(Object.Id, parameters), $"Setting object '{Object.Name}' (ID: {Object.Id}) settings {settingsStr}");
+                    ExecuteOperation(() => client.SetObjectPropertyRaw(ids, parameters), $"Setting object {BasicShouldProcessMessage} settings {settingsStr}");
                 }
             }
         }
@@ -270,9 +313,9 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// <param name="ids">The Object IDs of all queued items.</param>
         protected override void PerformMultiOperation(int[] ids)
         {
-            if (ParameterSetName == ParameterSet.Default)
+            if (IsNormalParameterSet)
                 ExecuteMultiOperation(() => client.SetObjectProperty(ids, Property, Value), $"Setting {GetMultiTypeListSummary()} setting '{Property}' to '{Value}'");
-            else if (ParameterSetName == ParameterSet.Dynamic)
+            else if (IsDynamicParameterSet)
             {
                 var strActions = dynamicParameters.Select(p => $"'{p.Property}' to '{p.Value}'");
                 var str = string.Join(", ", strActions);
@@ -281,7 +324,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
             }
             else
             {
-                if (ParameterSetName == ParameterSet.RawProperty)
+                if (IsRawPropertyParameterSet)
                 {
                     var parameter = new CustomParameter(RawProperty, RawValue, ParameterType.MultiParameter);
                     ExecuteMultiOperation(() => client.SetObjectPropertyRaw(ids, parameter), $"Setting {GetMultiTypeListSummary()} setting '{RawProperty}' to {RawValue.ToQuotedList()}");
@@ -308,7 +351,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         {
             if (dynamicParams == null)
                 dynamicParams = new PropertyDynamicParameterSet<ObjectProperty>(
-                    ParameterSet.Dynamic,
+                    new[] {ParameterSet.Dynamic, ParameterSet.DynamicManual },
                     e => ObjectPropertyParser.GetPropertyInfoViaTypeLookup(e).Property.PropertyType
                 );
 

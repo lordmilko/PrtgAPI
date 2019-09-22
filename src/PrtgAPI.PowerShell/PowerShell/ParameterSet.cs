@@ -53,10 +53,14 @@
         /// </summary>
         internal const string Until = "UntilSet";
 
+        internal const string UntilManual = "UntilManualSet";
+
         /// <summary>
         /// The parameter set that is used when performing an action whose effects will last forever.
         /// </summary>
         internal const string Forever = "ForeverSet";
+
+        internal const string ForeverManual = "ForeverManualSet";
 
         internal const string Device = "DeviceSet";
         internal const string Group = "GroupSet";
@@ -64,6 +68,7 @@
         internal const string Schedule = "ScheduleSet";
 
         internal const string Target = "TargetSet";
+        internal const string TargetManual = "TargetManualSet";
 
         internal const string Empty = "EmptySet";
 

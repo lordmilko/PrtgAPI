@@ -29,7 +29,7 @@ namespace PrtgAPI.PowerShell.Cmdlets.ObjectManipulation
     /// <para type="link" uri="https://github.com/lordmilko/PrtgAPI/wiki/Devices#system-information-1">Online version:</para>
     /// <para type="link">Get-SystemInfo</para>
     /// </summary>
-    [Cmdlet(VerbsData.Update, "SystemInfo")]
+    [Cmdlet(VerbsData.Update, "SystemInfo", DefaultParameterSetName = ParameterSet.Default)]
     public class RefreshSystemInfo : PrtgPassThruCmdlet
     {
         /// <summary>

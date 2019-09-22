@@ -36,6 +36,8 @@ namespace PrtgAPI.PowerShell.Base
 
         internal CancellationToken CancellationToken => TokenSource.Token;
 
+        internal bool HasParameter(string name) => MyInvocation.BoundParameters.ContainsKey(name);
+
         /// <summary>
         /// Provides a one-time, preprocessing functionality for the cmdlet.
         /// </summary>

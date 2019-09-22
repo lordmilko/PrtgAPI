@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Management.Automation;
-using System.Threading;
 using PrtgAPI.PowerShell.Base;
+using PrtgAPI.Utilities;
 
 namespace PrtgAPI.PowerShell.Cmdlets
 {
@@ -33,20 +33,32 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <example>
     ///     <code>C:\> Get-Probe -Id 2004 | Restart-Probe -Wait:$false</code>
     ///     <para>Restart the probe with ID 2004, without waiting for the probe to restart.</para>
+    ///     <para/>
+    /// </example>
+    /// <example>
+    ///     <code>C:\> Restart-Probe -Id 1001</code>
+    ///     <para>Restart the probe with ID 1001. If 1001 is not a valid probe, an error will be thrown.</para>
     /// </example>
     ///
     /// <para type="link" uri="https://github.com/lordmilko/PrtgAPI/wiki/Administrative-Tools#restart-probe-service-1">Online version:</para>
     /// <para type="link">Get-Probe</para>
     /// <para type="link">Restart-PrtgCore</para>
     /// </summary>
-    [Cmdlet(VerbsLifecycle.Restart, "Probe", SupportsShouldProcess = true)]
+    [Cmdlet(VerbsLifecycle.Restart, "Probe", SupportsShouldProcess = true, DefaultParameterSetName = ParameterSet.Default)]
     public class RestartProbe : PrtgPostProcessCmdlet, IPrtgMultiPassThruCmdlet
     {
         /// <summary>
         /// <para type="description">The probe to restart. If no probe is specified, all probes will be restarted.</para>
         /// </summary>
-        [Parameter(Mandatory = false, ValueFromPipeline = true)]
+        [Parameter(Mandatory = false, ValueFromPipeline = true, ParameterSetName = ParameterSet.Default)]
         public Probe Probe { get; set; }
+
+        /// <summary>
+        /// <para type="description">ID of the probe to restart.</para>
+        /// </summary>
+        [Alias("ProbeId")]
+        [Parameter(Mandatory = true, ParameterSetName = ParameterSet.Manual)]
+        public int[] Id { get; set; }
 
         /// <summary>
         /// <para type="description">Specifies whether to return the original <see cref="IObject"/> that was passed to this cmdlet, allowing the object to be further piped into additional cmdlets.</para>
@@ -93,11 +105,24 @@ namespace PrtgAPI.PowerShell.Cmdlets
         {
             if (Probe == null)
             {
-                var processMessage = "All PRTG Probes";
-                var count = client.GetTotalObjects(Content.Probes);
-                var continueMessage = $"Are you want to restart the PRTG Probe Service on all {count} PRTG Probes?";
+                if (HasParameter(nameof(Id)))
+                {
+                    var probes = ResolveProbes(Id).ToArray();
 
-                Restart(processMessage, continueMessage, null, null);
+                    var processMessage = string.Join(", ", probes.Select(p => $"'{p.Name}' (ID: {p.Id})"));
+                    var continueMessage = $"Are you sure you want to restart the PRTG Probe Service on {("probe".Plural(probes))} {processMessage}?";
+                    var progressMessage = $"Restarting {("probe".Plural(probes))} {processMessage}";
+
+                    Restart(processMessage, continueMessage, progressMessage, probes);
+                }
+                else
+                {
+                    var processMessage = "All PRTG Probes";
+                    var count = client.GetTotalObjects(Content.Probes);
+                    var continueMessage = $"Are you want to restart the PRTG Probe Service on all {count} PRTG Probes?";
+
+                    Restart(processMessage, continueMessage, null, null);
+                }
             }
             else
             {
@@ -109,8 +134,26 @@ namespace PrtgAPI.PowerShell.Cmdlets
             }
         }
 
-        private void Restart(string processMessage, string continueMessage, string progressMessage, Probe probe)
+        private IEnumerable<Probe> ResolveProbes(int[] ids)
         {
+            var probes = client.GetProbes(Property.Id, ids);
+
+            foreach (var id in ids)
+            {
+                var match = probes.FirstOrDefault(p => p.Id == id);
+
+                if (match != null)
+                    yield return match;
+                else
+                    WriteInvalidOperation($"Object ID '{id}' is not a valid probe.");
+            }
+        }
+
+        private void Restart(string processMessage, string continueMessage, string progressMessage, params Probe[] probes)
+        {
+            if (probes != null && probes.Length == 0)
+                throw new ArgumentException($"{nameof(probes)} must be null or contain a probe.", nameof(probes));
+
             if (ShouldProcess(processMessage))
             {
                 if (Force || yesToAll || ShouldContinue(continueMessage, "WARNING", true, ref yesToAll, ref noToAll))
@@ -118,10 +161,17 @@ namespace PrtgAPI.PowerShell.Cmdlets
                     if (Wait)
                         restartTime = client.GetStatus().DateTime;
 
-                    if (probe != null)
-                        probesRestarted.Add(probe);
+                    if (probes != null)
+                        probesRestarted.AddRange(probes);
 
-                    ExecuteOperation(() => client.RestartProbe(probe == null ? null : new[] {probe.Id}, token: CancellationToken), progressMessage, !Wait);
+                    ExecuteOperation(
+                        () => client.RestartProbe(
+                            probes == null ? null : probes.Select(p => p.Id).ToArray(),
+                            token: CancellationToken
+                        ),
+                        progressMessage,
+                        !Wait
+                    );
                 }
             }
         }
@@ -133,7 +183,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         {
             if (Wait && restartTime != null)
             {
-                probesRestarted = Probe == null ? client.GetProbes() : probesRestarted;
+                probesRestarted = Probe == null && !HasParameter(nameof(Id)) ? client.GetProbes() : probesRestarted;
 
                 client.WaitForProbeRestart(restartTime.Value, probesRestarted, WriteProbeProgress, CancellationToken);
 
@@ -177,9 +227,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
                 {
                     var remaining = probeStatuses.Length - completed + 1;
 
-                    var plural = remaining == 1 ? "probe" : "probes";
-
-                    throw new TimeoutException($"Timed out waiting for {remaining} {plural} to restart.");
+                    throw new TimeoutException($"Timed out waiting for {remaining} {("probe".Plural(remaining))} to restart.");
                 }
 
                 if (Stopping)

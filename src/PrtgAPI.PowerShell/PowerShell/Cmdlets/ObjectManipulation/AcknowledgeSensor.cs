@@ -9,7 +9,8 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// 
     /// <para type="description">The Acknowledge-Sensor cmdlet acknowledges a sensor that is currently in a 'Down' state. When a sensor
     /// is acknowledged, it no longer generates notification triggers and is moved from the 'Down' sensors page to the 'Down (Acknowledged)'
-    /// sensors page.</para> 
+    /// sensors page.</para>
+    /// 
     /// <para type="description">When acknowledging a sensor, you must specify how long to acknowledge the sensor for. If the sensor is still in a down
     /// state when the acknowledgement period expires, the sensor will return to a Down state. While in a Down (Acknowledged) state
     /// PRTG will continue refreshing the sensor according to its scanning interval. If at any time the requisite conditions are met
@@ -41,14 +42,19 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <example>
     ///     <code>C:\> Get-Sensor Ping -Status Down | Acknowledge-Sensor -Forever</code>
     ///     <para>Acknowledge all down ping sensors forever (or until they comes back up by themselves)</para>
+    ///     <para/>
+    /// </example>
+    /// <example>
+    ///     <code>C:\> Acknowledge-Sensor -Id 1001 -Duration 10</code>
+    ///     <para>Acknowledge the sensor with ID 1001 for 10 minutes.</para>
     /// </example>
     ///
     /// <para type="link" uri="https://github.com/lordmilko/PrtgAPI/wiki/State-Manipulation#acknowledge-1">Online version:</para>
     /// <para type="link">Get-Sensor</para>
     /// <para type="link">Pause-Object</para>
     /// </summary>
-    [Cmdlet(VerbsLifecycle.Confirm, "Sensor", SupportsShouldProcess = true)]
-    public class AcknowledgeSensor : PrtgMultiOperationCmdlet
+    [Cmdlet(VerbsLifecycle.Confirm, "Sensor", SupportsShouldProcess = true, DefaultParameterSetName = ParameterSet.Default)]
+    public class AcknowledgeSensor : PrtgTimedStateCmdlet
     {
         /// <summary>
         /// <para type="description">The sensor to acknowledge.</para>
@@ -56,100 +62,71 @@ namespace PrtgAPI.PowerShell.Cmdlets
         [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = ParameterSet.Default)]
         [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = ParameterSet.Until)]
         [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = ParameterSet.Forever)]
-        public Sensor Sensor { get; set; }
+        public Sensor Sensor
+        {
+            get { return (Sensor) ObjectInternal; }
+            set { ObjectInternal = value; }
+        }
 
         /// <summary>
-        /// <para type="description">A message to display on the object indicating the reason it is acknowledged.</para>
+        /// <para type="description">ID of the sensor to acknowledge.</para>
         /// </summary>
-        [Parameter(Mandatory = false, ParameterSetName = ParameterSet.Default)]
-        [Parameter(Mandatory = false, ParameterSetName = ParameterSet.Until)]
-        [Parameter(Mandatory = false, ParameterSetName = ParameterSet.Forever)]
-        public string Message { get; set; }
+        [Alias("SensorId")]
+        [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = ParameterSet.Manual)]
+        [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = ParameterSet.UntilManual)]
+        [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = ParameterSet.ForeverManual)]
+        public int[] Id
+        {
+            get { return IdInternal; }
+            set { IdInternal = value; }
+        }
 
         /// <summary>
         /// <para type="description">The duration to acknowledge the sensor for, in minutes.</para>
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = ParameterSet.Default)]
-        public int Duration { get; set; }
+        [Parameter(Mandatory = true, ParameterSetName = ParameterSet.Manual)]
+        public int Duration
+        {
+            get { return DurationInternal; }
+            set { DurationInternal = value; }
+        }
 
         /// <summary>
         /// <para type="description">The datetime at which the object should become unacknowledged.</para>
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = ParameterSet.Until)]
-        public DateTime Until { get; set; }
+        [Parameter(Mandatory = true, ParameterSetName = ParameterSet.UntilManual)]
+        public DateTime Until
+        {
+            get { return UntilInternal; }
+            set { UntilInternal = value; }
+        }
 
         /// <summary>
         /// <para type="description">Indicates the object should be acknowledged indefinitely.</para>
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = ParameterSet.Forever)]
-        public SwitchParameter Forever { get; set; }
-
-        private int? duration;
-        private string minutesDescription;
-        private string durationDescription;
-        private string whatIfDescription;
-
-        internal override string ProgressActivity => "Acknowledge PRTG Sensors";
-
-        /// <summary>
-        /// Provides an enhanced one-time, preprocessing functionality for the cmdlet.
-        /// </summary>
-        protected override void BeginProcessingEx()
+        [Parameter(Mandatory = true, ParameterSetName = ParameterSet.ForeverManual)]
+        public SwitchParameter Forever
         {
-            switch (ParameterSetName)
-            {
-                case ParameterSet.Default:
-                    duration = Duration;
-                    break;
-
-                case ParameterSet.Until:
-                    duration = (int)Math.Ceiling((Until - DateTime.Now).TotalMinutes);
-                    break;
-
-                case ParameterSet.Forever:
-                    break;
-
-                default:
-                    throw new UnknownParameterSetException(ParameterSetName);
-            }
-
-            if (duration < 1 && ParameterSetName != ParameterSet.Forever)
-                throw new ArgumentException("Duration evaluated to less than one minute. Please specify -Forever or a duration greater than or equal to one minute.");
-
-            minutesDescription = duration == 1 ? "minute" : "minutes";
-            durationDescription = Forever.IsPresent ? "forever" : $"for {duration} {minutesDescription}";
-            whatIfDescription = Forever.IsPresent ? "forever" : $"{duration} {minutesDescription}";
+            get { return ForeverInternal; }
+            set { ForeverInternal = value; }
         }
 
         /// <summary>
-        /// Performs enhanced record-by-record processing functionality for the cmdlet.
+        /// <para type="description">A message to display on the object indicating the reason it is acknowledged.</para>
         /// </summary>
-        protected override void ProcessRecordEx()
-        {
-            if (ShouldProcess($"{Sensor.Name} (ID: {Sensor.Id}) (Duration: {whatIfDescription})"))
-                ExecuteOrQueue(Sensor);
-        }
+        [Parameter(Mandatory = false)]
+        public string Message { get; set; }
+
+        internal override void Action(int[] ids) => client.AcknowledgeSensor(ids, duration, Message);
 
         /// <summary>
-        /// Invokes this cmdlet's action against the current object in the pipeline.
+        /// Initializes a new instance of the <see cref="AcknowledgeSensor"/> class.
         /// </summary>
-        protected override void PerformSingleOperation()
+        public AcknowledgeSensor() : base("Acknowledging", "sensor", false)
         {
-            ExecuteOperation(() => client.AcknowledgeSensor(Sensor.Id, duration, Message), $"Acknowledging sensor '{Sensor.Name}' {durationDescription}");
         }
-
-        /// <summary>
-        /// Invokes this cmdlet's action against all queued items from the pipeline.
-        /// </summary>
-        /// <param name="ids">The Object IDs of all queued items.</param>
-        protected override void PerformMultiOperation(int[] ids)
-        {
-            ExecuteMultiOperation(() => client.AcknowledgeSensor(ids, duration, Message), $"Acknowledging {GetCommonObjectBaseType()} {GetListSummary()} {durationDescription}");
-        }
-
-        /// <summary>
-        /// Returns the current object that should be passed through this cmdlet.
-        /// </summary>
-        public override object PassThruObject => Sensor;
     }
 }

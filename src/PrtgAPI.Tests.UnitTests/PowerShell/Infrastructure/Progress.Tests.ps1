@@ -13,8 +13,8 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         Validate (@(
             (Gen "PRTG Sensor Search"               "Retrieving all sensors")
             (Gen "PRTG Sensor Search"               "Processing sensor 'Volume IO _Total0' (1/1)" 100)
-            (Gen "Pausing PRTG Objects"             "Pausing sensor 'Volume IO _Total0' forever (1/1)" 100)
-            (Gen "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total0' forever (1/1)" 100)
+            (Gen "Pausing PRTG Objects"             "Pausing sensor 'Volume IO _Total0' (ID: 4000) forever (1/1)" 100)
+            (Gen "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total0' (ID: 4000) forever (1/1)" 100)
         ))
     }
     
@@ -26,13 +26,13 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $devices | Pause-Object -Forever -Batch:$false
 
         Validate (@(
-            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device0' forever (1/2)" 50)
-            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device1' forever (2/2)" 100)
-            (Gen "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device1' forever (2/2)" 100)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device0' (ID: 3000) forever (1/2)" 50)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device1' (ID: 3001) forever (2/2)" 100)
+            (Gen "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device1' (ID: 3001) forever (2/2)" 100)
         ))
     }
 
-    #endregion
+    #endregion-
     #region 2: Something -> Table
 
     It "2a: Table -> Table" {
@@ -173,13 +173,13 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
                 (Gen2 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50)
 
             (Gen1 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50) +
-                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total0' forever (1/2)" 50)
+                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total0' (ID: 4000) forever (1/2)" 50)
 
             (Gen1 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50) +
-                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
+                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total1' (ID: 4001) forever (2/2)" 100)
 
             (Gen1 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50) +
-                (Gen2 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
+                (Gen2 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total1' (ID: 4001) forever (2/2)" 100)
 
             (Gen "PRTG Device Search" "Processing device 'Probe Device1' (2/2)" 100)
             (Gen "PRTG Device Search" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
@@ -188,13 +188,13 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
                 (Gen2 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50)
 
             (Gen1 "PRTG Device Search" "Processing device 'Probe Device1' (2/2)" 100) +
-                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total0' forever (1/2)" 50)
+                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total0' (ID: 4000) forever (1/2)" 50)
 
             (Gen1 "PRTG Device Search" "Processing device 'Probe Device1' (2/2)" 100) +
-                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
+                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total1' (ID: 4001) forever (2/2)" 100)
 
             (Gen1 "PRTG Device Search" "Processing device 'Probe Device1' (2/2)" 100) +
-                (Gen2 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
+                (Gen2 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total1' (ID: 4001) forever (2/2)" 100)
 
             (Gen "PRTG Device Search (Completed)" "Processing device 'Probe Device1' (2/2)" 100)
         ))
@@ -209,24 +209,24 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             (Gen "PRTG Sensor Search" "Processing device 'Probe Device0' (1/2)" 50 "Retrieving all sensors")
 
             (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device0' (1/2)" 50) +
-                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total0' forever (1/2)" 50)
+                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total0' (ID: 4000) forever (1/2)" 50)
 
             (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device0' (1/2)" 50) +
-                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
+                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total1' (ID: 4001) forever (2/2)" 100)
 
             (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device0' (1/2)" 50) +
-                (Gen2 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
+                (Gen2 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total1' (ID: 4001) forever (2/2)" 100)
 
             (Gen "PRTG Sensor Search" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
 
             (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device1' (2/2)" 100) +
-                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total0' forever (1/2)" 50)
+                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total0' (ID: 4000) forever (1/2)" 50)
 
             (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device1' (2/2)" 100) +
-                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
+                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total1' (ID: 4001) forever (2/2)" 100)
 
             (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device1' (2/2)" 100) +
-                (Gen2 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
+                (Gen2 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total1' (ID: 4001) forever (2/2)" 100)
 
             (Gen "PRTG Sensor Search (Completed)" "Processing device 'Probe Device1' (2/2)" 100)
         ))
@@ -437,7 +437,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             $nameSuffix = $i - 1
 
             $records += "Pausing PRTG Objects`n" +
-                        "    Pausing sensor 'Volume IO _Total$nameSuffix' forever ($i/$total)`n" +
+                        "    Pausing sensor 'Volume IO _Total$nameSuffix' (ID: $(4000 + $i - 1)) forever ($i/$total)`n" +
                         "    $percentBar"
         }
 
@@ -451,7 +451,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
             $records
 
-            (Gen "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total500' forever (501/501)" 100)
+            (Gen "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total500' (ID: 4500) forever (501/501)" 100)
         ))
     }
 
@@ -701,9 +701,9 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             (Gen "PRTG Probe Search"                "Retrieving all probes")
 
             (Gen "PRTG Probe Search"                "Processing probe '127.0.0.10' (1/3)"                     33)
-            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.10' forever (1/3)" 33)
-            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.11' forever (2/3)" 66)
-            (Gen "Pausing PRTG Objects (Completed)" "Pausing probe '127.0.0.11' forever (2/3)" 66)
+            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.10' (ID: 1000) forever (1/3)" 33)
+            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.11' (ID: 1001) forever (2/3)" 66)
+            (Gen "Pausing PRTG Objects (Completed)" "Pausing probe '127.0.0.11' (ID: 1001) forever (2/3)" 66)
         ))
     }
 
@@ -726,9 +726,9 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $probes | Select -First 2 | Pause-Object -Forever -Batch:$false
 
         Validate(@(
-            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.10' forever (1/3)" 33)
-            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.11' forever (2/3)" 66)
-            (Gen "Pausing PRTG Objects (Completed)" "Pausing probe '127.0.0.11' forever (2/3)" 66)
+            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.10' (ID: 1000) forever (1/3)" 33)
+            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.11' (ID: 1001) forever (2/3)" 66)
+            (Gen "Pausing PRTG Objects (Completed)" "Pausing probe '127.0.0.11' (ID: 1001) forever (2/3)" 66)
         ))
     }
 
@@ -751,9 +751,9 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             (Gen "PRTG Probe Search"                "Retrieving all probes")
 
             (Gen "PRTG Probe Search"                "Processing probe '127.0.0.10' (1/3)"                     33)
-            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.10' forever (1/3)" 33)
-            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.11' forever (2/3)" 66)
-            (Gen "Pausing PRTG Objects (Completed)" "Pausing probe '127.0.0.11' forever (2/3)" 66)
+            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.10' (ID: 1000) forever (1/3)" 33)
+            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.11' (ID: 1001) forever (2/3)" 66)
+            (Gen "Pausing PRTG Objects (Completed)" "Pausing probe '127.0.0.11' (ID: 1001) forever (2/3)" 66)
         ))
     }
 
@@ -775,9 +775,9 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $probes | Select -First 2 -Wait | Pause-Object -Forever -Batch:$false
 
         Validate(@(
-            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.10' forever (1/3)" 33)
-            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.11' forever (2/3)" 66)
-            (Gen "Pausing PRTG Objects (Completed)" "Pausing probe '127.0.0.11' forever (2/3)" 66)
+            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.10' (ID: 1000) forever (1/3)" 33)
+            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.11' (ID: 1001) forever (2/3)" 66)
+            (Gen "Pausing PRTG Objects (Completed)" "Pausing probe '127.0.0.11' (ID: 1001) forever (2/3)" 66)
         ))
     }
 
@@ -855,17 +855,17 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
                 (Gen2 "PRTG Device Search"               "Processing device 'Probe Device0' (1/2)"                        50)
 
             (Gen1 "PRTG Probe Search"                    "Processing probe '127.0.0.10' (1/3)"                         33) +
-                (Gen2 "Pausing PRTG Objects"             "Pausing device 'Probe Device0' forever (1/2)" 50)
+                (Gen2 "Pausing PRTG Objects"             "Pausing device 'Probe Device0' (ID: 3000) forever (1/2)" 50)
 
             ###################################################################
 
             (Gen1 "PRTG Probe Search"                    "Processing probe '127.0.0.10' (1/3)"                         33) +
-                (Gen2 "Pausing PRTG Objects"             "Pausing device 'Probe Device1' forever (2/2)" 100)
+                (Gen2 "Pausing PRTG Objects"             "Pausing device 'Probe Device1' (ID: 3001) forever (2/2)" 100)
 
             ###################################################################
 
             (Gen1 "PRTG Probe Search"                    "Processing probe '127.0.0.10' (1/3)"                         33) +
-                (Gen2 "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device1' forever (2/2)" 100)
+                (Gen2 "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device1' (ID: 3001) forever (2/2)" 100)
 
             ###################################################################
 
@@ -878,17 +878,17 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
                 (Gen2 "PRTG Device Search"               "Processing device 'Probe Device0' (1/2)"                        50)
 
             (Gen1 "PRTG Probe Search"                    "Processing probe '127.0.0.11' (2/3)"                         66) +
-                (Gen2 "Pausing PRTG Objects"             "Pausing device 'Probe Device0' forever (1/2)" 50)
+                (Gen2 "Pausing PRTG Objects"             "Pausing device 'Probe Device0' (ID: 3000) forever (1/2)" 50)
 
             ###################################################################
 
             (Gen1 "PRTG Probe Search"                    "Processing probe '127.0.0.11' (2/3)"                         66) +
-                (Gen2 "Pausing PRTG Objects"             "Pausing device 'Probe Device1' forever (2/2)" 100)
+                (Gen2 "Pausing PRTG Objects"             "Pausing device 'Probe Device1' (ID: 3001) forever (2/2)" 100)
 
             ###################################################################
             
             (Gen1 "PRTG Probe Search"                    "Processing probe '127.0.0.11' (2/3)"                         66) +
-                (Gen2 "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device1' forever (2/2)" 100)
+                (Gen2 "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device1' (ID: 3001) forever (2/2)" 100)
 
             ###################################################################
 
@@ -941,13 +941,13 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             (Gen "PRTG Device Search"        "Processing probe '127.0.0.10' (1/3)" 33 "Retrieving all devices")
 
             (Gen1 "PRTG Device Search"       "Processing probe '127.0.0.10' (1/3)" 33) +
-                (Gen2 "Pausing PRTG Objects" "Pausing device 'Probe Device0' forever (1/2)"  50)
+                (Gen2 "Pausing PRTG Objects" "Pausing device 'Probe Device0' (ID: 3000) forever (1/2)"  50)
 
             (Gen1 "PRTG Device Search"       "Processing probe '127.0.0.10' (1/3)" 33) +
-                (Gen2 "Pausing PRTG Objects" "Pausing device 'Probe Device1' forever (2/2)"  100)
+                (Gen2 "Pausing PRTG Objects" "Pausing device 'Probe Device1' (ID: 3001) forever (2/2)"  100)
 
             (Gen1 "PRTG Device Search"       "Processing probe '127.0.0.10' (1/3)" 33) +
-                (Gen2 "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device1' forever (2/2)"  100)
+                (Gen2 "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device1' (ID: 3001) forever (2/2)"  100)
 
             ###################################################################
 
@@ -956,13 +956,13 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             ###################################################################
 
             (Gen1 "PRTG Device Search"       "Processing probe '127.0.0.11' (2/3)" 66) +
-                (Gen2 "Pausing PRTG Objects" "Pausing device 'Probe Device0' forever (1/2)"  50)
+                (Gen2 "Pausing PRTG Objects" "Pausing device 'Probe Device0' (ID: 3000) forever (1/2)"  50)
 
             (Gen1 "PRTG Device Search"       "Processing probe '127.0.0.11' (2/3)" 66) +
-                (Gen2 "Pausing PRTG Objects" "Pausing device 'Probe Device1' forever (2/2)"  100)
+                (Gen2 "Pausing PRTG Objects" "Pausing device 'Probe Device1' (ID: 3001) forever (2/2)"  100)
 
             (Gen1 "PRTG Device Search"       "Processing probe '127.0.0.11' (2/3)" 66) +
-                (Gen2 "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device1' forever (2/2)"  100)
+                (Gen2 "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device1' (ID: 3001) forever (2/2)"  100)
 
             ###################################################################
 
@@ -1158,9 +1158,9 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             (Gen "PRTG Probe Search"                "Processing probe '127.0.0.10' (1/4)" 25)
             (Gen "PRTG Probe Search (Completed)"    "Processing probe '127.0.0.13' (4/4)" 100)
 
-            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.12' forever (1/2)" 50)
-            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.13' forever (2/2)" 100)
-            (Gen "Pausing PRTG Objects (Completed)" "Pausing probe '127.0.0.13' forever (2/2)" 100)
+            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.12' (ID: 1002) forever (1/2)" 50)
+            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.13' (ID: 1003) forever (2/2)" 100)
+            (Gen "Pausing PRTG Objects (Completed)" "Pausing probe '127.0.0.13' (ID: 1003) forever (2/2)" 100)
         ))
     }
 
@@ -1182,9 +1182,9 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $probes | Select -Last 2 | Pause-Object -Forever -Batch:$false
 
         Validate(@(
-            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.12' forever (1/2)" 50)
-            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.13' forever (2/2)" 100)
-            (Gen "Pausing PRTG Objects (Completed)" "Pausing probe '127.0.0.13' forever (2/2)" 100)
+            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.12' (ID: 1002) forever (1/2)" 50)
+            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.13' (ID: 1003) forever (2/2)" 100)
+            (Gen "Pausing PRTG Objects (Completed)" "Pausing probe '127.0.0.13' (ID: 1003) forever (2/2)" 100)
         ))
     }
 
@@ -1211,9 +1211,9 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             (Gen "PRTG Probe Search"                "Processing probe '127.0.0.10' (1/4)"                     25)
             (Gen "PRTG Probe Search (Completed)"    "Processing probe '127.0.0.13' (4/4)"                     100)
 
-            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.12' forever (1/2)" 50)
-            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.13' forever (2/2)" 100)
-            (Gen "Pausing PRTG Objects (Completed)" "Pausing probe '127.0.0.13' forever (2/2)" 100)
+            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.12' (ID: 1002) forever (1/2)" 50)
+            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.13' (ID: 1003) forever (2/2)" 100)
+            (Gen "Pausing PRTG Objects (Completed)" "Pausing probe '127.0.0.13' (ID: 1003) forever (2/2)" 100)
         ))
     }
 
@@ -1235,9 +1235,9 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $probes | Select -Last 2 -Wait | Pause-Object -Forever -Batch:$false
 
         Validate(@(
-            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.12' forever (1/2)" 50)
-            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.13' forever (2/2)" 100)
-            (Gen "Pausing PRTG Objects (Completed)" "Pausing probe '127.0.0.13' forever (2/2)" 100)
+            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.12' (ID: 1002) forever (1/2)" 50)
+            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.13' (ID: 1003) forever (2/2)" 100)
+            (Gen "Pausing PRTG Objects (Completed)" "Pausing probe '127.0.0.13' (ID: 1003) forever (2/2)" 100)
         ))
     }
 
@@ -1295,13 +1295,13 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             (Gen "PRTG Device Search" "Processing probe '127.0.0.11' (1/2)"       50 "Retrieving all devices")
 
             (Gen1 "PRTG Device Search" "Processing probe '127.0.0.11' (1/2)"      50) +
-                (Gen2 "Pausing PRTG Objects" "Pausing device 'Probe Device0' forever (1/2)" 50)
+                (Gen2 "Pausing PRTG Objects" "Pausing device 'Probe Device0' (ID: 3000) forever (1/2)" 50)
 
             (Gen1 "PRTG Device Search" "Processing probe '127.0.0.11' (1/2)"      50) +
-                (Gen2 "Pausing PRTG Objects" "Pausing device 'Probe Device1' forever (2/2)" 100)
+                (Gen2 "Pausing PRTG Objects" "Pausing device 'Probe Device1' (ID: 3001) forever (2/2)" 100)
 
             (Gen1 "PRTG Device Search" "Processing probe '127.0.0.11' (1/2)"      50) +
-                (Gen2 "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device1' forever (2/2)" 100)
+                (Gen2 "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device1' (ID: 3001) forever (2/2)" 100)
 
             ###################################################################
 
@@ -1310,13 +1310,13 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             ###################################################################
 
             (Gen1 "PRTG Device Search" "Processing probe '127.0.0.12' (2/2)"      100) +
-                (Gen2 "Pausing PRTG Objects" "Pausing device 'Probe Device0' forever (1/2)" 50)
+                (Gen2 "Pausing PRTG Objects" "Pausing device 'Probe Device0' (ID: 3000) forever (1/2)" 50)
 
             (Gen1 "PRTG Device Search" "Processing probe '127.0.0.12' (2/2)"      100) +
-                (Gen2 "Pausing PRTG Objects" "Pausing device 'Probe Device1' forever (2/2)" 100)
+                (Gen2 "Pausing PRTG Objects" "Pausing device 'Probe Device1' (ID: 3001) forever (2/2)" 100)
 
             (Gen1 "PRTG Device Search" "Processing probe '127.0.0.12' (2/2)"      100) +
-                (Gen2 "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device1' forever (2/2)" 100)
+                (Gen2 "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device1' (ID: 3001) forever (2/2)" 100)
 
             ###################################################################
 
@@ -1367,13 +1367,13 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             (Gen "PRTG Device Search" "Processing probe '127.0.0.11' (1/2)" 50 "Retrieving all devices")
 
             (Gen1 "PRTG Device Search" "Processing probe '127.0.0.11' (1/2)" 50) +
-                (Gen2 "Pausing PRTG Objects" "Pausing device 'Probe Device0' forever (1/2)" 50)
+                (Gen2 "Pausing PRTG Objects" "Pausing device 'Probe Device0' (ID: 3000) forever (1/2)" 50)
 
             (Gen1 "PRTG Device Search" "Processing probe '127.0.0.11' (1/2)" 50) +
-                (Gen2 "Pausing PRTG Objects" "Pausing device 'Probe Device1' forever (2/2)" 100)
+                (Gen2 "Pausing PRTG Objects" "Pausing device 'Probe Device1' (ID: 3001) forever (2/2)" 100)
 
             (Gen1 "PRTG Device Search" "Processing probe '127.0.0.11' (1/2)" 50) +
-                (Gen2 "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device1' forever (2/2)" 100)
+                (Gen2 "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device1' (ID: 3001) forever (2/2)" 100)
 
             ###################################################################
 
@@ -1382,13 +1382,13 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             ###################################################################
 
             (Gen1 "PRTG Device Search" "Processing probe '127.0.0.12' (2/2)" 100) +
-                (Gen2 "Pausing PRTG Objects" "Pausing device 'Probe Device0' forever (1/2)" 50)
+                (Gen2 "Pausing PRTG Objects" "Pausing device 'Probe Device0' (ID: 3000) forever (1/2)" 50)
 
             (Gen1 "PRTG Device Search" "Processing probe '127.0.0.12' (2/2)" 100) +
-                (Gen2 "Pausing PRTG Objects" "Pausing device 'Probe Device1' forever (2/2)" 100)
+                (Gen2 "Pausing PRTG Objects" "Pausing device 'Probe Device1' (ID: 3001) forever (2/2)" 100)
 
             (Gen1 "PRTG Device Search" "Processing probe '127.0.0.12' (2/2)" 100) +
-                (Gen2 "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device1' forever (2/2)" 100)
+                (Gen2 "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device1' (ID: 3001) forever (2/2)" 100)
 
             ###################################################################
 
@@ -1585,9 +1585,9 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         Validate(@(
             (Gen "PRTG Probe Search"                "Retrieving all probes")
             (Gen "PRTG Probe Search"                "Processing probe '127.0.0.10' (1/4)" 25)
-            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.12' forever (3/4)" 75)
-            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.13' forever (4/4)" 100)
-            (Gen "Pausing PRTG Objects (Completed)" "Pausing probe '127.0.0.13' forever (4/4)" 100)
+            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.12' (ID: 1002) forever (3/4)" 75)
+            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.13' (ID: 1003) forever (4/4)" 100)
+            (Gen "Pausing PRTG Objects (Completed)" "Pausing probe '127.0.0.13' (ID: 1003) forever (4/4)" 100)
         ))
     }
 
@@ -1609,9 +1609,9 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $probes | Select -Skip 2 | Pause-Object -Forever -Batch:$false
 
         Validate(@(
-            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.12' forever (3/4)" 75)
-            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.13' forever (4/4)" 100)
-            (Gen "Pausing PRTG Objects (Completed)" "Pausing probe '127.0.0.13' forever (4/4)" 100)
+            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.12' (ID: 1002) forever (3/4)" 75)
+            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.13' (ID: 1003) forever (4/4)" 100)
+            (Gen "Pausing PRTG Objects (Completed)" "Pausing probe '127.0.0.13' (ID: 1003) forever (4/4)" 100)
         ))
     }
 
@@ -1635,9 +1635,9 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         Validate(@(
             (Gen "PRTG Probe Search"                "Retrieving all probes")
             (Gen "PRTG Probe Search"                "Processing probe '127.0.0.10' (1/4)" 25)
-            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.12' forever (3/4)" 75)
-            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.13' forever (4/4)" 100)
-            (Gen "Pausing PRTG Objects (Completed)" "Pausing probe '127.0.0.13' forever (4/4)" 100)
+            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.12' (ID: 1002) forever (3/4)" 75)
+            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.13' (ID: 1003) forever (4/4)" 100)
+            (Gen "Pausing PRTG Objects (Completed)" "Pausing probe '127.0.0.13' (ID: 1003) forever (4/4)" 100)
         ))
     }
 
@@ -1659,9 +1659,9 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $probes | Select -Skip 2 -Wait | Pause-Object -Forever -Batch:$false
 
         Validate(@(
-            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.12' forever (3/4)" 75)
-            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.13' forever (4/4)" 100)
-            (Gen "Pausing PRTG Objects (Completed)" "Pausing probe '127.0.0.13' forever (4/4)" 100)
+            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.12' (ID: 1002) forever (3/4)" 75)
+            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.13' (ID: 1003) forever (4/4)" 100)
+            (Gen "Pausing PRTG Objects (Completed)" "Pausing probe '127.0.0.13' (ID: 1003) forever (4/4)" 100)
         ))
     }
 
@@ -1725,13 +1725,13 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
                 (Gen2 "PRTG Device Search"               "Processing device 'Probe Device0' (1/2)"            50)
 
             (Gen1 "PRTG Probe Search"                    "Processing probe '127.0.0.11' (2/3)"             66) +
-                (Gen2 "Pausing PRTG Objects"             "Pausing device 'Probe Device0' forever (1/2)"            50)
+                (Gen2 "Pausing PRTG Objects"             "Pausing device 'Probe Device0' (ID: 3000) forever (1/2)"            50)
 
             (Gen1 "PRTG Probe Search"                    "Processing probe '127.0.0.11' (2/3)"             66) +
-                (Gen2 "Pausing PRTG Objects"             "Pausing device 'Probe Device1' forever (2/2)"            100)
+                (Gen2 "Pausing PRTG Objects"             "Pausing device 'Probe Device1' (ID: 3001) forever (2/2)"            100)
 
             (Gen1 "PRTG Probe Search"                    "Processing probe '127.0.0.11' (2/3)"             66) +
-                (Gen2 "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device1' forever (2/2)"            100)
+                (Gen2 "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device1' (ID: 3001) forever (2/2)"            100)
 
             ###################################################################
 
@@ -1744,13 +1744,13 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
                 (Gen2 "PRTG Device Search"               "Processing device 'Probe Device0' (1/2)"            50)
 
             (Gen1 "PRTG Probe Search"                    "Processing probe '127.0.0.12' (3/3)"             100) +
-                (Gen2 "Pausing PRTG Objects"             "Pausing device 'Probe Device0' forever (1/2)"            50)
+                (Gen2 "Pausing PRTG Objects"             "Pausing device 'Probe Device0' (ID: 3000) forever (1/2)"            50)
 
             (Gen1 "PRTG Probe Search"                    "Processing probe '127.0.0.12' (3/3)"             100) +
-                (Gen2 "Pausing PRTG Objects"             "Pausing device 'Probe Device1' forever (2/2)"            100)
+                (Gen2 "Pausing PRTG Objects"             "Pausing device 'Probe Device1' (ID: 3001) forever (2/2)"            100)
 
             (Gen1 "PRTG Probe Search"                    "Processing probe '127.0.0.12' (3/3)"             100) +
-                (Gen2 "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device1' forever (2/2)"            100)
+                (Gen2 "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device1' (ID: 3001) forever (2/2)"            100)
 
             (Gen "PRTG Probe Search (Completed)"         "Processing probe '127.0.0.12' (3/3)"             100)
         ))
@@ -1803,13 +1803,13 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             (Gen "PRTG Device Search"                   "Processing probe '127.0.0.11' (2/3)"   66 "Retrieving all devices")
 
             (Gen1 "PRTG Device Search"                   "Processing probe '127.0.0.11' (2/3)"  66) +
-                (Gen2 "Pausing PRTG Objects"             "Pausing device 'Probe Device0' forever (1/2)" 50)
+                (Gen2 "Pausing PRTG Objects"             "Pausing device 'Probe Device0' (ID: 3000) forever (1/2)" 50)
 
             (Gen1 "PRTG Device Search"                   "Processing probe '127.0.0.11' (2/3)"  66) +
-                (Gen2 "Pausing PRTG Objects"             "Pausing device 'Probe Device1' forever (2/2)" 100)
+                (Gen2 "Pausing PRTG Objects"             "Pausing device 'Probe Device1' (ID: 3001) forever (2/2)" 100)
 
             (Gen1 "PRTG Device Search"                   "Processing probe '127.0.0.11' (2/3)"  66) +
-                (Gen2 "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device1' forever (2/2)" 100)
+                (Gen2 "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device1' (ID: 3001) forever (2/2)" 100)
 
             ###################################################################
 
@@ -1818,13 +1818,13 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             ###################################################################
 
             (Gen1 "PRTG Device Search"                   "Processing probe '127.0.0.12' (3/3)"  100) +
-                (Gen2 "Pausing PRTG Objects"             "Pausing device 'Probe Device0' forever (1/2)" 50)
+                (Gen2 "Pausing PRTG Objects"             "Pausing device 'Probe Device0' (ID: 3000) forever (1/2)" 50)
 
             (Gen1 "PRTG Device Search"                   "Processing probe '127.0.0.12' (3/3)"  100) +
-                (Gen2 "Pausing PRTG Objects"             "Pausing device 'Probe Device1' forever (2/2)" 100)
+                (Gen2 "Pausing PRTG Objects"             "Pausing device 'Probe Device1' (ID: 3001) forever (2/2)" 100)
 
             (Gen1 "PRTG Device Search"                   "Processing probe '127.0.0.12' (3/3)"  100) +
-                (Gen2 "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device1' forever (2/2)" 100)
+                (Gen2 "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device1' (ID: 3001) forever (2/2)" 100)
 
             ###################################################################
 
@@ -2027,13 +2027,13 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             (Gen "PRTG Probe Search"                     "Processing probe '127.0.0.10' (1/4)" 25)
 
             (Gen1 "PRTG Probe Search (Completed)"        "Processing probe '127.0.0.11' (2/4)" 50) +
-                (Gen2 "Pausing PRTG Objects"             "Pausing probe '127.0.0.10' forever (1/2)" 50)
+                (Gen2 "Pausing PRTG Objects"             "Pausing probe '127.0.0.10' (ID: 1000) forever (1/2)" 50)
 
             (Gen1 "PRTG Probe Search (Completed)"        "Processing probe '127.0.0.11' (2/4)" 50) +
-                (Gen2 "Pausing PRTG Objects"             "Pausing probe '127.0.0.11' forever (2/2)" 100)
+                (Gen2 "Pausing PRTG Objects"             "Pausing probe '127.0.0.11' (ID: 1001) forever (2/2)" 100)
 
             (Gen1 "PRTG Probe Search (Completed)"        "Processing probe '127.0.0.11' (2/4)" 50) +
-                (Gen2 "Pausing PRTG Objects (Completed)" "Pausing probe '127.0.0.11' forever (2/2)" 100)
+                (Gen2 "Pausing PRTG Objects (Completed)" "Pausing probe '127.0.0.11' (ID: 1001) forever (2/2)" 100)
         ))
     }
 
@@ -2055,9 +2055,9 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $probes | Select -SkipLast 2 | Pause-Object -Forever -Batch:$false
 
         Validate(@(
-            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.10' forever (1/2)" 50)
-            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.11' forever (2/2)" 100)
-            (Gen "Pausing PRTG Objects (Completed)" "Pausing probe '127.0.0.11' forever (2/2)" 100)
+            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.10' (ID: 1000) forever (1/2)" 50)
+            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.11' (ID: 1001) forever (2/2)" 100)
+            (Gen "Pausing PRTG Objects (Completed)" "Pausing probe '127.0.0.11' (ID: 1001) forever (2/2)" 100)
         ))
     }
 
@@ -2122,15 +2122,15 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
             (Gen1 "PRTG Probe Search (Completed)"      "Processing probe '127.0.0.11' (2/3)" 66) +
                 (Gen2 "PRTG Device Search"             "Processing probe '127.0.0.10' (1/2)"  50) +
-                    (Gen3 "Pausing PRTG Objects"       "Pausing device 'Probe Device0' forever (1/2)" 50)
+                    (Gen3 "Pausing PRTG Objects"       "Pausing device 'Probe Device0' (ID: 3000) forever (1/2)" 50)
 
             (Gen1 "PRTG Probe Search (Completed)"      "Processing probe '127.0.0.11' (2/3)" 66) +
                 (Gen2 "PRTG Device Search"             "Processing probe '127.0.0.10' (1/2)"  50) +
-                    (Gen3 "Pausing PRTG Objects"       "Pausing device 'Probe Device1' forever (2/2)" 100)
+                    (Gen3 "Pausing PRTG Objects"       "Pausing device 'Probe Device1' (ID: 3001) forever (2/2)" 100)
 
             (Gen1 "PRTG Probe Search (Completed)"      "Processing probe '127.0.0.11' (2/3)" 66) +
                 (Gen2 "PRTG Device Search"             "Processing probe '127.0.0.10' (1/2)"  50) +
-                    (Gen3 "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device1' forever (2/2)" 100)
+                    (Gen3 "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device1' (ID: 3001) forever (2/2)" 100)
 
             ###################################################################
 
@@ -2139,15 +2139,15 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
             (Gen1 "PRTG Probe Search (Completed)"      "Processing probe '127.0.0.11' (2/3)" 66) +
                 (Gen2 "PRTG Device Search"             "Processing probe '127.0.0.11' (2/2)"  100) +
-                    (Gen3 "Pausing PRTG Objects"       "Pausing device 'Probe Device0' forever (1/2)" 50)
+                    (Gen3 "Pausing PRTG Objects"       "Pausing device 'Probe Device0' (ID: 3000) forever (1/2)" 50)
 
             (Gen1 "PRTG Probe Search (Completed)"      "Processing probe '127.0.0.11' (2/3)" 66) +
                 (Gen2 "PRTG Device Search"             "Processing probe '127.0.0.11' (2/2)"  100) +
-                    (Gen3 "Pausing PRTG Objects"       "Pausing device 'Probe Device1' forever (2/2)" 100)
+                    (Gen3 "Pausing PRTG Objects"       "Pausing device 'Probe Device1' (ID: 3001) forever (2/2)" 100)
 
             (Gen1 "PRTG Probe Search (Completed)"      "Processing probe '127.0.0.11' (2/3)" 66) +
                 (Gen2 "PRTG Device Search"             "Processing probe '127.0.0.11' (2/2)"  100) +
-                    (Gen3 "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device1' forever (2/2)" 100)
+                    (Gen3 "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device1' (ID: 3001) forever (2/2)" 100)
             
             ###################################################################
 
@@ -2201,26 +2201,26 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             (Gen "PRTG Device Search"                   "Processing probe '127.0.0.10' (1/2)" 50 "Retrieving all devices")
 
             (Gen1 "PRTG Device Search"                   "Processing probe '127.0.0.10' (1/2)" 50) +
-                (Gen2 "Pausing PRTG Objects"             "Pausing device 'Probe Device0' forever (1/2)" 50)
+                (Gen2 "Pausing PRTG Objects"             "Pausing device 'Probe Device0' (ID: 3000) forever (1/2)" 50)
 
             (Gen1 "PRTG Device Search"                   "Processing probe '127.0.0.10' (1/2)" 50) +
-                (Gen2 "Pausing PRTG Objects"             "Pausing device 'Probe Device1' forever (2/2)" 100)
+                (Gen2 "Pausing PRTG Objects"             "Pausing device 'Probe Device1' (ID: 3001) forever (2/2)" 100)
 
             (Gen1 "PRTG Device Search"                   "Processing probe '127.0.0.10' (1/2)" 50) +
-                (Gen2 "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device1' forever (2/2)" 100)
+                (Gen2 "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device1' (ID: 3001) forever (2/2)" 100)
 
             ###################################################################
 
             (Gen "PRTG Device Search"                   "Processing probe '127.0.0.11' (2/2)" 100 "Retrieving all devices")
 
             (Gen1 "PRTG Device Search"                   "Processing probe '127.0.0.11' (2/2)" 100) +
-                (Gen2 "Pausing PRTG Objects"             "Pausing device 'Probe Device0' forever (1/2)" 50)
+                (Gen2 "Pausing PRTG Objects"             "Pausing device 'Probe Device0' (ID: 3000) forever (1/2)" 50)
 
             (Gen1 "PRTG Device Search"                   "Processing probe '127.0.0.11' (2/2)" 100) +
-                (Gen2 "Pausing PRTG Objects"             "Pausing device 'Probe Device1' forever (2/2)" 100)
+                (Gen2 "Pausing PRTG Objects"             "Pausing device 'Probe Device1' (ID: 3001) forever (2/2)" 100)
 
             (Gen1 "PRTG Device Search"                   "Processing probe '127.0.0.11' (2/2)" 100) +
-                (Gen2 "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device1' forever (2/2)" 100)
+                (Gen2 "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device1' (ID: 3001) forever (2/2)" 100)
 
             ###################################################################
 
@@ -2366,9 +2366,9 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         Validate(@(
             (Gen "PRTG Probe Search"                "Retrieving all probes")
-            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.11' forever (2/4)" 50)
-            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.12' forever (3/4)" 75)
-            (Gen "Pausing PRTG Objects (Completed)" "Pausing probe '127.0.0.12' forever (3/4)" 75)
+            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.11' (ID: 1001) forever (2/4)" 50)
+            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.12' (ID: 1002) forever (3/4)" 75)
+            (Gen "Pausing PRTG Objects (Completed)" "Pausing probe '127.0.0.12' (ID: 1002) forever (3/4)" 75)
         ))
     }
 
@@ -2390,9 +2390,9 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $probes | Select -Index 1,2 | Pause-Object -Forever -Batch:$false
 
         Validate(@(
-            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.11' forever (2/4)" 50)
-            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.12' forever (3/4)" 75)
-            (Gen "Pausing PRTG Objects (Completed)" "Pausing probe '127.0.0.12' forever (3/4)" 75)
+            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.11' (ID: 1001) forever (2/4)" 50)
+            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.12' (ID: 1002) forever (3/4)" 75)
+            (Gen "Pausing PRTG Objects (Completed)" "Pausing probe '127.0.0.12' (ID: 1002) forever (3/4)" 75)
         ))
     }
 
@@ -2413,9 +2413,9 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         Validate(@(
             (Gen "PRTG Probe Search"                "Retrieving all probes")
-            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.11' forever (2/4)" 50)
-            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.12' forever (3/4)" 75)
-            (Gen "Pausing PRTG Objects (Completed)" "Pausing probe '127.0.0.12' forever (3/4)" 75)
+            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.11' (ID: 1001) forever (2/4)" 50)
+            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.12' (ID: 1002) forever (3/4)" 75)
+            (Gen "Pausing PRTG Objects (Completed)" "Pausing probe '127.0.0.12' (ID: 1002) forever (3/4)" 75)
         ))
     }
 
@@ -2437,9 +2437,9 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $probes | Select -Index 1,2 -Wait | Pause-Object -Forever -Batch:$false
 
         Validate(@(
-            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.11' forever (2/4)" 50)
-            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.12' forever (3/4)" 75)
-            (Gen "Pausing PRTG Objects (Completed)" "Pausing probe '127.0.0.12' forever (3/4)" 75)
+            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.11' (ID: 1001) forever (2/4)" 50)
+            (Gen "Pausing PRTG Objects"             "Pausing probe '127.0.0.12' (ID: 1002) forever (3/4)" 75)
+            (Gen "Pausing PRTG Objects (Completed)" "Pausing probe '127.0.0.12' (ID: 1002) forever (3/4)" 75)
         ))
     }
 
@@ -2501,13 +2501,13 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
                 (Gen2 "PRTG Device Search"                "Processing device 'Probe Device0' (1/2)" 50)
 
             (Gen1 "PRTG Probe Search"                "Processing probe '127.0.0.11' (2/5)" 40) +
-                (Gen2 "Pausing PRTG Objects"         "Pausing device 'Probe Device0' forever (1/2)" 50)
+                (Gen2 "Pausing PRTG Objects"         "Pausing device 'Probe Device0' (ID: 3000) forever (1/2)" 50)
 
             (Gen1 "PRTG Probe Search"                "Processing probe '127.0.0.11' (2/5)" 40) +
-                (Gen2 "Pausing PRTG Objects"         "Pausing device 'Probe Device1' forever (2/2)" 100)
+                (Gen2 "Pausing PRTG Objects"         "Pausing device 'Probe Device1' (ID: 3001) forever (2/2)" 100)
 
             (Gen1 "PRTG Probe Search"                "Processing probe '127.0.0.11' (2/5)" 40) +
-                (Gen2 "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device1' forever (2/2)" 100)
+                (Gen2 "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device1' (ID: 3001) forever (2/2)" 100)
 
             ###################################################################
 
@@ -2518,13 +2518,13 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
                 (Gen2 "PRTG Device Search"           "Processing device 'Probe Device0' (1/2)" 50)
 
             (Gen1 "PRTG Probe Search"                "Processing probe '127.0.0.13' (4/5)" 80) +
-                (Gen2 "Pausing PRTG Objects"         "Pausing device 'Probe Device0' forever (1/2)" 50)
+                (Gen2 "Pausing PRTG Objects"         "Pausing device 'Probe Device0' (ID: 3000) forever (1/2)" 50)
 
             (Gen1 "PRTG Probe Search"                "Processing probe '127.0.0.13' (4/5)" 80) +
-                (Gen2 "Pausing PRTG Objects"         "Pausing device 'Probe Device1' forever (2/2)" 100)
+                (Gen2 "Pausing PRTG Objects"         "Pausing device 'Probe Device1' (ID: 3001) forever (2/2)" 100)
 
             (Gen1 "PRTG Probe Search"                "Processing probe '127.0.0.13' (4/5)" 80) +
-                (Gen2 "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device1' forever (2/2)" 100)
+                (Gen2 "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device1' (ID: 3001) forever (2/2)" 100)
 
             ###################################################################
 
@@ -2577,26 +2577,26 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             (Gen "PRTG Device Search"                    "Processing probe '127.0.0.11' (2/5)" 40 "Retrieving all devices")
 
             (Gen1 "PRTG Device Search"                   "Processing probe '127.0.0.11' (2/5)" 40) +
-                (Gen2 "Pausing PRTG Objects"             "Pausing device 'Probe Device0' forever (1/2)" 50)
+                (Gen2 "Pausing PRTG Objects"             "Pausing device 'Probe Device0' (ID: 3000) forever (1/2)" 50)
 
             (Gen1 "PRTG Device Search"                   "Processing probe '127.0.0.11' (2/5)" 40) +
-                (Gen2 "Pausing PRTG Objects"             "Pausing device 'Probe Device1' forever (2/2)" 100)
+                (Gen2 "Pausing PRTG Objects"             "Pausing device 'Probe Device1' (ID: 3001) forever (2/2)" 100)
 
             (Gen1 "PRTG Device Search"                   "Processing probe '127.0.0.11' (2/5)" 40) +
-                (Gen2 "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device1' forever (2/2)" 100)
+                (Gen2 "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device1' (ID: 3001) forever (2/2)" 100)
 
             ###################################################################
 
             (Gen "PRTG Device Search"                    "Processing probe '127.0.0.13' (4/5)" 80 "Retrieving all devices")
 
             (Gen1 "PRTG Device Search"                   "Processing probe '127.0.0.13' (4/5)" 80) +
-                (Gen2 "Pausing PRTG Objects"             "Pausing device 'Probe Device0' forever (1/2)" 50)
+                (Gen2 "Pausing PRTG Objects"             "Pausing device 'Probe Device0' (ID: 3000) forever (1/2)" 50)
 
             (Gen1 "PRTG Device Search"                   "Processing probe '127.0.0.13' (4/5)" 80) +
-                (Gen2 "Pausing PRTG Objects"             "Pausing device 'Probe Device1' forever (2/2)" 100)
+                (Gen2 "Pausing PRTG Objects"             "Pausing device 'Probe Device1' (ID: 3001) forever (2/2)" 100)
 
             (Gen1 "PRTG Device Search"                   "Processing probe '127.0.0.13' (4/5)" 80) +
-                (Gen2 "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device1' forever (2/2)" 100)
+                (Gen2 "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device1' (ID: 3001) forever (2/2)" 100)
 
             ###################################################################
 
@@ -2776,9 +2776,9 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         Validate(@(
             (Gen "PRTG Probe Search" "Retrieving all probes")
             (Gen "PRTG Probe Search" "Processing probe '127.0.0.10' (1/3)" 33)
-            (Gen "Pausing PRTG Objects" "Pausing probe '127.0.0.10' forever (1/3)" 33)
-            (Gen "Pausing PRTG Objects" "Pausing probe '127.0.0.12' forever (3/3)" 100)
-            (Gen "Pausing PRTG Objects (Completed)" "Pausing probe '127.0.0.12' forever (3/3)" 100)
+            (Gen "Pausing PRTG Objects" "Pausing probe '127.0.0.10' (ID: 1000) forever (1/3)" 33)
+            (Gen "Pausing PRTG Objects" "Pausing probe '127.0.0.12' (ID: 1002) forever (3/3)" 100)
+            (Gen "Pausing PRTG Objects (Completed)" "Pausing probe '127.0.0.12' (ID: 1002) forever (3/3)" 100)
         ))
     }
 
@@ -4066,18 +4066,18 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             (Gen "PRTG Probe Search" "Retrieving all probes")
             (Gen "PRTG Probe Search" "Processing probe '127.0.0.10' (1/2)" 50)
             (Gen "PRTG Probe Search" "Processing probe '127.0.0.10' (1/2)" 50 "Retrieving all devices")
-                (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device0' forever (1/1)" 100)
-                (Gen "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device0' forever (1/1)" 100)
+                (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device0' (ID: 3000) forever (1/1)" 100)
+                (Gen "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device0' (ID: 3000) forever (1/1)" 100)
 
-                (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device1' forever (1/1)" 100)
-                (Gen "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device1' forever (1/1)" 100)
+                (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device1' (ID: 3001) forever (1/1)" 100)
+                (Gen "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device1' (ID: 3001) forever (1/1)" 100)
 
             (Gen "PRTG Probe Search" "Processing probe '127.0.0.11' (2/2)" 100 "Retrieving all devices")
-                (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device0' forever (1/1)" 100)
-                (Gen "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device0' forever (1/1)" 100)
+                (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device0' (ID: 3000) forever (1/1)" 100)
+                (Gen "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device0' (ID: 3000) forever (1/1)" 100)
 
-                (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device1' forever (1/1)" 100)
-                (Gen "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device1' forever (1/1)" 100)
+                (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device1' (ID: 3001) forever (1/1)" 100)
+                (Gen "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device1' (ID: 3001) forever (1/1)" 100)
 
             (Gen "PRTG Probe Search (Completed)" "Processing probe '127.0.0.11' (2/2)" 100 "Retrieving all devices")
         ))
@@ -4090,18 +4090,18 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         Validate(@(
             (Gen "PRTG Device Search" "Processing probe '127.0.0.10' (1/2)" 50 "Retrieving all devices")
-                (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device0' forever (1/1)" 100)
-                (Gen "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device0' forever (1/1)" 100)
+                (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device0' (ID: 3000) forever (1/1)" 100)
+                (Gen "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device0' (ID: 3000) forever (1/1)" 100)
 
-                (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device1' forever (1/1)" 100)
-                (Gen "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device1' forever (1/1)" 100)
+                (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device1' (ID: 3001) forever (1/1)" 100)
+                (Gen "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device1' (ID: 3001) forever (1/1)" 100)
 
             (Gen "PRTG Device Search" "Processing probe '127.0.0.11' (2/2)" 100 "Retrieving all devices")
-                (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device0' forever (1/1)" 100)
-                (Gen "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device0' forever (1/1)" 100)
+                (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device0' (ID: 3000) forever (1/1)" 100)
+                (Gen "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device0' (ID: 3000) forever (1/1)" 100)
 
-                (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device1' forever (1/1)" 100)
-                (Gen "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device1' forever (1/1)" 100)
+                (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device1' (ID: 3001) forever (1/1)" 100)
+                (Gen "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device1' (ID: 3001) forever (1/1)" 100)
 
             (Gen "PRTG Device Search (Completed)" "Processing probe '127.0.0.11' (2/2)" 100 "Retrieving all devices")
         ))
@@ -4172,13 +4172,13 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             (Gen "PRTG Sensor Search" "Processing device 'Probe Device0' (1/1)" 100 "Retrieving all sensors")
 
             (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device0' (1/1)" 100) +
-                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total0' forever (1/2)" 50)
+                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total0' (ID: 4000) forever (1/2)" 50)
 
             (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device0' (1/1)" 100) +
-                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
+                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total1' (ID: 4001) forever (2/2)" 100)
 
             (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device0' (1/1)" 100) +
-                (Gen2 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
+                (Gen2 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total1' (ID: 4001) forever (2/2)" 100)
 
             (Gen "PRTG Sensor Search (Completed)" "Processing device 'Probe Device0' (1/1)" 100)
 
@@ -4187,13 +4187,13 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             (Gen "PRTG Sensor Search" "Processing device 'Probe Device1' (1/1)" 100 "Retrieving all sensors")
 
             (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device1' (1/1)" 100) +
-                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total0' forever (1/2)" 50)
+                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total0' (ID: 4000) forever (1/2)" 50)
 
             (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device1' (1/1)" 100) +
-                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
+                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total1' (ID: 4001) forever (2/2)" 100)
 
             (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device1' (1/1)" 100) +
-                (Gen2 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
+                (Gen2 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total1' (ID: 4001) forever (2/2)" 100)
 
             (Gen "PRTG Sensor Search (Completed)" "Processing device 'Probe Device1' (1/1)" 100)
 
@@ -4203,13 +4203,13 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             (Gen "PRTG Sensor Search" "Processing device 'Probe Device0' (1/1)" 100 "Retrieving all sensors")
 
             (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device0' (1/1)" 100) +
-                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total0' forever (1/2)" 50)
+                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total0' (ID: 4000) forever (1/2)" 50)
 
             (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device0' (1/1)" 100) +
-                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
+                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total1' (ID: 4001) forever (2/2)" 100)
 
             (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device0' (1/1)" 100) +
-                (Gen2 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
+                (Gen2 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total1' (ID: 4001) forever (2/2)" 100)
 
             (Gen "PRTG Sensor Search (Completed)" "Processing device 'Probe Device0' (1/1)" 100)
 
@@ -4218,13 +4218,13 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             (Gen "PRTG Sensor Search" "Processing device 'Probe Device1' (1/1)" 100 "Retrieving all sensors")
 
             (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device1' (1/1)" 100) +
-                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total0' forever (1/2)" 50)
+                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total0' (ID: 4000) forever (1/2)" 50)
 
             (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device1' (1/1)" 100) +
-                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
+                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total1' (ID: 4001) forever (2/2)" 100)
 
             (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device1' (1/1)" 100) +
-                (Gen2 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
+                (Gen2 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total1' (ID: 4001) forever (2/2)" 100)
 
             (Gen "PRTG Sensor Search (Completed)" "Processing device 'Probe Device1' (1/1)" 100)
             (Gen "PRTG Probe Search (Completed)" "Processing probe '127.0.0.11' (2/2)" 100 "Retrieving all devices")
@@ -4241,13 +4241,13 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             (Gen "PRTG Sensor Search" "Processing device 'Probe Device0' (1/1)" 100 "Retrieving all sensors")
 
             (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device0' (1/1)" 100) +
-                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total0' forever (1/2)" 50)
+                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total0' (ID: 4000) forever (1/2)" 50)
 
             (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device0' (1/1)" 100) +
-                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
+                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total1' (ID: 4001) forever (2/2)" 100)
 
             (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device0' (1/1)" 100) +
-                (Gen2 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
+                (Gen2 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total1' (ID: 4001) forever (2/2)" 100)
 
             (Gen "PRTG Sensor Search (Completed)" "Processing device 'Probe Device0' (1/1)" 100)
 
@@ -4256,13 +4256,13 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             (Gen "PRTG Sensor Search" "Processing device 'Probe Device1' (1/1)" 100 "Retrieving all sensors")
 
             (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device1' (1/1)" 100) +
-                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total0' forever (1/2)" 50)
+                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total0' (ID: 4000) forever (1/2)" 50)
 
             (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device1' (1/1)" 100) +
-                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
+                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total1' (ID: 4001) forever (2/2)" 100)
 
             (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device1' (1/1)" 100) +
-                (Gen2 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
+                (Gen2 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total1' (ID: 4001) forever (2/2)" 100)
 
             (Gen "PRTG Sensor Search (Completed)" "Processing device 'Probe Device1' (1/1)" 100)
 
@@ -4272,13 +4272,13 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             (Gen "PRTG Sensor Search" "Processing device 'Probe Device0' (1/1)" 100 "Retrieving all sensors")
 
             (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device0' (1/1)" 100) +
-                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total0' forever (1/2)" 50)
+                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total0' (ID: 4000) forever (1/2)" 50)
 
             (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device0' (1/1)" 100) +
-                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
+                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total1' (ID: 4001) forever (2/2)" 100)
 
             (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device0' (1/1)" 100) +
-                (Gen2 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
+                (Gen2 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total1' (ID: 4001) forever (2/2)" 100)
 
             (Gen "PRTG Sensor Search (Completed)" "Processing device 'Probe Device0' (1/1)" 100)
 
@@ -4287,13 +4287,13 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             (Gen "PRTG Sensor Search" "Processing device 'Probe Device1' (1/1)" 100 "Retrieving all sensors")
 
             (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device1' (1/1)" 100) +
-                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total0' forever (1/2)" 50)
+                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total0' (ID: 4000) forever (1/2)" 50)
 
             (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device1' (1/1)" 100) +
-                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
+                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total1' (ID: 4001) forever (2/2)" 100)
 
             (Gen1 "PRTG Sensor Search" "Processing device 'Probe Device1' (1/1)" 100) +
-                (Gen2 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
+                (Gen2 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total1' (ID: 4001) forever (2/2)" 100)
 
             ##########################################################################################
 
@@ -4393,19 +4393,19 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
             (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure0' (1/2)" 50) +
                 (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) to object ID 5678 (1/2)" 50) +
-                    (Gen3 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total0' forever (1/2)" 50)
+                    (Gen3 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total0' (ID: 4000) forever (1/2)" 50)
 
             ###################################################################
 
             (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure0' (1/2)" 50) +
                 (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) to object ID 5678 (1/2)" 50) +
-                    (Gen3 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
+                    (Gen3 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total1' (ID: 4001) forever (2/2)" 100)
 
             ###################################################################
 
             (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure0' (1/2)" 50) +
                 (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) to object ID 5678 (1/2)" 50) +
-                    (Gen3 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
+                    (Gen3 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total1' (ID: 4001) forever (2/2)" 100)
 
             ###################################################################
 
@@ -4423,19 +4423,19 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
             (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure0' (1/2)" 50) +
                 (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) to object ID 5678 (2/2)" 100) +
-                    (Gen3 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total0' forever (1/2)" 50)
+                    (Gen3 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total0' (ID: 4000) forever (1/2)" 50)
 
             ###################################################################
 
             (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure0' (1/2)" 50) +
                 (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) to object ID 5678 (2/2)" 100) +
-                    (Gen3 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
+                    (Gen3 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total1' (ID: 4001) forever (2/2)" 100)
 
             ###################################################################
 
             (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure0' (1/2)" 50) +
                 (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) to object ID 5678 (2/2)" 100) +
-                    (Gen3 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
+                    (Gen3 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total1' (ID: 4001) forever (2/2)" 100)
 
             ###################################################################
 
@@ -4462,19 +4462,19 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
             (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure1' (2/2)" 100) +
                 (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) to object ID 5678 (1/2)" 50) +
-                    (Gen3 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total0' forever (1/2)" 50)
+                    (Gen3 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total0' (ID: 4000) forever (1/2)" 50)
 
             ###################################################################
 
             (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure1' (2/2)" 100) +
                 (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) to object ID 5678 (1/2)" 50) +
-                    (Gen3 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
+                    (Gen3 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total1' (ID: 4001) forever (2/2)" 100)
 
             ###################################################################
 
             (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure1' (2/2)" 100) +
                 (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) to object ID 5678 (1/2)" 50) +
-                    (Gen3 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
+                    (Gen3 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total1' (ID: 4001) forever (2/2)" 100)
 
             ###################################################################
 
@@ -4492,19 +4492,19 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
             (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure1' (2/2)" 100) +
                 (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) to object ID 5678 (2/2)" 100) +
-                    (Gen3 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total0' forever (1/2)" 50)
+                    (Gen3 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total0' (ID: 4000) forever (1/2)" 50)
 
             ###################################################################
 
             (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure1' (2/2)" 100) +
                 (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) to object ID 5678 (2/2)" 100) +
-                    (Gen3 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
+                    (Gen3 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total1' (ID: 4001) forever (2/2)" 100)
 
             ###################################################################
 
             (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure1' (2/2)" 100) +
                 (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) to object ID 5678 (2/2)" 100) +
-                    (Gen3 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
+                    (Gen3 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total1' (ID: 4001) forever (2/2)" 100)
 
             ###################################################################
 
@@ -4537,19 +4537,19 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
             (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure0' (1/2)" 50) +
                 (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) to object ID 5678 (1/2)" 50) +
-                    (Gen3 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total0' forever (1/2)" 50)
+                    (Gen3 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total0' (ID: 4000) forever (1/2)" 50)
 
             ###################################################################
 
             (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure0' (1/2)" 50) +
                 (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) to object ID 5678 (1/2)" 50) +
-                    (Gen3 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
+                    (Gen3 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total1' (ID: 4001) forever (2/2)" 100)
 
             ###################################################################
 
             (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure0' (1/2)" 50) +
                 (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) to object ID 5678 (1/2)" 50) +
-                    (Gen3 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
+                    (Gen3 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total1' (ID: 4001) forever (2/2)" 100)
 
             ###################################################################
 
@@ -4567,19 +4567,19 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
             (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure0' (1/2)" 50) +
                 (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) to object ID 5678 (2/2)" 100) +
-                    (Gen3 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total0' forever (1/2)" 50)
+                    (Gen3 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total0' (ID: 4000) forever (1/2)" 50)
 
             ###################################################################
 
             (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure0' (1/2)" 50) +
                 (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) to object ID 5678 (2/2)" 100) +
-                    (Gen3 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
+                    (Gen3 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total1' (ID: 4001) forever (2/2)" 100)
 
             ###################################################################
 
             (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure0' (1/2)" 50) +
                 (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) to object ID 5678 (2/2)" 100) +
-                    (Gen3 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
+                    (Gen3 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total1' (ID: 4001) forever (2/2)" 100)
 
             ###################################################################
 
@@ -4602,19 +4602,19 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
             (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure1' (2/2)" 100) +
                 (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) to object ID 5678 (1/2)" 50) +
-                    (Gen3 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total0' forever (1/2)" 50)
+                    (Gen3 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total0' (ID: 4000) forever (1/2)" 50)
 
             ###################################################################
 
             (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure1' (2/2)" 100) +
                 (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) to object ID 5678 (1/2)" 50) +
-                    (Gen3 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
+                    (Gen3 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total1' (ID: 4001) forever (2/2)" 100)
 
             ###################################################################
 
             (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure1' (2/2)" 100) +
                 (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) to object ID 5678 (1/2)" 50) +
-                    (Gen3 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
+                    (Gen3 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total1' (ID: 4001) forever (2/2)" 100)
 
             ###################################################################
 
@@ -4632,19 +4632,19 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
             (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure1' (2/2)" 100) +
                 (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) to object ID 5678 (2/2)" 100) +
-                    (Gen3 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total0' forever (1/2)" 50)
+                    (Gen3 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total0' (ID: 4000) forever (1/2)" 50)
 
             ###################################################################
 
             (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure1' (2/2)" 100) +
                 (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) to object ID 5678 (2/2)" 100) +
-                    (Gen3 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
+                    (Gen3 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total1' (ID: 4001) forever (2/2)" 100)
 
             ###################################################################
 
             (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure1' (2/2)" 100) +
                 (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) to object ID 5678 (2/2)" 100) +
-                    (Gen3 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
+                    (Gen3 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total1' (ID: 4001) forever (2/2)" 100)
 
             ###################################################################
 
@@ -4673,13 +4673,13 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
                 (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) to object ID 5678 (1/2)" 50)
 
             (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure0' (1/2)" 50) +
-                (Gen2 "Resuming PRTG Objects" "Resuming device 'Probe Device0' (1/2)" 50)
+                (Gen2 "Resuming PRTG Objects" "Resuming device 'Probe Device0' (ID: 3000) (1/2)" 50)
 
             (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure0' (1/2)" 50) +
                 (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) to object ID 5678 (2/2)" 100)
 
             (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure0' (1/2)" 50) +
-                (Gen2 "Resuming PRTG Objects" "Resuming device 'Probe Device0' (2/2)" 100)
+                (Gen2 "Resuming PRTG Objects" "Resuming device 'Probe Device0' (ID: 3000) (2/2)" 100)
 
             (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure0' (1/2)" 50) +
                 (Gen2 "Cloning PRTG Devices (Completed)" "Cloning device 'Probe Device1' (ID: 3001) to object ID 5678 (2/2)" 100)
@@ -4696,13 +4696,13 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
                 (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) to object ID 5678 (1/2)" 50)
 
             (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure1' (2/2)" 100) +
-                (Gen2 "Resuming PRTG Objects" "Resuming device 'Probe Device0' (1/2)" 50)
+                (Gen2 "Resuming PRTG Objects" "Resuming device 'Probe Device0' (ID: 3000) (1/2)" 50)
 
             (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure1' (2/2)" 100) +
                 (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) to object ID 5678 (2/2)" 100)
 
             (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure1' (2/2)" 100) +
-                (Gen2 "Resuming PRTG Objects" "Resuming device 'Probe Device0' (2/2)" 100)
+                (Gen2 "Resuming PRTG Objects" "Resuming device 'Probe Device0' (ID: 3000) (2/2)" 100)
 
             (Gen1 "PRTG Group Search" "Processing group 'Windows Infrastructure1' (2/2)" 100) +
                 (Gen2 "Cloning PRTG Devices (Completed)" "Cloning device 'Probe Device1' (ID: 3001) to object ID 5678 (2/2)" 100)
@@ -4723,16 +4723,16 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
                 (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) to object ID 5678 (1/2)" 50)
 
             (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure0' (1/2)" 50) +
-                (Gen2 "Resuming PRTG Objects" "Resuming device 'Probe Device0' (1/2)" 50)
+                (Gen2 "Resuming PRTG Objects" "Resuming device 'Probe Device0' (ID: 3000) (1/2)" 50)
 
             (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure0' (1/2)" 50) +
                 (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) to object ID 5678 (2/2)" 100)
 
             (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure0' (1/2)" 50) +
-                (Gen2 "Resuming PRTG Objects" "Resuming device 'Probe Device0' (2/2)" 100)
+                (Gen2 "Resuming PRTG Objects" "Resuming device 'Probe Device0' (ID: 3000) (2/2)" 100)
 
             (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure0' (1/2)" 50) +
-                (Gen2 "Resuming PRTG Objects (Completed)" "Resuming device 'Probe Device0' (2/2)" 100)
+                (Gen2 "Resuming PRTG Objects (Completed)" "Resuming device 'Probe Device0' (ID: 3000) (2/2)" 100)
 
             ###################################################################
 
@@ -4742,16 +4742,16 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
                 (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device0' (ID: 3000) to object ID 5678 (1/2)" 50)
 
             (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure1' (2/2)" 100) +
-                (Gen2 "Resuming PRTG Objects" "Resuming device 'Probe Device0' (1/2)" 50)
+                (Gen2 "Resuming PRTG Objects" "Resuming device 'Probe Device0' (ID: 3000) (1/2)" 50)
 
             (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure1' (2/2)" 100) +
                 (Gen2 "Cloning PRTG Devices" "Cloning device 'Probe Device1' (ID: 3001) to object ID 5678 (2/2)" 100)
 
             (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure1' (2/2)" 100) +
-                (Gen2 "Resuming PRTG Objects" "Resuming device 'Probe Device0' (2/2)" 100)
+                (Gen2 "Resuming PRTG Objects" "Resuming device 'Probe Device0' (ID: 3000) (2/2)" 100)
 
             (Gen1 "PRTG Device Search" "Processing group 'Windows Infrastructure1' (2/2)" 100) +
-                (Gen2 "Resuming PRTG Objects (Completed)" "Resuming device 'Probe Device0' (2/2)" 100)
+                (Gen2 "Resuming PRTG Objects (Completed)" "Resuming device 'Probe Device0' (ID: 3000) (2/2)" 100)
 
             (Gen "PRTG Device Search (Completed)" "Processing group 'Windows Infrastructure1' (2/2)" 100)
         ))
@@ -4859,10 +4859,10 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         Validate(@(
             (Gen "PRTG Device Search" "Retrieving all devices")
             (Gen "PRTG Device Search" "Processing device 'Probe Device0' (1/10)" 10)
-            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device0' forever (1/10)" 10)
-            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device1' forever (2/10)" 20)
-            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device2' forever (3/10)" 30)
-            (Gen "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device2' forever (3/10)" 30)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device0' (ID: 3000) forever (1/10)" 10)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device1' (ID: 3001) forever (2/10)" 20)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device2' (ID: 3002) forever (3/10)" 30)
+            (Gen "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device2' (ID: 3002) forever (3/10)" 30)
         ))
     }
 
@@ -4873,10 +4873,10 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $devices | Select -First 5 | where { $_.Id -lt 3003 } | Pause-Object -Forever -Batch:$false
         
         Validate(@(
-            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device0' forever (1/10)" 10)
-            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device1' forever (2/10)" 20)
-            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device2' forever (3/10)" 30)
-            (Gen "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device2' forever (3/10)" 30)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device0' (ID: 3000) forever (1/10)" 10)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device1' (ID: 3001) forever (2/10)" 20)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device2' (ID: 3002) forever (3/10)" 30)
+            (Gen "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device2' (ID: 3002) forever (3/10)" 30)
         ))
     }
 
@@ -4953,9 +4953,9 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             (Gen "PRTG Device Search" "Processing device 'Probe Device0' (1/10)" 10)
             (Gen "PRTG Device Search (Completed)" "Processing device 'Probe Device9' (10/10)" 100)
 
-            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device5' forever (1/5)" 20)
-            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device6' forever (2/5)" 40)
-            (Gen "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device6' forever (2/5)" 40)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device5' (ID: 3005) forever (1/5)" 20)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device6' (ID: 3006) forever (2/5)" 40)
+            (Gen "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device6' (ID: 3006) forever (2/5)" 40)
         ))
     }
 
@@ -4965,9 +4965,9 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $devices | Select -Last 5 | where { $_.Id -lt 3007 } | Pause-Object -Forever -Batch:$false
 
         Validate(@(
-            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device5' forever (1/5)" 20)
-            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device6' forever (2/5)" 40)
-            (Gen "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device6' forever (2/5)" 40)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device5' (ID: 3005) forever (1/5)" 20)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device6' (ID: 3006) forever (2/5)" 40)
+            (Gen "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device6' (ID: 3006) forever (2/5)" 40)
         ))
     }
 
@@ -5034,7 +5034,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             (Gen "PRTG Device Search" "Retrieving all devices")
             (Gen "PRTG Device Search" "Processing device 'Probe Device0' (1/10)" 10)
 
-            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device7' forever (8/10)" 80)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device7' (ID: 3007) forever (8/10)" 80)
             (Gen "Pausing PRTG Objects (Completed)" "Processing device 'Probe Device9' (10/10)" 100)
         ))
     }
@@ -5045,8 +5045,8 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $devices | Select -Skip 7 | where { $_.Id -lt 3008 } | Pause-Object -Forever -Batch:$false
 
         Validate(@(
-            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device7' forever (8/10)" 80)
-            (Gen "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device7' forever (8/10)" 80)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device7' (ID: 3007) forever (8/10)" 80)
+            (Gen "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device7' (ID: 3007) forever (8/10)" 80)
         ))
     }
 
@@ -5151,16 +5151,16 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             (Gen "PRTG Device Search" "Processing device 'Probe Device0' (1/10)" 10)
 
             (Gen1 "PRTG Device Search (Completed)" "Processing device 'Probe Device4' (5/10)" 50) +
-                (Gen2 "Pausing PRTG Objects" "Pausing device 'Probe Device0' forever (1/5)" 20)
+                (Gen2 "Pausing PRTG Objects" "Pausing device 'Probe Device0' (ID: 3000) forever (1/5)" 20)
 
             (Gen1 "PRTG Device Search (Completed)" "Processing device 'Probe Device4' (5/10)" 50) +
-                (Gen2 "Pausing PRTG Objects" "Pausing device 'Probe Device1' forever (2/5)" 40)
+                (Gen2 "Pausing PRTG Objects" "Pausing device 'Probe Device1' (ID: 3001) forever (2/5)" 40)
 
             (Gen1 "PRTG Device Search (Completed)" "Processing device 'Probe Device4' (5/10)" 50) +
-                (Gen2 "Pausing PRTG Objects" "Pausing device 'Probe Device2' forever (3/5)" 60)
+                (Gen2 "Pausing PRTG Objects" "Pausing device 'Probe Device2' (ID: 3002) forever (3/5)" 60)
 
             (Gen1 "PRTG Device Search (Completed)" "Processing device 'Probe Device4' (5/10)" 50) +
-                (Gen2 "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device2' forever (3/5)" 60)
+                (Gen2 "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device2' (ID: 3002) forever (3/5)" 60)
         ))
     }
 
@@ -5170,11 +5170,11 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $devices | Select -SkipLast 5 | where { $_.Id -lt 3003 } | Pause-Object -Forever -Batch:$false
 
         Validate(@(
-            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device0' forever (1/5)" 20)
-            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device1' forever (2/5)" 40)
-            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device2' forever (3/5)" 60)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device0' (ID: 3000) forever (1/5)" 20)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device1' (ID: 3001) forever (2/5)" 40)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device2' (ID: 3002) forever (3/5)" 60)
 
-            (Gen "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device2' forever (3/5)" 60)
+            (Gen "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device2' (ID: 3002) forever (3/5)" 60)
         ))
     }
 
@@ -5254,9 +5254,9 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         Validate(@(
             (Gen "PRTG Device Search" "Retrieving all devices")
-            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device1' forever (2/10)" 20)
-            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device3' forever (4/10)" 40)
-            (Gen "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device3' forever (4/10)" 40)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device1' (ID: 3001) forever (2/10)" 20)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device3' (ID: 3003) forever (4/10)" 40)
+            (Gen "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device3' (ID: 3003) forever (4/10)" 40)
         ))
     }
 
@@ -5266,9 +5266,9 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $devices | Select -Index 1,3,5,7,8 | where { $_.Id -lt 3005 } | Pause-Object -Forever -Batch:$false
 
         Validate(@(
-            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device1' forever (2/10)" 20)
-            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device3' forever (4/10)" 40)
-            (Gen "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device3' forever (4/10)" 40)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device1' (ID: 3001) forever (2/10)" 20)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device3' (ID: 3003) forever (4/10)" 40)
+            (Gen "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device3' (ID: 3003) forever (4/10)" 40)
         ))
     }
 
@@ -5312,12 +5312,12 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $devices | where { $_.Id -lt 3007 } | Select -First 5 | Pause-Object -Forever -Batch:$false
 
         Validate(@(
-            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device0' forever (1/10)" 10)
-            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device1' forever (2/10)" 20)
-            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device2' forever (3/10)" 30)
-            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device3' forever (4/10)" 40)
-            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device4' forever (5/10)" 50)
-            (Gen "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device4' forever (5/10)" 50)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device0' (ID: 3000) forever (1/10)" 10)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device1' (ID: 3001) forever (2/10)" 20)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device2' (ID: 3002) forever (3/10)" 30)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device3' (ID: 3003) forever (4/10)" 40)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device4' (ID: 3004) forever (5/10)" 50)
+            (Gen "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device4' (ID: 3004) forever (5/10)" 50)
         ))
     }
 
@@ -5358,12 +5358,12 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $devices | where { $_.Id -lt 3007 } | Select -Last 5 | Pause-Object -Forever -Batch:$false
         
         Validate(@(
-            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device2' forever (1/5)" 20)
-            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device3' forever (2/5)" 40)
-            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device4' forever (3/5)" 60)
-            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device5' forever (4/5)" 80)
-            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device6' forever (5/5)" 100)
-            (Gen "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device6' forever (5/5)" 100)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device2' (ID: 3002) forever (1/5)" 20)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device3' (ID: 3003) forever (2/5)" 40)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device4' (ID: 3004) forever (3/5)" 60)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device5' (ID: 3005) forever (4/5)" 80)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device6' (ID: 3006) forever (5/5)" 100)
+            (Gen "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device6' (ID: 3006) forever (5/5)" 100)
         ))
     }
 
@@ -5401,9 +5401,9 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $devices | where { $_.Id -lt 3007 } | Select -Skip 5 | Pause-Object -Forever -Batch:$false
 
         Validate(@(
-            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device5' forever (6/10)" 60)
-            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device6' forever (7/10)" 70)
-            (Gen "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device6' forever (7/10)" 70)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device5' (ID: 3005) forever (6/10)" 60)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device6' (ID: 3006) forever (7/10)" 70)
+            (Gen "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device6' (ID: 3006) forever (7/10)" 70)
         ))
     }
 
@@ -5441,9 +5441,9 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $devices | where { $_.Id -lt 3007 } | Select -SkipLast 5 | Pause-Object -Forever -Batch:$false
 
         Validate(@(
-            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device0' forever (1/5)" 20)
-            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device1' forever (2/5)" 40)
-            (Gen "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device1' forever (2/5)" 40)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device0' (ID: 3000) forever (1/5)" 20)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device1' (ID: 3001) forever (2/5)" 40)
+            (Gen "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device1' (ID: 3001) forever (2/5)" 40)
         ))
     }
 
@@ -5483,11 +5483,11 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $devices | where { $_.Id -lt 3007 } | Select -Index 0,1,3,5 | Pause-Object -Forever -Batch:$false
 
         Validate(@(
-            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device0' forever (1/10)" 10)
-            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device1' forever (2/10)" 20)
-            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device3' forever (4/10)" 40)
-            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device5' forever (6/10)" 60)
-            (Gen "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device5' forever (6/10)" 60)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device0' (ID: 3000) forever (1/10)" 10)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device1' (ID: 3001) forever (2/10)" 20)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device3' (ID: 3003) forever (4/10)" 40)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device5' (ID: 3005) forever (6/10)" 60)
+            (Gen "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device5' (ID: 3005) forever (6/10)" 60)
         ))
     }
 
@@ -5892,13 +5892,13 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
                 (Gen2 "PRTG Sensor Factory Sensor Search" "Processing sensor factory sensor 'Volume IO _Total0' (1/2)" 50)
 
             (Gen1 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50) +
-                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total0' forever (1/2)" 50)
+                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total0' (ID: 4000) forever (1/2)" 50)
 
             (Gen1 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50) +
-                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
+                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total1' (ID: 4001) forever (2/2)" 100)
 
             (Gen1 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50) +
-                (Gen2 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
+                (Gen2 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total1' (ID: 4001) forever (2/2)" 100)
 
             ###################################################################
 
@@ -5910,13 +5910,13 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
                 (Gen2 "PRTG Sensor Factory Sensor Search" "Processing sensor factory sensor 'Volume IO _Total0' (1/2)" 50)
 
             (Gen1 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100) +
-                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total0' forever (1/2)" 50)
+                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total0' (ID: 4000) forever (1/2)" 50)
 
             (Gen1 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100) +
-                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
+                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total1' (ID: 4001) forever (2/2)" 100)
 
             (Gen1 "PRTG Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100) +
-                (Gen2 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
+                (Gen2 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total1' (ID: 4001) forever (2/2)" 100)
 
             (Gen "PRTG Sensor Search (Completed)" "Processing sensor 'Volume IO _Total1' (2/2)" 100)
         ))
@@ -5935,13 +5935,13 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             (Gen "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50 "Retrieving all sensor factory sensors")
 
             (Gen1 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50) +
-                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total0' forever (1/2)" 50)
+                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total0' (ID: 4000) forever (1/2)" 50)
 
             (Gen1 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50) +
-                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
+                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total1' (ID: 4001) forever (2/2)" 100)
 
             (Gen1 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50) +
-                (Gen2 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
+                (Gen2 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total1' (ID: 4001) forever (2/2)" 100)
 
             ###################################################################
 
@@ -5949,13 +5949,13 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
             (Gen "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100 "Retrieving all sensor factory sensors")
 
             (Gen1 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100) +
-                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total0' forever (1/2)" 50)
+                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total0' (ID: 4000) forever (1/2)" 50)
 
             (Gen1 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100) +
-                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
+                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total1' (ID: 4001) forever (2/2)" 100)
 
             (Gen1 "PRTG Sensor Factory Sensor Search" "Processing sensor 'Volume IO _Total1' (2/2)" 100) +
-                (Gen2 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total1' forever (2/2)" 100)
+                (Gen2 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total1' (ID: 4001) forever (2/2)" 100)
 
             (Gen "PRTG Sensor Factory Sensor Search (Completed)" "Processing sensor 'Volume IO _Total1' (2/2)" 100)
         ))
@@ -7025,19 +7025,19 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
                  "'Volume IO _Total7', 'Volume IO _Total8' and 2 others forever (11/11)"
 
         Validate(@(
-            (Gen "Acknowledge PRTG Sensors"         "Queuing sensor 'Volume IO _Total0' (1/11)" 9)
-            (Gen "Acknowledge PRTG Sensors"         "Queuing sensor 'Volume IO _Total1' (2/11)" 18)
-            (Gen "Acknowledge PRTG Sensors"         "Queuing sensor 'Volume IO _Total2' (3/11)" 27)
-            (Gen "Acknowledge PRTG Sensors"         "Queuing sensor 'Volume IO _Total3' (4/11)" 36)
-            (Gen "Acknowledge PRTG Sensors"         "Queuing sensor 'Volume IO _Total4' (5/11)" 45)
-            (Gen "Acknowledge PRTG Sensors"         "Queuing sensor 'Volume IO _Total5' (6/11)" 54)
-            (Gen "Acknowledge PRTG Sensors"         "Queuing sensor 'Volume IO _Total6' (7/11)" 63)
-            (Gen "Acknowledge PRTG Sensors"         "Queuing sensor 'Volume IO _Total7' (8/11)" 72)
-            (Gen "Acknowledge PRTG Sensors"         "Queuing sensor 'Volume IO _Total8' (9/11)" 81)
-            (Gen "Acknowledge PRTG Sensors"         "Queuing sensor 'Volume IO _Total9' (10/11)" 90)
-            (Gen "Acknowledge PRTG Sensors"         "Queuing sensor 'Volume IO _Total10' (11/11)" 100)
-            (Gen "Acknowledge PRTG Sensors"         $final 100)
-            (Gen "Acknowledge PRTG Sensors (Completed)" $final 100)
+            (Gen "Acknowledging PRTG Sensors"         "Queuing sensor 'Volume IO _Total0' (1/11)" 9)
+            (Gen "Acknowledging PRTG Sensors"         "Queuing sensor 'Volume IO _Total1' (2/11)" 18)
+            (Gen "Acknowledging PRTG Sensors"         "Queuing sensor 'Volume IO _Total2' (3/11)" 27)
+            (Gen "Acknowledging PRTG Sensors"         "Queuing sensor 'Volume IO _Total3' (4/11)" 36)
+            (Gen "Acknowledging PRTG Sensors"         "Queuing sensor 'Volume IO _Total4' (5/11)" 45)
+            (Gen "Acknowledging PRTG Sensors"         "Queuing sensor 'Volume IO _Total5' (6/11)" 54)
+            (Gen "Acknowledging PRTG Sensors"         "Queuing sensor 'Volume IO _Total6' (7/11)" 63)
+            (Gen "Acknowledging PRTG Sensors"         "Queuing sensor 'Volume IO _Total7' (8/11)" 72)
+            (Gen "Acknowledging PRTG Sensors"         "Queuing sensor 'Volume IO _Total8' (9/11)" 81)
+            (Gen "Acknowledging PRTG Sensors"         "Queuing sensor 'Volume IO _Total9' (10/11)" 90)
+            (Gen "Acknowledging PRTG Sensors"         "Queuing sensor 'Volume IO _Total10' (11/11)" 100)
+            (Gen "Acknowledging PRTG Sensors"         $final 100)
+            (Gen "Acknowledging PRTG Sensors (Completed)" $final 100)
         ))
     }
 
@@ -7081,20 +7081,20 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
                  "'Volume IO _Total7', 'Volume IO _Total8', 'Volume IO _Total9' and 2 others forever (12/12)"
 
         Validate(@(
-            (Gen "Acknowledge PRTG Sensors"         "Queuing sensor 'Volume IO _Total0' (1/12)" 8)
-            (Gen "Acknowledge PRTG Sensors"         "Queuing sensor 'Volume IO _Total1' (2/12)" 16)
-            (Gen "Acknowledge PRTG Sensors"         "Queuing sensor 'Volume IO _Total2' (3/12)" 25)
-            (Gen "Acknowledge PRTG Sensors"         "Queuing sensor 'Volume IO _Total3' (4/12)" 33)
-            (Gen "Acknowledge PRTG Sensors"         "Queuing sensor 'Volume IO _Total4' (5/12)" 41)
-            (Gen "Acknowledge PRTG Sensors"         "Queuing sensor 'Volume IO _Total5' (6/12)" 50)
-            (Gen "Acknowledge PRTG Sensors"         "Queuing sensor 'Volume IO _Total6' (7/12)" 58)
-            (Gen "Acknowledge PRTG Sensors"         "Queuing sensor 'Volume IO _Total7' (8/12)" 66)
-            (Gen "Acknowledge PRTG Sensors"         "Queuing sensor 'Volume IO _Total8' (9/12)" 75)
-            (Gen "Acknowledge PRTG Sensors"         "Queuing sensor 'Volume IO _Total9' (10/12)" 83)
-            (Gen "Acknowledge PRTG Sensors"         "Queuing sensor 'Volume IO _Total10' (11/12)" 91)
-            (Gen "Acknowledge PRTG Sensors"         "Queuing sensor 'Volume IO _Total11' (12/12)" 100)
-            (Gen "Acknowledge PRTG Sensors"         $final 100)
-            (Gen "Acknowledge PRTG Sensors (Completed)" $final 100)
+            (Gen "Acknowledging PRTG Sensors"         "Queuing sensor 'Volume IO _Total0' (1/12)" 8)
+            (Gen "Acknowledging PRTG Sensors"         "Queuing sensor 'Volume IO _Total1' (2/12)" 16)
+            (Gen "Acknowledging PRTG Sensors"         "Queuing sensor 'Volume IO _Total2' (3/12)" 25)
+            (Gen "Acknowledging PRTG Sensors"         "Queuing sensor 'Volume IO _Total3' (4/12)" 33)
+            (Gen "Acknowledging PRTG Sensors"         "Queuing sensor 'Volume IO _Total4' (5/12)" 41)
+            (Gen "Acknowledging PRTG Sensors"         "Queuing sensor 'Volume IO _Total5' (6/12)" 50)
+            (Gen "Acknowledging PRTG Sensors"         "Queuing sensor 'Volume IO _Total6' (7/12)" 58)
+            (Gen "Acknowledging PRTG Sensors"         "Queuing sensor 'Volume IO _Total7' (8/12)" 66)
+            (Gen "Acknowledging PRTG Sensors"         "Queuing sensor 'Volume IO _Total8' (9/12)" 75)
+            (Gen "Acknowledging PRTG Sensors"         "Queuing sensor 'Volume IO _Total9' (10/12)" 83)
+            (Gen "Acknowledging PRTG Sensors"         "Queuing sensor 'Volume IO _Total10' (11/12)" 91)
+            (Gen "Acknowledging PRTG Sensors"         "Queuing sensor 'Volume IO _Total11' (12/12)" 100)
+            (Gen "Acknowledging PRTG Sensors"         $final 100)
+            (Gen "Acknowledging PRTG Sensors (Completed)" $final 100)
         ))
     }
 
@@ -7231,7 +7231,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         $names = @("Volume IO _Total0","Volume IO _Total1")
 
-        ValidateMultiTypeCmdlet "Sensor" "Acknowledge PRTG Sensors" $names "Acknowledging sensors '$($names[0])' and '$($names[1])' for 10 minutes"
+        ValidateMultiTypeCmdlet "Sensor" "Acknowledging PRTG Sensors" $names "Acknowledging sensors '$($names[0])' and '$($names[1])' for 10 minutes"
     }
 
     It "101c2: Pause-Object" {
@@ -8321,10 +8321,10 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
                 (Gen2 "Adding PRTG Sensors" "Adding sensor 'Service' to device 'Probe Device0' (1/1)" 100)
 
             (Gen1 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50) +
-                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total2' forever (1/2)" 50)
+                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total2' (ID: 1002) forever (1/2)" 50)
 
             (Gen1 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50) +
-                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total3' forever (2/2)" 100)
+                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total3' (ID: 1003) forever (2/2)" 100)
 
             (Gen1 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50) +
                 (Gen2 "Adding PRTG Sensors (Completed)" "Adding sensor 'Service' to device 'Probe Device0' (1/1)" 100)
@@ -8341,10 +8341,10 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
                 (Gen2 "Adding PRTG Sensors" "Adding sensor 'Service' to device 'Probe Device1' (1/1)" 100)
 
             (Gen1 "PRTG Device Search" "Processing device 'Probe Device1' (2/2)" 100) +
-                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total2' forever (1/2)" 50)
+                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total2' (ID: 1002) forever (1/2)" 50)
 
             (Gen1 "PRTG Device Search" "Processing device 'Probe Device1' (2/2)" 100) +
-                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total3' forever (2/2)" 100)
+                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total3' (ID: 1003) forever (2/2)" 100)
 
             (Gen1 "PRTG Device Search" "Processing device 'Probe Device1' (2/2)" 100) +
                 (Gen2 "Adding PRTG Sensors (Completed)" "Adding sensor 'Service' to device 'Probe Device1' (1/1)" 100)
@@ -8368,13 +8368,13 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
                 (Gen2 "Adding PRTG Sensors" "Adding sensor 'Service' to device 'Probe Device0' (1/1)" 100)
 
             (Gen1 "PRTG WMI Service Search" "Processing device 'Probe Device0' (1/2)" 50) +
-                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total2' forever (1/2)" 50)
+                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total2' (ID: 1002) forever (1/2)" 50)
 
             (Gen1 "PRTG WMI Service Search" "Processing device 'Probe Device0' (1/2)" 50) +
-                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total3' forever (2/2)" 100)
+                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total3' (ID: 1003) forever (2/2)" 100)
 
             (Gen1 "PRTG WMI Service Search" "Processing device 'Probe Device0' (1/2)" 50) +
-                (Gen2 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total3' forever (2/2)" 100)
+                (Gen2 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total3' (ID: 1003) forever (2/2)" 100)
 
             ###################################################################
 
@@ -8385,13 +8385,13 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
                 (Gen2 "Adding PRTG Sensors" "Adding sensor 'Service' to device 'Probe Device1' (1/1)" 100)
 
             (Gen1 "PRTG WMI Service Search" "Processing device 'Probe Device1' (2/2)" 100) +
-                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total2' forever (1/2)" 50)
+                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total2' (ID: 1002) forever (1/2)" 50)
 
             (Gen1 "PRTG WMI Service Search" "Processing device 'Probe Device1' (2/2)" 100) +
-                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total3' forever (2/2)" 100)
+                (Gen2 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total3' (ID: 1003) forever (2/2)" 100)
 
             (Gen1 "PRTG WMI Service Search" "Processing device 'Probe Device1' (2/2)" 100) +
-                (Gen2 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total3' forever (2/2)" 100)
+                (Gen2 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total3' (ID: 1003) forever (2/2)" 100)
 
             (Gen "PRTG WMI Service Search (Completed)" "Processing device 'Probe Device1' (2/2)" 100)
         ))
@@ -8520,11 +8520,11 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
             (Gen1 "PRTG Probe Search" "Processing probe '127.0.0.10' (1/1)" 100) +
                 (Gen2 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50) +
-                    (Gen3 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total2' forever (1/2)" 50)
+                    (Gen3 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total2' (ID: 1002) forever (1/2)" 50)
 
             (Gen1 "PRTG Probe Search" "Processing probe '127.0.0.10' (1/1)" 100) +
                 (Gen2 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50) +
-                    (Gen3 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total3' forever (2/2)" 100)
+                    (Gen3 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total3' (ID: 1003) forever (2/2)" 100)
 
             (Gen1 "PRTG Probe Search" "Processing probe '127.0.0.10' (1/1)" 100) +
                 (Gen2 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50) +
@@ -8546,11 +8546,11 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
             (Gen1 "PRTG Probe Search" "Processing probe '127.0.0.10' (1/1)" 100) +
                 (Gen2 "PRTG Device Search" "Processing device 'Probe Device1' (2/2)" 100) +
-                    (Gen3 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total2' forever (1/2)" 50)
+                    (Gen3 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total2' (ID: 1002) forever (1/2)" 50)
 
             (Gen1 "PRTG Probe Search" "Processing probe '127.0.0.10' (1/1)" 100) +
                 (Gen2 "PRTG Device Search" "Processing device 'Probe Device1' (2/2)" 100) +
-                    (Gen3 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total3' forever (2/2)" 100)
+                    (Gen3 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total3' (ID: 1003) forever (2/2)" 100)
 
             (Gen1 "PRTG Probe Search" "Processing probe '127.0.0.10' (1/1)" 100) +
                 (Gen2 "PRTG Device Search" "Processing device 'Probe Device1' (2/2)" 100) +
@@ -8585,15 +8585,15 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
             (Gen1 "PRTG Device Search" "Processing probe '127.0.0.10' (1/2)" 50) +
                 (Gen2 "PRTG WMI Service Search" "Processing device 'Probe Device0' (1/2)" 50) +
-                    (Gen3 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total2' forever (1/2)" 50)
+                    (Gen3 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total2' (ID: 1002) forever (1/2)" 50)
 
             (Gen1 "PRTG Device Search" "Processing probe '127.0.0.10' (1/2)" 50) +
                 (Gen2 "PRTG WMI Service Search" "Processing device 'Probe Device0' (1/2)" 50) +
-                    (Gen3 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total3' forever (2/2)" 100)
+                    (Gen3 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total3' (ID: 1003) forever (2/2)" 100)
 
             (Gen1 "PRTG Device Search" "Processing probe '127.0.0.10' (1/2)" 50) +
                 (Gen2 "PRTG WMI Service Search" "Processing device 'Probe Device0' (1/2)" 50) +
-                    (Gen3 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total3' forever (2/2)" 100)
+                    (Gen3 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total3' (ID: 1003) forever (2/2)" 100)
 
             ###################################################################
 
@@ -8606,15 +8606,15 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
             (Gen1 "PRTG Device Search" "Processing probe '127.0.0.10' (1/2)" 50) +
                 (Gen2 "PRTG WMI Service Search" "Processing device 'Probe Device1' (2/2)" 100) +
-                    (Gen3 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total2' forever (1/2)" 50)
+                    (Gen3 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total2' (ID: 1002) forever (1/2)" 50)
 
             (Gen1 "PRTG Device Search" "Processing probe '127.0.0.10' (1/2)" 50) +
                 (Gen2 "PRTG WMI Service Search" "Processing device 'Probe Device1' (2/2)" 100) +
-                    (Gen3 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total3' forever (2/2)" 100)
+                    (Gen3 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total3' (ID: 1003) forever (2/2)" 100)
 
             (Gen1 "PRTG Device Search" "Processing probe '127.0.0.10' (1/2)" 50) +
                 (Gen2 "PRTG WMI Service Search" "Processing device 'Probe Device1' (2/2)" 100) +
-                    (Gen3 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total3' forever (2/2)" 100)
+                    (Gen3 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total3' (ID: 1003) forever (2/2)" 100)
 
             (Gen1 "PRTG Device Search" "Processing probe '127.0.0.10' (1/2)" 50) +
                 (Gen2 "PRTG WMI Service Search (Completed)" "Processing device 'Probe Device1' (2/2)" 100)
@@ -8635,15 +8635,15 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
             (Gen1 "PRTG Device Search" "Processing probe '127.0.0.11' (2/2)" 100) +
                 (Gen2 "PRTG WMI Service Search" "Processing device 'Probe Device0' (1/2)" 50) +
-                    (Gen3 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total2' forever (1/2)" 50)
+                    (Gen3 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total2' (ID: 1002) forever (1/2)" 50)
 
             (Gen1 "PRTG Device Search" "Processing probe '127.0.0.11' (2/2)" 100) +
                 (Gen2 "PRTG WMI Service Search" "Processing device 'Probe Device0' (1/2)" 50) +
-                    (Gen3 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total3' forever (2/2)" 100)
+                    (Gen3 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total3' (ID: 1003) forever (2/2)" 100)
 
             (Gen1 "PRTG Device Search" "Processing probe '127.0.0.11' (2/2)" 100) +
                 (Gen2 "PRTG WMI Service Search" "Processing device 'Probe Device0' (1/2)" 50) +
-                    (Gen3 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total3' forever (2/2)" 100)
+                    (Gen3 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total3' (ID: 1003) forever (2/2)" 100)
 
             ###################################################################
 
@@ -8656,15 +8656,15 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
             (Gen1 "PRTG Device Search" "Processing probe '127.0.0.11' (2/2)" 100) +
                 (Gen2 "PRTG WMI Service Search" "Processing device 'Probe Device1' (2/2)" 100) +
-                    (Gen3 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total2' forever (1/2)" 50)
+                    (Gen3 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total2' (ID: 1002) forever (1/2)" 50)
 
             (Gen1 "PRTG Device Search" "Processing probe '127.0.0.11' (2/2)" 100) +
                 (Gen2 "PRTG WMI Service Search" "Processing device 'Probe Device1' (2/2)" 100) +
-                    (Gen3 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total3' forever (2/2)" 100)
+                    (Gen3 "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total3' (ID: 1003) forever (2/2)" 100)
 
             (Gen1 "PRTG Device Search" "Processing probe '127.0.0.11' (2/2)" 100) +
                 (Gen2 "PRTG WMI Service Search" "Processing device 'Probe Device1' (2/2)" 100) +
-                    (Gen3 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total3' forever (2/2)" 100)
+                    (Gen3 "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total3' (ID: 1003) forever (2/2)" 100)
 
             (Gen1 "PRTG Device Search" "Processing probe '127.0.0.11' (2/2)" 100) +
                 (Gen2 "PRTG WMI Service Search (Completed)" "Processing device 'Probe Device1' (2/2)" 100)
@@ -9196,13 +9196,13 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         Validate(@(
             (Gen "PRTG Device Search" "Retrieving all devices")
             (Gen "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50)
-            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device0' forever (1/2)" 50)
-            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device0' forever (1/2)" 50 "Retrieving all sensors")
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device0' (ID: 3000) forever (1/2)" 50)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device0' (ID: 3000) forever (1/2)" 50 "Retrieving all sensors")
 
-            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device1' forever (2/2)" 100)
-            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device1' forever (2/2)" 100 "Retrieving all sensors")
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device1' (ID: 3001) forever (2/2)" 100)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device1' (ID: 3001) forever (2/2)" 100 "Retrieving all sensors")
 
-            (Gen "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device1' forever (2/2)" 100)
+            (Gen "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device1' (ID: 3001) forever (2/2)" 100)
         ))
     }
 
@@ -9212,13 +9212,13 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $devices | Pause-Object -Forever -PassThru -Batch:$false | Get-Sensor
 
         Validate(@(
-            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device0' forever (1/2)" 50)
-            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device0' forever (1/2)" 50 "Retrieving all sensors")
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device0' (ID: 3000) forever (1/2)" 50)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device0' (ID: 3000) forever (1/2)" 50 "Retrieving all sensors")
 
-            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device1' forever (2/2)" 100)
-            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device1' forever (2/2)" 100 "Retrieving all sensors")
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device1' (ID: 3001) forever (2/2)" 100)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device1' (ID: 3001) forever (2/2)" 100 "Retrieving all sensors")
 
-            (Gen "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device1' forever (2/2)" 100 "Retrieving all sensors")
+            (Gen "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device1' (ID: 3001) forever (2/2)" 100 "Retrieving all sensors")
         ))
     }
 
@@ -9232,39 +9232,39 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         Validate(@(
             (Gen "PRTG Group Search" "Retrieving all groups")
             (Gen "PRTG Group Search" "Processing group 'Windows Infrastructure0' (1/2)" 50)
-            (Gen "Pausing PRTG Objects" "Pausing group 'Windows Infrastructure0' forever (1/2)" 50)
-            (Gen "Pausing PRTG Objects" "Pausing group 'Windows Infrastructure0' forever (1/2)" 50 "Retrieving all devices")
+            (Gen "Pausing PRTG Objects" "Pausing group 'Windows Infrastructure0' (ID: 2000) forever (1/2)" 50)
+            (Gen "Pausing PRTG Objects" "Pausing group 'Windows Infrastructure0' (ID: 2000) forever (1/2)" 50 "Retrieving all devices")
 
-            (Gen1 "Pausing PRTG Objects" "Pausing group 'Windows Infrastructure0' forever (1/2)" 50) +
+            (Gen1 "Pausing PRTG Objects" "Pausing group 'Windows Infrastructure0' (ID: 2000) forever (1/2)" 50) +
                 (Gen2 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50)
 
-            (Gen1 "Pausing PRTG Objects" "Pausing group 'Windows Infrastructure0' forever (1/2)" 50) +
+            (Gen1 "Pausing PRTG Objects" "Pausing group 'Windows Infrastructure0' (ID: 2000) forever (1/2)" 50) +
                 (Gen2 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50 "Retrieving all sensors")
 
-            (Gen1 "Pausing PRTG Objects" "Pausing group 'Windows Infrastructure0' forever (1/2)" 50) +
+            (Gen1 "Pausing PRTG Objects" "Pausing group 'Windows Infrastructure0' (ID: 2000) forever (1/2)" 50) +
                 (Gen2 "PRTG Device Search" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
 
-            (Gen1 "Pausing PRTG Objects" "Pausing group 'Windows Infrastructure0' forever (1/2)" 50) +
+            (Gen1 "Pausing PRTG Objects" "Pausing group 'Windows Infrastructure0' (ID: 2000) forever (1/2)" 50) +
                 (Gen2 "PRTG Device Search (Completed)" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
 
             ###################################################################
 
-            (Gen "Pausing PRTG Objects" "Pausing group 'Windows Infrastructure1' forever (2/2)" 100)
-            (Gen "Pausing PRTG Objects" "Pausing group 'Windows Infrastructure1' forever (2/2)" 100 "Retrieving all devices")
+            (Gen "Pausing PRTG Objects" "Pausing group 'Windows Infrastructure1' (ID: 2001) forever (2/2)" 100)
+            (Gen "Pausing PRTG Objects" "Pausing group 'Windows Infrastructure1' (ID: 2001) forever (2/2)" 100 "Retrieving all devices")
 
-            (Gen1 "Pausing PRTG Objects" "Pausing group 'Windows Infrastructure1' forever (2/2)" 100) +
+            (Gen1 "Pausing PRTG Objects" "Pausing group 'Windows Infrastructure1' (ID: 2001) forever (2/2)" 100) +
                 (Gen2 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50)
 
-            (Gen1 "Pausing PRTG Objects" "Pausing group 'Windows Infrastructure1' forever (2/2)" 100) +
+            (Gen1 "Pausing PRTG Objects" "Pausing group 'Windows Infrastructure1' (ID: 2001) forever (2/2)" 100) +
                 (Gen2 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50 "Retrieving all sensors")
 
-            (Gen1 "Pausing PRTG Objects" "Pausing group 'Windows Infrastructure1' forever (2/2)" 100) +
+            (Gen1 "Pausing PRTG Objects" "Pausing group 'Windows Infrastructure1' (ID: 2001) forever (2/2)" 100) +
                 (Gen2 "PRTG Device Search" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
 
-            (Gen1 "Pausing PRTG Objects" "Pausing group 'Windows Infrastructure1' forever (2/2)" 100) +
+            (Gen1 "Pausing PRTG Objects" "Pausing group 'Windows Infrastructure1' (ID: 2001) forever (2/2)" 100) +
                 (Gen2 "PRTG Device Search (Completed)" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
 
-            (Gen "Pausing PRTG Objects (Completed)" "Pausing group 'Windows Infrastructure1' forever (2/2)" 100)
+            (Gen "Pausing PRTG Objects (Completed)" "Pausing group 'Windows Infrastructure1' (ID: 2001) forever (2/2)" 100)
         ))
     }
 
@@ -9274,39 +9274,39 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $groups | Pause-Object -Forever -Batch:$false -PassThru | Get-Device | Get-Sensor
 
         Validate(@(
-            (Gen "Pausing PRTG Objects" "Pausing group 'Windows Infrastructure0' forever (1/2)" 50)
-            (Gen "Pausing PRTG Objects" "Pausing group 'Windows Infrastructure0' forever (1/2)" 50 "Retrieving all devices")
+            (Gen "Pausing PRTG Objects" "Pausing group 'Windows Infrastructure0' (ID: 2000) forever (1/2)" 50)
+            (Gen "Pausing PRTG Objects" "Pausing group 'Windows Infrastructure0' (ID: 2000) forever (1/2)" 50 "Retrieving all devices")
 
-            (Gen1 "Pausing PRTG Objects" "Pausing group 'Windows Infrastructure0' forever (1/2)" 50) +
+            (Gen1 "Pausing PRTG Objects" "Pausing group 'Windows Infrastructure0' (ID: 2000) forever (1/2)" 50) +
                 (Gen2 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50)
 
-            (Gen1 "Pausing PRTG Objects" "Pausing group 'Windows Infrastructure0' forever (1/2)" 50) +
+            (Gen1 "Pausing PRTG Objects" "Pausing group 'Windows Infrastructure0' (ID: 2000) forever (1/2)" 50) +
                 (Gen2 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50 "Retrieving all sensors")
 
-            (Gen1 "Pausing PRTG Objects" "Pausing group 'Windows Infrastructure0' forever (1/2)" 50) +
+            (Gen1 "Pausing PRTG Objects" "Pausing group 'Windows Infrastructure0' (ID: 2000) forever (1/2)" 50) +
                 (Gen2 "PRTG Device Search" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
 
-            (Gen1 "Pausing PRTG Objects" "Pausing group 'Windows Infrastructure0' forever (1/2)" 50) +
+            (Gen1 "Pausing PRTG Objects" "Pausing group 'Windows Infrastructure0' (ID: 2000) forever (1/2)" 50) +
                 (Gen2 "PRTG Device Search (Completed)" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
 
             ###################################################################
 
-            (Gen "Pausing PRTG Objects" "Pausing group 'Windows Infrastructure1' forever (2/2)" 100)
-            (Gen "Pausing PRTG Objects" "Pausing group 'Windows Infrastructure1' forever (2/2)" 100 "Retrieving all devices")
+            (Gen "Pausing PRTG Objects" "Pausing group 'Windows Infrastructure1' (ID: 2001) forever (2/2)" 100)
+            (Gen "Pausing PRTG Objects" "Pausing group 'Windows Infrastructure1' (ID: 2001) forever (2/2)" 100 "Retrieving all devices")
 
-            (Gen1 "Pausing PRTG Objects" "Pausing group 'Windows Infrastructure1' forever (2/2)" 100) +
+            (Gen1 "Pausing PRTG Objects" "Pausing group 'Windows Infrastructure1' (ID: 2001) forever (2/2)" 100) +
                 (Gen2 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50)
 
-            (Gen1 "Pausing PRTG Objects" "Pausing group 'Windows Infrastructure1' forever (2/2)" 100) +
+            (Gen1 "Pausing PRTG Objects" "Pausing group 'Windows Infrastructure1' (ID: 2001) forever (2/2)" 100) +
                 (Gen2 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50 "Retrieving all sensors")
 
-            (Gen1 "Pausing PRTG Objects" "Pausing group 'Windows Infrastructure1' forever (2/2)" 100) +
+            (Gen1 "Pausing PRTG Objects" "Pausing group 'Windows Infrastructure1' (ID: 2001) forever (2/2)" 100) +
                 (Gen2 "PRTG Device Search" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
 
-            (Gen1 "Pausing PRTG Objects" "Pausing group 'Windows Infrastructure1' forever (2/2)" 100) +
+            (Gen1 "Pausing PRTG Objects" "Pausing group 'Windows Infrastructure1' (ID: 2001) forever (2/2)" 100) +
                 (Gen2 "PRTG Device Search (Completed)" "Processing device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
 
-            (Gen "Pausing PRTG Objects (Completed)" "Pausing group 'Windows Infrastructure1' forever (2/2)" 100)
+            (Gen "Pausing PRTG Objects (Completed)" "Pausing group 'Windows Infrastructure1' (ID: 2001) forever (2/2)" 100)
         ))
     }
 
@@ -9319,13 +9319,13 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         Validate(@(
             (Gen "PRTG Device Search" "Retrieving all devices")
             (Gen "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50)
-            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device0' forever (1/2)" 50)
-            (Gen "Resuming PRTG Objects" "Resuming device 'Probe Device0' (1/2)" 50)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device0' (ID: 3000) forever (1/2)" 50)
+            (Gen "Resuming PRTG Objects" "Resuming device 'Probe Device0' (ID: 3000) (1/2)" 50)
 
-            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device1' forever (2/2)" 100)
-            (Gen "Resuming PRTG Objects" "Resuming device 'Probe Device1' (2/2)" 100)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device1' (ID: 3001) forever (2/2)" 100)
+            (Gen "Resuming PRTG Objects" "Resuming device 'Probe Device1' (ID: 3001) (2/2)" 100)
             
-            (Gen "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device1' forever (2/2)" 100)
+            (Gen "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device1' (ID: 3001) forever (2/2)" 100)
         ))
     }
 
@@ -9335,13 +9335,13 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $devices | Pause-Object -Forever -PassThru -Batch:$false | Resume-Object -Batch:$false
 
         Validate(@(
-            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device0' forever (1/2)" 50)
-            (Gen "Resuming PRTG Objects" "Resuming device 'Probe Device0' (1/2)" 50)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device0' (ID: 3000) forever (1/2)" 50)
+            (Gen "Resuming PRTG Objects" "Resuming device 'Probe Device0' (ID: 3000) (1/2)" 50)
 
-            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device1' forever (2/2)" 100)
-            (Gen "Resuming PRTG Objects" "Resuming device 'Probe Device1' (2/2)" 100)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device1' (ID: 3001) forever (2/2)" 100)
+            (Gen "Resuming PRTG Objects" "Resuming device 'Probe Device1' (ID: 3001) (2/2)" 100)
             
-            (Gen "Resuming PRTG Objects (Completed)" "Resuming device 'Probe Device1' (2/2)" 100)
+            (Gen "Resuming PRTG Objects (Completed)" "Resuming device 'Probe Device1' (ID: 3001) (2/2)" 100)
         ))
     }
 
@@ -9355,15 +9355,15 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         Validate(@(
             (Gen "PRTG Device Search" "Retrieving all devices")
             (Gen "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50)
-            (Gen "Pausing PRTG Objects"  "Pausing device 'Probe Device0' forever (1/2)" 50)
-            (Gen "Resuming PRTG Objects" "Resuming device 'Probe Device0' (1/2)" 50)
-            (Gen "Resuming PRTG Objects" "Resuming device 'Probe Device0' (1/2)" 50 "Retrieving all sensors")
+            (Gen "Pausing PRTG Objects"  "Pausing device 'Probe Device0' (ID: 3000) forever (1/2)" 50)
+            (Gen "Resuming PRTG Objects" "Resuming device 'Probe Device0' (ID: 3000) (1/2)" 50)
+            (Gen "Resuming PRTG Objects" "Resuming device 'Probe Device0' (ID: 3000) (1/2)" 50 "Retrieving all sensors")
 
-            (Gen "Pausing PRTG Objects"  "Pausing device 'Probe Device1' forever (2/2)" 100)
-            (Gen "Resuming PRTG Objects" "Resuming device 'Probe Device1' (2/2)" 100)
-            (Gen "Resuming PRTG Objects" "Resuming device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
+            (Gen "Pausing PRTG Objects"  "Pausing device 'Probe Device1' (ID: 3001) forever (2/2)" 100)
+            (Gen "Resuming PRTG Objects" "Resuming device 'Probe Device1' (ID: 3001) (2/2)" 100)
+            (Gen "Resuming PRTG Objects" "Resuming device 'Probe Device1' (ID: 3001) (2/2)" 100 "Retrieving all sensors")
 
-            (Gen "Pausing PRTG Objects (Completed)"  "Pausing device 'Probe Device1' forever (2/2)" 100)
+            (Gen "Pausing PRTG Objects (Completed)"  "Pausing device 'Probe Device1' (ID: 3001) forever (2/2)" 100)
         ))
     }
 
@@ -9373,15 +9373,15 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $devices | Pause-Object -Forever -PassThru -Batch:$false | Resume-Object -PassThru -Batch:$false | Get-Sensor
 
         Validate(@(
-            (Gen "Pausing PRTG Objects"  "Pausing device 'Probe Device0' forever (1/2)" 50)
-            (Gen "Resuming PRTG Objects" "Resuming device 'Probe Device0' (1/2)" 50)
-            (Gen "Resuming PRTG Objects" "Resuming device 'Probe Device0' (1/2)" 50 "Retrieving all sensors")
+            (Gen "Pausing PRTG Objects"  "Pausing device 'Probe Device0' (ID: 3000) forever (1/2)" 50)
+            (Gen "Resuming PRTG Objects" "Resuming device 'Probe Device0' (ID: 3000) (1/2)" 50)
+            (Gen "Resuming PRTG Objects" "Resuming device 'Probe Device0' (ID: 3000) (1/2)" 50 "Retrieving all sensors")
 
-            (Gen "Pausing PRTG Objects"  "Pausing device 'Probe Device1' forever (2/2)" 100)
-            (Gen "Resuming PRTG Objects" "Resuming device 'Probe Device1' (2/2)" 100)
-            (Gen "Resuming PRTG Objects" "Resuming device 'Probe Device1' (2/2)" 100 "Retrieving all sensors")
+            (Gen "Pausing PRTG Objects"  "Pausing device 'Probe Device1' (ID: 3001) forever (2/2)" 100)
+            (Gen "Resuming PRTG Objects" "Resuming device 'Probe Device1' (ID: 3001) (2/2)" 100)
+            (Gen "Resuming PRTG Objects" "Resuming device 'Probe Device1' (ID: 3001) (2/2)" 100 "Retrieving all sensors")
 
-            (Gen "Resuming PRTG Objects (Completed)"  "Resuming device 'Probe Device1' (2/2)" 100)
+            (Gen "Resuming PRTG Objects (Completed)"  "Resuming device 'Probe Device1' (ID: 3001) (2/2)" 100)
         ))
     }
 
@@ -9394,17 +9394,17 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         Validate(@(
             (Gen "PRTG Device Search" "Retrieving all devices")
             (Gen "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50)
-            (Gen "Pausing PRTG Objects"  "Pausing device 'Probe Device0' forever (1/2)" 50)
-            (Gen "Resuming PRTG Objects" "Resuming device 'Probe Device0' (1/2)" 50)
+            (Gen "Pausing PRTG Objects"  "Pausing device 'Probe Device0' (ID: 3000) forever (1/2)" 50)
+            (Gen "Resuming PRTG Objects" "Resuming device 'Probe Device0' (ID: 3000) (1/2)" 50)
             (Gen "Modify PRTG Object Settings" "Setting object 'Probe Device0' (ID: 3000) setting 'Interval' to '00:00:30' (1/2)" 50)
             (Gen "Modify PRTG Object Settings" "Setting object 'Probe Device0' (ID: 3000) setting 'Interval' to '00:00:30' (1/2)" 50 "Retrieving all sensors")
 
-            (Gen "Pausing PRTG Objects"  "Pausing device 'Probe Device1' forever (2/2)" 100)
-            (Gen "Resuming PRTG Objects" "Resuming device 'Probe Device1' (2/2)" 100)
+            (Gen "Pausing PRTG Objects"  "Pausing device 'Probe Device1' (ID: 3001) forever (2/2)" 100)
+            (Gen "Resuming PRTG Objects" "Resuming device 'Probe Device1' (ID: 3001) (2/2)" 100)
             (Gen "Modify PRTG Object Settings" "Setting object 'Probe Device1' (ID: 3001) setting 'Interval' to '00:00:30' (2/2)" 100)
             (Gen "Modify PRTG Object Settings" "Setting object 'Probe Device1' (ID: 3001) setting 'Interval' to '00:00:30' (2/2)" 100 "Retrieving all sensors")
 
-            (Gen "Pausing PRTG Objects (Completed)"  "Pausing device 'Probe Device1' forever (2/2)" 100)
+            (Gen "Pausing PRTG Objects (Completed)"  "Pausing device 'Probe Device1' (ID: 3001) forever (2/2)" 100)
         ))
     }
 
@@ -9414,17 +9414,17 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $devices | Pause-Object -Forever -PassThru -Batch:$false | Resume-Object -PassThru -Batch:$false | Set-ObjectProperty Interval 00:00:30 -PassThru -Batch:$false | Get-Sensor
 
         Validate(@(
-            (Gen "Pausing PRTG Objects"  "Pausing device 'Probe Device0' forever (1/2)" 50)
-            (Gen "Resuming PRTG Objects" "Resuming device 'Probe Device0' (1/2)" 50)
+            (Gen "Pausing PRTG Objects"  "Pausing device 'Probe Device0' (ID: 3000) forever (1/2)" 50)
+            (Gen "Resuming PRTG Objects" "Resuming device 'Probe Device0' (ID: 3000) (1/2)" 50)
             (Gen "Modify PRTG Object Settings" "Setting object 'Probe Device0' (ID: 3000) setting 'Interval' to '00:00:30' (1/2)" 50)
             (Gen "Modify PRTG Object Settings" "Setting object 'Probe Device0' (ID: 3000) setting 'Interval' to '00:00:30' (1/2)" 50 "Retrieving all sensors")
 
-            (Gen "Pausing PRTG Objects"  "Pausing device 'Probe Device1' forever (2/2)" 100)
-            (Gen "Resuming PRTG Objects" "Resuming device 'Probe Device1' (2/2)" 100)
+            (Gen "Pausing PRTG Objects"  "Pausing device 'Probe Device1' (ID: 3001) forever (2/2)" 100)
+            (Gen "Resuming PRTG Objects" "Resuming device 'Probe Device1' (ID: 3001) (2/2)" 100)
             (Gen "Modify PRTG Object Settings" "Setting object 'Probe Device1' (ID: 3001) setting 'Interval' to '00:00:30' (2/2)" 100)
             (Gen "Modify PRTG Object Settings" "Setting object 'Probe Device1' (ID: 3001) setting 'Interval' to '00:00:30' (2/2)" 100 "Retrieving all sensors")
 
-            (Gen "Resuming PRTG Objects (Completed)"  "Resuming device 'Probe Device1' (2/2)" 100)
+            (Gen "Resuming PRTG Objects (Completed)"  "Resuming device 'Probe Device1' (ID: 3001) (2/2)" 100)
         ))
     }
 
@@ -9438,119 +9438,119 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         Validate(@(
             (Gen "PRTG Probe Search" "Retrieving all probes")
             (Gen "PRTG Probe Search" "Processing probe '127.0.0.10' (1/2)" 50)
-            (Gen "Pausing PRTG Objects" "Pausing probe '127.0.0.10' forever (1/2)" 50)
-            (Gen "Pausing PRTG Objects" "Pausing probe '127.0.0.10' forever (1/2)" 50 "Retrieving all groups")
+            (Gen "Pausing PRTG Objects" "Pausing probe '127.0.0.10' (ID: 1000) forever (1/2)" 50)
+            (Gen "Pausing PRTG Objects" "Pausing probe '127.0.0.10' (ID: 1000) forever (1/2)" 50 "Retrieving all groups")
 
-            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.10' forever (1/2)" 50) +
+            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.10' (ID: 1000) forever (1/2)" 50) +
                 (Gen2 "PRTG Group Search" "Processing group 'Windows Infrastructure0' (1/2)" 50)
 
-            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.10' forever (1/2)" 50) +
-                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure0' (1/2)" 50)
+            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.10' (ID: 1000) forever (1/2)" 50) +
+                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure0' (ID: 2000) (1/2)" 50)
 
-            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.10' forever (1/2)" 50) +
-                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure0' (1/2)" 50 "Retrieving all devices")
+            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.10' (ID: 1000) forever (1/2)" 50) +
+                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure0' (ID: 2000) (1/2)" 50 "Retrieving all devices")
 
-            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.10' forever (1/2)" 50) +
-                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure0' (1/2)" 50) +
+            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.10' (ID: 1000) forever (1/2)" 50) +
+                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure0' (ID: 2000) (1/2)" 50) +
                     (Gen3 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50)
 
-            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.10' forever (1/2)" 50) +
-                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure0' (1/2)" 50) +
+            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.10' (ID: 1000) forever (1/2)" 50) +
+                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure0' (ID: 2000) (1/2)" 50) +
                     (Gen3 "Modify PRTG Object Settings" "Setting object 'Probe Device0' (ID: 3000) setting 'Interval' to '00:00:30' (1/2)" 50)
 
-            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.10' forever (1/2)" 50) +
-                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure0' (1/2)" 50) +
+            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.10' (ID: 1000) forever (1/2)" 50) +
+                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure0' (ID: 2000) (1/2)" 50) +
                     (Gen3 "Modify PRTG Object Settings" "Setting object 'Probe Device1' (ID: 3001) setting 'Interval' to '00:00:30' (2/2)" 100)
 
-            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.10' forever (1/2)" 50) +
-                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure0' (1/2)" 50) +
+            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.10' (ID: 1000) forever (1/2)" 50) +
+                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure0' (ID: 2000) (1/2)" 50) +
                     (Gen3 "Modify PRTG Object Settings (Completed)" "Setting object 'Probe Device1' (ID: 3001) setting 'Interval' to '00:00:30' (2/2)" 100)
 
             ###################################################################
 
-            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.10' forever (1/2)" 50) +
-                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure1' (2/2)" 100)
+            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.10' (ID: 1000) forever (1/2)" 50) +
+                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure1' (ID: 2001) (2/2)" 100)
 
-            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.10' forever (1/2)" 50) +
-                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure1' (2/2)" 100 "Retrieving all devices")
+            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.10' (ID: 1000) forever (1/2)" 50) +
+                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure1' (ID: 2001) (2/2)" 100 "Retrieving all devices")
 
-            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.10' forever (1/2)" 50) +
-                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure1' (2/2)" 100) +
+            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.10' (ID: 1000) forever (1/2)" 50) +
+                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure1' (ID: 2001) (2/2)" 100) +
                     (Gen3 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50)
 
-            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.10' forever (1/2)" 50) +
-                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure1' (2/2)" 100) +
+            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.10' (ID: 1000) forever (1/2)" 50) +
+                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure1' (ID: 2001) (2/2)" 100) +
                     (Gen3 "Modify PRTG Object Settings" "Setting object 'Probe Device0' (ID: 3000) setting 'Interval' to '00:00:30' (1/2)" 50)
 
-            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.10' forever (1/2)" 50) +
-                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure1' (2/2)" 100) +
+            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.10' (ID: 1000) forever (1/2)" 50) +
+                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure1' (ID: 2001) (2/2)" 100) +
                     (Gen3 "Modify PRTG Object Settings" "Setting object 'Probe Device1' (ID: 3001) setting 'Interval' to '00:00:30' (2/2)" 100)
 
-            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.10' forever (1/2)" 50) +
-                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure1' (2/2)" 100) +
+            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.10' (ID: 1000) forever (1/2)" 50) +
+                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure1' (ID: 2001) (2/2)" 100) +
                     (Gen3 "Modify PRTG Object Settings (Completed)" "Setting object 'Probe Device1' (ID: 3001) setting 'Interval' to '00:00:30' (2/2)" 100)
 
-            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.10' forever (1/2)" 50) +
-                (Gen2 "Resuming PRTG Objects (Completed)" "Resuming group 'Windows Infrastructure1' (2/2)" 100)
+            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.10' (ID: 1000) forever (1/2)" 50) +
+                (Gen2 "Resuming PRTG Objects (Completed)" "Resuming group 'Windows Infrastructure1' (ID: 2001) (2/2)" 100)
 
             ##########################################################################################
 
-            (Gen "Pausing PRTG Objects" "Pausing probe '127.0.0.11' forever (2/2)" 100)
-            (Gen "Pausing PRTG Objects" "Pausing probe '127.0.0.11' forever (2/2)" 100 "Retrieving all groups")
+            (Gen "Pausing PRTG Objects" "Pausing probe '127.0.0.11' (ID: 1001) forever (2/2)" 100)
+            (Gen "Pausing PRTG Objects" "Pausing probe '127.0.0.11' (ID: 1001) forever (2/2)" 100 "Retrieving all groups")
 
-            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.11' forever (2/2)" 100) +
+            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.11' (ID: 1001) forever (2/2)" 100) +
                 (Gen2 "PRTG Group Search" "Processing group 'Windows Infrastructure0' (1/2)" 50)
 
-            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.11' forever (2/2)" 100) +
-                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure0' (1/2)" 50)
+            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.11' (ID: 1001) forever (2/2)" 100) +
+                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure0' (ID: 2000) (1/2)" 50)
 
-            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.11' forever (2/2)" 100) +
-                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure0' (1/2)" 50 "Retrieving all devices")
+            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.11' (ID: 1001) forever (2/2)" 100) +
+                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure0' (ID: 2000) (1/2)" 50 "Retrieving all devices")
 
-            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.11' forever (2/2)" 100) +
-                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure0' (1/2)" 50) +
+            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.11' (ID: 1001) forever (2/2)" 100) +
+                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure0' (ID: 2000) (1/2)" 50) +
                     (Gen3 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50)
 
-            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.11' forever (2/2)" 100) +
-                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure0' (1/2)" 50) +
+            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.11' (ID: 1001) forever (2/2)" 100) +
+                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure0' (ID: 2000) (1/2)" 50) +
                     (Gen3 "Modify PRTG Object Settings" "Setting object 'Probe Device0' (ID: 3000) setting 'Interval' to '00:00:30' (1/2)" 50)
 
-            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.11' forever (2/2)" 100) +
-                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure0' (1/2)" 50) +
+            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.11' (ID: 1001) forever (2/2)" 100) +
+                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure0' (ID: 2000) (1/2)" 50) +
                     (Gen3 "Modify PRTG Object Settings" "Setting object 'Probe Device1' (ID: 3001) setting 'Interval' to '00:00:30' (2/2)" 100)
 
-            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.11' forever (2/2)" 100) +
-                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure0' (1/2)" 50) +
+            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.11' (ID: 1001) forever (2/2)" 100) +
+                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure0' (ID: 2000) (1/2)" 50) +
                     (Gen3 "Modify PRTG Object Settings (Completed)" "Setting object 'Probe Device1' (ID: 3001) setting 'Interval' to '00:00:30' (2/2)" 100)
 
             ###################################################################
 
-            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.11' forever (2/2)" 100) +
-                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure1' (2/2)" 100)
+            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.11' (ID: 1001) forever (2/2)" 100) +
+                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure1' (ID: 2001) (2/2)" 100)
 
-            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.11' forever (2/2)" 100) +
-                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure1' (2/2)" 100 "Retrieving all devices")
+            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.11' (ID: 1001) forever (2/2)" 100) +
+                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure1' (ID: 2001) (2/2)" 100 "Retrieving all devices")
 
-            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.11' forever (2/2)" 100) +
-                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure1' (2/2)" 100) +
+            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.11' (ID: 1001) forever (2/2)" 100) +
+                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure1' (ID: 2001) (2/2)" 100) +
                     (Gen3 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50)
 
-            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.11' forever (2/2)" 100) +
-                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure1' (2/2)" 100) +
+            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.11' (ID: 1001) forever (2/2)" 100) +
+                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure1' (ID: 2001) (2/2)" 100) +
                     (Gen3 "Modify PRTG Object Settings" "Setting object 'Probe Device0' (ID: 3000) setting 'Interval' to '00:00:30' (1/2)" 50)
 
-            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.11' forever (2/2)" 100) +
-                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure1' (2/2)" 100) +
+            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.11' (ID: 1001) forever (2/2)" 100) +
+                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure1' (ID: 2001) (2/2)" 100) +
                     (Gen3 "Modify PRTG Object Settings" "Setting object 'Probe Device1' (ID: 3001) setting 'Interval' to '00:00:30' (2/2)" 100)
 
-            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.11' forever (2/2)" 100) +
-                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure1' (2/2)" 100) +
+            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.11' (ID: 1001) forever (2/2)" 100) +
+                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure1' (ID: 2001) (2/2)" 100) +
                     (Gen3 "Modify PRTG Object Settings (Completed)" "Setting object 'Probe Device1' (ID: 3001) setting 'Interval' to '00:00:30' (2/2)" 100)
 
-            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.11' forever (2/2)" 100) +
-                (Gen2 "Resuming PRTG Objects (Completed)" "Resuming group 'Windows Infrastructure1' (2/2)" 100)
+            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.11' (ID: 1001) forever (2/2)" 100) +
+                (Gen2 "Resuming PRTG Objects (Completed)" "Resuming group 'Windows Infrastructure1' (ID: 2001) (2/2)" 100)
 
-            (Gen "Pausing PRTG Objects (Completed)" "Pausing probe '127.0.0.11' forever (2/2)" 100)
+            (Gen "Pausing PRTG Objects (Completed)" "Pausing probe '127.0.0.11' (ID: 1001) forever (2/2)" 100)
         ))
     }
 
@@ -9560,119 +9560,119 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $probes | Pause-Object -Forever -PassThru -Batch:$false | Get-Group | Resume-Object -PassThru -Batch:$false | Get-Device | Set-ObjectProperty Interval 00:00:30 -PassThru -Batch:$false
 
         Validate(@(
-            (Gen "Pausing PRTG Objects" "Pausing probe '127.0.0.10' forever (1/2)" 50)
-            (Gen "Pausing PRTG Objects" "Pausing probe '127.0.0.10' forever (1/2)" 50 "Retrieving all groups")
+            (Gen "Pausing PRTG Objects" "Pausing probe '127.0.0.10' (ID: 1000) forever (1/2)" 50)
+            (Gen "Pausing PRTG Objects" "Pausing probe '127.0.0.10' (ID: 1000) forever (1/2)" 50 "Retrieving all groups")
 
-            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.10' forever (1/2)" 50) +
+            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.10' (ID: 1000) forever (1/2)" 50) +
                 (Gen2 "PRTG Group Search" "Processing group 'Windows Infrastructure0' (1/2)" 50)
 
-            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.10' forever (1/2)" 50) +
-                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure0' (1/2)" 50)
+            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.10' (ID: 1000) forever (1/2)" 50) +
+                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure0' (ID: 2000) (1/2)" 50)
 
-            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.10' forever (1/2)" 50) +
-                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure0' (1/2)" 50 "Retrieving all devices")
+            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.10' (ID: 1000) forever (1/2)" 50) +
+                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure0' (ID: 2000) (1/2)" 50 "Retrieving all devices")
 
-            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.10' forever (1/2)" 50) +
-                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure0' (1/2)" 50) +
+            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.10' (ID: 1000) forever (1/2)" 50) +
+                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure0' (ID: 2000) (1/2)" 50) +
                     (Gen3 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50)
 
-            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.10' forever (1/2)" 50) +
-                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure0' (1/2)" 50) +
+            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.10' (ID: 1000) forever (1/2)" 50) +
+                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure0' (ID: 2000) (1/2)" 50) +
                     (Gen3 "Modify PRTG Object Settings" "Setting object 'Probe Device0' (ID: 3000) setting 'Interval' to '00:00:30' (1/2)" 50)
 
-            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.10' forever (1/2)" 50) +
-                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure0' (1/2)" 50) +
+            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.10' (ID: 1000) forever (1/2)" 50) +
+                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure0' (ID: 2000) (1/2)" 50) +
                     (Gen3 "Modify PRTG Object Settings" "Setting object 'Probe Device1' (ID: 3001) setting 'Interval' to '00:00:30' (2/2)" 100)
 
-            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.10' forever (1/2)" 50) +
-                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure0' (1/2)" 50) +
+            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.10' (ID: 1000) forever (1/2)" 50) +
+                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure0' (ID: 2000) (1/2)" 50) +
                     (Gen3 "Modify PRTG Object Settings (Completed)" "Setting object 'Probe Device1' (ID: 3001) setting 'Interval' to '00:00:30' (2/2)" 100)
 
             ###################################################################
 
-            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.10' forever (1/2)" 50) +
-                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure1' (2/2)" 100)
+            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.10' (ID: 1000) forever (1/2)" 50) +
+                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure1' (ID: 2001) (2/2)" 100)
 
-            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.10' forever (1/2)" 50) +
-                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure1' (2/2)" 100 "Retrieving all devices")
+            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.10' (ID: 1000) forever (1/2)" 50) +
+                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure1' (ID: 2001) (2/2)" 100 "Retrieving all devices")
 
-            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.10' forever (1/2)" 50) +
-                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure1' (2/2)" 100) +
+            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.10' (ID: 1000) forever (1/2)" 50) +
+                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure1' (ID: 2001) (2/2)" 100) +
                     (Gen3 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50)
 
-            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.10' forever (1/2)" 50) +
-                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure1' (2/2)" 100) +
+            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.10' (ID: 1000) forever (1/2)" 50) +
+                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure1' (ID: 2001) (2/2)" 100) +
                     (Gen3 "Modify PRTG Object Settings" "Setting object 'Probe Device0' (ID: 3000) setting 'Interval' to '00:00:30' (1/2)" 50)
 
-            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.10' forever (1/2)" 50) +
-                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure1' (2/2)" 100) +
+            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.10' (ID: 1000) forever (1/2)" 50) +
+                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure1' (ID: 2001) (2/2)" 100) +
                     (Gen3 "Modify PRTG Object Settings" "Setting object 'Probe Device1' (ID: 3001) setting 'Interval' to '00:00:30' (2/2)" 100)
 
-            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.10' forever (1/2)" 50) +
-                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure1' (2/2)" 100) +
+            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.10' (ID: 1000) forever (1/2)" 50) +
+                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure1' (ID: 2001) (2/2)" 100) +
                     (Gen3 "Modify PRTG Object Settings (Completed)" "Setting object 'Probe Device1' (ID: 3001) setting 'Interval' to '00:00:30' (2/2)" 100)
 
-            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.10' forever (1/2)" 50) +
-                (Gen2 "Resuming PRTG Objects (Completed)" "Resuming group 'Windows Infrastructure1' (2/2)" 100)
+            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.10' (ID: 1000) forever (1/2)" 50) +
+                (Gen2 "Resuming PRTG Objects (Completed)" "Resuming group 'Windows Infrastructure1' (ID: 2001) (2/2)" 100)
 
             ##########################################################################################
 
-            (Gen "Pausing PRTG Objects" "Pausing probe '127.0.0.11' forever (2/2)" 100)
-            (Gen "Pausing PRTG Objects" "Pausing probe '127.0.0.11' forever (2/2)" 100 "Retrieving all groups")
+            (Gen "Pausing PRTG Objects" "Pausing probe '127.0.0.11' (ID: 1001) forever (2/2)" 100)
+            (Gen "Pausing PRTG Objects" "Pausing probe '127.0.0.11' (ID: 1001) forever (2/2)" 100 "Retrieving all groups")
 
-            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.11' forever (2/2)" 100) +
+            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.11' (ID: 1001) forever (2/2)" 100) +
                 (Gen2 "PRTG Group Search" "Processing group 'Windows Infrastructure0' (1/2)" 50)
 
-            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.11' forever (2/2)" 100) +
-                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure0' (1/2)" 50)
+            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.11' (ID: 1001) forever (2/2)" 100) +
+                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure0' (ID: 2000) (1/2)" 50)
 
-            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.11' forever (2/2)" 100) +
-                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure0' (1/2)" 50 "Retrieving all devices")
+            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.11' (ID: 1001) forever (2/2)" 100) +
+                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure0' (ID: 2000) (1/2)" 50 "Retrieving all devices")
 
-            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.11' forever (2/2)" 100) +
-                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure0' (1/2)" 50) +
+            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.11' (ID: 1001) forever (2/2)" 100) +
+                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure0' (ID: 2000) (1/2)" 50) +
                     (Gen3 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50)
 
-            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.11' forever (2/2)" 100) +
-                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure0' (1/2)" 50) +
+            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.11' (ID: 1001) forever (2/2)" 100) +
+                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure0' (ID: 2000) (1/2)" 50) +
                     (Gen3 "Modify PRTG Object Settings" "Setting object 'Probe Device0' (ID: 3000) setting 'Interval' to '00:00:30' (1/2)" 50)
 
-            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.11' forever (2/2)" 100) +
-                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure0' (1/2)" 50) +
+            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.11' (ID: 1001) forever (2/2)" 100) +
+                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure0' (ID: 2000) (1/2)" 50) +
                     (Gen3 "Modify PRTG Object Settings" "Setting object 'Probe Device1' (ID: 3001) setting 'Interval' to '00:00:30' (2/2)" 100)
 
-            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.11' forever (2/2)" 100) +
-                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure0' (1/2)" 50) +
+            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.11' (ID: 1001) forever (2/2)" 100) +
+                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure0' (ID: 2000) (1/2)" 50) +
                     (Gen3 "Modify PRTG Object Settings (Completed)" "Setting object 'Probe Device1' (ID: 3001) setting 'Interval' to '00:00:30' (2/2)" 100)
 
             ###################################################################
 
-            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.11' forever (2/2)" 100) +
-                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure1' (2/2)" 100)
+            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.11' (ID: 1001) forever (2/2)" 100) +
+                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure1' (ID: 2001) (2/2)" 100)
 
-            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.11' forever (2/2)" 100) +
-                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure1' (2/2)" 100 "Retrieving all devices")
+            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.11' (ID: 1001) forever (2/2)" 100) +
+                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure1' (ID: 2001) (2/2)" 100 "Retrieving all devices")
 
-            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.11' forever (2/2)" 100) +
-                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure1' (2/2)" 100) +
+            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.11' (ID: 1001) forever (2/2)" 100) +
+                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure1' (ID: 2001) (2/2)" 100) +
                     (Gen3 "PRTG Device Search" "Processing device 'Probe Device0' (1/2)" 50)
 
-            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.11' forever (2/2)" 100) +
-                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure1' (2/2)" 100) +
+            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.11' (ID: 1001) forever (2/2)" 100) +
+                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure1' (ID: 2001) (2/2)" 100) +
                     (Gen3 "Modify PRTG Object Settings" "Setting object 'Probe Device0' (ID: 3000) setting 'Interval' to '00:00:30' (1/2)" 50)
 
-            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.11' forever (2/2)" 100) +
-                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure1' (2/2)" 100) +
+            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.11' (ID: 1001) forever (2/2)" 100) +
+                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure1' (ID: 2001) (2/2)" 100) +
                     (Gen3 "Modify PRTG Object Settings" "Setting object 'Probe Device1' (ID: 3001) setting 'Interval' to '00:00:30' (2/2)" 100)
 
-            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.11' forever (2/2)" 100) +
-                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure1' (2/2)" 100) +
+            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.11' (ID: 1001) forever (2/2)" 100) +
+                (Gen2 "Resuming PRTG Objects" "Resuming group 'Windows Infrastructure1' (ID: 2001) (2/2)" 100) +
                     (Gen3 "Modify PRTG Object Settings (Completed)" "Setting object 'Probe Device1' (ID: 3001) setting 'Interval' to '00:00:30' (2/2)" 100)
 
-            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.11' forever (2/2)" 100) +
-                (Gen2 "Resuming PRTG Objects (Completed)" "Resuming group 'Windows Infrastructure1' (2/2)" 100)
+            (Gen1 "Pausing PRTG Objects" "Pausing probe '127.0.0.11' (ID: 1001) forever (2/2)" 100) +
+                (Gen2 "Resuming PRTG Objects (Completed)" "Resuming group 'Windows Infrastructure1' (ID: 2001) (2/2)" 100)
 
-            (Gen "Pausing PRTG Objects (Completed)" "Pausing probe '127.0.0.11' forever (2/2)" 100)
+            (Gen "Pausing PRTG Objects (Completed)" "Pausing probe '127.0.0.11' (ID: 1001) forever (2/2)" 100)
         ))
     }
 
@@ -9686,11 +9686,11 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $devices | Pause-Object -Forever -PassThru -Batch:$false | Select -First 2 | Get-Sensor
 
         Validate(@(
-            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device0' forever (1/5)" 20)
-            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device0' forever (1/5)" 20 "Retrieving all sensors")
-            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device1' forever (2/5)" 40)
-            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device1' forever (2/5)" 40 "Retrieving all sensors")
-            (Gen "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device1' forever (2/5)" 40 "Retrieving all sensors")
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device0' (ID: 3000) forever (1/5)" 20)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device0' (ID: 3000) forever (1/5)" 20 "Retrieving all sensors")
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device1' (ID: 3001) forever (2/5)" 40)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device1' (ID: 3001) forever (2/5)" 40 "Retrieving all sensors")
+            (Gen "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device1' (ID: 3001) forever (2/5)" 40 "Retrieving all sensors")
         ))
     }
 
@@ -9706,15 +9706,15 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $devices | Pause-Object -Forever -PassThru -Batch:$false | Select -Skip 2 | Get-Sensor
 
         Validate(@(
-            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device0' forever (1/5)" 20)
-            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device1' forever (2/5)" 40)
-            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device2' forever (3/5)" 60)
-            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device2' forever (3/5)" 60 "Retrieving all sensors")
-            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device3' forever (4/5)" 80)
-            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device3' forever (4/5)" 80 "Retrieving all sensors")
-            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device4' forever (5/5)" 100)
-            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device4' forever (5/5)" 100 "Retrieving all sensors")
-            (Gen "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device4' forever (5/5)" 100 "Retrieving all sensors")
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device0' (ID: 3000) forever (1/5)" 20)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device1' (ID: 3001) forever (2/5)" 40)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device2' (ID: 3002) forever (3/5)" 60)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device2' (ID: 3002) forever (3/5)" 60 "Retrieving all sensors")
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device3' (ID: 3003) forever (4/5)" 80)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device3' (ID: 3003) forever (4/5)" 80 "Retrieving all sensors")
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device4' (ID: 3004) forever (5/5)" 100)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device4' (ID: 3004) forever (5/5)" 100 "Retrieving all sensors")
+            (Gen "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device4' (ID: 3004) forever (5/5)" 100 "Retrieving all sensors")
         ))
     }
     
@@ -9727,15 +9727,15 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         #by Get-Sensor to display records 0, 1 and 2
 
         Validate(@(
-            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device0' forever (1/5)" 20)
-            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device1' forever (2/5)" 40)
-            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device2' forever (3/5)" 60)
-            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device2' forever (3/5)" 60 "Retrieving all sensors")
-            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device3' forever (4/5)" 80)
-            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device3' forever (4/5)" 80 "Retrieving all sensors")
-            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device4' forever (5/5)" 100)
-            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device4' forever (5/5)" 100 "Retrieving all sensors")
-            (Gen "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device4' forever (5/5)" 100 "Retrieving all sensors")
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device0' (ID: 3000) forever (1/5)" 20)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device1' (ID: 3001) forever (2/5)" 40)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device2' (ID: 3002) forever (3/5)" 60)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device2' (ID: 3002) forever (3/5)" 60 "Retrieving all sensors")
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device3' (ID: 3003) forever (4/5)" 80)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device3' (ID: 3003) forever (4/5)" 80 "Retrieving all sensors")
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device4' (ID: 3004) forever (5/5)" 100)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device4' (ID: 3004) forever (5/5)" 100 "Retrieving all sensors")
+            (Gen "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device4' (ID: 3004) forever (5/5)" 100 "Retrieving all sensors")
         ))
     }
     
@@ -9745,13 +9745,13 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $devices | Pause-Object -Forever -PassThru -Batch:$false | Select -Index 1,3 | Get-Sensor
 
         Validate(@(
-            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device0' forever (1/5)" 20)
-            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device1' forever (2/5)" 40)
-            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device1' forever (2/5)" 40 "Retrieving all sensors")
-            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device2' forever (3/5)" 60)
-            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device3' forever (4/5)" 80)
-            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device3' forever (4/5)" 80 "Retrieving all sensors")
-            (Gen "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device3' forever (4/5)" 80 "Retrieving all sensors")
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device0' (ID: 3000) forever (1/5)" 20)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device1' (ID: 3001) forever (2/5)" 40)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device1' (ID: 3001) forever (2/5)" 40 "Retrieving all sensors")
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device2' (ID: 3002) forever (3/5)" 60)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device3' (ID: 3003) forever (4/5)" 80)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device3' (ID: 3003) forever (4/5)" 80 "Retrieving all sensors")
+            (Gen "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device3' (ID: 3003) forever (4/5)" 80 "Retrieving all sensors")
         ))
     }
 
@@ -9764,13 +9764,13 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $devices | Pause-Object -Forever -PassThru -Batch:$false | Select -First 2 | Resume-Object -Batch:$false
 
         Validate(@(
-            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device0' forever (1/5)" 20)
-            (Gen "Resuming PRTG Objects" "Resuming device 'Probe Device0' (1/5)" 20)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device0' (ID: 3000) forever (1/5)" 20)
+            (Gen "Resuming PRTG Objects" "Resuming device 'Probe Device0' (ID: 3000) (1/5)" 20)
 
-            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device1' forever (2/5)" 40)
-            (Gen "Resuming PRTG Objects" "Resuming device 'Probe Device1' (2/5)" 40)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device1' (ID: 3001) forever (2/5)" 40)
+            (Gen "Resuming PRTG Objects" "Resuming device 'Probe Device1' (ID: 3001) (2/5)" 40)
 
-            (Gen "Resuming PRTG Objects (Completed)" "Resuming device 'Probe Device1' (2/5)" 40)
+            (Gen "Resuming PRTG Objects (Completed)" "Resuming device 'Probe Device1' (ID: 3001) (2/5)" 40)
         ))
     }
     
@@ -9780,15 +9780,15 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $devices | Pause-Object -Forever -PassThru -Batch:$false | Select -Last 2 | Resume-Object -Batch:$false
 
         Validate(@(
-            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device0' forever (1/5)" 20)
-            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device1' forever (2/5)" 40)
-            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device2' forever (3/5)" 60)
-            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device3' forever (4/5)" 80)
-            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device4' forever (5/5)" 100)
-            (Gen "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device4' forever (5/5)" 100)
-            (Gen "Resuming PRTG Objects" "Resuming device 'Probe Device3' (1/2)" 50)
-            (Gen "Resuming PRTG Objects" "Resuming device 'Probe Device4' (2/2)" 100)
-            (Gen "Resuming PRTG Objects (Completed)" "Resuming device 'Probe Device4' (2/2)" 100)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device0' (ID: 3000) forever (1/5)" 20)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device1' (ID: 3001) forever (2/5)" 40)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device2' (ID: 3002) forever (3/5)" 60)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device3' (ID: 3003) forever (4/5)" 80)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device4' (ID: 3004) forever (5/5)" 100)
+            (Gen "Pausing PRTG Objects (Completed)" "Pausing device 'Probe Device4' (ID: 3004) forever (5/5)" 100)
+            (Gen "Resuming PRTG Objects" "Resuming device 'Probe Device3' (ID: 3003) (1/2)" 50)
+            (Gen "Resuming PRTG Objects" "Resuming device 'Probe Device4' (ID: 3004) (2/2)" 100)
+            (Gen "Resuming PRTG Objects (Completed)" "Resuming device 'Probe Device4' (ID: 3004) (2/2)" 100)
         ))
     }
 
@@ -9798,18 +9798,18 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $devices | Pause-Object -Forever -PassThru -Batch:$false | Select -Skip 2 | Resume-Object -Batch:$false
 
         Validate(@(
-            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device0' forever (1/5)" 20)
-            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device1' forever (2/5)" 40)
-            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device2' forever (3/5)" 60)
-            (Gen "Resuming PRTG Objects" "Resuming device 'Probe Device2' (3/5)" 60)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device0' (ID: 3000) forever (1/5)" 20)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device1' (ID: 3001) forever (2/5)" 40)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device2' (ID: 3002) forever (3/5)" 60)
+            (Gen "Resuming PRTG Objects" "Resuming device 'Probe Device2' (ID: 3002) (3/5)" 60)
 
-            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device3' forever (4/5)" 80)
-            (Gen "Resuming PRTG Objects" "Resuming device 'Probe Device3' (4/5)" 80)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device3' (ID: 3003) forever (4/5)" 80)
+            (Gen "Resuming PRTG Objects" "Resuming device 'Probe Device3' (ID: 3003) (4/5)" 80)
 
-            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device4' forever (5/5)" 100)
-            (Gen "Resuming PRTG Objects" "Resuming device 'Probe Device4' (5/5)" 100)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device4' (ID: 3004) forever (5/5)" 100)
+            (Gen "Resuming PRTG Objects" "Resuming device 'Probe Device4' (ID: 3004) (5/5)" 100)
 
-            (Gen "Resuming PRTG Objects (Completed)" "Resuming device 'Probe Device4' (5/5)" 100)
+            (Gen "Resuming PRTG Objects (Completed)" "Resuming device 'Probe Device4' (ID: 3004) (5/5)" 100)
         ))
     }
 
@@ -9819,16 +9819,16 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $devices | Pause-Object -Forever -PassThru -Batch:$false | Select -SkipLast 2 | Resume-Object -Batch:$false
 
         Validate(@(
-            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device0' forever (1/5)" 20)
-            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device1' forever (2/5)" 40)
-            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device2' forever (3/5)" 60)
-            (Gen "Resuming PRTG Objects" "Resuming device 'Probe Device0' (3/5)" 60)
-            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device3' forever (4/5)" 80)
-            (Gen "Resuming PRTG Objects" "Resuming device 'Probe Device1' (4/5)" 80)
-            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device4' forever (5/5)" 100)
-            (Gen "Resuming PRTG Objects" "Resuming device 'Probe Device2' (5/5)" 100)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device0' (ID: 3000) forever (1/5)" 20)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device1' (ID: 3001) forever (2/5)" 40)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device2' (ID: 3002) forever (3/5)" 60)
+            (Gen "Resuming PRTG Objects" "Resuming device 'Probe Device0' (ID: 3000) (3/5)" 60)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device3' (ID: 3003) forever (4/5)" 80)
+            (Gen "Resuming PRTG Objects" "Resuming device 'Probe Device1' (ID: 3001) (4/5)" 80)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device4' (ID: 3004) forever (5/5)" 100)
+            (Gen "Resuming PRTG Objects" "Resuming device 'Probe Device2' (ID: 3002) (5/5)" 100)
 
-            (Gen "Resuming PRTG Objects (Completed)" "Resuming device 'Probe Device2' (5/5)" 100)
+            (Gen "Resuming PRTG Objects (Completed)" "Resuming device 'Probe Device2' (ID: 3002) (5/5)" 100)
         ))
     }
 
@@ -9838,13 +9838,13 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         $devices | Pause-Object -Forever -PassThru -Batch:$false | Select -Index 1,3 | Resume-Object -Batch:$false
 
         Validate(@(
-            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device0' forever (1/5)" 20)
-            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device1' forever (2/5)" 40)
-            (Gen "Resuming PRTG Objects" "Resuming device 'Probe Device1' (2/5)" 40)
-            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device2' forever (3/5)" 60)
-            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device3' forever (4/5)" 80)
-            (Gen "Resuming PRTG Objects" "Resuming device 'Probe Device3' (4/5)" 80)
-            (Gen "Resuming PRTG Objects (Completed)" "Resuming device 'Probe Device3' (4/5)" 80)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device0' (ID: 3000) forever (1/5)" 20)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device1' (ID: 3001) forever (2/5)" 40)
+            (Gen "Resuming PRTG Objects" "Resuming device 'Probe Device1' (ID: 3001) (2/5)" 40)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device2' (ID: 3002) forever (3/5)" 60)
+            (Gen "Pausing PRTG Objects" "Pausing device 'Probe Device3' (ID: 3003) forever (4/5)" 80)
+            (Gen "Resuming PRTG Objects" "Resuming device 'Probe Device3' (ID: 3003) (4/5)" 80)
+            (Gen "Resuming PRTG Objects (Completed)" "Resuming device 'Probe Device3' (ID: 3003) (4/5)" 80)
         ))
     }
 
@@ -12385,9 +12385,9 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         Validate(@(
             (Gen "PRTG Sensor Search" "Detecting total number of items")
             (Gen "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (1/2)" 50)
-            (Gen "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total0' forever (1/2)" 50)
-            (Gen "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total0' forever (1/2)" 50) # Pause-Object cleans up his cloned record
-            (Gen "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total0' forever (1/2)" 50) # Get-Sensor cleans up the original record
+            (Gen "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total0' (ID: 4000) forever (1/2)" 50)
+            (Gen "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total0' (ID: 4000) forever (1/2)" 50) # Pause-Object cleans up his cloned record
+            (Gen "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total0' (ID: 4000) forever (1/2)" 50) # Get-Sensor cleans up the original record
         ))
     }
 

@@ -50,6 +50,7 @@
     <Compile Include="PowerShell\Base\InternalNotificationTriggerCommand.cs" />
     <Compile Include="PowerShell\Base\InternalSetSubObjectPropertyCmdlet.cs" />
     <Compile Include="PowerShell\Base\IPSCmdletEx.cs" />
+    <Compile Include="PowerShell\Base\PrtgTimedStateCmdlet.cs" />
     <Compile Include="PowerShell\Cmdlets\ObjectManipulation\SetNotificationTrigger.cs" />
     <Compile Include="PowerShell\Cmdlets\ObjectManipulation\SetNotificationTriggerProperty.cs" />
     <Compile Include="PowerShell\EventStack.cs" />

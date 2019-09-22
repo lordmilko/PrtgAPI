@@ -62,4 +62,12 @@ Describe "Refresh-Object" -Tag @("PowerShell", "UnitTest") {
 
         $newSensor | Should Be $sensor
     }
+
+    It "specifies an ID" {
+        SetAddressValidatorResponse @(
+            [Request]::Get("api/scannow.htm?id=1001")
+        )
+
+        Refresh-Object -Id 1001
+    }
 }

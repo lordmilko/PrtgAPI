@@ -75,4 +75,19 @@ Describe "Restart-Probe" -Tag @("PowerShell", "UnitTest") {
 
         $newProbe | Should Be $probe
     }
+
+    It "specifies an ID" {
+        SetAddressValidatorResponse @(
+            [Request]::Probes("filter_objid=1000&filter_parentid=0", [Request]::DefaultObjectFlags)
+            [Request]::Get("api/restartprobes.htm?id=1000")
+        )
+
+        Restart-Probe -Id 1000 -Wait:$false -Force
+    }
+
+    It "specifies an invalid ID" {
+        SetMultiTypeResponse
+
+        { Restart-Probe -Id 300 -Force } | Should Throw "ID '300' is not a valid probe."
+    }
 }

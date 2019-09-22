@@ -2,28 +2,52 @@
 
 Describe "Acknowledge-Sensor" -Tag @("PowerShell", "UnitTest") {
 
-    SetActionResponse
+    #SetActionResponse #todo: do address validation on all of these
 
     $sensor = Run Sensor { Get-Sensor }
 
     It "acknowledges for a duration" {
 
+        SetAddressValidatorResponse @(
+            [Request]::Get("api/acknowledgealarm.htm?id=2203&duration=10")
+        )
+
         $sensor | Acknowledge-Sensor -Duration 10
     }
 
     It "acknowledges until a specified time" {
+
+        SetAddressValidatorResponse @(
+            [Request]::Get("api/acknowledgealarm.htm?id=2203&duration=1440")
+        )
+
         $sensor | Acknowledge-Sensor -Until (get-date).AddDays(1)
     }
 
     It "acknowledges forever" {
+
+        SetAddressValidatorResponse @(
+            [Request]::Get("api/acknowledgealarm.htm?id=2203")
+        )
+
         $sensor | Acknowledge-Sensor -Forever
     }
 
     It "acknowledges with a message" {
+
+        SetAddressValidatorResponse @(
+            [Request]::Get("api/acknowledgealarm.htm?id=2203&ackmsg=Acknowledging+object!&duration=10")
+        )
+
         $sensor | Acknowledge-Sensor -Duration 10 -Message "Acknowledging object!"
     }
 
     It "acknowledges for 1 minute" {
+
+        SetAddressValidatorResponse @(
+            [Request]::Get("api/acknowledgealarm.htm?id=2203&duration=1")
+        )
+
         $sensor | Acknowledge-Sensor -Duration 1
     }
 
@@ -78,5 +102,31 @@ Describe "Acknowledge-Sensor" -Tag @("PowerShell", "UnitTest") {
         $newSensor = $sensor | Acknowledge-Sensor -Forever -PassThru -Batch:$true
 
         $newSensor | Should Be $sensor
+    }
+
+    It "acknowledges for a duration with an ID" {
+
+        SetAddressValidatorResponse @(
+            [Request]::Get("api/acknowledgealarm.htm?id=4000&duration=10")
+        )
+
+        Acknowledge-Sensor -Id 4000 -Duration 10
+    }
+
+    It "acknowledges until a specified time with an ID" {
+
+        SetAddressValidatorResponse @(
+            [Request]::Get("api/acknowledgealarm.htm?id=4000,4001&duration=1440")
+        )
+
+        Acknowledge-Sensor -Id 4000,4001 -Until (get-date).AddDays(1)
+    }
+
+    It "acknowledges forever with an ID" {
+        SetAddressValidatorResponse @(
+            [Request]::Get("api/acknowledgealarm.htm?id=4000")
+        )
+
+        Acknowledge-Sensor -Id 4000 -Forever
     }
 }

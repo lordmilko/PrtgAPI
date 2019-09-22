@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Management.Automation;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -14,6 +15,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PrtgAPI.Attributes;
 using PrtgAPI.PowerShell;
 using PrtgAPI.PowerShell.Base;
+using PrtgAPI.PowerShell.Cmdlets;
 using PrtgAPI.Request;
 using PrtgAPI.Utilities;
 using PrtgAPI.Tests.UnitTests.Support;
@@ -35,6 +37,43 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             if (result.Count > 0)
             {
                 Assert.Fail($"Types that derive from {nameof(PrtgCmdlet)} are not allowed to override method ProcessRecord. The following types contain ProcessRecord: {string.Join(", ", result.Select(t => t.Name))}");
+            }
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void PrtgOperationCmdlets_Implement_Id()
+        {
+            var assembly = Assembly.GetAssembly(typeof(PrtgCmdlet));
+
+            var exclusions = new[]
+            {
+                typeof(AddDevice),
+                typeof(AddGroup),
+                typeof(AddSensor),
+                typeof(NewSensor),
+                typeof(AddNotificationTrigger),
+                typeof(SetNotificationTrigger),
+                typeof(SetNotificationTriggerProperty),
+                typeof(RemoveNotificationTrigger),
+                typeof(CloneObject),
+                typeof(RestartPrtgCore),
+                typeof(SetChannelProperty) //Has a SensorId instead
+            };
+
+            var types = assembly.GetTypes().Where(t => typeof(PrtgOperationCmdlet).IsAssignableFrom(t) && !exclusions.Contains(t) && !t.IsAbstract).ToList();
+
+            foreach (var type in types)
+            {
+                var property = type.GetProperty("Id");
+
+                if (property == null)
+                    Assert.Fail($"'{type}' does not have an -Id parameter");
+
+                var defaultSet = type.GetCustomAttribute<CmdletAttribute>().DefaultParameterSetName;
+
+                if (defaultSet == null)
+                    Assert.Fail($"'{type}' does not specify a DefaultParameterSetName");
             }
         }
 

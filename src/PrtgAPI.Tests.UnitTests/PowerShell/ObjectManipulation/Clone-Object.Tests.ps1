@@ -184,4 +184,22 @@ Describe "Clone-Object" -Tag @("PowerShell", "UnitTest") {
         $group | Clone-Object 1234 -WhatIf
         $trigger | Clone-Object 1234 -WhatIf
     }
+
+    It "clones an object by ID" {
+        SetAddressValidatorResponse @(
+            [Request]::Objects("filter_objid=300", [Request]::DefaultObjectFlags)
+            [Request]::Get("api/duplicateobject.htm?id=300&name=test&targetid=-3")
+        )
+
+        Clone-Object -Id 300 -DestinationId -3 "test" -Resolve:$false
+    }
+
+    it "clones an object by ID without specifying a Destination ID" {
+        SetAddressValidatorResponse @(
+            [Request]::Objects("filter_objid=300", [Request]::DefaultObjectFlags)
+            [Request]::Get("api/duplicateobject.htm?id=300&name=test&targetid=-3")
+        )
+
+        Clone-Object -Id 300 "test" -Resolve:$false
+    }
 }

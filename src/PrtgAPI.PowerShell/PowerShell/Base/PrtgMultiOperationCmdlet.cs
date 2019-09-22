@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Management.Automation;
 using System.Text;
+using PrtgAPI.Utilities;
 
 namespace PrtgAPI.PowerShell.Base
 {
@@ -43,7 +44,10 @@ namespace PrtgAPI.PowerShell.Base
         /// <param name="obj">The object to process.</param>
         protected void ExecuteOrQueue(IObject obj)
         {
-            ExecuteOrQueue(obj, $"Queuing {obj.GetTypeDescription().ToLower()} '{obj.Name}'");
+            if (obj != null)
+                ExecuteOrQueue(obj, $"Queuing {obj.GetTypeDescription().ToLower()} '{obj.Name}'");
+            else
+                ExecuteOrQueue(obj, null);
         }
 
         /// <summary>
@@ -53,7 +57,7 @@ namespace PrtgAPI.PowerShell.Base
         /// <param name="progressMessage">The progress message to display.</param>
         protected internal void ExecuteOrQueue(IObject obj, string progressMessage)
         {
-            if (Batch.IsPresent)
+            if (Batch.IsPresent && obj != null)
                 ExecuteQueueOperation(obj, progressMessage);
             else
                 PerformSingleOperation();
@@ -213,10 +217,7 @@ namespace PrtgAPI.PowerShell.Base
         {
             var baseType = objects.First().GetTypeDescription().ToLower();
 
-            if (objects.Count > 1)
-                baseType += "s";
-
-            return baseType;
+            return baseType.Plural(objects.Count);
         }
 
         /// <summary>

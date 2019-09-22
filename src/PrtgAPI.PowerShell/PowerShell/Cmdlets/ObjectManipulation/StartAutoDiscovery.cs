@@ -43,6 +43,11 @@ namespace PrtgAPI.PowerShell.Cmdlets
     ///         C:\> Get-Device dc-1 | Start-AutoDiscovery $templates
     ///     </code>
     ///     <para>Run auto-discovery against all devices named "dc-1" using WMI specific device templates</para>
+    ///     <para/>
+    /// </example>
+    /// <example>
+    ///     <code>C:\> Start-AutoDiscovery -Id 1001</code>
+    ///     <para>Run an auto-discovery against the device with ID 1001.</para>
     /// </example>
     ///
     /// <para type="link" uri="https://github.com/lordmilko/PrtgAPI/wiki/Object-Creation#auto-discovery-1">Online version:</para>
@@ -53,23 +58,34 @@ namespace PrtgAPI.PowerShell.Cmdlets
     public class StartAutoDiscovery : PrtgPassThruCmdlet
     {
         /// <summary>
-        /// <para type="description">The device to perform auto-discovery upon.</para>
+        /// <para type="description">The device to perform an auto-discovery upon.</para>
         /// </summary>
-        [Parameter(Mandatory = true, ValueFromPipeline = true)]
+        [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = ParameterSet.Default)]
+        [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = ParameterSet.Target)]
         public Device Device { get; set; }
+
+        /// <summary>
+        /// <para type="description">ID of the device to perform an auto-discovery upon.</para>
+        /// </summary>
+        [Alias("DeviceId")]
+        [Parameter(Mandatory = true, ParameterSetName = ParameterSet.Manual)]
+        [Parameter(Mandatory = true, ParameterSetName = ParameterSet.TargetManual)]
+        public int Id { get; set; }
 
         /// <summary>
         /// <para type="description">One or more expressions used to identify device templates to use for the auto-discovery. If no templates
         /// are specified, only templates enabled on the device will be used.</para>
         /// </summary>
         [Parameter(Mandatory = false, ParameterSetName = ParameterSet.Default, Position = 0)]
+        [Parameter(Mandatory = false, ParameterSetName = ParameterSet.Manual, Position = 0)]
         public string[] TemplateName { get; set; }
 
         /// <summary>
         /// <para type="description">One or more device templates to use for the auto-discovery. If no templates
         /// are specified, only templates enabled on the device will be used.</para>
         /// </summary>
-        [Parameter(Mandatory = false, ParameterSetName = ParameterSet.Target, Position = 0)]
+        [Parameter(Mandatory = true, ParameterSetName = ParameterSet.Target, Position = 0)]
+        [Parameter(Mandatory = true, ParameterSetName = ParameterSet.TargetManual, Position = 0)]
         public DeviceTemplate[] Template { get; set; }
 
         /// <summary>
@@ -77,11 +93,14 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// </summary>
         protected override void ProcessRecordEx()
         {
-            if (ShouldProcess($"'{Device.Name}' (ID: {Device.Id})"))
+            var ids = new[] {Id};
+            var id = GetSingleOperationId(Device, ids)[0];
+
+            if (ShouldProcess(GetShouldProcessMessage(Device, ids)))
             {
                 if (TemplateName != null && TemplateName.Length > 0)
                 {
-                    var templates = client.GetDeviceTemplates(Device.Id);
+                    var templates = client.GetDeviceTemplates(id);
 
                     Template = templates.Where(template => TemplateName
                         .Select(name => new WildcardPattern(name, WildcardOptions.IgnoreCase))
@@ -92,7 +111,10 @@ namespace PrtgAPI.PowerShell.Cmdlets
                         throw new ArgumentException($"No device templates could be found that match the specified template names {TemplateName.ToQuotedList()}.");
                 }
 
-                ExecuteOperation(() => client.AutoDiscover(Device.Id, Template), $"Starting Auto-Discovery on device '{Device}'");
+                ExecuteOperation(
+                    () => client.AutoDiscover(id, Template),
+                    GetSingleOperationProgressMessage(Device, ids, "Starting Auto-Discovery on", "device")
+                );
             }
         }
 

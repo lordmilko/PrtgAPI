@@ -371,7 +371,7 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
                     if (id < 5000)
                         return GetObject("sensors", address, function);
 
-                    var text = new ObjectResponse(new SensorItem()).GetResponseText(ref address);
+                    var text = new ObjectResponse(new SensorItem(objid: "7000", baseType: "", typeRaw: "basenode")).GetResponseText(ref address);
 
                     return XDocument.Parse(text).Descendants("item").ToList();
                 }).ToArray();

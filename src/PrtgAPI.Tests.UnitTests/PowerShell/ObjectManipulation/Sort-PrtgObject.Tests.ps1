@@ -26,4 +26,12 @@ Describe "Sort-PrtgObject" -Tag @("PowerShell", "UnitTest") {
 
         $newDevice | Should Be $device
     }
+
+    It "specifies an ID" {
+        SetAddressValidatorResponse @(
+            [Request]::Get("api/sortsubobjects.htm?id=1001")
+        )
+
+        Sort-PrtgObject -Id 1001
+    }
 }

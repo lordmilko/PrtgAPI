@@ -61,4 +61,34 @@ Describe "Start-AutoDiscovery" -Tag @("PowerShell", "UnitTest") {
 
         $newDevice | Should Be $device
     }
+
+    It "specifies an ID" {
+
+        SetAddressValidatorResponse @(
+            [Request]::Get("api/discovernow.htm?id=1000")
+        )
+
+        Start-AutoDiscovery -Id 1000
+    }
+
+    It "specifies an ID with a template name" {
+        SetAddressValidatorResponse @(
+            [Request]::DeviceProperties(1000)
+            [Request]::Get("api/discovernow.htm?id=1000&template=%22server+rdp.odt%22")
+        )
+
+        Start-AutoDiscovery -Id 1000 *rdp*
+    }
+
+    It "specifies an ID with a template target" {
+        SetMultiTypeResponse
+
+        $template = Get-DeviceTemplate *rdp*
+
+        SetAddressValidatorResponse @(
+            [Request]::Get("api/discovernow.htm?id=1000&template=%22server+rdp.odt%22")
+        )
+
+        Start-AutoDiscovery -Id 1000 $template
+    }
 }

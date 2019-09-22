@@ -71,4 +71,12 @@ Describe "Rename-Object" -Tag @("PowerShell", "UnitTest") {
 
         $newSensor | Should Be $sensor
     }
+
+    It "specifies an ID" {
+        SetAddressValidatorResponse @(
+            [Request]::Get("api/rename.htm?id=1001&value=test")
+        )
+
+        Rename-Object -Id 1001 "test"
+    }
 }

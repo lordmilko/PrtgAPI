@@ -1,4 +1,5 @@
-﻿using System.Management.Automation;
+﻿using System;
+using System.Management.Automation;
 using PrtgAPI.PowerShell.Base;
 
 namespace PrtgAPI.PowerShell.Cmdlets
@@ -19,6 +20,11 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <example>
     ///     <code>C:\> Get-Sensor -Id 1001 | Set-ObjectPosition Up</code>
     ///     <para>Move the sensor with ID 1001 up a single position from its current location.</para>
+    ///     <para/>
+    /// </example>
+    /// <example>
+    ///     <code>C:\> Set-ObjectPosition -Id 1001 Up</code>
+    ///     <para>Move the object with ID 1001 uo a single position from its current location.</para>
     /// </example>
     ///
     /// <para type="link" uri="https://github.com/lordmilko/PrtgAPI/wiki/Object-Organization#positioning-1">Online version:</para>
@@ -27,14 +33,20 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <para type="link">Get-Group</para>
     /// <para type="link">Get-Probe</para>
     /// </summary>
-    [Cmdlet(VerbsCommon.Set, "ObjectPosition", SupportsShouldProcess = true)]
+    [Cmdlet(VerbsCommon.Set, "ObjectPosition", SupportsShouldProcess = true, DefaultParameterSetName = ParameterSet.Default)]
     public class SetObjectPosition : PrtgPassThruCmdlet
     {
         /// <summary>
-        /// <para type="description">The object to move.</para>
+        /// <para type="description">The object to reposition.</para>
         /// </summary>
-        [Parameter(Mandatory = true, ValueFromPipeline = true)]
+        [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = ParameterSet.Default)]
         public SensorOrDeviceOrGroupOrProbe Object { get; set; }
+
+        /// <summary>
+        /// <para type="description">ID of the object to reposition.</para>
+        /// </summary>
+        [Parameter(Mandatory = true, ParameterSetName = ParameterSet.Manual)]
+        public int Id { get; set; }
 
         /// <summary>
         /// <para type="description">Position to move the object to. If this value is higher than the number of items in the parent object,
@@ -48,7 +60,18 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// </summary>
         protected override void ProcessRecordEx()
         {
+            if (Object == null)
+            {
+                var obj = client.GetObject(Id, true);
+
+                Object = obj as SensorOrDeviceOrGroupOrProbe;
+
+                if (Object == null)
+                    throw new InvalidOperationException($"Cannot modify position of object '{obj}' (ID: {obj.Id}, Type: {obj.Type}). Object must be a sensor, device, group or probe.");
+            }
+
             if (ShouldProcess($"'{Object.Name}' (ID: {Object.Id}) (Current Position: {Object.Position}) (New Position: {Position})"))
+            {
                 ExecuteOperation(() =>
                 {
                     if (Position.IsAbsolutePosition)
@@ -57,6 +80,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
                         client.SetPosition(Object.Id, Position.RelativePosition);
 
                 }, $"Moving object {Object.Name} (ID: {Object.Id}) to position '{Position}'");
+            }
         }
 
         internal override string ProgressActivity => "Modify PRTG Object Positions";

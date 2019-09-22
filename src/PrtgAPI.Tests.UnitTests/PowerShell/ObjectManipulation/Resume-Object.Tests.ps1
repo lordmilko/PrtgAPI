@@ -61,4 +61,12 @@ Describe "Resume-Object" -Tag @("PowerShell", "UnitTest") {
 
         $newSensor | Should Be $sensor
     }
+
+    It "specifies an ID" {
+        SetAddressValidatorResponse @(
+            [Request]::Get("api/pause.htm?id=1001&action=1")
+        )
+
+        Resume-Object -Id 1001
+    }
 }

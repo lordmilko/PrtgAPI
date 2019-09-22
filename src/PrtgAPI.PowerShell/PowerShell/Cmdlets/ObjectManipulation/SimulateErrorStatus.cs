@@ -24,20 +24,32 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// 
     /// <example>
     ///     <code>C:\> Get-Sensor -Id 1001 | Simulate-ErrorStatus</code>
-    ///     <para>Force the sensor with ID to enter an error state.</para>
+    ///     <para>Force the sensor with ID 1001 to enter an error state.</para>
+    ///     <para/>
+    /// </example>
+    /// <example>
+    ///     <code>C:\> Simulate-ErrorStatus -Id 1001</code>
+    ///     <para>Force the sensor with ID 1001 to enter an error state.</para>
     /// </example>
     ///
     /// <para type="link" uri="https://github.com/lordmilko/PrtgAPI/wiki/State-Manipulation#simulate-error-1">Online version:</para>
     /// <para type="link">Resume-Object</para>
     /// </summary>
-    [Cmdlet(VerbsDiagnostic.Test, "ErrorStatus", SupportsShouldProcess = true)]
+    [Cmdlet(VerbsDiagnostic.Test, "ErrorStatus", SupportsShouldProcess = true, DefaultParameterSetName = ParameterSet.Default)]
     public class SimualteErrorStatus : PrtgMultiOperationCmdlet
     {
         /// <summary>
         /// <para type="description">The sensor to simulate an error status on.</para>
         /// </summary>
-        [Parameter(Mandatory = true, ValueFromPipeline = true)]
+        [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = ParameterSet.Default)]
         public Sensor Sensor { get; set; }
+
+        /// <summary>
+        /// <para type="description">The ID of the sensor to simulate an error status on.</para>
+        /// </summary>
+        [Alias("SensorId")]
+        [Parameter(Mandatory = true, ParameterSetName = ParameterSet.Manual)]
+        public int[] Id { get; set; }
 
         internal override string ProgressActivity => "Simulating Sensor Errors";
 
@@ -46,7 +58,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// </summary>
         protected override void ProcessRecordEx()
         {
-            if (ShouldProcess($"'{Sensor.Name}' (ID: {Sensor.Id})"))
+            if (ShouldProcess(GetShouldProcessMessage(Sensor, Id)))
                 ExecuteOrQueue(Sensor);
         }
 
@@ -55,7 +67,10 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// </summary>
         protected override void PerformSingleOperation()
         {
-            ExecuteOperation(() => client.SimulateError(Sensor.Id), $"Processing sensor '{Sensor.Name}'");
+            ExecuteOperation(
+                () => client.SimulateError(GetSingleOperationId(Sensor, Id)),
+                GetSingleOperationProgressMessage(Sensor, Id, "Processing", "sensor")
+            );
         }
 
         /// <summary>
