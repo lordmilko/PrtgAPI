@@ -22,6 +22,10 @@ namespace PrtgAPI.Request
         internal const string DefaultTextAreaRegex = "(<textarea.+?>)(.*?)(<\\/textarea>)";
         internal const string DefaultDependencyDiv = "(<div.+?data-inputname=\"dependency_\")(.+?>)";
 
+        private static Regex inputValueRegex = new Regex("(.+?value=\")(.*?)(\".+)", RegexOptions.Compiled);
+        private static Regex ddlOptionValueRegex = new Regex("(.+?value=\")(.*?)(\".+)", RegexOptions.Compiled);
+        private static Regex ddlOptionInnerHtmlRegex = new Regex("(<.+?>)(.*?)(</.+>)", RegexOptions.Compiled);
+
         #region PropertyPrefix
 
         private string propertyPrefix;
@@ -144,7 +148,7 @@ namespace PrtgAPI.Request
             return null;
         }
 
-        internal List<Input> GetInput(string response, string matchRegex = null, string nameRegex = null, Func<string, string> nameTransformer = null)
+        internal Input[] GetInput(string response, string matchRegex = null, string nameRegex = null, Func<string, string> nameTransformer = null)
         {
             if (nameTransformer == null)
                 nameTransformer = v => v;
@@ -163,11 +167,11 @@ namespace PrtgAPI.Request
             return properties;
         }
 
-        internal List<Input> GetFilteredInputs(string response, string nameRegex = null)
+        internal Input[] GetFilteredInputs(string response, string nameRegex = null)
         {
             var inputs = GetInput(response, nameRegex: nameRegex);
 
-            var filtered = FilterInputTags(inputs).Select(i => i.Value).ToList();
+            var filtered = FilterInputTags(inputs).Select(i => i.Value).ToArray();
 
             return filtered;
         }
@@ -221,7 +225,7 @@ namespace PrtgAPI.Request
             return list;
         }
 
-        internal List<DropDownList> GetDropDownList(string response, string nameRegex = null, Func<string, string> nameTransformer = null)
+        internal DropDownList[] GetDropDownList(string response, string nameRegex = null, Func<string, string> nameTransformer = null)
         {
             if (nameTransformer == null)
                 nameTransformer = v => v;
@@ -237,7 +241,7 @@ namespace PrtgAPI.Request
             return listObjs;
         }
 
-        internal List<XElement> GetDropDownListXml(string response, string nameRegex = null, Func<string, string> nameTransformer = null)
+        internal XElement[] GetDropDownListXml(string response, string nameRegex = null, Func<string, string> nameTransformer = null)
         {
             if (nameTransformer == null)
                 nameTransformer = v => v;
@@ -250,7 +254,7 @@ namespace PrtgAPI.Request
             if (listObjs.Any(l => l.Options.Any(o => o.Selected)))
             {
                 var xml = listObjs.Select(l => new XElement($"{PropertyPrefix}{l.Name}", l.Options.FirstOrDefault(o => o.Selected)?.Value));
-                return xml.ToList();
+                return xml.ToArray();
             }
 
             return null;
@@ -275,16 +279,16 @@ namespace PrtgAPI.Request
             return namesAndValues;
         }
 
-        internal List<XElement> GetTextAreaXml(string response, string nameRegex = null)
+        internal XElement[] GetTextAreaXml(string response, string nameRegex = null)
         {
             var text = GetTextAreaFields(response, nameRegex);
 
-            var xml = text.Select(n => new XElement($"{PropertyPrefix}{n.Key}", n.Value)).ToList();
+            var xml = text.Select(n => new XElement($"{PropertyPrefix}{n.Key}", n.Value)).ToArray();
 
             return xml;
         }
 
-        private List<Input> GetProperties(List<string> inputs, string nameRegex, Func<string, string> nameTransformer)
+        private Input[] GetProperties(List<string> inputs, string nameRegex, Func<string, string> nameTransformer)
         {
             //If PRTG bugs out and returns an input tag with an empty name, that's not our fault and we have no way of
             //reliably determining which property it actually is, so simply omit that property and let's hope it was a nullable
@@ -293,12 +297,12 @@ namespace PrtgAPI.Request
             var properties = inputs.Select(input => new Input
             {
                 Name = nameTransformer(Regex.Replace(input, nameRegex, "$2")).Replace("/", "_").Replace(" ", "_"), // Forward slash and space are not valid characters for an XElement name
-                Value = WebUtility.HtmlDecode(Regex.Replace(input, "(.+?value=\")(.*?)(\".+)", "$2")),
+                Value = WebUtility.HtmlDecode(inputValueRegex.Replace(input, "$2")),
                 Type = GetInputType(input),
                 Checked = Regex.Match(input, "checked").Success,
                 Hidden = Regex.Match(input, "type=\"hidden\"").Success,
                 Html = input
-            }).Where(i => i.Name != string.Empty).ToList();
+            }).Where(i => i.Name != string.Empty).ToArray();
 
             return properties; //todo: allow hidden items, and in the filter if theres a conflict overwrite the hidden one
         }
@@ -312,7 +316,7 @@ namespace PrtgAPI.Request
             return InputType.Other;
         }
 
-        private List<DropDownList> GetLists(List<string> lists, string nameRegex, Func<string, string> nameTransformer = null)
+        private DropDownList[] GetLists(List<string> lists, string nameRegex, Func<string, string> nameTransformer = null)
         {
             if (nameTransformer == null)
                 nameTransformer = v => v;
@@ -328,17 +332,17 @@ namespace PrtgAPI.Request
                     Html = list
                 };
 
-                var matches = Regex.Matches(list, "<option.+?>.+?<\\/option>", RegexOptions.Singleline)
-                    .Cast<Match>()
-                    .Select(m => m.Value);
+                var matches = Regex.Matches(list, "<option.+?>.+?<\\/option>", RegexOptions.Singleline);
 
-                foreach (var match in matches)
+                for (var i = 0; i < matches.Count; i++)
                 {
+                    var match = matches[i].Value;
+
                     ddl.Options.Add(new Option
                     {
-                        Value = WebUtility.HtmlDecode(Regex.Replace(match, "(.+?value=\")(.*?)(\".+)", "$2")),
+                        Value = WebUtility.HtmlDecode(ddlOptionValueRegex.Replace(match, "$2")),
                         Selected = Regex.Match(match, "selected").Success,
-                        InnerHtml = WebUtility.HtmlDecode(Regex.Replace(match, "(<.+?>)(.*?)(</.+>)", "$2")),
+                        InnerHtml = WebUtility.HtmlDecode(ddlOptionInnerHtmlRegex.Replace(match, "$2")),
                         Html = match
                     });
                 }
@@ -346,10 +350,10 @@ namespace PrtgAPI.Request
                 ddls.Add(ddl);
             }
 
-            return ddls.Where(ddl => ddl.Name != "channel").ToList();
+            return ddls.Where(ddl => ddl.Name != "channel").ToArray();
         }
 
-        private Dictionary<string, Input> FilterInputTags(List<Input> properties)
+        private Dictionary<string, Input> FilterInputTags(Input[] properties)
         {
             var dictionary = new Dictionary<string, Input>();
 
