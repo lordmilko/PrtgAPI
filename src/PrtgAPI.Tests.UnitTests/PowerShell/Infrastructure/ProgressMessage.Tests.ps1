@@ -127,7 +127,7 @@ Describe "Test-ProgressMessage" -Tag @("PowerShell", "UnitTest") {
             Expression = "`$sensors | Acknowledge-Sensor $params"
             Title = "Acknowledging PRTG Sensors"
             Message = "Acknowledging sensors 'Volume IO _Total0' and 'Volume IO _Total1' $description"
-            QueueFormat = "Queuing sensor 'Volume IO _Total{0}'"
+            QueueFormat = "Queuing sensor 'Volume IO _Total{0}' (ID: 400{0})"
             WhatIfMessage = "Performing the operation `"Confirm-Sensor`" on target `"'Volume IO _Total0' (ID: 4000, Duration: $whatIf)`"., Performing the operation `"Confirm-Sensor`" on target `"'Volume IO _Total1' (ID: 4001, Duration: $whatIf)`"."
         }
 
@@ -193,7 +193,7 @@ Describe "Test-ProgressMessage" -Tag @("PowerShell", "UnitTest") {
             Expression = "`$sensors | Pause-Object $params"
             Title = "Pausing PRTG Objects"
             Message = "Pausing sensors 'Volume IO _Total0' and 'Volume IO _Total1' $description"
-            QueueFormat = "Queuing sensor 'Volume IO _Total{0}'"
+            QueueFormat = "Queuing sensor 'Volume IO _Total{0}' (ID: 400{0})"
             WhatIfMessage = "Performing the operation `"Suspend-Object`" on target `"'Volume IO _Total0' (ID: 4000, Duration: $whatIf)`"., Performing the operation `"Suspend-Object`" on target `"'Volume IO _Total1' (ID: 4001, Duration: $whatIf)`"."
         }
 
@@ -243,8 +243,8 @@ Describe "Test-ProgressMessage" -Tag @("PowerShell", "UnitTest") {
         Invoke-Expression $expr
 
         Validate(@(
-            (Gen "Pausing PRTG Objects" "Queuing sensor 'Volume IO _Total0' (1/2)" 50)
-            (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device0' (2/2)" 100)
+            (Gen "Pausing PRTG Objects" "Queuing sensor 'Volume IO _Total0' (ID: 4000) (1/2)" 50)
+            (Gen "Pausing PRTG Objects" "Queuing device 'Probe Device0' (ID: 3000) (2/2)" 100)
             (Gen "Pausing PRTG Objects" "Pausing sensor 'Volume IO _Total0' and device 'Probe Device0' $description (2/2)" 100)
             (Gen "Pausing PRTG Objects (Completed)" "Pausing sensor 'Volume IO _Total0' and device 'Probe Device0' $description (2/2)" 100)
         ))
@@ -344,7 +344,7 @@ Describe "Test-ProgressMessage" -Tag @("PowerShell", "UnitTest") {
             Expression = "`$sensors | Refresh-Object"
             Title = "Refreshing PRTG Objects"
             Message = "Refreshing sensors 'Volume IO _Total0' and 'Volume IO _Total1'"
-            QueueFormat = "Queuing sensor 'Volume IO _Total{0}'"
+            QueueFormat = "Queuing sensor 'Volume IO _Total{0}' (ID: 400{0})"
             WhatIfMessage = "Performing the operation `"Update-Object`" on target `"'Volume IO _Total0' (ID: 4000)`"., Performing the operation `"Update-Object`" on target `"'Volume IO _Total1' (ID: 4001)`"."
         }
 
@@ -392,7 +392,7 @@ Describe "Test-ProgressMessage" -Tag @("PowerShell", "UnitTest") {
             Expression = "`$sensors | Remove-Object -Force"
             Title = "Removing PRTG Objects"
             Message = "Removing sensors 'Volume IO _Total0' and 'Volume IO _Total1'"
-            QueueFormat = "Queuing sensor 'Volume IO _Total{0}'"
+            QueueFormat = "Queuing sensor 'Volume IO _Total{0}' (ID: 400{0})"
             WhatIfMessage = "Performing the operation `"Remove-Object`" on target `"'Volume IO _Total0' (ID: 4000)`"., Performing the operation `"Remove-Object`" on target `"'Volume IO _Total1' (ID: 4001)`"."
         }
 
@@ -440,7 +440,7 @@ Describe "Test-ProgressMessage" -Tag @("PowerShell", "UnitTest") {
             Expression = "`$sensors | Rename-Object `"test`""
             Title = "Rename PRTG Objects"
             Message = "Renaming sensors 'Volume IO _Total0' and 'Volume IO _Total1' to 'test'"
-            QueueFormat = "Queuing sensor 'Volume IO _Total{0}'"
+            QueueFormat = "Queuing sensor 'Volume IO _Total{0}' (ID: 400{0})"
             WhatIfMessage = "Performing the operation `"Rename-Object`" on target `"'Volume IO _Total0' (ID: 4000, New Name: 'test')`"., Performing the operation `"Rename-Object`" on target `"'Volume IO _Total1' (ID: 4001, New Name: 'test')`"."
         }
 
@@ -488,7 +488,7 @@ Describe "Test-ProgressMessage" -Tag @("PowerShell", "UnitTest") {
             Expression = "`$sensors | Simulate-ErrorStatus"
             Title = "Simulating Sensor Errors"
             Message = "Simulating errors on sensors 'Volume IO _Total0' and 'Volume IO _Total1'"
-            QueueFormat = "Queuing sensor 'Volume IO _Total{0}'"
+            QueueFormat = "Queuing sensor 'Volume IO _Total{0}' (ID: 400{0})"
             WhatIfMessage = "Performing the operation `"Test-ErrorStatus`" on target `"'Volume IO _Total0' (ID: 4000)`"., Performing the operation `"Test-ErrorStatus`" on target `"'Volume IO _Total1' (ID: 4001)`"."
         }
 
@@ -536,7 +536,7 @@ Describe "Test-ProgressMessage" -Tag @("PowerShell", "UnitTest") {
             Expression = "`$sensors | Resume-Object"
             Title = "Resuming PRTG Objects"
             Message = "Resuming sensors 'Volume IO _Total0' and 'Volume IO _Total1'"
-            QueueFormat = "Queuing sensor 'Volume IO _Total{0}'"
+            QueueFormat = "Queuing sensor 'Volume IO _Total{0}' (ID: 400{0})"
             WhatIfMessage = "Performing the operation `"Resume-Object`" on target `"'Volume IO _Total0' (ID: 4000)`"., Performing the operation `"Resume-Object`" on target `"'Volume IO _Total1' (ID: 4001)`"."
         }
 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Management.Automation;
+using System.Text;
 using Microsoft.PowerShell.Commands;
 using PrtgAPI.PowerShell.Base;
 using PrtgAPI.Reflection;
@@ -1116,7 +1117,7 @@ namespace PrtgAPI.PowerShell.Progress
                 var str = GetStatusDescriptionProgressCount(manager.RecordsProcessed, manager.TotalRecords.Value);
 
                 if (obj != null && Scenario != ProgressScenario.StreamProgress)
-                    record.StatusDescription = $"{InitialDescription} '{obj.Name}' ({str})";
+                    record.StatusDescription = GetObjectStatusDescription(obj, str);
                 else
                     record.StatusDescription = $"{InitialDescription} {str}";
 
@@ -1166,7 +1167,7 @@ namespace PrtgAPI.PowerShell.Progress
             var str = GetStatusDescriptionProgressCount(index, maxCount);
 
             if (obj != null)
-                record.StatusDescription = $"{InitialDescription} '{obj.Name}' ({str})";
+                record.StatusDescription = GetObjectStatusDescription(obj, str);
             else
                 record.StatusDescription = $"{InitialDescription} {str}";
 
@@ -1177,6 +1178,19 @@ namespace PrtgAPI.PowerShell.Progress
 
             if (originalIndex <= Pipeline.List.Count)
                 WriteProgress(record);
+        }
+
+        private string GetObjectStatusDescription(IObject obj, string countStr)
+        {
+            var builder = new StringBuilder();
+            builder.AppendFormat("{0} '{1}'", InitialDescription, obj.Name);
+
+            if (obj is IPrtgObject)
+                builder.AppendFormat(" (ID: {0})", obj.GetId());
+
+            builder.AppendFormat(" ({0})", countStr);
+
+            return builder.ToString();
         }
 
         public void SetPreviousOperation(string operation)

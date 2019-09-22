@@ -45,7 +45,7 @@ namespace PrtgAPI.PowerShell.Base
         protected void ExecuteOrQueue(IObject obj)
         {
             if (obj != null)
-                ExecuteOrQueue(obj, $"Queuing {obj.GetTypeDescription().ToLower()} '{obj.Name}'");
+                ExecuteOrQueue(obj, $"Queuing {obj.GetTypeDescription().ToLower()} '{obj.Name}'" + (obj is PrtgObject ? $" (ID: {obj.GetId()})" : ""));
             else
                 ExecuteOrQueue(obj, null);
         }
