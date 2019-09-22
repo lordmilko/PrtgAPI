@@ -965,12 +965,12 @@
                     <Summary>Clones a sensor or group to another device or group.</Summary>
                     <ReturnDescription>The ID of the object that was created.</ReturnDescription>
 
-                    <Parameter name="sourceObject" type="Either&lt;IPrtgObject, int&gt;" description="The sensor or group to clone."/>
+                    <Parameter name="objectOrId" type="Either&lt;IPrtgObject, int&gt;" description="The sensor or group to clone."/>
                     <Parameter name="cloneName" type="string" description="The name that should be given to the cloned object."/>
-                    <Parameter name="targetParentObject" type="Either&lt;DeviceOrGroupOrProbe, int&gt;" description="If this is a sensor, the device or ID of the device to clone to. If this is a group, the object or ID of the group or probe to clone to."/>
+                    <Parameter name="destinationObjectOrId" type="Either&lt;DeviceOrGroupOrProbe, int&gt;" description="If this is a sensor, the device or ID of the device to clone to. If this is a group, the object or ID of the group or probe to clone to."/>
 
                     <Body expression="true">
-                        <Call name="CloneObject" args="new CloneParameters(sourceObject.ToPrtgObject(), cloneName, targetParentObject.ToPrtgObject())"/>
+                        <Call name="CloneObject" args="new CloneParameters(objectOrId.ToPrtgObject(), cloneName, destinationObjectOrId.ToPrtgObject())"/>
                     </Body>
                 </InlineMethodDef>
                 <InlineMethodDef name="CloneObject" returns="int" tokenMode="MandatoryCall">
@@ -980,10 +980,10 @@
                     <Parameter name="deviceOrId" type="Either&lt;Device, int&gt;" description="The device or ID of the device to clone."/>
                     <Parameter name="cloneName" type="string" description="The name that should be given to the cloned device."/>
                     <Parameter name="host" type="string" description="The hostname or IP Address that should be assigned to the new device."/>
-                    <Parameter name="targetParentObject" type="Either&lt;GroupOrProbe, int&gt;" description="The group or probe the device should be cloned to."/>
+                    <Parameter name="destinationObjectOrId" type="Either&lt;GroupOrProbe, int&gt;" description="The group or probe the device should be cloned to."/>
 
                     <Body expression="true">
-                        <Call name="CloneObject" args="new CloneParameters(deviceOrId, cloneName, targetParentObject, host)"/>
+                        <Call name="CloneObject" args="new CloneParameters(deviceOrId, cloneName, destinationObjectOrId, host)"/>
                     </Body>
                 </InlineMethodDef>
             </Region>

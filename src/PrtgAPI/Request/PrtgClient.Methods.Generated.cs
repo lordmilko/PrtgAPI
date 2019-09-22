@@ -3003,12 +3003,12 @@ namespace PrtgAPI
         /// <summary>
         /// Clones a sensor or group to another device or group.
         /// </summary>
-        /// <param name="sourceObject">The sensor or group to clone.</param>
+        /// <param name="objectOrId">The sensor or group to clone.</param>
         /// <param name="cloneName">The name that should be given to the cloned object.</param>
-        /// <param name="targetParentObject">If this is a sensor, the device or ID of the device to clone to. If this is a group, the object or ID of the group or probe to clone to.</param>
+        /// <param name="destinationObjectOrId">If this is a sensor, the device or ID of the device to clone to. If this is a group, the object or ID of the group or probe to clone to.</param>
         /// <returns>The ID of the object that was created.</returns>
-        public int CloneObject(Either<IPrtgObject, int> sourceObject, string cloneName, Either<DeviceOrGroupOrProbe, int> targetParentObject) =>
-            CloneObject(new CloneParameters(sourceObject.ToPrtgObject(), cloneName, targetParentObject.ToPrtgObject()), CancellationToken.None);
+        public int CloneObject(Either<IPrtgObject, int> objectOrId, string cloneName, Either<DeviceOrGroupOrProbe, int> destinationObjectOrId) =>
+            CloneObject(new CloneParameters(objectOrId.ToPrtgObject(), cloneName, destinationObjectOrId.ToPrtgObject()), CancellationToken.None);
 
         /// <summary>
         /// Clones a device to another group or probe.
@@ -3016,31 +3016,31 @@ namespace PrtgAPI
         /// <param name="deviceOrId">The device or ID of the device to clone.</param>
         /// <param name="cloneName">The name that should be given to the cloned device.</param>
         /// <param name="host">The hostname or IP Address that should be assigned to the new device.</param>
-        /// <param name="targetParentObject">The group or probe the device should be cloned to.</param>
+        /// <param name="destinationObjectOrId">The group or probe the device should be cloned to.</param>
         /// <returns>The ID of the object that was created.</returns>
-        public int CloneObject(Either<Device, int> deviceOrId, string cloneName, string host, Either<GroupOrProbe, int> targetParentObject) =>
-            CloneObject(new CloneParameters(deviceOrId, cloneName, targetParentObject, host), CancellationToken.None);
+        public int CloneObject(Either<Device, int> deviceOrId, string cloneName, string host, Either<GroupOrProbe, int> destinationObjectOrId) =>
+            CloneObject(new CloneParameters(deviceOrId, cloneName, destinationObjectOrId, host), CancellationToken.None);
 
         /// <summary>
         /// Asynchronously clones a sensor or group to another device or group.
         /// </summary>
-        /// <param name="sourceObject">The sensor or group to clone.</param>
+        /// <param name="objectOrId">The sensor or group to clone.</param>
         /// <param name="cloneName">The name that should be given to the cloned object.</param>
-        /// <param name="targetParentObject">If this is a sensor, the device or ID of the device to clone to. If this is a group, the object or ID of the group or probe to clone to.</param>
+        /// <param name="destinationObjectOrId">If this is a sensor, the device or ID of the device to clone to. If this is a group, the object or ID of the group or probe to clone to.</param>
         /// <returns>The ID of the object that was created.</returns>
-        public async Task<int> CloneObjectAsync(Either<IPrtgObject, int> sourceObject, string cloneName, Either<DeviceOrGroupOrProbe, int> targetParentObject) =>
-            await CloneObjectAsync(sourceObject, cloneName, targetParentObject, CancellationToken.None).ConfigureAwait(false);
+        public async Task<int> CloneObjectAsync(Either<IPrtgObject, int> objectOrId, string cloneName, Either<DeviceOrGroupOrProbe, int> destinationObjectOrId) =>
+            await CloneObjectAsync(objectOrId, cloneName, destinationObjectOrId, CancellationToken.None).ConfigureAwait(false);
 
         /// <summary>
         /// Asynchronously clones a sensor or group to another device or group with a specified cancellation token.
         /// </summary>
-        /// <param name="sourceObject">The sensor or group to clone.</param>
+        /// <param name="objectOrId">The sensor or group to clone.</param>
         /// <param name="cloneName">The name that should be given to the cloned object.</param>
-        /// <param name="targetParentObject">If this is a sensor, the device or ID of the device to clone to. If this is a group, the object or ID of the group or probe to clone to.</param>
+        /// <param name="destinationObjectOrId">If this is a sensor, the device or ID of the device to clone to. If this is a group, the object or ID of the group or probe to clone to.</param>
         /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>The ID of the object that was created.</returns>
-        public async Task<int> CloneObjectAsync(Either<IPrtgObject, int> sourceObject, string cloneName, Either<DeviceOrGroupOrProbe, int> targetParentObject, CancellationToken token) =>
-            await CloneObjectAsync(new CloneParameters(sourceObject.ToPrtgObject(), cloneName, targetParentObject.ToPrtgObject()), token).ConfigureAwait(false);
+        public async Task<int> CloneObjectAsync(Either<IPrtgObject, int> objectOrId, string cloneName, Either<DeviceOrGroupOrProbe, int> destinationObjectOrId, CancellationToken token) =>
+            await CloneObjectAsync(new CloneParameters(objectOrId.ToPrtgObject(), cloneName, destinationObjectOrId.ToPrtgObject()), token).ConfigureAwait(false);
 
         /// <summary>
         /// Asynchronously clones a device to another group or probe.
@@ -3048,10 +3048,10 @@ namespace PrtgAPI
         /// <param name="deviceOrId">The device or ID of the device to clone.</param>
         /// <param name="cloneName">The name that should be given to the cloned device.</param>
         /// <param name="host">The hostname or IP Address that should be assigned to the new device.</param>
-        /// <param name="targetParentObject">The group or probe the device should be cloned to.</param>
+        /// <param name="destinationObjectOrId">The group or probe the device should be cloned to.</param>
         /// <returns>The ID of the object that was created.</returns>
-        public async Task<int> CloneObjectAsync(Either<Device, int> deviceOrId, string cloneName, string host, Either<GroupOrProbe, int> targetParentObject) =>
-            await CloneObjectAsync(deviceOrId, cloneName, host, targetParentObject, CancellationToken.None).ConfigureAwait(false);
+        public async Task<int> CloneObjectAsync(Either<Device, int> deviceOrId, string cloneName, string host, Either<GroupOrProbe, int> destinationObjectOrId) =>
+            await CloneObjectAsync(deviceOrId, cloneName, host, destinationObjectOrId, CancellationToken.None).ConfigureAwait(false);
 
         /// <summary>
         /// Asynchronously clones a device to another group or probe with a specified cancellation token.
@@ -3059,11 +3059,11 @@ namespace PrtgAPI
         /// <param name="deviceOrId">The device or ID of the device to clone.</param>
         /// <param name="cloneName">The name that should be given to the cloned device.</param>
         /// <param name="host">The hostname or IP Address that should be assigned to the new device.</param>
-        /// <param name="targetParentObject">The group or probe the device should be cloned to.</param>
+        /// <param name="destinationObjectOrId">The group or probe the device should be cloned to.</param>
         /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>The ID of the object that was created.</returns>
-        public async Task<int> CloneObjectAsync(Either<Device, int> deviceOrId, string cloneName, string host, Either<GroupOrProbe, int> targetParentObject, CancellationToken token) =>
-            await CloneObjectAsync(new CloneParameters(deviceOrId, cloneName, targetParentObject, host), token).ConfigureAwait(false);
+        public async Task<int> CloneObjectAsync(Either<Device, int> deviceOrId, string cloneName, string host, Either<GroupOrProbe, int> destinationObjectOrId, CancellationToken token) =>
+            await CloneObjectAsync(new CloneParameters(deviceOrId, cloneName, destinationObjectOrId, host), token).ConfigureAwait(false);
 
         #endregion
         #region Get Object Properties
