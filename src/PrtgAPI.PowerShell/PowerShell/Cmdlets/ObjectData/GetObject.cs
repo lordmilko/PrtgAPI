@@ -23,6 +23,9 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// parameter. When filtering by sensors, the underlying raw type name must be specified (e.g. "ping", "wmivolume"). If the generic
     /// object type <see cref="ObjectType.Sensor"/> is specified, Get-Object will refrain from filtering by type server side,
     /// such that the complete type of each object may be inspected client side.</para>
+    ///
+    /// <para type="description">The PRTG object hierarchy can also be explored by specifying the parent -<see cref="Object"/> to retrieve children of.
+    /// When an -<see cref="Object"/> is specified, only children directly descended from the specified object will be returned.</para>
     /// 
     /// <example>
     ///     <code>C:\> Get-Object</code>
@@ -47,6 +50,11 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <example>
     ///     <code>C:\> Get-Object -Type wmivolume -Resolve</code>
     ///     <para>Get all WMI Volume sensor objects and resolve them to objects of type <see cref="Sensor"/>.</para>
+    ///     <para/>
+    /// </example>
+    /// <example>
+    ///     <code>C:\> Get-Object -Id -3 | Get-Object</code>
+    ///     <para>Retrieve all objects under the system "Notifications" object.</para>
     /// </example>
     ///
     /// <para type="link" uri="https://github.com/lordmilko/PrtgAPI/wiki/Other-Objects#powershell">Online version:</para>
@@ -63,6 +71,12 @@ namespace PrtgAPI.PowerShell.Cmdlets
     [Cmdlet(VerbsCommon.Get, "Object")]
     public class GetObject : PrtgTableFilterCmdlet<PrtgObject, PrtgObjectParameters>
     {
+        /// <summary>
+        /// <para type="description">The object to retrieve direct descendents of.</para>
+        /// </summary>
+        [Parameter(Mandatory = false, ValueFromPipeline = true)]
+        public PrtgObject Object { get; set; }
+
         /// <summary>
         /// <para type="description">Specifies that returned objects should be resolved to their most derived object types (<see cref="Sensor"/>, <see cref="Device"/>, <see cref="Probe"/>, etc.</para>
         /// </summary>
@@ -192,6 +206,9 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// </summary>
         protected override void ProcessAdditionalParameters()
         {
+            if (Object != null)
+                AddPipelineFilter(Property.ParentId, Object.Id);
+
             if (Type != null)
             {
                 //If any Type specified ObjectType.Sensor with no underlying type,

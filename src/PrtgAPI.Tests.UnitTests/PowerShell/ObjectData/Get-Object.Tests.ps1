@@ -135,4 +135,14 @@ Describe "Get-Object" -Tag @("PowerShell", "UnitTest") {
         $objs[1].Type | Should Be "Sensor (wmilogicaldiskv2)"
         $objs[1].Type.StringValue | Should Be "wmilogicaldiskv2"
     }
+
+    It "pipes from another object" {
+
+        SetAddressValidatorResponse @(
+            [Request]::Objects("filter_objid=1000", [Request]::DefaultObjectFlags)
+            [Request]::Objects("filter_parentid=1000", [Request]::DefaultObjectFlags)
+        )
+
+        Get-Object -Id 1000 | Get-Object
+    }
 }

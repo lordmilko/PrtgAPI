@@ -30,4 +30,16 @@ Describe "Get-Object_IT" -Tag @("PowerShell", "IntegrationTest") {
             Get-Object
         }
     }
+
+    It "pipes from another object" {
+        $notifications = Get-Object -Id -3 | Get-Object
+
+        $actions = Get-NotificationAction
+        $notifications.Count | Should Be $actions.Count
+
+        foreach($action in $notifications)
+        {
+            $action.Type | Should Be "Notification"
+        }
+    }
 }
