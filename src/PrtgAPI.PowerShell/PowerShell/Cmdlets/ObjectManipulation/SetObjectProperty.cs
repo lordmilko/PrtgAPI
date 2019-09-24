@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Linq;
 using System.Management.Automation;
+using PrtgAPI.Attributes;
 using PrtgAPI.Parameters;
 using PrtgAPI.Parameters.Helpers;
 using PrtgAPI.PowerShell.Base;
@@ -199,6 +200,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
             }
             else if (IsRawPropertyParameterSet)
             {
+                WarnSuspiciousPropertyName(RawProperty);
                 RawValue = PSObjectUtilities.CleanPSObject(RawValue);
             }
             else if (IsRawParameterSet)
@@ -209,6 +211,20 @@ namespace PrtgAPI.PowerShell.Cmdlets
             }
 
             base.BeginProcessingEx();
+        }
+
+        private void WarnSuspiciousPropertyName(string name)
+        {
+            if (name.EndsWith("_"))
+                return;
+
+            var inherited = Enum.GetValues(typeof(ObjectProperty)).Cast<ObjectProperty>().Where(v => v.GetEnumAttribute<LiteralValueAttribute>() != null).ToArray();
+            var raw = inherited.Select(i => ObjectPropertyParser.GetObjectPropertyName(i)).ToArray();
+
+            if (raw.Contains(name))
+                return;
+
+            WriteWarning($"Property '{name}' does not look correct. If request does not work try with '{name}_' instead. To suppress this message specify -WarningAction SilentlyContinue.");
         }
 
         private bool IsAnyParameterSet(params string[] sets)

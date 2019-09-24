@@ -368,5 +368,18 @@ Describe "Set-ObjectProperty" -Tag @("PowerShell", "UnitTest") {
 
             Set-ObjectProperty -Id 1001 -Name "test" -Interval 00:05:00
         }
+
+        It "shows a warning when a raw property doesn't contain an underscore" {
+
+            SetMultiTypeResponse
+
+            (Set-ObjectProperty -Id 1001 -RawProperty name -RawValue value -Force 3>&1) -join "" | Should BeLike "Property 'name' does not look correct*"
+        }
+
+        It "doesn't show a warning when a known literal value doesn't contain an underscore" {
+            SetMultiTypeResponse
+
+            (Set-ObjectProperty -Id 1001 -RawProperty intervalgroup -RawValue 1 -Force 3>&1) -join "" | Should BeNullOrEmpty
+        }
     }
 }
