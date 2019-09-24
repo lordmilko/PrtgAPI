@@ -23,7 +23,11 @@ Describe "Simulate-ErrorStatus_IT" -Tag @("PowerShell", "IntegrationTest") {
         }
 
         $redSensor.Status | Should Be Down
-        $redSensor.Message | Should BeLike "Simulated error*"
+
+        if(IsEnglish)
+        {
+            $redSensor.Message | Should BeLike "Simulated error*"
+        }
 
         LogTestDetail "Resuming object"
         $redSensor | Resume-Object
@@ -66,9 +70,13 @@ Describe "Simulate-ErrorStatus_IT" -Tag @("PowerShell", "IntegrationTest") {
         }
 
         $redSensors[0].Status | Should Be Down
-        $redSensors[0].Message | Should BeLike "Simulated error*"
         $redSensors[1].Status | Should Be Down
-        $redSensors[1].Message | Should BeLike "Simulated error*"
+        
+        if(IsEnglish)
+        {
+            $redSensors[0].Message | Should BeLike "Simulated error*"
+            $redSensors[1].Message | Should BeLike "Simulated error*"
+        }
 
         LogTestDetail "Resuming object"
         $redSensors | Resume-Object

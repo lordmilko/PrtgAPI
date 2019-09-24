@@ -45,7 +45,10 @@ Describe "Add-Device_IT" -Tag @("PowerShell", "IntegrationTest") {
 
         $device = $group | Add-Device "autodiscoverAutomatic" -AutoDiscover
 
-        $device.Condition | Should BeLike "Auto-Discovery*"
+        if(IsEnglish)
+        {
+            $device.Condition | Should BeLike "Auto-Discovery*"
+        }
 
         Unsafe {
             $device | Remove-Object -Force
@@ -57,7 +60,10 @@ Describe "Add-Device_IT" -Tag @("PowerShell", "IntegrationTest") {
 
         $device = $group | Add-Device "autodiscoverTemplate" -AutoDiscover -Template *wmi*
 
-        $device.Condition | Should BeLike "Auto-Discovery*"
+        if(IsEnglish)
+        {
+            $device.Condition | Should BeLike "Auto-Discovery*"
+        }
 
         Unsafe {
             $device | Should Not BeNullOrEmpty

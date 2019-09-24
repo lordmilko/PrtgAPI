@@ -261,35 +261,41 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         [TestCategory("IntegrationTest")]
         public void Data_Stream_Serially_Count_AndStartOffset_LessThanAvailable_SinglePage()
         {
-            var parameters = new LogParameters(Settings.UpSensor, RecordAge.All, null);
+            FilterTests.Retry(retry =>
+            {
+                var parameters = new LogParameters(Settings.UpSensor, RecordAge.All, null);
 
-            var expected = client.GetLogs(parameters);
+                var expected = client.GetLogs(parameters);
 
-            var count = 100;
+                var count = 100;
 
-            Assert.IsTrue(count < expected.Count);
+                AssertEx.IsTrue(count < expected.Count, $"Expected {count} to be less than {expected.Count}");
 
-            parameters.Count = count;
+                parameters.Count = count;
 
-            StreamLogsSerial(parameters, expected.Take(count).ToList());
+                StreamLogsSerial(parameters, expected.Take(count).ToList());
+            });
         }
 
         [TestMethod]
         [TestCategory("IntegrationTest")]
         public void Data_Stream_Serially_Count_AndStartOffset_LessThanAvailable_MultiplePages()
         {
-            var parameters = new LogParameters(Settings.UpSensor, RecordAge.All, null);
+            FilterTests.Retry(retry =>
+            {
+                var parameters = new LogParameters(Settings.UpSensor, RecordAge.All, null);
 
-            var expected = client.GetLogs(parameters);
+                var expected = client.GetLogs(parameters);
 
-            var count = 100;
+                var count = 100;
 
-            Assert.IsTrue(count < expected.Count);
+                Assert.IsTrue(count < expected.Count);
 
-            parameters.Count = count;
-            parameters.PageSize = 30;
+                parameters.Count = count;
+                parameters.PageSize = 30;
 
-            StreamLogsSerial(parameters, expected.Take(count).ToList());
+                StreamLogsSerial(parameters, expected.Take(count).ToList());
+            });
         }
 
         [TestMethod]
@@ -871,35 +877,41 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         [TestCategory("IntegrationTest")]
         public void Data_Stream_Parallel_Count_AndStartOffset_LessThanAvailable_SinglePage()
         {
-            var parameters = new LogParameters(Settings.UpSensor, RecordAge.All, null);
+            FilterTests.Retry(retry =>
+            {
+                var parameters = new LogParameters(Settings.UpSensor, RecordAge.All, null);
 
-            var expected = client.GetLogs(parameters);
+                var expected = client.GetLogs(parameters);
 
-            var count = 100;
+                var count = 100;
 
-            Assert.IsTrue(count < expected.Count);
+                AssertEx.IsTrue(count < expected.Count, $"Expected {count} to be less than {expected.Count}");
 
-            parameters.Count = count;
+                parameters.Count = count;
 
-            StreamLogs(parameters, expected.Take(count).ToList());
+                StreamLogs(parameters, expected.Take(count).ToList());
+            });
         }
 
         [TestMethod]
         [TestCategory("IntegrationTest")]
         public void Data_Stream_Parallel_Count_AndStartOffset_LessThanAvailable_MultiplePages()
         {
-            var parameters = new LogParameters(Settings.UpSensor, RecordAge.All, null);
+            FilterTests.Retry(retry =>
+            {
+                var parameters = new LogParameters(Settings.UpSensor, RecordAge.All, null);
 
-            var expected = client.GetLogs(parameters);
+                var expected = client.GetLogs(parameters);
 
-            var count = 100;
+                var count = 100;
 
-            Assert.IsTrue(count < expected.Count);
+                AssertEx.IsTrue(count < expected.Count, $"Expected {count} to be less than {expected.Count}");
 
-            parameters.Count = count;
-            parameters.PageSize = 30;
+                parameters.Count = count;
+                parameters.PageSize = 30;
 
-            StreamLogs(parameters, expected.Take(count).ToList());
+                StreamLogs(parameters, expected.Take(count).ToList());
+            });
         }
 
         [TestMethod]

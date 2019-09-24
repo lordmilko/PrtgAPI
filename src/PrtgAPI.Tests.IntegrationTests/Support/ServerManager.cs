@@ -26,6 +26,18 @@ namespace PrtgAPI.Tests.IntegrationTests
 
         private Func<PrtgClient> getClient;
 
+        internal static bool IsEnglish(PrtgClient client, bool defaultValue = true)
+        {
+            string language;
+
+            if (client.GetObjectPropertiesRaw(810).TryGetValue("languagefile", out language))
+            {
+                return language == "english.lng";
+            }
+
+            return defaultValue;
+        }
+
         private PrtgClient Client
         {
             get
@@ -509,7 +521,8 @@ namespace PrtgAPI.Tests.IntegrationTests
             }
             catch (Exception ex)
             {
-                if (ex.Message.Contains("probe is not connected"))
+                //If we're not English, lets assume this is the issue
+                if (ex.Message.Contains("probe is not connected") || !IsEnglish(Client))
                 {
                     Logger.Log("Cannot repair state as probe is not connected yet. Sleeping for 5 seconds");
                     Thread.Sleep(5000);

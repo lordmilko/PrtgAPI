@@ -119,7 +119,10 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
             {
                 Assert.AreEqual("ZEN", sensor.Name);
                 Assert.AreEqual(sensor.Type, "zen");
-                Assert.AreEqual(sensor.NotificationTypes.InheritTriggers, true);
+
+                if (IsEnglish)
+                    Assert.AreEqual(sensor.NotificationTypes.InheritTriggers, true);
+
                 Assert.AreEqual(Priority.None, sensor.Priority); //ZEN sensors don't have a priority
                 Assert.AreEqual(false, sensor.InheritInterval);  //ZEN sensors don't have an InheritInterval
                 Assert.AreEqual(ScanningInterval.TwentyFourHours, sensor.Interval); //ZEN sensors don't have an Interval. SensorSettings will report this value as null

@@ -71,26 +71,50 @@ Describe "Get-ObjectProperty_IT" -Tag @("PowerShell", "IntegrationTest") {
         
         $result = Get-ObjectProperty -Id (Settings ChannelSensor) -SubId 1 -RawSubType "blah" -RawProperty "blahblah"
 
-        $result | Should Be "Not found"
+        if(IsEnglish)
+        {
+            $result | Should Be "Not found"
+        }
     }
 
     it "returns 'Not found' retrieving properties from an invalid sub id" {
 
         $result = Get-ObjectProperty -Id (Settings ChannelSensor) -SubId 1000 -RawSubType channel -RawProperty "limitmaxerror"
 
-        $result | Should Be "Not found"
+        if(IsEnglish)
+        {
+            $result | Should Be "Not found"
+        }
     }
 
     It "throws retrieving a raw inheritance flag" {
         $sensor = Get-Sensor -Id (Settings UpSensor)
 
-        { $sensor | Get-ObjectProperty -RawProperty "accessgroup" } | Should Throw "A value for property 'accessgroup' could not be found"
+        $scriptBlock = { $sensor | Get-ObjectProperty -RawProperty "accessgroup" }
+
+        if(IsEnglish)
+        {
+            $scriptBlock | Should Throw "A value for property 'accessgroup' could not be found"
+        }
+        else
+        {
+            & $scriptBlock
+        }
     }
 
     It "retrieves an invalid unsupported property" {
         $device = Get-Device -Id (Settings Device)
 
-        { $device | Get-ObjectProperty -RawProperty "banana" } | Should Throw "A value for property 'banana' could not be found"
+        $scriptBlock = { $device | Get-ObjectProperty -RawProperty "banana" }
+
+        if(IsEnglish)
+        {
+            $scriptBlock | Should Throw "A value for property 'banana' could not be found"
+        }
+        else
+        {
+            & $scriptBlock
+        }
     }
 
     It "throws an ErrorRecord when a property doesn't exist" {

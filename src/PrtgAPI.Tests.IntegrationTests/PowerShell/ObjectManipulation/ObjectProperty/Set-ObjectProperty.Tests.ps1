@@ -82,7 +82,11 @@ Describe "Set-ObjectProperty_IT" -Tag @("PowerShell", "IntegrationTest") {
 
             #$schedule = Get-PrtgSchedule -Id (Settings Schedule)
             
-            GetValue "Schedule"           "None"
+            if(IsEnglish)
+            {
+                GetValue "Schedule"           "None"
+            }
+            
             GetValue "MaintenanceEnabled" $false
             GetValue "MaintenanceStart"   (Settings MaintenanceStart)
             GetValue "MaintenanceEnd"     (Settings MaintenanceStart)
@@ -225,7 +229,7 @@ Describe "Set-ObjectProperty_IT" -Tag @("PowerShell", "IntegrationTest") {
 
         $message = "Sensor Name: Required field, not defined. The object has not been changed"
 
-        { $sensor | Set-ObjectProperty Name $null } | Should Throw $message
+        { $sensor | Set-ObjectProperty Name $null } | Should Throw (ForeignMessage $message)
     }
 
     It "setting an invalid scanning interval sets the nearest valid interval" {

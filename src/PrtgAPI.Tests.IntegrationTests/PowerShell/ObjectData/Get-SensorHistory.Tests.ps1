@@ -106,8 +106,11 @@ Describe "Get-SensorHistory_IT" -Tag @("PowerShell", "IntegrationTest") {
 
         $history = $sensor | Get-SensorHistory
 
-        $history."Total(volume)" | Should Not BeNullOrEmpty
-        $history."Total(speed)" | Should Not BeNullOrEmpty
+        if(IsEnglish)
+        {
+            $history."Total(volume)" | Should Not BeNullOrEmpty
+            $history."Total(speed)" | Should Not BeNullOrEmpty
+        }        
     }
 
     It "processes all sensors" {

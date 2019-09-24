@@ -178,8 +178,8 @@ Describe "Add-Sensor_IT" -Tag @("PowerShell", "IntegrationTest") {
 
             try
             {
-                $sensors | where Name -eq "Service: PRTG Core Server Service" | Should Not BeNullOrEmpty
-                $sensors | where Name -eq "Service: PRTG Probe Service" | Should Not BeNullOrEmpty
+                $sensors | where Name -like "*: PRTG Core Server Service" | Should Not BeNullOrEmpty
+                $sensors | where Name -like "*: PRTG Probe Service" | Should Not BeNullOrEmpty
             }
             finally
             {
@@ -250,8 +250,8 @@ Describe "Add-Sensor_IT" -Tag @("PowerShell", "IntegrationTest") {
 
         try
         {
-            $sensors | where Name -eq "Service: PRTG Core Server Service" | Should Not BeNullOrEmpty
-            $sensors | where Name -eq "Service: PRTG Probe Service" | Should Not BeNullOrEmpty
+            $sensors | where Name -like "*: PRTG Core Server Service" | Should Not BeNullOrEmpty
+            $sensors | where Name -like "*: PRTG Probe Service" | Should Not BeNullOrEmpty
         }
         finally
         {
@@ -439,13 +439,13 @@ Describe "Add-Sensor_IT" -Tag @("PowerShell", "IntegrationTest") {
 
         $params = New-SensorParameters $table
 
-        { Get-Device -Id (Settings Device) | Add-Sensor $params } | Should Throw "Failed to add sensor for sensor type 'exexml1': type was not valid"
+        { Get-Device -Id (Settings Device) | Add-Sensor $params } | Should Throw (ForeignMessage "Failed to add sensor for sensor type 'exexml1': type was not valid")
     }
 
     It "throws attempting to create dynamic parameters as a read only user" {
 
         ReadOnlyClient {
-            { Get-Device -Id (Settings Device) | New-SensorParameters -RawType exexml } | Should Throw "a read-only user account is not allowed to access this web page"
+            { Get-Device -Id (Settings Device) | New-SensorParameters -RawType exexml } | Should Throw (ForeignMessage "a read-only user account is not allowed to access this web page")
         }
     }
 

@@ -81,10 +81,17 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         [TestCategory("IntegrationTest")]
         public void Data_GetObjectProperties_Throws_RetrievingAnInvalidProperty()
         {
-            AssertEx.Throws<PrtgRequestException>(
-                () => client.GetObjectPropertyRaw(Settings.UpSensor, "banana"),
-                "A value for property 'banana' could not be found"
-            );
+            Action action = () => client.GetObjectPropertyRaw(Settings.UpSensor, "banana");
+
+            if (IsEnglish)
+            {
+                AssertEx.Throws<PrtgRequestException>(
+                    action,
+                    "A value for property 'banana' could not be found"
+                );
+            }
+            else
+                action();
         }
 
         [TestMethod]

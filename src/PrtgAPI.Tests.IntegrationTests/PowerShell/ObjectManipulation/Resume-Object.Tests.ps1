@@ -51,7 +51,11 @@ Describe "Resume-Object_IT" -Tag @("PowerShell", "IntegrationTest") {
         }
 
         $redSensor.Status | Should Be Down
-        $redSensor.Message | Should BeLike "Simulated error*"
+
+        if(IsEnglish)
+        {
+            $redSensor.Message | Should BeLike "Simulated error*"
+        }
 
         LogTestDetail "Resuming object"
         $redSensor | Resume-Object

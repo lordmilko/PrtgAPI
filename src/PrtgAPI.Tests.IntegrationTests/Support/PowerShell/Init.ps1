@@ -23,6 +23,23 @@ function Log($message, $error = $false)
     Write-Host $message
 }
 
+function IsEnglish
+{
+    $properties = Get-ObjectProperty -Id 810 -Raw
+
+    return $properties.languagefile -eq "english.lng"
+}
+
+function ForeignMessage($msg)
+{
+    if(IsEnglish)
+    {
+        return $msg
+    }
+
+    return $null
+}
+
 function LogTest($message, $error)
 {
     if($error -ne $true)

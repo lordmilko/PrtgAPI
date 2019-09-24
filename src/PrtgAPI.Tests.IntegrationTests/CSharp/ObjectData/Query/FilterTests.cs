@@ -1828,7 +1828,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
             {
                 var device = client.GetDevice(Settings.Device);
 
-                if (device.Condition != null && device.Condition.Contains("recommendation in progress"))
+                if (device.Condition != null && (device.Condition.Contains("recommendation in progress") || (!IsEnglish && device.Condition.Contains("%"))))
                 {
                     Logger.LogTestDetail("Sensor recommendation in progress. Pausing device");
                     client.PauseObject(device.Id);
@@ -1850,16 +1850,36 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
                     if (device.Condition == null)
                     {
                         client.RefreshObject(Settings.Device);
-                        Thread.Sleep(5000);
+                        Thread.Sleep(3000);
+                        client.AutoDiscover(Settings.Device);
+                        Thread.Sleep(2000);
                         device = client.GetDevice(Settings.Device);
                     }
+                    else
+                        break;
+                }
+
+                if (device.Condition == null)
+                {
+                    if (inner)
+                        Assert.Fail("Condition failed to become non-null");
+                    else
+                    {
+                        PrepareCondition(action, true);
+                        return;
+                    }
+                }
+                else
+                {
+                    Logger.LogTestDetail($"Condition is '{device.Condition}'");
                 }
 
                 if (device.Condition.Contains("Sensor recommendation in progress"))
                     PrepareCondition(action, true);
                 else
                 {
-                    Assert.IsTrue(device.Condition?.Contains("Auto-Discovery") == true, $"Expected condition to contain the words 'Auto-Discovery', however instead contained '{device.Condition}'");
+                    if (IsEnglish)
+                        Assert.IsTrue(device.Condition?.Contains("Auto-Discovery") == true, $"Expected condition to contain the words 'Auto-Discovery', however instead contained '{device.Condition}'");
 
                     action(device);
                 }

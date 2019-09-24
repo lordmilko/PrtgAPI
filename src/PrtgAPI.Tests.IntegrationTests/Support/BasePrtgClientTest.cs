@@ -24,6 +24,7 @@ namespace PrtgAPI.Tests.IntegrationTests
 
         private PrtgClient cachedClient;
         private PrtgClient cachedReadOnlyClient;
+        private bool? cachedIsEnglish;
 
         protected PrtgClient client
         {
@@ -44,6 +45,19 @@ namespace PrtgAPI.Tests.IntegrationTests
                     cachedReadOnlyClient = new PrtgClient(Settings.ServerWithProto, Settings.ReadOnlyUserName, Settings.ReadOnlyPassword);
 
                 return cachedReadOnlyClient;
+            }
+        }
+
+        protected bool IsEnglish
+        {
+            get
+            {
+                if (cachedIsEnglish == null)
+                {
+                    cachedIsEnglish = ServerManager.IsEnglish(client);
+                }
+
+                return cachedIsEnglish.Value;
             }
         }
 

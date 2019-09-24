@@ -192,7 +192,7 @@ Describe "Clone-Object_IT" -Tag @("PowerShell", "IntegrationTest") {
         }
 
         It "throws attempting to clone a special object" {
-            { Clone-Object -Id 1 } | Should Throw "You can only clone"
+            { Clone-Object -Id 1 } | Should Throw (ForeignMessage "You can only clone")
         }
     }
 }

@@ -115,12 +115,34 @@ Describe "Set-ChannelProperty_IT" -Tag @("PowerShell", "IntegrationTest") {
 
         (& $channel) | Set-ChannelProperty ValueLookup "banana"
         $newChannel = (& $channel)
-        $newChannel.ValueLookup | Should Be "None"
+        if(IsEnglish)
+        {
+            $newChannel.ValueLookup | Should Be "None"
+        }
+        else
+        {
+            $newChannel.ValueLookup | Should Not Be "banana"
+        }
 
         $channel = { Get-Sensor -Id (Settings ExeXml) | Get-Channel Value }
+        $realValueLookup = "prtg.standardlookups.yesno.stateyesok"
+
+        (& $channel) | Set-ChannelProperty ValueLookup $realValueLookup
         
-        (& $channel) | Set-ChannelProperty ValueLookup "prtg.standardlookups.yesno.stateyesok"
-        SetValue "ValueLookup" "None"
+        if(IsEnglish)
+        {
+            SetValue "ValueLookup" "None"
+        }
+        else
+        {
+            $val = (& $channel).ValueLookup
+            $val | Should Be $realValueLookup
+
+            (& $channel) | Set-ChannelProperty ValueLookup None
+
+            $finalVal = (& $channel).ValueLookup
+            $finalValue | Should Not Be $realValueLookup
+        }
     }
 
     It "sets ValueLookup to None when an invalid value is specified" {
@@ -128,7 +150,15 @@ Describe "Set-ChannelProperty_IT" -Tag @("PowerShell", "IntegrationTest") {
 
         (& $channel) | Set-ChannelProperty ValueLookup "banana"
         $newChannel = (& $channel)
-        $newChannel.ValueLookup | Should Be "None"
+
+        if(IsEnglish)
+        {
+            $newChannel.ValueLookup | Should Be "None"
+        }
+        else
+        {
+            $newChannel.ValueLookup | Should Not Be "banana"
+        }   
     }
 
     It "Value Scaling" {
@@ -155,7 +185,7 @@ Describe "Set-ChannelProperty_IT" -Tag @("PowerShell", "IntegrationTest") {
         $channel = DefaultChannel
 
         SetChild "LineColor" "#666666" "ColorMode" "Manual"
-        { SetValue "ColorMode" "Manual" } | Should Throw "Required field, not defined"
+        { SetValue "ColorMode" "Manual" } | Should Throw (ForeignMessage "Required field, not defined")
         
         (& $channel) | Set-ChannelProperty LineColor "444444"
 
@@ -181,7 +211,7 @@ Describe "Set-ChannelProperty_IT" -Tag @("PowerShell", "IntegrationTest") {
         # Logically this should throw, however prior to PRTG 18.4.1962 if you set the PercentDisplay to PercentOfMax, it doesn't make you specify a value
         # As such, we do not create a reverse dependency on PercentValue
         # In PRTG 18.4.1962 this now throws properly
-        { SetValue "PercentMode" "PercentOfMax" } | Should Throw "Required field, not defined"
+        { SetValue "PercentMode" "PercentOfMax" } | Should Throw (ForeignMessage "Required field, not defined")
 
         (& $channel) | Set-ChannelProperty PercentValue 40
 
@@ -200,7 +230,7 @@ Describe "Set-ChannelProperty_IT" -Tag @("PowerShell", "IntegrationTest") {
         $temp = & $channel
 
         SetValue "DecimalPlaces" 3 "DecimalMode" "Custom"
-        { SetValue "DecimalMode" "Custom" } | Should Throw "Required field, not defined"
+        { SetValue "DecimalMode" "Custom" } | Should Throw (ForeignMessage "Required field, not defined")
 
         (& $channel) | Set-ChannelProperty DecimalPlaces 4
 
@@ -227,7 +257,7 @@ Describe "Set-ChannelProperty_IT" -Tag @("PowerShell", "IntegrationTest") {
 
         SetChild "VerticalAxisMin" 10 "VerticalAxisScaling" "Manual"
         SetChild "VerticalAxisMax" 80 "VerticalAxisScaling" "Manual"
-        { SetValue "VerticalAxisScaling" "Manual" } | Should Throw "Required field, not defined"
+        { SetValue "VerticalAxisScaling" "Manual" } | Should Throw (ForeignMessage "Required field, not defined")
 
         (& $channel) | Set-ChannelProperty VerticalAxisMin 20
         (& $channel) | Set-ChannelProperty VerticalAxisMax 70
@@ -254,9 +284,9 @@ Describe "Set-ChannelProperty_IT" -Tag @("PowerShell", "IntegrationTest") {
         SetChild "LowerErrorLimit"     -200                "LimitsEnabled" $true
         SetChild "LowerWarningLimit"   -300                "LimitsEnabled" $true
         
-        { SetChild "ErrorLimitMessage"   "error! error!"     "LimitsEnabled" $true } | Should Throw "does not have a limit value defined on it"
-        { SetChild "WarningLimitMessage" "warning! warning!" "LimitsEnabled" $true } | Should Throw "does not have a limit value defined on it"
-        { SetValue "LimitsEnabled" $true                                           } | Should Throw "does not have a limit value defined on it"
+        { SetChild "ErrorLimitMessage"   "error! error!"     "LimitsEnabled" $true } | Should Throw (ForeignMessage "does not have a limit value defined on it")
+        { SetChild "WarningLimitMessage" "warning! warning!" "LimitsEnabled" $true } | Should Throw (ForeignMessage "does not have a limit value defined on it")
+        { SetValue "LimitsEnabled" $true                                           } | Should Throw (ForeignMessage "does not have a limit value defined on it")
 
         SetValueWithLimit "LimitsEnabled" $true
         SetChildWithLimit "ErrorLimitMessage"   "error! error!"     "LimitsEnabled" $true
@@ -409,7 +439,7 @@ Describe "Set-ChannelProperty_IT" -Tag @("PowerShell", "IntegrationTest") {
                 $finalChannel.UpperErrorLimit | Assert-Null -Message "Expected UpperErrorLimit to be null but it wasn't"
                 $finalChannel.LimitsEnabled | Assert-Equal $true -Message "After clearing UpperErrorLimit, expected LimitsEnabled to be <expected> however instead was <actual>"
 
-                { $finalChannel | Set-ChannelProperty UpperErrorLimit $null } | Should Throw "You have set Alerting to limit-based, but have entered no limit value"
+                { $finalChannel | Set-ChannelProperty UpperErrorLimit $null } | Should Throw (ForeignMessage "You have set Alerting to limit-based, but have entered no limit value")
             }
         }
 

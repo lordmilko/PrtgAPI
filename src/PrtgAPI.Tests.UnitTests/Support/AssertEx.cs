@@ -195,7 +195,7 @@ namespace PrtgAPI.Tests.UnitTests
             return field.FieldType.IsGenericType && field.FieldType.GetGenericTypeDefinition() == typeof(LazyValue<>);
         }
 
-        public static void Throws<T>(Action action, string message) where T : Exception
+        public static void Throws<T>(Action action, string message, bool checkMessage = true) where T : Exception
         {
             try
             {
@@ -205,7 +205,8 @@ namespace PrtgAPI.Tests.UnitTests
             }
             catch (T ex)
             {
-                Assert.IsTrue(ex.Message.Contains(message), $"Exception message '{ex.Message}' did not contain string '{message}'");
+                if (checkMessage)
+                    Assert.IsTrue(ex.Message.Contains(message), $"Exception message '{ex.Message}' did not contain string '{message}'");
             }
             catch (Exception ex) when (!(ex is AssertFailedException))
             {
@@ -213,7 +214,7 @@ namespace PrtgAPI.Tests.UnitTests
             }
         }
 
-        public static async Task ThrowsAsync<T>(Func<Task> action, string message) where T : Exception
+        public static async Task ThrowsAsync<T>(Func<Task> action, string message, bool checkMessage = true) where T : Exception
         {
             try
             {
@@ -223,7 +224,8 @@ namespace PrtgAPI.Tests.UnitTests
             }
             catch (T ex)
             {
-                Assert.IsTrue(ex.Message.Contains(message), $"Exception message '{ex.Message}' did not contain string '{message}'");
+                if (checkMessage)
+                    Assert.IsTrue(ex.Message.Contains(message), $"Exception message '{ex.Message}' did not contain string '{message}'");
             }
             catch (Exception ex) when (!(ex is AssertFailedException))
             {

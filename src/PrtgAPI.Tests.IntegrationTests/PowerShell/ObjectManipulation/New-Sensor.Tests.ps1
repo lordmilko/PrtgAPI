@@ -21,7 +21,12 @@ function TestSensorWithTargets($sensorArgs, $targetArgs, $expectedSensorNames, $
 
     try
     {
-        ($expectedNames -join ",") | Assert-Equal ($actualNames -join ",") -Message "Expected sensors were not created"
+        $expectedNames.Count | Assert-Equal $actualNames.Count -Message "Expected number of sensors were not created"
+
+        for($i = 0; $i -lt $expectedNames.Count; $i++)
+        {
+            $actualNames[$i] | Should BeLike $expectedNames[$i]
+        }
     }
     catch
     {
@@ -55,7 +60,7 @@ function TestSensorFactory($arguments, $expectedDefinition, $count, $throw)
     {
         if($throw)
         {
-            { Get-Sensor @getSensorArgs | New-Sensor @arguments } | Should Throw "Error in channel"
+            { Get-Sensor @getSensorArgs | New-Sensor @arguments } | Should Throw (ForeignMessage "Error in channel")
             return
         }
         else
@@ -92,7 +97,7 @@ function TestSensorFactory($arguments, $expectedDefinition, $count, $throw)
     {
         if($throw)
         {
-            { New-Sensor @newArguments -DestinationId $arguments["DestinationId"] } | Should Throw "Error in channel"
+            { New-Sensor @newArguments -DestinationId $arguments["DestinationId"] } | Should Throw (ForeignMessage "Error in channel")
             return
         }
         else
@@ -194,7 +199,7 @@ Describe "New-Sensor_IT" -Tag @("PowerShell", "IntegrationTest") {
                 Name = "*prtg*"
             }
 
-            TestSensorWithTargets $sensorArgs $targetArgs { "Service: $_" } ("WmiService", "ServiceName")
+            TestSensorWithTargets $sensorArgs $targetArgs { "*: $_" } ("WmiService", "ServiceName")
         }
     }
 

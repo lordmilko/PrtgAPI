@@ -32,12 +32,15 @@ Describe "Start-AutoDiscovery_IT" -Tag @("PowerShell", "IntegrationTest") {
         
         $newDevice = Get-Device -Id $device.Id
 
-        if($newDevice.Condition -notlike "Auto-Discovery*")
+        if(IsEnglish)
         {
-            $newDevice = WaitForAutoDiscovery $newDevice
-        }
+            if($newDevice.Condition -notlike "Auto-Discovery*")
+            {
+                $newDevice = WaitForAutoDiscovery $newDevice
+            }
 
-        $newDevice.Condition | Should BeLike "Auto-Discovery*"
+            $newDevice.Condition | Should BeLike "Auto-Discovery*"
+        }
 
         Unsafe {
             $newDevice | Should Not BeNullOrEmpty
@@ -56,12 +59,15 @@ Describe "Start-AutoDiscovery_IT" -Tag @("PowerShell", "IntegrationTest") {
         $device | Start-AutoDiscovery $templates
         $newDevice = Get-Device -Id $device.Id
 
-        if($newDevice.Condition -notlike "Auto-Discovery*")
+        if(IsEnglish)
         {
-            $newDevice = WaitForAutoDiscovery $newDevice
-        }
+            if($newDevice.Condition -notlike "Auto-Discovery*")
+            {
+                $newDevice = WaitForAutoDiscovery $newDevice
+            }
 
-        $newDevice.Condition | Should BeLike "Auto-Discovery*"
+            $newDevice.Condition | Should BeLike "Auto-Discovery*"
+        }
 
         Unsafe {
             $newDevice | Should Not BeNullOrEmpty
@@ -80,12 +86,15 @@ Describe "Start-AutoDiscovery_IT" -Tag @("PowerShell", "IntegrationTest") {
 
         $newDevice = Get-Device -Id $device.Id
 
-        if($newDevice.Condition -notlike "Auto-Discovery*")
+        if(IsEnglish)
         {
-            $newDevice = WaitForAutoDiscovery $newDevice
-        }
+            if($newDevice.Condition -notlike "Auto-Discovery*")
+            {
+                $newDevice = WaitForAutoDiscovery $newDevice
+            }
         
-        $newDevice.Condition | Should BeLike "Auto-Discovery*"
+            $newDevice.Condition | Should BeLike "Auto-Discovery*"
+        }
 
         Unsafe {
             $newDevice | Should Not BeNullOrEmpty

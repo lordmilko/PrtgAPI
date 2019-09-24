@@ -13,7 +13,7 @@ Describe "Set-ObjectProperty_DeviceOrGroup_IT" -Tag @("PowerShell", "Integration
     It "Group Type" {
         $object = Get-Group -Id (Settings Group)
 
-        { SetValue "AutoDiscoveryMode" "AutomaticDetailed" } | Should Throw "IPv4 Base: Required field, not defined"
+        { SetValue "AutoDiscoveryMode" "AutomaticDetailed" } | Should Throw (ForeignMessage "IPv4 Base: Required field, not defined")
         SetValue "AutoDiscoverySchedule" "Hourly"
     }
 }

@@ -10,6 +10,14 @@ namespace PrtgAPI.Tests.IntegrationTests
     {
         internal static bool HadFailure { get; set; }
 
+        private static Lazy<bool> IsEnglish => new Lazy<bool>(
+            () =>
+            {
+                var client = new PrtgClient(Settings.ServerWithProto, Settings.UserName, Settings.Password);
+
+                return ServerManager.IsEnglish(client);
+            });
+
         public static void AreEqual<T>(T expected, T actual, string message, bool retry = false)
         {
             ExecuteAssert(() => Assert.AreEqual(expected, actual, message), "Assert.AreEqual", retry);
@@ -32,12 +40,12 @@ namespace PrtgAPI.Tests.IntegrationTests
 
         public static void Throws<T>(Action action, string message) where T : Exception
         {
-            ExecuteAssert(() => UnitTests.AssertEx.Throws<T>(action, message), "AssertEx.Throws");
+            ExecuteAssert(() => UnitTests.AssertEx.Throws<T>(action, message, IsEnglish.Value), "AssertEx.Throws");
         }
 
         public static async Task ThrowsAsync<T>(Func<Task> action, string message) where T : Exception
         {
-            await ExecuteAssertAsync(async () => await UnitTests.AssertEx.ThrowsAsync<T>(action, message), "AssertEx.Throws");
+            await ExecuteAssertAsync(async () => await UnitTests.AssertEx.ThrowsAsync<T>(action, message, IsEnglish.Value), "AssertEx.Throws");
         }
 
         public static void AllPropertiesRetrieveValues(object value) => UnitTests.AssertEx.AllPropertiesRetrieveValues(value);
