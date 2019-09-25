@@ -738,7 +738,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             return method;
         }
 
-        internal static PrtgClient GetDefaultClient()
+        internal static PrtgClient GetDefaultClient(bool switchContext = false)
         {
             var client = Initialize_Client(new MultiTypeResponse
             {
@@ -751,7 +751,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
                     [Content.Notifications] = 1,
                     [Content.Schedules] = 1
                 }
-            });
+            }, switchContext);
 
             return client;
         }

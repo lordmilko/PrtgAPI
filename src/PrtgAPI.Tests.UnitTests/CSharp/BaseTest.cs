@@ -12,9 +12,10 @@ namespace PrtgAPI.Tests.UnitTests
     public class BaseTest
     {
         //Public for use in PowerShell
-        public static PrtgClient Initialize_Client(IWebResponse response)
+        public static PrtgClient Initialize_Client(IWebResponse response, bool switchContext = false)
         {
             var webClient = new MockWebClient(response);
+            webClient.SwitchContext = switchContext;
 
             var client = new PrtgClient("prtg.example.com", "username", "12345678", AuthMode.PassHash, webClient);
             

@@ -17,6 +17,8 @@ namespace PrtgAPI.Tests.UnitTests
             this.response = response;
         }
 
+        public bool SwitchContext { get; set; }
+
         public Task<HttpResponseMessage> SendSync(PrtgRequestMessage request, CancellationToken token)
         {
             var address = request.ToString();
@@ -42,6 +44,11 @@ namespace PrtgAPI.Tests.UnitTests
 
         public async Task<HttpResponseMessage> SendAsync(PrtgRequestMessage request, CancellationToken token)
         {
+            var frames = new System.Diagnostics.StackTrace().GetFrames();
+
+            if (SwitchContext)
+                await Task.Yield();
+
             var address = request.ToString();
 
             var statusCode = GetStatusCode();
@@ -49,9 +56,7 @@ namespace PrtgAPI.Tests.UnitTests
             if (token.IsCancellationRequested)
                 throw new TaskCanceledException();
 
-            var stack = new System.Diagnostics.StackTrace();
-
-            var method = stack.GetFrames().Last(f => f.GetMethod().Module.Name == "PrtgAPI.dll").GetMethod();
+            var method = frames.Last(f => f.GetMethod().Module.Name == "PrtgAPI.dll").GetMethod();
 
             var responseStr = string.Empty;
 

@@ -445,13 +445,16 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             var methods = typeof(PrtgClient).GetMethods().Where(m => m.Name.EndsWith("Async"));
             var groups = methods.GroupBy(m => m.Name);
 
-            var client = PrtgClientTests.GetDefaultClient();
+            var client = PrtgClientTests.GetDefaultClient(true);
 
             foreach (var group in groups)
             {
-                var subGroups = group.GroupBy(m => string.Join(", ",
-                    m.GetParameters().Where(p => p.ParameterType != typeof(CancellationToken))
-                        .Select(p => p.ParameterType.Name + " " + p.Name)));
+                var subGroups = group.GroupBy(
+                    m => string.Join(", ", m.GetParameters()
+                        .Where(p => p.ParameterType != typeof(CancellationToken))
+                        .Select(p => p.ParameterType.Name + " " + p.Name)
+                    )
+                );
 
                 foreach (var subGroup in subGroups)
                 {
@@ -467,6 +470,31 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
 
                         var parameters = PrtgClientTests.GetParameters(overload);
                         parameters[parameters.Length - 1] = cts.Token;
+
+                        var task = (Task)m.Invoke(client, parameters);
+
+                        try
+                        {
+                            await AssertEx.ThrowsAsync<TaskCanceledException>(async () => await task, "A task was canceled.");
+                        }
+                        catch (AssertFailedException)
+                        {
+                            Assert.Fail($"Method '{m}' did not throw an exception");
+                        }
+                    }
+
+                    var overloadsWithout = subGroup.Where(m => m.GetParameters().All(p => p.ParameterType != typeof(CancellationToken)));
+
+                    foreach (var overload in overloadsWithout)
+                    {
+                        var m = PrtgClientTests.GetCustomMethod(overload);
+
+                        var cts = new CancellationTokenSource();
+                        cts.Cancel();
+
+                        client.DefaultCancellationToken = cts.Token;
+
+                        var parameters = PrtgClientTests.GetParameters(overload);
 
                         var task = (Task)m.Invoke(client, parameters);
 
