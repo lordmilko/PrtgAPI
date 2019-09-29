@@ -3,6 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Xml.Serialization;
 using PrtgAPI.Attributes;
 using PrtgAPI.Request;
+using PrtgAPI.Tree;
 using PrtgAPI.Utilities;
 
 namespace PrtgAPI
@@ -11,11 +12,13 @@ namespace PrtgAPI
     /// <para type="description">Represents a uniquely identifiable object within PRTG.</para>
     /// </summary>
     [AlternateDescription("Object")]
-    public class PrtgObject : IPrtgObject, ITableObject, ISerializable
+    public class PrtgObject : IPrtgObject, ITableObject, ITreeValue, ISerializable
     {
         // ################################## All Object Tables ##################################
 
         //prtg's documentation says these belong under ObjectTable, however i believe they may belong under PrtgObject
+
+        int? ITreeValue.Id => Id;
 
         /// <summary>
         /// Unique identifier of this object within PRTG.
