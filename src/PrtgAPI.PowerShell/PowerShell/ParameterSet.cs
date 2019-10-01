@@ -40,6 +40,7 @@
         internal const string RawProperty = "RawPropertySet";
 
         internal const string Type = "TypeSet";
+        internal const string TypeManual = "TypeManualSet";
 
         internal const string RecordAge = "RecordAgeSet";
         internal const string DateTime = "DateTimeSet";

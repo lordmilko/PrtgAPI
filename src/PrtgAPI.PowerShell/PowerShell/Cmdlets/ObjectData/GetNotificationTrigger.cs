@@ -70,31 +70,43 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// <summary>
         /// <para type="description">The object to retrieve notification triggers for.</para>
         /// </summary>
-        [Parameter(Mandatory = true, ValueFromPipeline = true, HelpMessage = "The object to retrieve notification triggers for.")]
+        [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = ParameterSet.Type, HelpMessage = "The object to retrieve notification triggers for.")]
+        [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = ParameterSet.Dynamic, HelpMessage = "The object to retrieve notification triggers for.")]
         public SensorOrDeviceOrGroupOrProbe Object { get; set; }
+
+        /// <summary>
+        /// <para type="description">The ID of the object to retrieve notification triggers for.</para>
+        /// </summary>
+        [Parameter(Mandatory = true, ParameterSetName = ParameterSet.TypeManual)]
+        [Parameter(Mandatory = true, ParameterSetName = ParameterSet.DynamicManual)]
+        public int ObjectId { get; set; }
 
         /// <summary>
         /// <para type="description">Filter the response to objects with a certain <see cref="TriggerProperty.OnNotificationAction"/>. Can include wildcards.</para>
         /// </summary>
         [Parameter(Mandatory = false, Position = 0, ParameterSetName = ParameterSet.Dynamic)]
+        [Parameter(Mandatory = false, Position = 0, ParameterSetName = ParameterSet.DynamicManual)]
         public NameOrObject<NotificationAction>[] OnNotificationAction { get; set; }
 
         /// <summary>
         /// <para type="description">Filter the response to objects with a certain <see cref="TriggerProperty.OffNotificationAction"/>. Can include wildcards.</para>
         /// </summary>
         [Parameter(Mandatory = false, ParameterSetName = ParameterSet.Dynamic)]
+        [Parameter(Mandatory = false, ParameterSetName = ParameterSet.DynamicManual)]
         public NameOrObject<NotificationAction>[] OffNotificationAction { get; set; }
 
         /// <summary>
         /// <para type="description">Filter the response to objects with a certain <see cref="TriggerProperty.EscalationNotificationAction"/>. Can include wildcards.</para>
         /// </summary>
         [Parameter(Mandatory = false, ParameterSetName = ParameterSet.Dynamic)]
+        [Parameter(Mandatory = false, ParameterSetName = ParameterSet.DynamicManual)]
         public NameOrObject<NotificationAction>[] EscalationNotificationAction { get; set; }
 
         /// <summary>
         /// <para type="description">Filter the response to objects of a certain type.</para>
         /// </summary>
         [Parameter(Mandatory = false, ParameterSetName = ParameterSet.Dynamic)]
+        [Parameter(Mandatory = false, ParameterSetName = ParameterSet.DynamicManual)]
         public TriggerType[] Type { get; set; }
 
         /// <summary>
@@ -102,12 +114,14 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// </summary>
         [Alias("Id")]
         [Parameter(Mandatory = false, ParameterSetName = ParameterSet.Dynamic)]
+        [Parameter(Mandatory = false, ParameterSetName = ParameterSet.DynamicManual)]
         public int[] SubId { get; set; }
 
         /// <summary>
         /// <para type="description">Filter the reponse to objects with a specified ParentId.</para>
         /// </summary>
         [Parameter(Mandatory = false, ParameterSetName = ParameterSet.Dynamic)]
+        [Parameter(Mandatory = false, ParameterSetName = ParameterSet.DynamicManual)]
         public int[] ParentId { get; set; }
 
         /// <summary>
@@ -115,18 +129,21 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// Can refer to an object capable of being used as the source of a <see cref="TriggerChannel"/> or a wildcard indicating the name of the channel.</para>
         /// </summary>
         [Parameter(Mandatory = false, ParameterSetName = ParameterSet.Dynamic)]
+        [Parameter(Mandatory = false, ParameterSetName = ParameterSet.DynamicManual)]
         public object[] Channel { get; set; }
 
         /// <summary>
         /// <para type="description">List all notification trigger types compatible with the specified object.</para> 
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = ParameterSet.Type)]
+        [Parameter(Mandatory = true, ParameterSetName = ParameterSet.TypeManual)] //todo: unit test type manual
         public SwitchParameter Types { get; set; }
 
         /// <summary>
         /// <para type="description">Indicates whether to include inherited triggers in the response.</para>
         /// </summary>
         [Parameter(Mandatory = false, ParameterSetName = ParameterSet.Dynamic, HelpMessage = "Indicates whether to include inherited triggers in the response. If this value is not specified, inherited triggers are included.")]
+        [Parameter(Mandatory = false, ParameterSetName = ParameterSet.DynamicManual, HelpMessage = "Indicates whether to include inherited triggers in the response. If this value is not specified, inherited triggers are included.")]
         public bool? Inherited { get; set; }
 
         private PropertyDynamicParameterSet<TriggerProperty> dynamicParameterSet;
@@ -136,26 +153,38 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// </summary>
         protected override void ProcessRecordEx()
         {
-            if (ParameterSetName == ParameterSet.Dynamic)
-                base.ProcessRecordEx();
-            else
+            switch (ParameterSetName)
             {
-                TypeDescription = "Notification Trigger Type";
-                WriteObjectWithProgress(GetNotificationTriggerTypes);
+                case ParameterSet.Dynamic:
+                case ParameterSet.DynamicManual:
+                    base.ProcessRecordEx();
+                    break;
+                case ParameterSet.Type:
+                case ParameterSet.TypeManual:
+                    TypeDescription = "Notification Trigger Type";
+                    WriteObjectWithProgress(GetNotificationTriggerTypes);
+                    break;
+                default:
+                    throw new UnknownParameterSetException(ParameterSetName);
             }
         }
 
         private PSObject GetNotificationTriggerTypes()
         {
-            var types = client.GetNotificationTriggerTypes(Object);
+            PrtgObject prtgObject = Object;
+
+            if (prtgObject == null)
+                prtgObject = client.GetObject(ObjectId);
+
+            var types = client.GetNotificationTriggerTypes(prtgObject);
 
             var names = Enum.GetValues(typeof(TriggerType)).Cast<TriggerType>().ToList();
 
             var obj = new PSObject();
             obj.TypeNames.Insert(0, "PrtgAPI.TriggerTypePSObject");
 
-            obj.Properties.Add(new PSNoteProperty("Name", Object.Name));
-            obj.Properties.Add(new PSNoteProperty("ObjectId", Object.Id));
+            obj.Properties.Add(new PSNoteProperty("Name", prtgObject.Name));
+            obj.Properties.Add(new PSNoteProperty("ObjectId", prtgObject.Id));
 
             foreach (var name in names)
             {
@@ -171,7 +200,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// <returns>A list of all notification triggers.</returns>
         protected override IEnumerable<NotificationTrigger> GetRecords()
         {
-            IEnumerable<NotificationTrigger> triggers = client.GetNotificationTriggers(Object);
+            IEnumerable<NotificationTrigger> triggers = client.GetNotificationTriggers(Object?.Id ?? ObjectId);
 
             if (Inherited == false)
                 triggers = triggers.Where(a => a.Inherited == false);
@@ -209,6 +238,9 @@ namespace PrtgAPI.PowerShell.Cmdlets
                         }
                         else
                         {
+                            if (Object == null)
+                                Object = client.GetObject(ObjectId, true) as SensorOrDeviceOrGroupOrProbe;
+
                             if (Object is Sensor)
                             {
                                 var channels = client.GetChannels(Object.Id);
@@ -267,7 +299,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
                     Select(p => Tuple.Create((TriggerProperty)p.GetAttribute<PropertyParameterAttribute>().Property, p)).ToList();
 
                 dynamicParameterSet = new PropertyDynamicParameterSet<TriggerProperty>(
-                    new[] {ParameterSet.Dynamic},
+                    new[] {ParameterSet.Dynamic,ParameterSet.DynamicManual},
                     e => ReflectionCacheManager.GetArrayPropertyType(properties.FirstOrDefault(p => p.Item1 == e)?.Item2.Property.PropertyType),
                     this
                 );

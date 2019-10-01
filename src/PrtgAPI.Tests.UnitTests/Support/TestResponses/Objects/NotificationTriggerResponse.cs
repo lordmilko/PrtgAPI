@@ -53,6 +53,8 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
                     return base.GetResponseText(ref address);
                 case Content.Channels:
                     return new ChannelResponse(channels).GetResponseText(ref address);
+                case Content.Sensors:
+                    return new SensorResponse(new SensorItem()).GetResponseText(ref address);
                 case Content.Objects:
                     if (Convert.ToInt32(components["filter_objid"]) >= 4000)
                         return new ObjectResponse(new SensorItem()).GetResponseText(ref address);
