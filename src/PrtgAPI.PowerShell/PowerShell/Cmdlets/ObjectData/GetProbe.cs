@@ -75,7 +75,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     ///
     /// </summary>
     [OutputType(typeof(Probe))]
-    [Cmdlet(VerbsCommon.Get, "Probe", DefaultParameterSetName = LogicalAndTags)]
+    [Cmdlet(VerbsCommon.Get, "Probe", DefaultParameterSetName = ParameterSet.LogicalAndTags)]
     public class GetProbe : PrtgTableStatusCmdlet<Probe, ProbeParameters>, IDynamicParameters
     {
         /// <summary>

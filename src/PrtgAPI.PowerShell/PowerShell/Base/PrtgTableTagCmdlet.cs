@@ -15,19 +15,16 @@ namespace PrtgAPI.PowerShell.Base
         where TObject : ITableObject, IObject
         where TParam : TableParameters<TObject>
     {
-        internal const string LogicalAndTags = "Tags";
-        internal const string LogicalOrTags = "Tag";
-
         /// <summary>
         /// <para type="description">Filter the response to objects with all specified tags. Can include wildcards.</para>
         /// </summary>
-        [Parameter(Mandatory = false, ParameterSetName = LogicalAndTags, HelpMessage = "Filter the response to objects with all specified tags. Can include wildcards.")]
+        [Parameter(Mandatory = false, ParameterSetName = ParameterSet.LogicalAndTags, HelpMessage = "Filter the response to objects with all specified tags. Can include wildcards.")]
         public string[] Tags { get; set; }
 
         /// <summary>
         /// <para type="description">Filter the response to objects with one of several tags. Can include wildcards.</para>
         /// </summary>
-        [Parameter(Mandatory = false, ParameterSetName = LogicalOrTags, HelpMessage = "Filter the response to objects with one of several tags. Can include wildcards.")]
+        [Parameter(Mandatory = false, ParameterSetName = ParameterSet.LogicalOrTags, HelpMessage = "Filter the response to objects with one of several tags. Can include wildcards.")]
         public string[] Tag { get; set; }
 
         /// <summary>
@@ -57,9 +54,9 @@ namespace PrtgAPI.PowerShell.Base
         /// </summary>
         protected override void ProcessAdditionalParameters()
         {
-            if (ParameterSetName == LogicalAndTags)
+            if (ParameterSetName == ParameterSet.LogicalAndTags)
                 ProcessLogicalAndTagsFilter();
-            else if (ParameterSetName == LogicalOrTags)
+            else if (ParameterSetName == ParameterSet.LogicalOrTags)
                 ProcessLogicalOrTagsFilter();
             else
                 throw new NotImplementedException($"Don't know how to process tags for parameter set '{ParameterSetName}'.");
@@ -74,9 +71,9 @@ namespace PrtgAPI.PowerShell.Base
         /// <returns>The filtered records.</returns>
         protected override IEnumerable<TObject> PostProcessAdditionalFilters(IEnumerable<TObject> records)
         {
-            if (ParameterSetName == LogicalAndTags)
+            if (ParameterSetName == ParameterSet.LogicalAndTags)
                 records = FilterResponseRecordsByLogicalAndTag(records);
-            else if (ParameterSetName == LogicalOrTags)
+            else if (ParameterSetName == ParameterSet.LogicalOrTags)
                 records = FilterResponseRecordsByLogicalOrTag(records);
             else
                 throw new NotImplementedException($"Don't know how to process tags for parameter set '{ParameterSetName}'.");
@@ -124,6 +121,6 @@ namespace PrtgAPI.PowerShell.Base
         /// Retrieves an object that defines the dynamic parameters of this cmdlet.
         /// </summary>
         /// <returns>An object that defines the dynamic parameters of this cmdlet.</returns>
-        public virtual object GetDynamicParameters() => GetDynamicParameters("Tag", "Tags");
+        public virtual object GetDynamicParameters() => GetDynamicParameters(ParameterSet.LogicalOrTags, ParameterSet.LogicalAndTags);
     }
 }

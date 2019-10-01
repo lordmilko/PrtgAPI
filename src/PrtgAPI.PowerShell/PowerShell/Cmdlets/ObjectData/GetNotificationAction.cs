@@ -51,7 +51,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <para type="link">New-TriggerParameters</para>
     /// </summary>
     [OutputType(typeof(NotificationAction))]
-    [Cmdlet(VerbsCommon.Get, "NotificationAction", DefaultParameterSetName = LogicalAndTags)]
+    [Cmdlet(VerbsCommon.Get, "NotificationAction", DefaultParameterSetName = ParameterSet.LogicalAndTags)]
     public class GetNotificationAction : PrtgTableTagCmdlet<NotificationAction, NotificationActionParameters>
     {
         //Notification Actions do not support filtering by tags server side. To account for this, we temporarily

@@ -90,7 +90,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <para type="link">Add-Device</para> 
     /// </summary>
     [OutputType(typeof(Device))]
-    [Cmdlet(VerbsCommon.Get, "Device", DefaultParameterSetName = LogicalAndTags)]
+    [Cmdlet(VerbsCommon.Get, "Device", DefaultParameterSetName = ParameterSet.LogicalAndTags)]
     public class GetDevice : PrtgTableRecurseCmdlet<Device, DeviceParameters>, IDynamicParameters
     {
         /// <summary>

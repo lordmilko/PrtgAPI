@@ -104,7 +104,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <para type="link">Add-Sensor</para> 
     /// </summary>
     [OutputType(typeof(Sensor))]
-    [Cmdlet(VerbsCommon.Get, "Sensor", DefaultParameterSetName = LogicalAndTags)]
+    [Cmdlet(VerbsCommon.Get, "Sensor", DefaultParameterSetName = ParameterSet.LogicalAndTags)]
     public class GetSensor : PrtgTableRecurseCmdlet<Sensor, SensorParameters>, IDynamicParameters
     {
         /// <summary>

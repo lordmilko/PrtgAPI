@@ -93,7 +93,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <para type="link">Add-Group</para> 
     /// </summary>
     [OutputType(typeof(Group))]
-    [Cmdlet(VerbsCommon.Get, "Group", DefaultParameterSetName = LogicalAndTags)]
+    [Cmdlet(VerbsCommon.Get, "Group", DefaultParameterSetName = ParameterSet.LogicalAndTags)]
     public class GetGroup : PrtgTableRecurseCmdlet<Group, GroupParameters>, IDynamicParameters
     {
         /// <summary>

@@ -48,6 +48,9 @@
         internal const string Aggregate = "AggregateSet";
         internal const string Summary = "SummarySet";
 
+        internal const string LogicalAndTags = "LogicalAndTagsSet";
+        internal const string LogicalOrTags = "LogicalOrTagsSet";
+
         /// <summary>
         /// The parameter set that is used when performing an action whose effects will last until a specified <see cref="System.DateTime"/>.
         /// </summary>
