@@ -68,7 +68,7 @@ namespace PrtgAPI.PowerShell
             if (ActiveSensorType.GetInvoker(newSensorCmdlet) != null && IsInvokableParameterSet)
             {
                 ActiveSensorType.GetInvoker(newSensorCmdlet).BindParameters(boundParameters);
-                ActiveSensorType.GetInvoker(newSensorCmdlet).BeginProcessing();
+                ActiveSensorType.GetInvoker(newSensorCmdlet).BeginProcessing(boundParameters);
             }
         }
 

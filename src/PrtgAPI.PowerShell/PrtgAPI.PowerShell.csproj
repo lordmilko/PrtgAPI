@@ -49,7 +49,6 @@
     <Compile Include="PowerShell\AlternateSensorTargetParameter.cs" />
     <Compile Include="PowerShell\Base\InternalNotificationTriggerCommand.cs" />
     <Compile Include="PowerShell\Base\InternalSetSubObjectPropertyCmdlet.cs" />
-    <Compile Include="PowerShell\Base\IPSCmdletEx.cs" />
     <Compile Include="PowerShell\Base\PrtgTimedStateCmdlet.cs" />
     <Compile Include="PowerShell\Cmdlets\ObjectManipulation\SetNotificationTrigger.cs" />
     <Compile Include="PowerShell\Cmdlets\ObjectManipulation\SetNotificationTriggerProperty.cs" />
@@ -76,7 +75,6 @@
     <Compile Include="PowerShell\Base\PrtgTableRecurseCmdlet.cs" />
     <Compile Include="PowerShell\Base\PrtgTableStatusCmdlet.cs" />
     <Compile Include="PowerShell\Base\PrtgTableTagCmdlet.cs" />
-    <Compile Include="PowerShell\Base\PSCmdletEx.cs" />
     <Compile Include="PowerShell\Base\StreamableCmdletProvider.cs" />
     <Compile Include="PowerShell\ChannelUnitMap.cs" />
     <Compile Include="PowerShell\CloneCmdletConfig.cs" />

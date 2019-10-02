@@ -16,6 +16,8 @@ namespace PrtgAPI.Reflection
     {
         private static BindingFlags internalFlags = BindingFlags.Instance | BindingFlags.NonPublic;
 
+        private static BindingFlags allFlags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static;
+
         public static CacheValue<TypeCache> GetCacheValue(this Type type) => ReflectionCacheManager.GetTypeCache(type);
 
         public static TypeCache GetTypeCache(this Type type) => ReflectionCacheManager.GetTypeCache(type).Cache;
@@ -171,7 +173,12 @@ namespace PrtgAPI.Reflection
         /// If more than one method is found with the specified name, this method throws a <see cref="AmbiguousMatchException"/></returns>
         public static MethodInfo GetInternalMethod(this object obj, string name)
         {
-            var method = obj.GetType().GetMethod(name, internalFlags);
+            return GetInternalMethod(obj.GetType(), name);
+        }
+
+        public static MethodInfo GetInternalMethod(this Type type, string name)
+        {
+            var method = type.GetMethod(name, internalFlags);
 
             return method;
         }
@@ -251,6 +258,40 @@ namespace PrtgAPI.Reflection
                 assignment,
                 @this,
                 val
+            );
+
+            return lambda.Compile();
+        }
+
+        internal static Action<T> CreateAction<T>(string methodName)
+        {
+            return CreateAction<T>(typeof(T).GetMethod(methodName, allFlags));
+        }
+
+        internal static Action<T> CreateAction<T>(MethodInfo method)
+        {
+            return CreateInvokec<T, Action<T>>(method);
+        }
+
+        internal static Func<T1, TResult> CreateFunc<T1, TResult>(string methodName)
+        {
+            return CreateFunc<T1, TResult>(typeof(T1).GetMethod(methodName, allFlags));
+        }
+
+        internal static Func<T1, TResult> CreateFunc<T1, TResult>(MethodInfo method)
+        {
+            return CreateInvokec<T1, Func<T1, TResult>>(method);
+        }
+
+        private static TDelegate CreateInvokec<TParameter, TDelegate>(MethodInfo method)
+        {
+            var @this = Expression.Parameter(typeof(TParameter), "obj");
+
+            var call = Expression.Call(@this, method);
+
+            var lambda = Expression.Lambda<TDelegate>(
+                call,
+                @this
             );
 
             return lambda.Compile();

@@ -245,7 +245,7 @@ namespace PrtgAPI.PowerShell.Base
         {
             //Lazy values will execute in the context of the previous command when retrieved from the next cmdlet
             //(such as Select-Object)
-            if (CommandRuntime.GetInternalProperty("PipelineProcessor").GetInternalField("_permittedToWrite") == this)
+            if (CommandRuntime.GetInternalProperty("PipelineProcessor").GetInternalField("_permittedToWrite") == this || CommandRuntime is DummyRuntime)
                 WriteVerbose($"{MyInvocation.MyCommand}: {args.Message}");
 
             Debug.WriteLine($"{MyInvocation.MyCommand}: {args.Message}");

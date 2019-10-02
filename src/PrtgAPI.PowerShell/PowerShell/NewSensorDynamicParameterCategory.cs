@@ -27,7 +27,7 @@ namespace PrtgAPI.PowerShell
 
         private PSCmdletInvoker invoker;
 
-        private Func<PSCmdletEx> makeCmdlet;
+        private Func<PSCmdlet> makeCmdlet;
         private Action<dynamic, Dictionary<string, object>> valueFromPipeline;
 
         private AlternateParameterSet alternateSet;
@@ -47,7 +47,7 @@ namespace PrtgAPI.PowerShell
         }
 
         public NewSensorDynamicParameterCategory(SensorType type, NewSensorDestinationType destinationType,
-            Func<PSCmdletEx> makeCmdlet = null, Action<dynamic, Dictionary<string, object>> valueFromPipeline = null)
+            Func<PSCmdlet> makeCmdlet = null, Action<dynamic, Dictionary<string, object>> valueFromPipeline = null)
         {
             parameterSets = new Lazy<ParameterSetDescriptor[]>(GetParameterSets);
 
@@ -267,7 +267,7 @@ namespace PrtgAPI.PowerShell
 
         private void AddCmdletDynamicParameters(NewSensor newSensorCmdlet, RuntimeDefinedParameterDictionaryEx dictionary)
         {
-            var properties = ReflectionCacheManager.Get(GetInvoker(newSensorCmdlet).Cmdlet.GetType()).Properties
+            var properties = ReflectionCacheManager.Get(GetInvoker(newSensorCmdlet).CmdletToInvoke.GetType()).Properties
                 .Where(p => p.GetAttribute<ParameterAttribute>() != null).ToList();
 
             var highestPosition = GetHighestParameterPosition(dictionary);
@@ -382,7 +382,7 @@ namespace PrtgAPI.PowerShell
                 Debug.Fail($"Invoker cannot be null in {nameof(GetParameterSets)} when {nameof(makeCmdlet)} is not null");
 
             //Get all the parameter sets defined on the cmdlet that will be invoked
-            var cmdletProperties = ReflectionCacheManager.Get(invoker.Cmdlet.GetType()).Properties
+            var cmdletProperties = ReflectionCacheManager.Get(invoker.CmdletToInvoke.GetType()).Properties
                 .Where(p => p.GetAttribute<ParameterAttribute>() != null).ToList();
 
             var sets = cmdletProperties
@@ -441,7 +441,7 @@ namespace PrtgAPI.PowerShell
                     boundParameters[nameof(GetSensorTarget.Name)] = newSensorCmdlet.MyInvocation.BoundParameters[matchingParameter.Name];
 
                     invoker.BindParameters(boundParameters);
-                    invoker.BeginProcessing();
+                    invoker.BeginProcessing(boundParameters);
                     invoker.ProcessRecord(newSensorCmdlet.MyInvocation.BoundParameters);
 
                     propertyName = matchingParameter.Name;

@@ -112,7 +112,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// </summary>
     [OutputType(typeof(SensorTarget<>))]
     [Cmdlet(VerbsCommon.Get, "SensorTarget", DefaultParameterSetName = ParameterSet.Default)]
-    public class GetSensorTarget : PrtgProgressCmdlet, IPSCmdletEx
+    public class GetSensorTarget : PrtgProgressCmdlet
     {
         /// <summary>
         /// <para type="description">The device to retrieve sensor targets from. While results returned by Get-SensorTarget are guaranteed to be compatible
@@ -317,17 +317,5 @@ namespace PrtgAPI.PowerShell.Cmdlets
 
             return default(T);
         }
-
-        #region IPSCmdletEx
-
-        void IPSCmdletEx.BeginProcessingInternal() => BeginProcessing();
-
-        void IPSCmdletEx.ProcessRecordInternal() => ProcessRecord();
-
-        void IPSCmdletEx.EndProcessingInternal() => EndProcessing();
-
-        void IPSCmdletEx.StopProcessingInternal() => StopProcessing();
-
-        #endregion
     }
 }
