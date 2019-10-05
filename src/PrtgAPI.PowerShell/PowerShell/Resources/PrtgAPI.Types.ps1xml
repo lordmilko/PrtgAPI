@@ -1,0 +1,74 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Types>
+    <Type>
+        <Name>PrtgAPI.Tree.PrtgNode</Name>
+        <Members>
+            <ScriptMethod>
+                <Name>FindNode</Name>
+                <Script>
+                    [PrtgAPI.Tree.NodeExtensions]::FindNode($this, ([PrtgAPI.PowerShell.ETSHelpers]::PrtgNodePredicate($args[0])))
+                </Script>
+            </ScriptMethod>
+            <ScriptMethod>
+                <Name>FindNodes</Name>
+                <Script>
+                    [PrtgAPI.Tree.NodeExtensions]::FindNodes($this, ([PrtgAPI.PowerShell.ETSHelpers]::PrtgNodePredicate($args[0])))
+                </Script>
+            </ScriptMethod>
+            <ScriptMethod>
+                <Name>InsertNodeAfter</Name>
+                <Script>
+                    [PrtgAPI.Tree.NodeExtensions]::InsertNodeAfter($this, $args[0], $args[1])
+                </Script>
+            </ScriptMethod>
+            <ScriptMethod>
+                <Name>InsertNodesAfter</Name>
+                <Script>
+                    [PrtgAPI.Tree.NodeExtensions]::InsertNodesAfter($this, $args[0], $args[1])
+                </Script>
+            </ScriptMethod>
+            <ScriptMethod>
+                <Name>InsertNodeBefore</Name>
+                <Script>
+                    [PrtgAPI.Tree.NodeExtensions]::InsertNodeBefore($this, $args[0], $args[1])
+                </Script>
+            </ScriptMethod>
+            <ScriptMethod>
+                <Name>InsertNodesBefore</Name>
+                <Script>
+                    [PrtgAPI.Tree.NodeExtensions]::InsertNodesBefore($this, $args[0], $args[1])
+                </Script>
+            </ScriptMethod>
+            <ScriptMethod>
+                <Name>RemoveNode</Name>
+                <Script>
+                    [PrtgAPI.Tree.NodeExtensions]::RemoveNode($this, $args[0])
+                </Script>
+            </ScriptMethod>
+            <ScriptMethod>
+                <Name>RemoveNodes</Name>
+                <Script>
+                    [PrtgAPI.Tree.NodeExtensions]::RemoveNodes($this, $args[0])
+                </Script>
+            </ScriptMethod>
+            <ScriptMethod>
+                <Name>ReplaceNode</Name>
+                <Script>
+                    [PrtgAPI.Tree.NodeExtensions]::ReplaceNode($this, $args[0], $args[1])
+                </Script>
+            </ScriptMethod>
+            <ScriptMethod>
+                <Name>ReplaceNodes</Name>
+                <Script>
+                    [PrtgAPI.Tree.NodeExtensions]::ReplaceNodes($this, $args[0], $args[1])
+                </Script>
+            </ScriptMethod>
+            <ScriptMethod>
+                <Name>WithChildren</Name>
+                <Script>
+                    [PrtgAPI.Tree.NodeExtensions]::WithChildren($this, $args[0])
+                </Script>
+            </ScriptMethod>
+        </Members>
+    </Type>
+</Types>

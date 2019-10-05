@@ -490,6 +490,7 @@ Describe "Appveyor" {
                 @{Type = "File"; Path = "Functions\New-Credential.ps1"}
                 @{Type = "File"; Path = "package\foo\bar.txt"}
                 @{Type = "File"; Path = "PrtgAPI.Format.ps1xml"}
+                @{Type = "File"; Path = "PrtgAPI.Types.ps1xml"}
                 @{Type = "File"; Path = "PrtgAPI.nuspec"}
                 @{Type = "File"; Path = "PrtgAPI.PowerShell.dll-Help.xml"}
                 @{Type = "File"; Path = "PrtgAPI.psd1"}
@@ -517,6 +518,7 @@ Describe "Appveyor" {
                 @{Type = "File"; Path = "Functions\New-Credential.ps1"}
                 @{Type = "File"; Path = "package\foo\bar.txt"}
                 @{Type = "File"; Path = "PrtgAPI.Format.ps1xml"}
+                @{Type = "File"; Path = "PrtgAPI.Types.ps1xml"}
                 @{Type = "File"; Path = "PrtgAPI.nuspec"}
                 @{Type = "File"; Path = "PrtgAPI.PowerShell.dll-Help.xml"}
                 @{Type = "File"; Path = "PrtgAPI.psd1"}
@@ -544,6 +546,7 @@ Describe "Appveyor" {
                 "'package\*'"
                 "'PrtgAPI.dll'"
                 "'PrtgAPI.Format.ps1xml'"
+                "'PrtgAPI.Types.ps1xml'"
                 "'PrtgAPI.nuspec'"
                 "'PrtgAPI.PowerShell.dll'"
                 "'PrtgAPI.PowerShell.dll-Help.xml'"
@@ -568,6 +571,7 @@ Describe "Appveyor" {
                 @{Type = "File"; Path = "Functions\New-Credential.ps1"}
                 @{Type = "File"; Path = "package\foo\bar.txt"}
                 @{Type = "File"; Path = "PrtgAPI.Format.ps1xml"}
+                @{Type = "File"; Path = "PrtgAPI.Types.ps1xml"}
                 @{Type = "File"; Path = "PrtgAPI.nuspec"}
                 @{Type = "File"; Path = "PrtgAPI.PowerShell.dll-Help.xml"}
                 @{Type = "File"; Path = "PrtgAPI.psd1"}
@@ -593,6 +597,7 @@ Describe "Appveyor" {
                 @{Type = "File"; Path = "PrtgAPI.PowerShell.dll"}
                 @{Type = "File"; Path = "Functions\New-Credential.ps1"}
                 @{Type = "File"; Path = "PrtgAPI.Format.ps1xml"}
+                @{Type = "File"; Path = "PrtgAPI.Types.ps1xml"}
                 @{Type = "File"; Path = "PrtgAPI.nuspec"}
                 @{Type = "File"; Path = "PrtgAPI.PowerShell.dll-Help.xml"}
                 @{Type = "File"; Path = "PrtgAPI.psd1"}
@@ -616,6 +621,7 @@ Describe "Appveyor" {
                 @{Type = "File"; Path = "PrtgAPI.cmd"}
                 @{Type = "File"; Path = "PrtgAPI.dll"}
                 @{Type = "File"; Path = "PrtgAPI.Format.ps1xml"}
+                @{Type = "File"; Path = "PrtgAPI.Types.ps1xml"}
                 @{Type = "File"; Path = "PrtgAPI.pdb"}
                 @{Type = "File"; Path = "PrtgAPI.PowerShell.dll"}
                 @{Type = "File"; Path = "PrtgAPI.PowerShell.dll-Help.xml"}
@@ -641,6 +647,7 @@ Describe "Appveyor" {
                 @{Type = "File"; Path = "PrtgAPI.cmd"}
                 @{Type = "File"; Path = "PrtgAPI.dll"}
                 @{Type = "File"; Path = "PrtgAPI.Format.ps1xml"}
+                @{Type = "File"; Path = "PrtgAPI.Types.ps1xml"}
                 @{Type = "File"; Path = "PrtgAPI.pdb"}
                 @{Type = "File"; Path = "PrtgAPI.PowerShell.dll"}
                 @{Type = "File"; Path = "PrtgAPI.PowerShell.dll-Help.xml"}
@@ -666,6 +673,7 @@ Describe "Appveyor" {
                 @{Type = "File"; Path = "PrtgAPI.cmd"}
                 @{Type = "File"; Path = "PrtgAPI.dll"}
                 @{Type = "File"; Path = "PrtgAPI.Format.ps1xml"}
+                @{Type = "File"; Path = "PrtgAPI.Types.ps1xml"}
                 @{Type = "File"; Path = "PrtgAPI.pdb"}
                 @{Type = "File"; Path = "PrtgAPI.PowerShell.deps.json"}
                 @{Type = "File"; Path = "PrtgAPI.PowerShell.dll"}
@@ -704,6 +712,7 @@ Describe "Appveyor" {
                 @{Type = "File"; Path = "fullclr\PrtgAPI.PowerShell.pdb"}
                 @{Type = "File"; Path = "fullclr\PrtgAPI.PowerShell.xml"}
                 @{Type = "File"; Path = "PrtgAPI.Format.ps1xml"}
+                @{Type = "File"; Path = "PrtgAPI.Types.ps1xml"}
                 @{Type = "File"; Path = "PrtgAPI.PowerShell.dll-Help.xml"}
                 @{Type = "File"; Path = "PrtgAPI.psd1"}
                 @{Type = "File"; Path = "PrtgAPI.psm1"}

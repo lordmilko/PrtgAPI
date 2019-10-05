@@ -60,6 +60,7 @@
     <Compile Include="PowerShell\Cmdlets\Tree\NewPropertyNode.cs" />
     <Compile Include="PowerShell\Cmdlets\Tree\NewSensorNode.cs" />
     <Compile Include="PowerShell\Cmdlets\Tree\NewTriggerNode.cs" />
+    <Compile Include="PowerShell\ETSHelpers.cs" />
     <Compile Include="PowerShell\EventStack.cs" />
     <Compile Include="PowerShell\EventState.cs" />
     <Compile Include="Exceptions\UnknownParameterSetException.cs" />
@@ -213,6 +214,7 @@
     </None>
     <None Include="PowerShell\Resources\PrtgAPI.psd1" />
     <None Include="PowerShell\Resources\PrtgAPI.psm1" />
+    <None Include="PowerShell\Resources\PrtgAPI.Types.ps1xml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="PowerShell\Resources\about_ChannelSettings.help.txt" />

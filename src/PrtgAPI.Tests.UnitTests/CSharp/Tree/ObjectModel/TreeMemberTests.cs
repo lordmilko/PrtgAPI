@@ -2146,5 +2146,26 @@ namespace PrtgAPI.Tests.UnitTests.Tree
                 "Value of type 'String' cannot be null"
             );
         }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void Tree_NodeExtensions_AllUniqueMethodsHaveETSDefinitions()
+        {
+            var src = TestHelpers.GetProjectRoot(true);
+            var ps1xml = Path.Combine(src, "PrtgAPI.PowerShell\\PowerShell\\Resources\\PrtgAPI.Types.ps1xml");
+
+            if (!File.Exists(ps1xml))
+                throw new InvalidOperationException($"File '{ps1xml}' does not exist.");
+
+            var xml = XDocument.Load(ps1xml);
+
+            var expectedMethods = typeof(NodeExtensions).GetMethods(BindingFlags.Public | BindingFlags.Static).Select(m => m.Name).Distinct();
+            var actualMethods = xml.Descendants("ScriptMethod").Select(d => d.Element("Name").Value).ToArray();
+
+            var missing = expectedMethods.Except(actualMethods).ToArray();
+
+            if (missing.Length > 0)
+                Assert.Fail($"Methods {(string.Join(", ", missing))} are missing from PrtgAPI.Types.ps1xml.");
+        }
     }
 }
