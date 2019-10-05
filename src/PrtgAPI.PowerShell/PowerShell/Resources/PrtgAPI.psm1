@@ -32,6 +32,13 @@ New-Alias fdef New-SensorFactoryDefinition
 
 New-Alias Restart-PrtgProbe Restart-Probe
 
+New-Alias SensorNode New-SensorNode
+New-Alias DeviceNode New-DeviceNode
+New-Alias GroupNode New-GroupNode
+New-Alias ProbeNode New-ProbeNode
+New-Alias TriggerNode New-TriggerNode
+New-Alias PropertyNode New-PropertyNode
+
 $ErrorActionPreference = "Stop"
 
 $functions = Get-ChildItem "$PSScriptRoot\Functions"

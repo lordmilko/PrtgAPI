@@ -423,6 +423,12 @@
     <None Include="PowerShell\ObjectManipulation\Simulate-ErrorStatus.Tests.ps1" />
     <None Include="PowerShell\ObjectManipulation\Sort-PrtgObject.Tests.ps1" />
     <None Include="PowerShell\ObjectManipulation\Start-AutoDiscovery.Tests.ps1" />
+    <None Include="PowerShell\Tree\New-DeviceNode.Tests.ps1" />
+    <None Include="PowerShell\Tree\New-GroupNode.Tests.ps1" />
+    <None Include="PowerShell\Tree\New-ProbeNode.Tests.ps1" />
+    <None Include="PowerShell\Tree\New-PropertyNode.Tests.ps1" />
+    <None Include="PowerShell\Tree\New-SensorNode.Tests.ps1" />
+    <None Include="PowerShell\Tree\New-TriggerNode.Tests.ps1" />
     <None Include="Support\PowerShell\BuildCore.ps1" />
     <None Include="Support\PowerShell\Build.ps1" />
     <None Include="Support\PowerShell\GoPrtg.ps1" />

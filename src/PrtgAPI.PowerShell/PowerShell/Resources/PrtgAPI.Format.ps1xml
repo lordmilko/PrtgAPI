@@ -456,7 +456,7 @@
             </ViewSelectedBy>
             <TableControl>
                 <TableHeaders>
-                    <TableColumnHeader/> <!-- Name -->                    
+                    <TableColumnHeader/> <!-- Name -->
                     <TableColumnHeader/> <!-- Id -->
                     <TableColumnHeader/> <!-- TimeTable -->
                 </TableHeaders>
@@ -609,9 +609,9 @@
                     <TableColumnHeader> <!-- ObjectId -->
                         <Alignment>Right</Alignment>
                     </TableColumnHeader>
-                    <TableColumnHeader/> <!-- DateTime -->                    
-                    <TableColumnHeader/> <!-- UserName -->                    
-                    <TableColumnHeader/> <!-- Message -->                    
+                    <TableColumnHeader/> <!-- DateTime -->
+                    <TableColumnHeader/> <!-- UserName -->
+                    <TableColumnHeader/> <!-- Message -->
                 </TableHeaders>
                 <TableRowEntries>
                     <TableRowEntry>
@@ -1045,6 +1045,74 @@
                             </TableColumnItem>
                             <TableColumnItem>
                                 <PropertyName>LastUpdated</PropertyName>
+                            </TableColumnItem>
+                        </TableColumnItems>
+                    </TableRowEntry>
+                </TableRowEntries>
+            </TableControl>
+        </View>
+        <View>
+            <Name>Default</Name>
+            <ViewSelectedBy>
+                <TypeName>PrtgAPI.Tree.PrtgNode</TypeName>
+            </ViewSelectedBy>
+            <TableControl>
+                <TableHeaders>
+                    <TableColumnHeader/> <!-- Name -->
+                    <TableColumnHeader/> <!-- Type -->
+                    <TableColumnHeader/> <!-- Parent -->
+                    <TableColumnHeader/> <!-- Children -->
+                </TableHeaders>
+                <TableRowEntries>
+                    <TableRowEntry>
+                        <TableColumnItems>
+                            <TableColumnItem>
+                                <PropertyName>Name</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>Type</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>Parent</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>Children</PropertyName>
+                            </TableColumnItem>
+                        </TableColumnItems>
+                    </TableRowEntry>
+                </TableRowEntries>
+            </TableControl>
+        </View>
+        <View>
+            <Name>Default</Name>
+            <ViewSelectedBy>
+                <TypeName>PrtgAPI.Tree.PrtgNodeGrouping</TypeName>
+            </ViewSelectedBy>
+            <TableControl>
+                <TableHeaders>
+                    <TableColumnHeader/> <!-- Name -->
+                    <TableColumnHeader/> <!-- Type -->
+                    <TableColumnHeader/> <!-- Parent -->
+                    <TableColumnHeader/> <!-- Group -->
+                    <TableColumnHeader/> <!-- Children -->
+                </TableHeaders>
+                <TableRowEntries>
+                    <TableRowEntry>
+                        <TableColumnItems>
+                            <TableColumnItem>
+                                <PropertyName>Name</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>Type</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>Parent</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>Group</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>Children</PropertyName>
                             </TableColumnItem>
                         </TableColumnItems>
                     </TableRowEntry>

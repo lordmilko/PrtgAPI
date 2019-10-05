@@ -309,6 +309,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
                 Tuple.Create("NewSensorFactoryDefinition.cs",        "MakeChannel",         "new InvalidOperationException($\"'{value}' is not a valid channel expression. Expression must not be null, empty or whitespace.\")"),
                 Tuple.Create("NewSensorFactoryDefinition.cs",        "GetChannelName",      "new InvalidOperationException($\"'{finalName}' is not a valid channel name. Name must not be null, empty or whitespace.\")"),
                 Tuple.Create("SetObjectPosition.cs",                 "ProcessRecordEx",     "new InvalidOperationException($\"Cannot modify position of object '{obj}' (ID: {obj.Id}, Type: {obj.Type}). Object must be a sensor, device, group or probe.\")"),
+                Tuple.Create("PrtgTableNodeCmdlet.cs",               "ProcessValues",       "new InvalidOperationException($\"Expected -{nameof(ScriptBlock)} to return one or more values of type '{nameof(PrtgNode)}', however response contained an invalid value of type '{invalid[0].GetType().FullName}'.\")"),
                 Tuple.Create("NewSensorParameters.cs",               "GetImplicit"),
                 Tuple.Create("TriggerParameterParser.cs",            "UpdateNotificationAction"),
                 Tuple.Create("UpdateGoPrtgCredential.cs"),
@@ -367,7 +368,20 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
                         }
                         else
                         {
-                            var type = ((IdentifierNameSyntax)objectCreationSyntax.Type).Identifier.ValueText;
+                            string type = null;
+
+                            switch (objectCreationSyntax.Type.Kind())
+                            {
+                                case SyntaxKind.IdentifierName:
+                                    type = ((IdentifierNameSyntax) objectCreationSyntax.Type).Identifier.ValueText;
+                                    break;
+                                case SyntaxKind.QualifiedName:
+                                    type = ((QualifiedNameSyntax) objectCreationSyntax.Type).Right.Identifier.ValueText;
+                                    break;
+                                default:
+                                    throw new NotImplementedException($"Don't know how to handle syntax of type '{objectCreationSyntax.Type.Kind()}'.");
+                            }
+
                             var exceptionStr = objectCreationSyntax.ToString();
 
                             if (!allowedTypes.Contains(type))
