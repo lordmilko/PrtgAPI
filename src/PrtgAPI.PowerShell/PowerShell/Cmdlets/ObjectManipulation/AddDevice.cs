@@ -64,10 +64,20 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// </summary>
         [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = ParameterSet.Default)]
         [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = ParameterSet.Basic)]
-        public new GroupOrProbe Destination
+        public override GroupOrProbe Destination
         {
-            get { return base.Destination; }
-            set { base.Destination = value; }
+            get { return DestinationInternal; }
+            set { DestinationInternal = value; }
+        }
+
+        /// <summary>
+        /// <para type="description">A set of parameters whose properties describe the type of object to add, with what settings.</para>
+        /// </summary>
+        [Parameter(Mandatory = true, Position = 0, ParameterSetName = ParameterSet.Default)]
+        public override NewDeviceParameters Parameters
+        {
+            get { return ParametersInternal; }
+            set { ParametersInternal = value; }
         }
 
         /// <summary>

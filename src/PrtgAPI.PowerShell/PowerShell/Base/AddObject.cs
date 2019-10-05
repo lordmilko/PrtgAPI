@@ -15,7 +15,7 @@ namespace PrtgAPI.PowerShell.Base
         /// <summary>
         /// A set of parameters whose properties describe the type of object to add, with what settings.
         /// </summary>
-        protected TParams Parameters { get; set; }
+        protected TParams ParametersInternal { get; set; }
 
         internal BaseType type;
 
@@ -44,7 +44,7 @@ namespace PrtgAPI.PowerShell.Base
         {
             if (Resolve)
             {
-                var obj = AddAndResolveObject(destinationId, Parameters, GetObjects);
+                var obj = AddAndResolveObject(destinationId, ParametersInternal, GetObjects);
 
                 foreach (var o in obj)
                 {
@@ -59,7 +59,7 @@ namespace PrtgAPI.PowerShell.Base
                 ProgressManager.RecordsProcessed = -1;
             }
             else
-                client.AddObject(new PrtgAPI.Either<IPrtgObject, int>(destinationId), Parameters, (f, t) => GetObjects(f), false, CancellationToken);
+                client.AddObject(new PrtgAPI.Either<IPrtgObject, int>(destinationId), ParametersInternal, (f, t) => GetObjects(f), false, CancellationToken);
         }
 
         internal virtual string WhatIfDescription()

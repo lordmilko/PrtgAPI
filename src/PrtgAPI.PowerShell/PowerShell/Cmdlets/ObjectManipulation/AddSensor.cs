@@ -78,14 +78,24 @@ namespace PrtgAPI.PowerShell.Cmdlets
     public class AddSensor : AddParametersObject<NewSensorParameters, Sensor, Device>
     {
         /// <summary>
+        /// <para type="description">The parent object to create an object under.</para>
+        /// </summary>
+        [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = ParameterSet.Default)]
+        public override Device Destination
+        {
+            get { return DestinationInternal; }
+            set { DestinationInternal = value; }
+        }
+
+        /// <summary>
         /// <para type="description">A set of parameters whose properties describe the type of object to add, with what settings.</para>
         /// </summary>
         [Parameter(Mandatory = true, Position = 0, ParameterSetName = ParameterSet.Default)]
         [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = ParameterSet.Target)]
-        public new NewSensorParameters Parameters
+        public override NewSensorParameters Parameters
         {
-            get { return base.Parameters; }
-            set { base.Parameters = value; }
+            get { return ParametersInternal; }
+            set { ParametersInternal = value; }
         }
 
         /// <summary>

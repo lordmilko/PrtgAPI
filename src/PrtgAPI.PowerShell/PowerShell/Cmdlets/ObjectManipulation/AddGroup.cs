@@ -52,12 +52,23 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// <summary>
         /// <para type="description">The parent object to create an object under.</para>
         /// </summary>
+        /// <remarks>Also part of ParameterSet.Default. Definition on base class specifies that set.</remarks>
         [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = ParameterSet.Default)]
         [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = ParameterSet.Basic)]
-        public new GroupOrProbe Destination
+        public override GroupOrProbe Destination
         {
-            get { return base.Destination; }
-            set { base.Destination = value; }
+            get { return DestinationInternal; }
+            set { DestinationInternal = value; }
+        }
+
+        /// <summary>
+        /// <para type="description">A set of parameters whose properties describe the type of object to add, with what settings.</para>
+        /// </summary>
+        [Parameter(Mandatory = true, Position = 0, ParameterSetName = ParameterSet.Default)]
+        public override NewGroupParameters Parameters
+        {
+            get { return ParametersInternal; }
+            set { ParametersInternal = value; }
         }
 
         /// <summary>

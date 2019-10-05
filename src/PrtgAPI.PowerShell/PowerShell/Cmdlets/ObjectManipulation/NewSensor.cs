@@ -233,7 +233,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
             {
                 var name = ObjectPropertyParser.GetObjectPropertyName(param);
 
-                var val = Parameters.GetCustomParameterInternal(name)?.ToString();
+                var val = ParametersInternal.GetCustomParameterInternal(name)?.ToString();
 
                 if (val?.Contains("\n") == true)
                     items.Add($"{param} =\n\n{val}\n\n");
@@ -413,7 +413,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
 
             dynamicParams.ActiveSensorType.ValidateParameters(this, parameters);
 
-            Parameters = parameters;
+            ParametersInternal = parameters;
             AddObjectInternal(DestinationId, endOperation);
         }
 
