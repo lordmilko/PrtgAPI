@@ -587,7 +587,7 @@ namespace PrtgAPI
         /// </summary>
         /// <param name="objectId">The ID of the object to retrieve supported types of.</param>
         /// <returns>If the specified object supports querying sensor types, a list descriptions of sensor types supported by the specified object. Otherwise, null.</returns>
-        public List<SensorTypeDescriptor> GetSensorTypes(int objectId = 1) =>
+        public List<SensorTypeDescriptor> GetSensorTypes(int objectId = WellKnownId.DefaultProbe) =>
             ResponseParser.ParseSensorTypes(ObjectEngine.GetObject<SensorTypeDescriptorInternal>(new SensorTypeParameters(objectId), ResponseParser.ValidateHasContent).Types);
 
         /// <summary>
@@ -597,7 +597,7 @@ namespace PrtgAPI
         /// <param name="objectId">The ID of the object to retrieve supported types of.</param>
         /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>If the specified object supports querying sensor types, a list descriptions of sensor types supported by the specified object. Otherwise, null.</returns>
-        public async Task<List<SensorTypeDescriptor>> GetSensorTypesAsync(int objectId = 1, CancellationToken token = default(CancellationToken)) =>
+        public async Task<List<SensorTypeDescriptor>> GetSensorTypesAsync(int objectId = WellKnownId.DefaultProbe, CancellationToken token = default(CancellationToken)) =>
             ResponseParser.ParseSensorTypes((await ObjectEngine.GetObjectAsync<SensorTypeDescriptorInternal>(new SensorTypeParameters(objectId), ResponseParser.ValidateHasContentAsync, token: token).ConfigureAwait(false)).Types);
 
             #endregion
@@ -918,7 +918,7 @@ namespace PrtgAPI
         /// </summary>
         /// <param name="deviceId">The ID of the device to retrieve supported device templates of. In practice all devices should support the same device templates.</param>
         /// <returns>A list of device templates supported by the specified object.</returns>
-        public List<DeviceTemplate> GetDeviceTemplates(int deviceId = 40) =>
+        public List<DeviceTemplate> GetDeviceTemplates(int deviceId = WellKnownId.DefaultProbeDevice) =>
             ResponseParser.GetTemplates(GetObjectPropertiesRawInternal(deviceId, ObjectType.Device).StringValue);
 
         /// <summary>
@@ -927,7 +927,7 @@ namespace PrtgAPI
         /// <param name="deviceId">The ID of the device to retrieve supported device templates of. In practice all devices should support the same device templates.</param>
         /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>A list of device templates supported by the specified object.</returns>
-        public async Task<List<DeviceTemplate>> GetDeviceTemplatesAsync(int deviceId = 40, CancellationToken token = default(CancellationToken)) =>
+        public async Task<List<DeviceTemplate>> GetDeviceTemplatesAsync(int deviceId = WellKnownId.DefaultProbeDevice, CancellationToken token = default(CancellationToken)) =>
             ResponseParser.GetTemplates((await GetObjectPropertiesRawInternalAsync(deviceId, ObjectType.Device, token).ConfigureAwait(false)).StringValue);
 
         #endregion

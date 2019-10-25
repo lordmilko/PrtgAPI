@@ -89,7 +89,7 @@ namespace PrtgAPI.Tests.IntegrationTests.Infrastructure
         public void Logic_Client_InvalidRequest()
         {
             var client = new PrtgClient(Settings.ServerWithProto, Settings.UserName, Settings.Password);
-            AssertEx.Throws<PrtgRequestException>(() => client.RemoveObject(0), "Some of the selected objects could not be deleted");
+            AssertEx.Throws<PrtgRequestException>(() => client.RemoveObject(WellKnownObjectId.Root), "Some of the selected objects could not be deleted");
         }
 
         [TestMethod]
@@ -97,7 +97,7 @@ namespace PrtgAPI.Tests.IntegrationTests.Infrastructure
         public async Task Logic_Client_InvalidRequestAsync()
         {
             var client = new PrtgClient(Settings.ServerWithProto, Settings.UserName, Settings.Password);
-            await AssertEx.ThrowsAsync<PrtgRequestException>(async () => await client.RemoveObjectAsync(0), "Some of the selected objects could not be deleted");
+            await AssertEx.ThrowsAsync<PrtgRequestException>(async () => await client.RemoveObjectAsync(WellKnownObjectId.Root), "Some of the selected objects could not be deleted");
         }
 
         [TestMethod]

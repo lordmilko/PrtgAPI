@@ -83,7 +83,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
             switch (ParameterSetName)
             {
                 case ParameterSet.Default:
-                    return Object?.Id ?? 1;
+                    return Object?.Id ?? WellKnownId.DefaultProbe;
                 case ParameterSet.Manual:
                     return Id;
                 default:

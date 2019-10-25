@@ -424,7 +424,7 @@ namespace PrtgAPI
                 {
                     string language;
 
-                    if (GetObjectPropertiesRaw(810).TryGetValue("languagefile", out language))
+                    if (GetObjectPropertiesRaw(WellKnownId.WebServerOptions).TryGetValue("languagefile", out language))
                     {
                         isEnglish = language == "english.lng";
                     }

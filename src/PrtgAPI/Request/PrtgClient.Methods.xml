@@ -696,7 +696,7 @@
                         </Summary>
                         <ReturnDescription>If the specified object supports querying sensor types, a list descriptions of sensor types supported by the specified object. Otherwise, null.</ReturnDescription>
 
-                        <Parameter name="objectId" type="int" default="1" description="The ID of the object to retrieve supported types of."/>
+                        <Parameter name="objectId" type="int" default="WellKnownId.DefaultProbe" description="The ID of the object to retrieve supported types of."/>
 
                         <Body expression="true">
                             ResponseParser.ParseSensorTypes(<Call name="ObjectEngine.GetObject" genericArgs="SensorTypeDescriptorInternal" args="new SensorTypeParameters(objectId), ResponseParser.ValidateHasContent{Request}"/>.Types)
@@ -719,7 +719,7 @@
                     <Summary>Retrieves all auto-discovery device templates supported by the specified object.</Summary>
                     <ReturnDescription>A list of device templates supported by the specified object.</ReturnDescription>
 
-                    <Parameter name="deviceId" type="int" default="40" description="The ID of the device to retrieve supported device templates of. In practice all devices should support the same device templates."/>
+                    <Parameter name="deviceId" type="int" default="WellKnownId.DefaultProbeDevice" description="The ID of the device to retrieve supported device templates of. In practice all devices should support the same device templates."/>
 
                     <Body expression="true">
                         ResponseParser.GetTemplates(<Call name="GetObjectPropertiesRawInternal" args="deviceId, ObjectType.Device"/>.StringValue)

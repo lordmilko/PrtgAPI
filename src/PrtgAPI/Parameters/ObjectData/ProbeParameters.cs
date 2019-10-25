@@ -32,7 +32,7 @@ namespace PrtgAPI.Parameters
 
         private List<SearchFilter> DefaultSearchFilter()
         {
-            return new List<SearchFilter> {new SearchFilter(Property.ParentId, "0")};
+            return new List<SearchFilter> {new SearchFilter(Property.ParentId, WellKnownId.Root)};
         }
 
         internal override void SetSearchFilter(List<SearchFilter> value)
@@ -41,10 +41,10 @@ namespace PrtgAPI.Parameters
                 base.SetSearchFilter(value);
             else
             {
-                if (value.Any(item => item.Property == Property.ParentId && (item.Operator != FilterOperator.Equals || ValueEquals(item, "0", (a, b) => a != b))))
+                if (value.Any(item => item.Property == Property.ParentId && (item.Operator != FilterOperator.Equals || ValueEquals(item, WellKnownId.Root.ToString(), (a, b) => a != b))))
                     throw new InvalidOperationException("Cannot filter for probes based on a ParentId other than 0.");
 
-                if (!value.Any(item => item.Property == Property.ParentId && item.Operator == FilterOperator.Equals && ValueEquals(item, "0", (a, b) => a == b)))
+                if (!value.Any(item => item.Property == Property.ParentId && item.Operator == FilterOperator.Equals && ValueEquals(item, WellKnownId.Root.ToString(), (a, b) => a == b)))
                     value = value.Union(DefaultSearchFilter()).ToList();
 
                 base.SetSearchFilter(value);

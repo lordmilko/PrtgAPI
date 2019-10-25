@@ -4,7 +4,7 @@
     {
         JsonFunction IJsonParameters.Function => JsonFunction.GetStatus;
 
-        public ServerStatusParameters() : base(0)
+        public ServerStatusParameters() : base(WellKnownId.Root)
         {
         }
     }

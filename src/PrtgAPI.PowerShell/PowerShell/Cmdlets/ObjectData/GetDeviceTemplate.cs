@@ -73,7 +73,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         {
             WriteObjectWithProgress(() =>
             {
-                var templates = client.GetDeviceTemplates(Device?.Id ?? 40);
+                var templates = client.GetDeviceTemplates(Device?.Id ?? WellKnownId.DefaultProbeDevice);
 
                 if (Name != null && Name.Length > 0)
                 {
