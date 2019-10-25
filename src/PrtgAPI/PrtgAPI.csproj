@@ -271,6 +271,7 @@
     <Compile Include="Tree\Visitors\PrtgNodeRemover.cs" />
     <Compile Include="Tree\Visitors\PrtgNodeReplacer.cs" />
     <Compile Include="Tree\Visitors\VisitorUtilities.cs" />
+    <Compile Include="Utilities\ConvertUtilities.cs" />
     <Compile Include="Utilities\DynamicParameterPropertyTypes.cs" />
     <Compile Include="Utilities\FluentExpressions.cs" />
     <Compile Include="Utilities\ObjectExtensions.cs" />

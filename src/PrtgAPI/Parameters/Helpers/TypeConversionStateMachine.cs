@@ -367,7 +367,14 @@ namespace PrtgAPI.Parameters.Helpers
                         if (Mode == SerializationMode.Deserialize)
                             val = doubleResult;
                         else
+                        {
                             val = doubleResult.ToString(CultureInfo.CurrentCulture);
+
+                            //Implication is the user assigned a value for the language used by the PRTG Server.
+                            //Leave the value as is.
+                            if (val != OriginalValue && OriginalValue is string)
+                                return OriginalValue;
+                        }
                     }
                 }
 

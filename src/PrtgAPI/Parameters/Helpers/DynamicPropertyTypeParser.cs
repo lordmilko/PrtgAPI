@@ -1,10 +1,12 @@
 using System;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using PrtgAPI.Reflection.Cache;
 using PrtgAPI.Utilities;
 
 namespace PrtgAPI.Parameters.Helpers
 {
+    [DebuggerDisplay("Property = {Property}, Type = {Type?.ToString(),nq}, Value = {Value}, ValueType = {ValueType.FullName,nq}")]
     internal class DynamicPropertyTypeParser
     {
         public Enum Property { get; }
@@ -72,7 +74,7 @@ namespace PrtgAPI.Parameters.Helpers
             if (Type == TypeCategory.String)
                 return Value.ToString();
             if (Type == TypeCategory.Number)
-                return Convert.ToDouble(Value);
+                return Value == null ? 0.0 : ConvertUtilities.ToDouble(Value.ToString());
             if (Type == TypeCategory.Enum)
             {
                 if (PropertyType == typeof(Enum))

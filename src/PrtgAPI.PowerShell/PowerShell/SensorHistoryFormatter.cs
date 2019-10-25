@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Management.Automation;
 using PrtgAPI.PowerShell.Cmdlets;
+using PrtgAPI.Utilities;
 
 namespace PrtgAPI.PowerShell
 {
@@ -314,7 +315,7 @@ namespace PrtgAPI.PowerShell
                     valueStr = channel.DisplayValue.Substring(first, second - first);
                 }
 
-                value = Convert.ToDouble(valueStr);
+                value = ConvertUtilities.ToDouble(valueStr);
             }
 
             return value;

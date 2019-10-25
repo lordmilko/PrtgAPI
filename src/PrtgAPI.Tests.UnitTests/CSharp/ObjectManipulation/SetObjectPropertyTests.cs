@@ -3347,5 +3347,52 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
                 "Channel ID '9' does not exist on sensor ID '1001'."
             );
         }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void SetChannelProperty_Ignores_ForeignNumberString_AmericanCulture()
+        {
+            TestCustomCulture(() =>
+            {
+                //Normal
+                TestFloatEncoding(0.1, "0.1");
+
+                //Foreign
+                TestFloatEncoding("0,1", "0%2C1");
+            }, new CultureInfo("en-US"));
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void SetChannelProperty_Ignores_ForeignNumberString_EuropeanCulture()
+        {
+            TestCustomCulture(() =>
+            {
+                //Normal
+                TestFloatEncoding(0.1, "0%2C1");
+
+                //Foreign
+                TestFloatEncoding("0.1", "0.1");
+                
+            }, new CultureInfo("de-DE"));
+        }
+
+        private void TestFloatEncoding(object val, string encoded)
+        {
+            Execute(
+                c => c.SetChannelProperty(
+                    1001,
+                    1,
+                    ChannelProperty.UpperErrorLimit,
+                    val
+                ),
+                new[]
+                {
+                    UnitRequest.Channels(1001),
+                    UnitRequest.ChannelProperties(1001, 1),
+                    UnitRequest.EditSettings($"id=1001&limitmaxerror_1={encoded}&limitmode_1=1&limitmaxerror_1_factor=1")
+                }
+            );
+        }
     }
 }
