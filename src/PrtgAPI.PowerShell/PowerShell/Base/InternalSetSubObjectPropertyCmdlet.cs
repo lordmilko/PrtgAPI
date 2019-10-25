@@ -116,13 +116,13 @@ namespace PrtgAPI.PowerShell.Base
         {
             if (DynamicSet())
             {
-                var strActions = dynamicParameters.Value.Select(p => $"{p.Property} = '{p.Value}'");
+                var strActions = dynamicParameters.Value.Select(p => $"{p.Property} = {p.Value.ToQuotedList()}");
                 var str = string.Join(", ", strActions);
 
                 return str;
             }
 
-            return $"{Property} = '{Value}'";
+            return $"{Property} = {Value.ToQuotedList()}";
         }
 
         internal void PerformSingleOperation()
@@ -139,7 +139,7 @@ namespace PrtgAPI.PowerShell.Base
             }
             else if (DynamicSet())
             {
-                var strActions = dynamicParameters.Value.Select(p => $"'{p.Property}' to '{p.Value}'");
+                var strActions = dynamicParameters.Value.Select(p => $"'{p.Property}' to {p.Value.ToQuotedList()}");
                 var str = string.Join(", ", strActions);
 
                 var name = Object != null ? $"{subObjectTypeDescription.ToLower()} '{Object.Name}'" : $"ID {SubId}";
@@ -199,13 +199,13 @@ namespace PrtgAPI.PowerShell.Base
 
                 if (DynamicSet())
                 {
-                    var strActions = dynamicParameters.Value.Select(p => $"'{p.Property}' to '{p.Value}'");
+                    var strActions = dynamicParameters.Value.Select(p => $"'{p.Property}' to {p.Value.ToQuotedList()}");
                     var str = string.Join(", ", strActions);
                     message = $"Setting {type} {summary} setting {str}";
                 }
                 else
                 {
-                    message = $"Setting {type} {summary} setting '{Property}' to '{Value}'";
+                    message = $"Setting {type} {summary} setting '{Property}' to {Value.ToQuotedList()}";
                     dynamicParameters = new Lazy<List<TParameter>>(() => new[] { createParameter(Property, Value) }.ToList());
                 }
 

@@ -239,12 +239,12 @@ namespace PrtgAPI.PowerShell.Cmdlets
         {
             if (IsNormalParameterSet)
             {
-                if (ShouldProcess(BasicShouldProcessMessage, $"{MyInvocation.MyCommand} {Property} = '{Value}'"))
+                if (ShouldProcess(BasicShouldProcessMessage, $"{MyInvocation.MyCommand} {Property} = {Value.ToQuotedList()}"))
                     ExecuteOrQueue(Object);
             }
             else if (IsDynamicParameterSet)
             {
-                var strActions = dynamicParameters.Select(p => $"{p.Property} = '{p.Value}'");
+                var strActions = dynamicParameters.Select(p => $"{p.Property} = {p.Value.ToQuotedList()}");
                 var str = string.Join(", ", strActions);
 
                 if (ShouldProcess(BasicShouldProcessMessage, $"{MyInvocation.MyCommand} {str}"))
@@ -261,15 +261,15 @@ namespace PrtgAPI.PowerShell.Cmdlets
 
             if (IsRawPropertyParameterSet)
             {
-                var vals = RawValue.Select(v => $"'{v}'").ToList();
-                var plural = vals.Count > 1 ? "s" : "";
+                //RawValue is Mandatory and thus cannot be null (can only be string.Empty)
+                var plural = RawValue.Length > 1 ? "s" : "";
 
-                continueStr = $"property '{RawProperty}' to value{plural} {string.Join(", ", vals)}";
-                whatIfStr = $"{RawProperty} = {RawValue.ToQuotedList()}"; //todo: bug? progress said it was setting property to system.object[] (it just did rawp.tostring()); we need to expand it to a quoted list or something
+                continueStr = $"property '{RawProperty}' to value{plural} {RawValue.ToQuotedList()}";
+                whatIfStr = $"{RawProperty} = {RawValue.ToQuotedList()}";
             }
             else if (IsRawParameterSet)
             {
-                var vals = parameters.Select(p => $"{p.Name} = '{p.Value}'");
+                var vals = parameters.Select(p => $"{p.Name} = {p.Value.ToQuotedList()}");
                 whatIfStr = $"{string.Join(", ", vals)}";
                 continueStr = $"properties {whatIfStr}";
             }
@@ -299,10 +299,10 @@ namespace PrtgAPI.PowerShell.Cmdlets
             var ids = GetSingleOperationId(Object, Id);
 
             if (IsNormalParameterSet)
-                ExecuteOperation(() => client.SetObjectProperty(ids, Property, Value), $"Setting object {BasicShouldProcessMessage} setting '{Property}' to '{Value}'");
+                ExecuteOperation(() => client.SetObjectProperty(ids, Property, Value), $"Setting object {BasicShouldProcessMessage} setting '{Property}' to {Value.ToQuotedList()}");
             else if (IsDynamicParameterSet)
             {
-                var strActions = dynamicParameters.Select(p => $"'{p.Property}' to '{p.Value}'");
+                var strActions = dynamicParameters.Select(p => $"'{p.Property}' to {p.Value.ToQuotedList()}");
                 var str = string.Join(", ", strActions);
 
                 ExecuteOperation(() => client.SetObjectProperty(ids, dynamicParameters), $"Setting object {BasicShouldProcessMessage} setting {str}");
@@ -316,7 +316,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
                 }
                 else
                 {
-                    var settingsStr = string.Join(", ", parameters.Select(p => $"{p.Name} = '{p.Value}'"));
+                    var settingsStr = string.Join(", ", parameters.Select(p => $"{p.Name} = {p.Value.ToQuotedList()}"));
 
                     ExecuteOperation(() => client.SetObjectPropertyRaw(ids, parameters), $"Setting object {BasicShouldProcessMessage} settings {settingsStr}");
                 }
@@ -330,10 +330,10 @@ namespace PrtgAPI.PowerShell.Cmdlets
         protected override void PerformMultiOperation(int[] ids)
         {
             if (IsNormalParameterSet)
-                ExecuteMultiOperation(() => client.SetObjectProperty(ids, Property, Value), $"Setting {GetMultiTypeListSummary()} setting '{Property}' to '{Value}'");
+                ExecuteMultiOperation(() => client.SetObjectProperty(ids, Property, Value), $"Setting {GetMultiTypeListSummary()} setting '{Property}' to {Value.ToQuotedList()}");
             else if (IsDynamicParameterSet)
             {
-                var strActions = dynamicParameters.Select(p => $"'{p.Property}' to '{p.Value}'");
+                var strActions = dynamicParameters.Select(p => $"'{p.Property}' to {p.Value.ToQuotedList()}");
                 var str = string.Join(", ", strActions);
 
                 ExecuteMultiOperation(() => client.SetObjectProperty(ids, dynamicParameters), $"Setting {GetMultiTypeListSummary()} setting {str}");
@@ -347,7 +347,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
                 }
                 else
                 {
-                    var settingsStr = string.Join(", ", parameters.Select(p => $"'{p.Name}' = '{p.Value}'"));
+                    var settingsStr = string.Join(", ", parameters.Select(p => $"'{p.Name}' = {p.Value.ToQuotedList()}"));
 
                     ExecuteMultiOperation(() => client.SetObjectPropertyRaw(ids, parameters.ToArray()), $"Setting {GetMultiTypeListSummary()} settings {settingsStr}");
                 }

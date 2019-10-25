@@ -55,5 +55,13 @@ namespace PrtgAPI.Utilities
 
             return string.Join(", ", list.Select(l => $"'{l}'"));
         }
+
+        public static string ToQuotedList(this object obj)
+        {
+            if (obj.IsIEnumerable())
+                return obj.ToIEnumerable().ToQuotedList();
+
+            return $"'{obj}'";
+        }
     }
 }
