@@ -1,8 +1,37 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <Types>
     <Type>
+        <Name>PrtgAPI.Tree.CompareNode</Name>
+        <Members>
+            <ScriptMethod>
+                <Name>FindNode</Name>
+                <Script>
+                    [PrtgAPI.Tree.NodeExtensions]::FindNode($this, ([PrtgAPI.PowerShell.ETSHelpers]::CompareNodePredicate($args[0])))
+                </Script>
+            </ScriptMethod>
+            <ScriptMethod>
+                <Name>FindNodes</Name>
+                <Script>
+                    [PrtgAPI.Tree.NodeExtensions]::FindNodes($this, ([PrtgAPI.PowerShell.ETSHelpers]::CompareNodePredicate($args[0])))
+                </Script>
+            </ScriptMethod>
+            <ScriptMethod>
+                <Name>WithChildren</Name>
+                <Script>
+                    [PrtgAPI.Tree.NodeExtensions]::WithChildren($this, $args[0])
+                </Script>
+            </ScriptMethod>
+        </Members>
+    </Type>
+    <Type>
         <Name>PrtgAPI.Tree.PrtgNode</Name>
         <Members>
+            <ScriptMethod>
+                <Name>CompareTo</Name>
+                <Script>
+                    [PrtgAPI.Tree.NodeExtensions]::CompareTo($this, $args[0])
+                </Script>
+            </ScriptMethod>
             <ScriptMethod>
                 <Name>FindNode</Name>
                 <Script>

@@ -334,6 +334,358 @@ namespace PrtgAPI.Tests.UnitTests.Tree
         }
 
             #endregion
+            #region CompareOrphan
+
+        [TestMethod]
+        public void Tree_CompareOrphan_Indexer_SingleChild_Original()
+        {
+            var first = PrtgNode.Probe(Probe(),
+                PrtgNode.Device(Device("Device1"))
+            );
+
+            var second = PrtgNode.Probe(Probe(),
+                PrtgNode.Device(Device("Device2"))
+            );
+
+            var comparison = first.CompareTo(second).Orphan;
+
+            var device = comparison["Device1"];
+
+            Assert.IsTrue(device is CompareOrphan);
+            Assert.IsFalse(device is CompareOrphanCollection);
+            Assert.AreEqual("Device1", device.Name);
+        }
+
+        [TestMethod]
+        public void Tree_CompareOrphan_Indexer_SingleChild_New()
+        {
+            var first = PrtgNode.Probe(Probe(),
+                PrtgNode.Device(Device("Device1")),
+                PrtgNode.Device(Device("Device2"))
+            );
+
+            var second = PrtgNode.Probe(Probe(),
+                PrtgNode.Device(Device("Device3"))
+            );
+
+            var comparison = first.CompareTo(second).Orphan;
+
+            var device = comparison["Device1"];
+
+            Assert.IsTrue(device is CompareOrphan);
+            Assert.IsFalse(device is CompareOrphanCollection);
+            Assert.AreEqual("Device1", device.Name);
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void Tree_CompareOrphan_Indexer_IgnoreCase()
+        {
+            var tree = PrtgNode.Probe(Probe(),
+                PrtgNode.Device(Device("Device1"))
+            );
+
+            var comparison = tree.CompareTo(tree).Orphan;
+
+            var device = comparison["device1", true];
+
+            Assert.IsTrue(device is CompareOrphan);
+            Assert.IsFalse(device is CompareOrphanCollection);
+            Assert.AreEqual("Device1", device.ToString());
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void Tree_CompareOrphan_Indexer_MultipleChildren()
+        {
+            var tree = PrtgNode.Probe(Probe(),
+                PrtgNode.Device(Device("Device1"),
+                    PrtgNode.Sensor(Sensor("Ping"))
+                ),
+                PrtgNode.Device(Device("Device1"),
+                    PrtgNode.Sensor(Sensor("Pong"))
+                ),
+                PrtgNode.Device(Device("Device2"))
+            );
+
+            var comparison = tree.CompareTo(tree).Orphan;
+
+            var devices = comparison["Device1"];
+
+            Assert.IsTrue(devices is CompareOrphanGrouping);
+            Assert.AreEqual(2, ((CompareOrphanGrouping) devices).Group.Count);
+            Assert.AreEqual(2, devices.Children.Count);
+            Assert.AreEqual("Ping", devices.Children[0].ToString());
+            Assert.AreEqual("Pong", devices.Children[1].ToString());
+            Assert.AreEqual("Device1", devices.ToString());
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void Tree_CompareOrphan_Indexer_GrandChild_FromMultipleChindren()
+        {
+            var tree = PrtgNode.Probe(Probe(),
+                PrtgNode.Device(Device("Device1"),
+                    PrtgNode.Sensor(Sensor("Sensor1"))),
+                PrtgNode.Device(Device("Device1"),
+                    PrtgNode.Sensor(Sensor("Sensor2"))),
+                PrtgNode.Device(Device("Device2"),
+                    PrtgNode.Sensor(Sensor("Sensor1"))
+                )
+            );
+
+            var comparison = tree.CompareTo(tree).Orphan;
+
+            var devices = comparison["Device1"];
+            var sensor = devices["Sensor1"];
+
+            Assert.IsTrue(sensor.First is SensorNode);
+            Assert.AreEqual("Sensor1", sensor.ToString());
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void Tree_CompareOrphan_Indexer_NoChildren()
+        {
+            var tree = PrtgNode.Probe(Probe(),
+                PrtgNode.Device(Device("Device1"))
+            );
+
+            var comparison = tree.CompareTo(tree).Orphan;
+
+            Assert.IsNull(comparison["Device2"]);
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void Tree_CompareOrphan_Indexer_Collection()
+        {
+            var tree = PrtgNode.TriggerCollection(DefaultTrigger);
+
+            var comparison = tree.CompareTo(tree).Orphan;
+
+            var child = comparison["Email to Admin"];
+            Assert.IsNotNull(child);
+            Assert.AreEqual("Email to Admin", child.Name);
+            Assert.AreEqual(comparison.Children[0], child);
+        }
+
+        [TestMethod]
+        public void Tree_CompareOrphan_Indexer_ReplacedOrphan()
+        {
+            var first = PrtgNode.Probe(Probe(),
+                PrtgNode.Device(Device("Device1"))
+            );
+
+            var second = PrtgNode.Probe(Probe(),
+                PrtgNode.Device(Device("Device2", 3002))
+            );
+
+            var comparison = first.CompareTo(second).Orphan;
+
+            var removedDevice = comparison["Device1"];
+            var addedDevice = comparison["Device2"];
+
+            Assert.AreEqual<TreeNodeDifference>(TreeNodeDifference.Removed, removedDevice.Difference);
+            Assert.AreEqual<TreeNodeDifference>(TreeNodeDifference.Added, addedDevice.Difference);
+        }
+
+        [TestMethod]
+        public void Tree_CompareOrphan_Indexer_RenamedOrphan()
+        {
+            var first = PrtgNode.Probe(Probe(),
+                PrtgNode.Device(Device("Device1"))
+            );
+
+            var second = PrtgNode.Probe(Probe(),
+                PrtgNode.Device(Device("Device2"))
+            );
+
+            var comparison = first.CompareTo(second).Orphan;
+
+            var originalDevice = comparison["Device1"];
+            var renamedDevice = comparison["Device2"];
+
+            Assert.AreEqual(originalDevice, renamedDevice);
+        }
+
+            #endregion
+            #region CompareNode
+
+        [TestMethod]
+        public void Tree_CompareNode_Indexer_SingleChild_Original()
+        {
+            var first = PrtgNode.Probe(Probe(),
+                PrtgNode.Device(Device("Device1"))
+            );
+
+            var second = PrtgNode.Probe(Probe(),
+                PrtgNode.Device(Device("Device2"))
+            );
+
+            var comparison = first.CompareTo(second);
+
+            var device = comparison["Device1"];
+
+            Assert.IsTrue(device is CompareNode);
+            Assert.IsFalse(device is CompareNodeCollection);
+            Assert.AreEqual("Device1", device.Name);
+        }
+
+        [TestMethod]
+        public void Tree_CompareNode_Indexer_SingleChild_New()
+        {
+            var first = PrtgNode.Probe(Probe(),
+                PrtgNode.Device(Device("Device1")),
+                PrtgNode.Device(Device("Device2"))
+            );
+
+            var second = PrtgNode.Probe(Probe(),
+                PrtgNode.Device(Device("Device3"))
+            );
+
+            var comparison = first.CompareTo(second);
+
+            var device = comparison["Device1"];
+
+            Assert.IsTrue(device is CompareNode);
+            Assert.IsFalse(device is CompareNodeCollection);
+            Assert.AreEqual("Device1", device.Name);
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void Tree_CompareNode_Indexer_IgnoreCase()
+        {
+            var tree = PrtgNode.Probe(Probe(),
+                PrtgNode.Device(Device("Device1"))
+            );
+
+            var comparison = tree.CompareTo(tree);
+
+            var device = comparison["device1", true];
+
+            Assert.IsTrue(device is CompareNode);
+            Assert.IsFalse(device is CompareNodeCollection);
+            Assert.AreEqual("Device1", device.ToString());
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void Tree_CompareNode_Indexer_MultipleChildren()
+        {
+            var tree = PrtgNode.Probe(Probe(),
+                PrtgNode.Device(Device("Device1"),
+                    PrtgNode.Sensor(Sensor("Ping"))
+                ),
+                PrtgNode.Device(Device("Device1"),
+                    PrtgNode.Sensor(Sensor("Pong"))
+                ),
+                PrtgNode.Device(Device("Device2"))
+            );
+
+            var comparison = tree.CompareTo(tree);
+
+            var devices = comparison["Device1"];
+
+            Assert.IsTrue(devices is CompareNodeGrouping);
+            Assert.AreEqual(2, ((CompareNodeGrouping) devices).Group.Count);
+            Assert.AreEqual(2, devices.Children.Count);
+            Assert.AreEqual("Ping", devices.Children[0].ToString());
+            Assert.AreEqual("Pong", devices.Children[1].ToString());
+            Assert.AreEqual("Device1", devices.ToString());
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void Tree_CompareNode_Indexer_GrandChild_FromMultipleChindren()
+        {
+            var tree = PrtgNode.Probe(Probe(),
+                PrtgNode.Device(Device("Device1"),
+                    PrtgNode.Sensor(Sensor("Sensor1"))),
+                PrtgNode.Device(Device("Device1"),
+                    PrtgNode.Sensor(Sensor("Sensor2"))),
+                PrtgNode.Device(Device("Device2"),
+                    PrtgNode.Sensor(Sensor("Sensor1"))
+                )
+            );
+
+            var comparison = tree.CompareTo(tree);
+
+            var devices = comparison["Device1"];
+            var sensor = devices["Sensor1"];
+
+            Assert.IsTrue(sensor.First is SensorNode);
+            Assert.AreEqual("Sensor1", sensor.ToString());
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void Tree_CompareNode_Indexer_NoChildren()
+        {
+            var tree = PrtgNode.Probe(Probe(),
+                PrtgNode.Device(Device("Device1"))
+            );
+
+            var comparison = tree.CompareTo(tree);
+
+            Assert.IsNull(comparison["Device2"]);
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void Tree_CompareNode_Indexer_Collection()
+        {
+            var tree = PrtgNode.TriggerCollection(DefaultTrigger);
+
+            var comparison = tree.CompareTo(tree);
+
+            var child = comparison["Email to Admin"];
+            Assert.IsNotNull(child);
+            Assert.AreEqual("Email to Admin", child.Name);
+            Assert.AreEqual(comparison.Children[0], child);
+        }
+
+        [TestMethod]
+        public void Tree_CompareNode_Indexer_ReplacedNode()
+        {
+            var first = PrtgNode.Probe(Probe(),
+                PrtgNode.Device(Device("Device1"))
+            );
+
+            var second = PrtgNode.Probe(Probe(),
+                PrtgNode.Device(Device("Device2", 3002))
+            );
+
+            var comparison = first.CompareTo(second);
+
+            var removedDevice = comparison["Device1"];
+            var addedDevice = comparison["Device2"];
+
+            Assert.AreEqual<TreeNodeDifference>(TreeNodeDifference.Removed, removedDevice.Difference);
+            Assert.AreEqual<TreeNodeDifference>(TreeNodeDifference.Added, addedDevice.Difference);
+        }
+
+        [TestMethod]
+        public void Tree_CompareNode_Indexer_RenamedNode()
+        {
+            var first = PrtgNode.Probe(Probe(),
+                PrtgNode.Device(Device("Device1"))
+            );
+
+            var second = PrtgNode.Probe(Probe(),
+                PrtgNode.Device(Device("Device2"))
+            );
+
+            var comparison = first.CompareTo(second);
+
+            var originalDevice = comparison["Device1"];
+            var renamedDevice = comparison["Device2"];
+
+            Assert.AreEqual(originalDevice, renamedDevice);
+        }
+
+            #endregion
         #endregion
         #region Find
             #region PrtgOrphan
@@ -615,6 +967,109 @@ namespace PrtgAPI.Tests.UnitTests.Tree
         public void Tree_PrtgNode_FindNodes_NullRoot()
         {
             var result = NodeExtensions.FindNode((PrtgNode) null, s => true);
+
+            Assert.IsNull(result);
+        }
+
+            #endregion
+            #region CompareNode
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void Tree_CompareNode_FindNode()
+        {
+            var parent = PrtgNode.Group(Group(),
+                PrtgNode.Device(Device("Child1"),
+                    PrtgNode.Sensor(Sensor("Child3"))
+                ),
+                PrtgNode.Device(Device("Child2"))
+            );
+
+            var comparison = parent.CompareTo(parent);
+
+            var match = comparison.FindNode(n => n.Name == "Child3");
+
+            Assert.AreEqual("Child3", match.Name);
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void Tree_CompareNode_FindNode_NoMatches()
+        {
+            var parent = PrtgNode.Group(Group(),
+                PrtgNode.Device(Device("Child1"),
+                    PrtgNode.Sensor(Sensor("Child3"))
+                ),
+                PrtgNode.Device(Device("Child2"))
+            );
+
+            var comparison = parent.CompareTo(parent);
+
+            var match = comparison.FindNode(n => n.Name == "Child4");
+
+            Assert.IsNull(match);
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void Tree_CompareNode_FindNode_MultipleMatches_Throws()
+        {
+            var parent = PrtgNode.Group(Group(),
+                PrtgNode.Device(Device("Child"),
+                    PrtgNode.Sensor(Sensor("Child"))
+                ),
+                PrtgNode.Device(Device("Child"))
+            );
+
+            var comparison = parent.CompareTo(parent);
+
+            AssertEx.Throws<InvalidOperationException>(
+                () => comparison.FindNode(n => n.Name == "Child"),
+                "Sequence contains more than one element"
+            );
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void Tree_CompareNode_FindNodes_WithPredicate()
+        {
+            var parent = PrtgNode.Group(Group(),
+                PrtgNode.Device(Device("Child"),
+                    PrtgNode.Sensor(Sensor("Child"))
+                ),
+                PrtgNode.Device(Device("Child"))
+            );
+
+            var comparison = parent.CompareTo(parent);
+
+            var matches = comparison.FindNodes(n => n.Name == "Child");
+
+            Assert.AreEqual(3, matches.Count());
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void Tree_CompareNode_FindNodes_NoPredicate()
+        {
+            var parent = PrtgNode.Group(Group(),
+                PrtgNode.Device(Device("Child"),
+                    PrtgNode.Sensor(Sensor("Child"))
+                ),
+                PrtgNode.Device(Device("Child"))
+            );
+
+            var comparison = parent.CompareTo(parent);
+
+            var matches = comparison.FindNodes(null);
+
+            Assert.AreEqual(3, matches.Count());
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void Tree_CompareNode_FindNodes_NullRoot()
+        {
+            var result = NodeExtensions.FindNode((CompareNode) null, s => true);
 
             Assert.IsNull(result);
         }
@@ -1176,6 +1631,267 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             };
         }
 
+            #endregion
+            #region CompareOrphan
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void Tree_CompareOrphan_Update_WithChildren()
+        {
+            var first = PrtgNode.Probe(Probe(),
+                PrtgNode.Device(Device()),
+                PrtgNode.Device(Device(id: 3002))
+            );
+
+            var second = PrtgNode.Probe(Probe(id: 1002));
+
+            var comparison = first.CompareTo(second).Orphan;
+            var devices = comparison["Local Probe"]["dc-1"] as CompareOrphanGrouping;
+
+            Assert.IsInstanceOfType(comparison, typeof(CompareOrphanRoot));
+            Assert.IsInstanceOfType(devices, typeof(CompareOrphanGrouping));
+            Assert.AreEqual(typeof(CompareOrphan), devices.Group[0].GetType());
+
+            Assert.AreEqual(2, comparison.Children.Count);
+            Assert.AreEqual(2, devices.Group.Count);
+
+            var newParent = devices.Group[0].WithChildren(comparison, devices);
+            Assert.AreEqual(4, newParent.Children.Count);
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void Tree_CompareOrphan_Update_Root_WithNull()
+        {
+            var comparison = GetCompareNodeUpdateTree().Orphan;
+
+            Assert.IsNull(comparison.Update(null));
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void Tree_CompareOrphan_Update_Root_NoChildren()
+        {
+            var comparison = GetCompareNodeUpdateTree().Orphan;
+
+            Assert.IsNull(comparison.Update(Enumerable.Empty<CompareOrphan>()));
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void Tree_CompareOrphan_Update_Root_OneChild()
+        {
+            var comparison = GetCompareNodeUpdateTree().Orphan;
+
+            var newNode = comparison.Update(new[] { comparison.Children.First() });
+
+            Assert.AreEqual(typeof(CompareOrphan), newNode.GetType());
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void Tree_CompareOrphan_Update_Root_OneNullChild()
+        {
+            var comparison = GetCompareNodeUpdateTree().Orphan;
+
+            var newNode = comparison.Update(new CompareOrphan[] { null });
+
+            Assert.IsNull(newNode);
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void Tree_CompareOrphan_Update_Root_TwoChildren()
+        {
+            var comparison = GetCompareNodeUpdateTree().Orphan;
+
+            var newNode = comparison.Update(comparison.Children.ToList());
+
+            Assert.IsInstanceOfType(newNode, typeof(CompareOrphanRoot));
+            Assert.AreNotEqual(comparison, newNode);
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void Tree_CompareOrphan_Update_Root_TwoChildren_OneNull()
+        {
+            var comparison = GetCompareNodeUpdateTree().Orphan;
+
+            AssertEx.Throws<ArgumentNullException>(
+                () => comparison.Update(new[] { null, comparison.Children[0] }),
+                "List contained a null element"
+            );
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void Tree_CompareOrphan_Update_Root_OverTwoChildren_Throws()
+        {
+            var comparison = GetCompareNodeUpdateTree().Orphan;
+
+            AssertEx.Throws<InvalidOperationException>(
+                () => comparison.Update(new[] { comparison.Children[0], comparison.Children[1], comparison.Children[0] }),
+                "A CompareOrphanRoot cannot have more than two children."
+            );
+        }
+
+            #endregion
+            #region CompareNode
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void Tree_CompareNode_Update_WithChildren()
+        {
+            var first = PrtgNode.Probe(Probe(),
+                PrtgNode.Device(Device()),
+                PrtgNode.Device(Device(id: 3002))
+            );
+
+            var second = PrtgNode.Probe(Probe(id: 1002));
+
+            var comparison = first.CompareTo(second);
+            var devices = comparison["Local Probe"]["dc-1"] as CompareNodeGrouping;
+
+            Assert.IsInstanceOfType(comparison, typeof(CompareNodeRoot));
+            Assert.IsInstanceOfType(devices, typeof(CompareNodeGrouping));
+            Assert.AreEqual(typeof(CompareNode), devices.Group[0].GetType());
+
+            Assert.AreEqual(2, comparison.Children.Count);
+            Assert.AreEqual(2, devices.Group.Count);
+
+            var newParent = devices.Group[0].WithChildren(comparison, devices);
+            Assert.AreEqual(4, newParent.Children.Count);
+        }
+
+                #region Root
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void Tree_CompareNode_Update_Root_WithNull()
+        {
+            var comparison = GetCompareNodeUpdateTree();
+
+            Assert.IsNull(comparison.Update(null));
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void Tree_CompareNode_Update_Root_NoChildren()
+        {
+            var comparison = GetCompareNodeUpdateTree();
+
+            Assert.IsNull(comparison.Update(Enumerable.Empty<CompareNode>()));
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void Tree_CompareNode_Update_Root_OneChild()
+        {
+            var comparison = GetCompareNodeUpdateTree();
+
+            var newNode = comparison.Update(new[]{comparison.Children.First()});
+
+            Assert.AreEqual(typeof(CompareNode), newNode.GetType());
+            Assert.IsNull(newNode.Parent);
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void Tree_CompareNode_Update_Root_OneNullChild()
+        {
+            var comparison = GetCompareNodeUpdateTree();
+
+            var newNode = comparison.Update(new CompareNode[] { null });
+
+            Assert.IsNull(newNode);
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void Tree_CompareNode_Update_Root_TwoChildren()
+        {
+            var comparison = GetCompareNodeUpdateTree();
+
+            var newNode = comparison.Update(comparison.Children.ToList());
+
+            Assert.IsInstanceOfType(newNode, typeof(CompareNodeRoot));
+            Assert.AreNotEqual(comparison, newNode);
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void Tree_CompareNode_Update_Root_TwoChildren_OneNull()
+        {
+            var comparison = GetCompareNodeUpdateTree();
+
+            AssertEx.Throws<ArgumentNullException>(
+                () => comparison.Update(new[] { null, comparison.Children[0] }),
+                "List contained a null element"
+            );
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void Tree_CompareNode_Update_Root_OverTwoChildren_Throws()
+        {
+            var comparison = GetCompareNodeUpdateTree();
+
+            AssertEx.Throws<InvalidOperationException>(
+                () => comparison.Update(new[] { comparison.Children[0], comparison.Children[1], comparison.Children[0] }),
+                "A CompareNodeRoot cannot have more than two children."
+            );
+        }
+
+        private CompareNode GetCompareNodeUpdateTree()
+        {
+            var first = PrtgNode.Probe(Probe());
+            var second = PrtgNode.Probe(Probe(id: 1002));
+
+            var comparison = first.CompareTo(second);
+            Assert.IsInstanceOfType(comparison, typeof(CompareNodeRoot));
+
+            return comparison;
+        }
+
+                #endregion
+                #region Normal
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void Tree_CompareNode_Update_WithNull()
+        {
+            var node = PrtgNode.Probe(Probe(),
+                PrtgNode.Device(Device())
+            );
+
+            var comparison = node.CompareTo(node);
+
+            Assert.AreEqual(1, comparison.Children.Count);
+
+            var result = comparison.Update(null);
+
+            Assert.AreEqual(0, result.Children.Count);
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void Tree_CompareNode_Update_OneNullChild()
+        {
+            var node = PrtgNode.Probe(Probe(),
+                PrtgNode.Device(Device())
+            );
+
+            var comparison = node.CompareTo(node);
+
+            Assert.AreEqual(1, comparison.Children.Count);
+
+            AssertEx.Throws<ArgumentNullException>(
+                () => comparison.Update(new[] { null, comparison["dc-1"] }),
+                "List contained a null element"
+            );
+        }
+
+                #endregion
             #endregion
         #endregion
         #region ValidChildren
@@ -1855,6 +2571,159 @@ namespace PrtgAPI.Tests.UnitTests.Tree
         }
 
         #endregion
+        #region TreeDifference
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void Tree_CompareNode_Difference_None()
+        {
+            var first = PrtgNode.Probe(Probe());
+            var second = PrtgNode.Probe(Probe());
+            var comparison = first.CompareTo(second);
+
+            Assert.IsTrue(TreeNodeDifference.None == comparison.Difference);
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void Tree_CompareNode_Difference_Type()
+        {
+            var first = PrtgNode.Probe(Probe());
+            var second = PrtgNode.Device(Device("Local Probe", 1001, 1));
+            var comparison = first.CompareTo(second);
+
+            Assert.IsTrue(TreeNodeDifference.Type == comparison.Difference);
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void Tree_CompareNode_Difference_ParentId()
+        {
+            var first = PrtgNode.Probe(Probe());
+            var second = PrtgNode.Probe(Probe(parentId: 0));
+            var comparison = first.CompareTo(second);
+
+            Assert.IsTrue(TreeNodeDifference.ParentId == comparison.Difference);
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void Tree_CompareNode_Difference_Name()
+        {
+            var first = PrtgNode.Probe(Probe(),
+                PrtgNode.Device(Device())
+            );
+            var second = PrtgNode.Probe(Probe("Cluster Probe"),
+                PrtgNode.Device(Device("dc-2"))
+            );
+            var comparison = first.CompareTo(second);
+
+            Assert.IsTrue(TreeNodeDifference.Name == comparison.Difference);
+            Assert.IsTrue(TreeNodeDifference.Name == comparison["dc-1"].Difference);
+            Assert.IsTrue(TreeNodeDifference.Name == comparison["dc-2"].Difference);
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void Tree_CompareNode_Difference_HasChildren()
+        {
+            var first = PrtgNode.Probe(Probe(),
+                PrtgNode.Device(Device())
+            );
+
+            var second = PrtgNode.Probe(Probe());
+
+            var comparison = first.CompareTo(second);
+
+            Assert.IsTrue((TreeNodeDifference.NumberOfChildren | TreeNodeDifference.HasChildren) == comparison.Difference);
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void Tree_CompareNode_Difference_NumberOfChildren()
+        {
+            var first = PrtgNode.Probe(Probe(),
+                PrtgNode.Device(Device())
+            );
+
+            var second = PrtgNode.Probe(Probe(),
+                PrtgNode.Device(Device()),
+                PrtgNode.Device(Device(id: 3002))
+            );
+
+            var comparison = first.CompareTo(second);
+
+            Assert.IsTrue((TreeNodeDifference.NumberOfChildren) == comparison.Difference);
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void Tree_CompareNode_Difference_Added()
+        {
+            var first = PrtgNode.Probe(Probe());
+
+            var second = PrtgNode.Probe(Probe(),
+                PrtgNode.Device(Device())
+            );
+
+            var comparison = first.CompareTo(second);
+
+            Assert.IsTrue(TreeNodeDifference.Added == comparison["dc-1"].Difference);
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void Tree_CompareNode_Difference_Removed()
+        {
+            var first = PrtgNode.Probe(Probe(),
+                PrtgNode.Device(Device())
+            );
+
+            var second = PrtgNode.Probe(Probe());
+
+            var comparison = first.CompareTo(second);
+
+            Assert.IsTrue(TreeNodeDifference.Removed == comparison["dc-1"].Difference);
+        }
+
+        #endregion
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void Tree_CompareNode_TreeDifference()
+        {
+            var first = PrtgNode.Probe(Probe(),
+                PrtgNode.Device(Device())
+            );
+
+            var second = PrtgNode.Probe(Probe(),
+                PrtgNode.Device(Device("dc-2"))
+            );
+
+            var comparison = first.CompareTo(second);
+
+            Assert.IsTrue(TreeNodeDifference.None == comparison.Difference);
+            Assert.IsTrue(TreeNodeDifference.Name == comparison.TreeDifference);
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void Tree_CompareNode_Type()
+        {
+            var first = PrtgNode.Probe(Probe(),
+                PrtgNode.Device(Device())
+            );
+
+            var second = PrtgNode.Probe(Probe(id: 1002),
+                PrtgNode.Device(Device())
+            );
+
+            var comparison = first.CompareTo(second);
+
+            Assert.AreEqual(TreeNodeType.Collection, comparison.Type);
+            Assert.AreEqual(TreeNodeType.Node, comparison.Children[0].Type);
+            Assert.AreEqual(TreeNodeType.Grouping, comparison["Local Probe"].Type);
+        }
 
         [TestMethod]
         [TestCategory("UnitTest")]
@@ -1943,6 +2812,16 @@ namespace PrtgAPI.Tests.UnitTests.Tree
                 },
                 "List contained a null element."
             );
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void Tree_CompareOrphan_NullNodes()
+        {
+            var orphan = new CompareOrphan(null, null, new[] { new CompareOrphan(null, null, null) });
+            Assert.IsTrue(TreeNodeDifference.None == orphan.Difference);
+            Assert.IsTrue(TreeNodeDifference.None == orphan.TreeDifference);
+            Assert.IsNull(orphan["dc-1"]);
         }
 
         /*[TestMethod]
@@ -2046,7 +2925,12 @@ namespace PrtgAPI.Tests.UnitTests.Tree
                 [typeof(PrtgOrphanCollectionDebugView)] = new[] {"Value"},
                 [typeof(PrtgOrphanGroupingDebugView)] = new[] {"Value"},
                 [typeof(PrtgNodeCollectionDebugView)] = new[] {"Value"},
-                [typeof(PrtgNodeGroupingDebugView)] = new[] {"Value"}
+                [typeof(PrtgNodeGroupingDebugView)] = new[] {"Value"},
+
+                [typeof(CompareOrphanCollectionDebugView)] = new[] {"First","Second"},
+                [typeof(CompareOrphanGroupingDebugView)] = new[] {"First", "Second"},
+                [typeof(CompareNodeCollectionDebugView)] = new[] {"First", "Second"},
+                [typeof(CompareNodeGroupingDebugView)] = new[] {"First", "Second"}
             };
 
             var assemblyTypes = typeof(TreeNode).Assembly.GetTypes();
@@ -2093,6 +2977,12 @@ namespace PrtgAPI.Tests.UnitTests.Tree
         [TestCategory("UnitTest")]
         public void Tree_NodeExtensions_AllUniqueMethodsHaveETSDefinitions()
         {
+            var exclusions = new[]
+            {
+                "PrtgNode_PrettyPrint",
+                "CompareNode_PrettyPrint"
+            };
+
             var src = TestHelpers.GetProjectRoot(true);
             var ps1xml = Path.Combine(src, "PrtgAPI.PowerShell\\PowerShell\\Resources\\PrtgAPI.Types.ps1xml");
 
@@ -2101,10 +2991,20 @@ namespace PrtgAPI.Tests.UnitTests.Tree
 
             var xml = XDocument.Load(ps1xml);
 
-            var expectedMethods = typeof(NodeExtensions).GetMethods(BindingFlags.Public | BindingFlags.Static).Select(m => m.Name).Distinct();
-            var actualMethods = xml.Descendants("ScriptMethod").Select(d => d.Element("Name").Value).ToArray();
+            var expectedMethods = typeof(NodeExtensions).GetMethods(BindingFlags.Public | BindingFlags.Static).Select(m =>
+            {
+                string prefix;
 
-            var missing = expectedMethods.Except(actualMethods).ToArray();
+                if (m.IsGenericMethod)
+                    prefix = m.GetGenericArguments()[0].GetGenericParameterConstraints()[0].Name;
+                else
+                    prefix = m.GetParameters()[0].ParameterType.Name;
+
+                return prefix + "_" + m.Name;
+            }).Distinct().ToArray();
+            var actualMethods = xml.Descendants("ScriptMethod").Select(d => d.Parent.Parent.Element("Name").Value.Replace("PrtgAPI.Tree.", "") + "_" + d.Element("Name").Value).ToArray();
+
+            var missing = expectedMethods.Except(actualMethods).Except(exclusions).ToArray();
 
             if (missing.Length > 0)
                 Assert.Fail($"Methods {(string.Join(", ", missing))} are missing from PrtgAPI.Types.ps1xml.");
@@ -2145,27 +3045,6 @@ namespace PrtgAPI.Tests.UnitTests.Tree
                 () => new PropertyValuePair(Device(), null, "1"),
                 "Value of type 'String' cannot be null"
             );
-        }
-
-        [TestMethod]
-        [TestCategory("UnitTest")]
-        public void Tree_NodeExtensions_AllUniqueMethodsHaveETSDefinitions()
-        {
-            var src = TestHelpers.GetProjectRoot(true);
-            var ps1xml = Path.Combine(src, "PrtgAPI.PowerShell\\PowerShell\\Resources\\PrtgAPI.Types.ps1xml");
-
-            if (!File.Exists(ps1xml))
-                throw new InvalidOperationException($"File '{ps1xml}' does not exist.");
-
-            var xml = XDocument.Load(ps1xml);
-
-            var expectedMethods = typeof(NodeExtensions).GetMethods(BindingFlags.Public | BindingFlags.Static).Select(m => m.Name).Distinct();
-            var actualMethods = xml.Descendants("ScriptMethod").Select(d => d.Element("Name").Value).ToArray();
-
-            var missing = expectedMethods.Except(actualMethods).ToArray();
-
-            if (missing.Length > 0)
-                Assert.Fail($"Methods {(string.Join(", ", missing))} are missing from PrtgAPI.Types.ps1xml.");
         }
     }
 }

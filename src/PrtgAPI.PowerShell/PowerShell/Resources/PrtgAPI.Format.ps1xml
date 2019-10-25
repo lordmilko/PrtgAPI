@@ -1122,6 +1122,90 @@
         <View>
             <Name>Default</Name>
             <ViewSelectedBy>
+                <TypeName>PrtgAPI.Tree.CompareNode</TypeName>
+            </ViewSelectedBy>
+            <TableControl>
+                <TableHeaders>
+                    <TableColumnHeader/> <!-- Name -->
+                    <TableColumnHeader/> <!-- First -->
+                    <TableColumnHeader/> <!-- Second -->
+                    <TableColumnHeader/> <!-- Difference -->
+                    <TableColumnHeader/> <!-- TreeDifference -->
+                    <TableColumnHeader/> <!-- Parent -->
+                    <TableColumnHeader/> <!-- Children -->
+                </TableHeaders>
+                <TableRowEntries>
+                    <TableRowEntry>
+                        <TableColumnItems>
+                            <TableColumnItem>
+                                <PropertyName>Name</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>First</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>Second</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>Difference</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>TreeDifference</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>Parent</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>Children</PropertyName>
+                            </TableColumnItem>
+                        </TableColumnItems>
+                    </TableRowEntry>
+                </TableRowEntries>
+            </TableControl>
+        </View>
+        <View>
+            <Name>Default</Name>
+            <ViewSelectedBy>
+                <TypeName>PrtgAPI.Tree.CompareNodeGrouping</TypeName>
+            </ViewSelectedBy>
+            <TableControl>
+                <TableHeaders>
+                    <TableColumnHeader/> <!-- Name -->
+                    <TableColumnHeader/> <!-- Difference -->
+                    <TableColumnHeader/> <!-- TreeDifference -->
+                    <TableColumnHeader/> <!-- Parent -->
+                    <TableColumnHeader/> <!-- Group -->
+                    <TableColumnHeader/> <!-- Children -->
+                </TableHeaders>
+                <TableRowEntries>
+                    <TableRowEntry>
+                        <TableColumnItems>
+                            <TableColumnItem>
+                                <PropertyName>Name</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>Difference</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>TreeDifference</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>Parent</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>Group</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>Children</PropertyName>
+                            </TableColumnItem>
+                        </TableColumnItems>
+                    </TableRowEntry>
+                </TableRowEntries>
+            </TableControl>
+        </View>
+        <View>
+            <Name>Default</Name>
+            <ViewSelectedBy>
                 <TypeName>PrtgAPI.SensorTypeDescriptor</TypeName>
             </ViewSelectedBy>
             <TableControl>

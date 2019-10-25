@@ -9,7 +9,23 @@ namespace PrtgAPI.Tree
     /// </summary>
     public static class NodeExtensions
     {
+        /// <summary>
+        /// Compares a <see cref="PrtgNode"/> to another node and creates a tree that describes their differences.
+        /// </summary>
+        /// <param name="node">The root of the first tree to compare.</param>
+        /// <param name="other">The root of the second tree to compare.</param>
+        /// <returns>A tree that describes the comparison of both trees.</returns>
+        public static CompareNode CompareTo(this PrtgNode node, PrtgNode other)
+        {
+            var comparer = new CompareTreeVisitor(node);
+
+            var result = comparer.Visit(other);
+
+            return result.ToStandaloneNode<CompareNode>();
+        }
+
         #region FindNodes
+            #region PrtgNode
 
         /// <summary>
         /// Retrieves the single node that matches a specified predicate from the descendants of a <see cref="PrtgNode"/>.<para/>
@@ -59,6 +75,35 @@ namespace PrtgAPI.Tree
             return root?.DescendantNodes().OfType<TNode>().Where(predicate);
         }
 
+            #endregion
+            #region CompareNode
+
+        /// <summary>
+        /// Retrieves the single node that matches a specified predicate from the descendants of a <see cref="CompareNode"/>.<para/>
+        /// If no matches are found, this method returns null. If multiple matches are found, an <see cref="InvalidOperationException"/> is thrown.
+        /// </summary>
+        /// <param name="root">The node whose tree should be searched.</param>
+        /// <param name="predicate">The condition to filter by.</param>
+        /// <exception cref="InvalidOperationException">Multiple nodes matched the specified predicate.</exception>
+        /// <returns>If a single node matched the predicate, the node that matched the predicate. Otherwise, null.</returns>
+        public static CompareNode FindNode(this CompareNode root, Func<CompareNode, bool> predicate) =>
+            FindNodes(root, predicate)?.SingleOrDefault();
+
+        /// <summary>
+        /// Retrieves all nodes that match a specified predicate from the descendants of a <see cref="CompareNode"/>.
+        /// </summary>
+        /// <param name="root">The node whose tree should be searched.</param>
+        /// <param name="predicate">The condition to filter by.</param>
+        /// <returns>A collection of nodes that matched the specified predicate.</returns>
+        public static IEnumerable<CompareNode> FindNodes(this CompareNode root, Func<CompareNode, bool> predicate)
+        {
+            if (predicate == null)
+                predicate = v => true;
+
+            return root?.DescendantNodes().Where(predicate);
+        }
+
+            #endregion
         #endregion
         #region InsertNodesAfter
 
@@ -225,6 +270,7 @@ namespace PrtgAPI.Tree
 
         #endregion
         #region WithChildren
+            #region PrtgNode
 
         /// <summary>
         /// Creates a new <see cref="PrtgNode"/> with the specified <paramref name="children"/>, or returns the existing node if the specified
@@ -250,6 +296,34 @@ namespace PrtgAPI.Tree
         public static TRoot WithChildren<TRoot>(this TRoot node, IEnumerable<PrtgNode> children) where TRoot : PrtgNode =>
             (TRoot) node?.Update(node.Value, children);
 
+            #endregion
+            #region CompareNode
+
+        /// <summary>
+        /// Creates a new <see cref="CompareNode"/> with the specified <paramref name="children"/>, or returns the existing node if the specified
+        /// collection of children is reference equal the current children of the <paramref name="node"/>.
+        /// </summary>
+        /// <typeparam name="TRoot">The type of the root node.</typeparam>
+        /// <param name="node">The node to modify.</param>
+        /// <param name="children">The children to be stored under the node.</param>
+        /// <returns>If the children are different from the node's existing children, a new node that contains those children.
+        /// Otherwise, the original node.</returns>
+        public static TRoot WithChildren<TRoot>(this TRoot node, params CompareNode[] children) where TRoot : CompareNode =>
+            node.WithChildren((IEnumerable<CompareNode>)children);
+
+        /// <summary>
+        /// Creates a new <see cref="CompareNode"/> with the specified <paramref name="children"/>, or returns the existing node if the specified
+        /// collection of children is reference equal to the current children of the <paramref name="node"/>.
+        /// </summary>
+        /// <typeparam name="TRoot">The type of the root node.</typeparam>
+        /// <param name="node">The node to modify.</param>
+        /// <param name="children">The children to be stored under the node.</param>
+        /// <returns>If the children are different from the node's existing children, a new node that contains those children.
+        /// Otherwise, the original node.</returns>
+        public static TRoot WithChildren<TRoot>(this TRoot node, IEnumerable<CompareNode> children) where TRoot : CompareNode =>
+            (TRoot) node?.Update(children);
+
+            #endregion
         #endregion
     }
 }

@@ -74,6 +74,7 @@
   <ItemGroup>
     <Compile Include="CSharp\Infrastructure\CancellationTests.cs" />
     <Compile Include="CSharp\Infrastructure\CodeGeneratorTests.cs" />
+    <Compile Include="CSharp\ObjectData\FlagEnumTests.cs" />
     <Compile Include="CSharp\ObjectData\QueryableObjectTests.cs" />
     <Compile Include="CSharp\ObjectData\ScheduleTests.cs" />
     <Compile Include="CSharp\ObjectData\StreamTests.cs" />
@@ -84,6 +85,7 @@
     <Compile Include="CSharp\ObjectManipulation\SetTriggerPropertyTests.cs" />
     <Compile Include="CSharp\Tree\BaseTreeTest.cs" />
     <Compile Include="CSharp\Tree\ObjectModel\NodeListTests.cs" />
+    <Compile Include="CSharp\Tree\ObjectModel\TreeCompareTests.cs" />
     <Compile Include="CSharp\Tree\ObjectModel\TreeMemberTests.cs" />
     <Compile Include="Support\AdvancedItemGenerator.cs" />
     <Compile Include="Support\AssertEx.cs" />

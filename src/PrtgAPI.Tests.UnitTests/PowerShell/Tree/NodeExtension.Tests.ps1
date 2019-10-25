@@ -18,16 +18,27 @@ function CreateTestTree
 Describe "NodeExtension" -Tag @("PowerShell", "UnitTest") {
 
     $probe = CreateTestTree
+    $compare = $probe.CompareTo($probe)
+
+    Context "CompareTo" {
+        It "compares two trees" {
+            $tree = CreateTestTree
+
+            $comparison = $tree.CompareTo($tree)
+
+            $comparison.TreeDifference | Should Be "None"
+        }
+    }
 
     Context "FindNodes" {
-        It "finds with FindNode" {
+        It "finds a PrtgNode with FindNode" {
 
             $results = $probe.FindNode({$_.Type -eq "Device" -and $_.Value.Id -eq 3000})
             $results.Count | Should Be 1
             $results.Name | Should Be "Probe Device0"
         }
 
-        It "finds with FindNodes" {
+        It "finds a PrtgNode with FindNodes" {
 
             $results = $probe.FindNodes({$_.Type -eq "Sensor"})
             $results.Count | Should Be 2
@@ -35,9 +46,30 @@ Describe "NodeExtension" -Tag @("PowerShell", "UnitTest") {
             $results[1].Name | Should Be "Volume IO _Total1"
         }
 
-        It "doesn't specify a ScriptBlock" {
+        It "doesn't specify a ScriptBlock for a PrtgNode" {
             
             $results = $probe.FindNodes()
+            $results.Count | Should Be 4
+        }
+
+        It "finds a CompareNode with FindNode" {
+
+            $results = $compare.FindNode({$_.First.Type -eq "Device" -and $_.First.Value.Id -eq 3000})
+            $results.Count | Should Be 1
+            $results.Name | Should Be "Probe Device0"
+        }
+
+        It "finds a CompareNode with FindNodes" {
+
+            $results = $compare.FindNodes({$_.First.Type -eq "Sensor"})
+            $results.Count | Should Be 2
+            $results[0].Name | Should Be "Volume IO _Total0"
+            $results[1].Name | Should Be "Volume IO _Total1"
+        }
+
+        It "doesn't specify a ScriptBlock for a CompareNode" {
+            
+            $results = $compare.FindNodes()
             $results.Count | Should Be 4
         }
 
@@ -180,7 +212,7 @@ Describe "NodeExtension" -Tag @("PowerShell", "UnitTest") {
     }
 
     Context "WithChildren" {
-        It "replaces children" {
+        It "replaces children for a PrtgNode" {
             $replacements = DeviceNode -Id 3002,3003
 
             $newProbe = $probe.WithChildren($replacements)
@@ -189,6 +221,17 @@ Describe "NodeExtension" -Tag @("PowerShell", "UnitTest") {
 
             $newProbe.Children[0].Value.Id | Should Be 3002
             $newProbe.Children[1].Value.Id | Should Be 3003
+        }
+
+        It "replaces children for a CompareNode" {
+            $replacements = DeviceNode -Id 3002,3003 | foreach { $_.CompareTo($_) }
+
+            $newComparison = $compare.WithChildren($replacements)
+
+            $newComparison.Children.Count | Should Be 2
+
+            $newComparison.Children[0].First.Value.Id | Should Be 3002
+            $newComparison.Children[1].First.Value.Id | Should Be 3003
         }
     }
 }
