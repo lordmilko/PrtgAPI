@@ -203,7 +203,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         [TestCategory("UnitTest")]
         public void StringEnum_Equals_Enum_WithSplitValue()
         {
-            var val = new StringEnum<DescriptionEnum>("str", DescriptionEnum.Second);
+            var val = new StringEnum<DescriptionEnum>(DescriptionEnum.Second, "str");
 
             Assert.IsTrue(val == DescriptionEnum.Second);
         }
@@ -222,7 +222,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         public void StringEnum_Equals_StringAgainstSplitValue()
         {
             var first = new StringEnum<DescriptionEnum>("str");
-            var second = new StringEnum<DescriptionEnum>("str", DescriptionEnum.Second);
+            var second = new StringEnum<DescriptionEnum>(DescriptionEnum.Second, "str");
 
             Assert.IsTrue(first == second);
         }
@@ -241,8 +241,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         [TestCategory("UnitTest")]
         public void StringEnum_NotEquals_DifferentEnumSameStringSplitValue()
         {
-            var first = new StringEnum<SimpleEnum>("str", SimpleEnum.First);
-            var second = new StringEnum<SimpleEnum>("str", SimpleEnum.Second);
+            var first = new StringEnum<SimpleEnum>(SimpleEnum.First, "str");
+            var second = new StringEnum<SimpleEnum>(SimpleEnum.Second, "str");
 
             Assert.IsFalse(first == second);
         }
@@ -252,7 +252,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         public void StringEnum_NotEquals_DifferentStringAgainstSplitValue()
         {
             var first = new StringEnum<DescriptionEnum>("str1");
-            var second = new StringEnum<DescriptionEnum>("str", DescriptionEnum.Second);
+            var second = new StringEnum<DescriptionEnum>(DescriptionEnum.Second, "str");
 
             Assert.IsFalse(first == second);
         }
@@ -288,8 +288,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         [TestCategory("UnitTest")]
         public void StringEnum_Equals_SameEnumAndValue()
         {
-            var first = new StringEnum<SimpleEnum>("str", SimpleEnum.First);
-            var second = new StringEnum<SimpleEnum>("str", SimpleEnum.First);
+            var first = new StringEnum<SimpleEnum>(SimpleEnum.First, "str");
+            var second = new StringEnum<SimpleEnum>(SimpleEnum.First, "str");
 
             Assert.IsTrue(first == second);
         }
@@ -298,8 +298,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         [TestCategory("UnitTest")]
         public void StringEnum_NotEquals_SameEnumDifferentString()
         {
-            var first = new StringEnum<SimpleEnum>("str", SimpleEnum.First);
-            var second = new StringEnum<SimpleEnum>("str1", SimpleEnum.First);
+            var first = new StringEnum<SimpleEnum>(SimpleEnum.First, "str");
+            var second = new StringEnum<SimpleEnum>(SimpleEnum.First, "str1");
 
             Assert.IsFalse(first == second);
         }

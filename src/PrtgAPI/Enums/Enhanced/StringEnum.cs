@@ -73,9 +73,9 @@ namespace PrtgAPI
         /// <summary>
         /// Initializes a new instance of the <see cref="StringEnum{TEnum}"/> class with a specified enum and string value.
         /// </summary>
-        /// <param name="stringValue">The string value to encapsulate.</param>
         /// <param name="enumValue">The enum value to encapsulate.</param>
-        public StringEnum(string stringValue, TEnum enumValue) : this(stringValue)
+        /// <param name="stringValue">The string value to encapsulate.</param>
+        public StringEnum(TEnum enumValue, string stringValue) : this(stringValue)
         {
             split = true;
             Value = enumValue;

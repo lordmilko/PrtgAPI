@@ -96,7 +96,7 @@ namespace PrtgAPI
                 if (enumType == null && !string.IsNullOrEmpty(type))
                 {
                     if (baseType == BaseType.Sensor)
-                        enumType = new StringEnum<ObjectType>(type, ObjectType.Sensor);
+                        enumType = new StringEnum<ObjectType>(ObjectType.Sensor, type);
                     else
                         enumType = new StringEnum<ObjectType>(type);
                 }
