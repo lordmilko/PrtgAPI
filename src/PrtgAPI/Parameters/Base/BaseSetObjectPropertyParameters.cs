@@ -15,6 +15,8 @@ namespace PrtgAPI.Parameters
     {
         HtmlFunction IHtmlParameters.Function => HtmlFunction.EditSettings;
 
+        [ExcludeFromCodeCoverage]
+        [DebuggerBrowsable(DebuggerBrowsableState.Never)]
         private string DebuggerDisplay => string.Join(", ", CustomParameters);
 
         public List<CustomParameter> CustomParameters

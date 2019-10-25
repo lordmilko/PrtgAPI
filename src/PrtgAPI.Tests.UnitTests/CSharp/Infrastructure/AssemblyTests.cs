@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Management.Automation;
@@ -847,6 +849,36 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
                     }
                 }
             }, true);
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
+        public void AllDebuggerDisplayProperties_AreDebuggerHidden_WithNoCodeCoverage()
+        {
+            var types = typeof(PrtgClient).Assembly.GetTypes().ToList();
+            types.AddRange(typeof(PrtgCmdlet).Assembly.GetTypes());
+
+            var flags = BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Static;
+
+            var properties = types.SelectMany(p => p.GetProperties(flags)).Where(p => p.Name.Contains("DebuggerDisplay")).ToList();
+
+            var unique = properties.Where(p => p.DeclaringType == p.ReflectedType).ToList();
+
+            foreach (var property in unique)
+            {
+                var attribtes = property.GetCustomAttributes();
+
+                if (!attribtes.OfType<ExcludeFromCodeCoverageAttribute>().Any())
+                    Assert.Fail($"Property '{property}' on type '{property.DeclaringType}' is missing a '{nameof(ExcludeFromCodeCoverageAttribute)}'");
+
+                var browsable = attribtes.OfType<DebuggerBrowsableAttribute>().FirstOrDefault();
+
+                if (browsable == null)
+                    Assert.Fail($"Property '{property}' on type '{property.DeclaringType}' is missing a '{nameof(DebuggerBrowsableAttribute)}'");
+
+                if (browsable.State != DebuggerBrowsableState.Never)
+                    Assert.Fail($"Property '{property}' on type '{property.DeclaringType}' had a {nameof(DebuggerBrowsableAttribute)} of state '{browsable.State}' instead of '{DebuggerBrowsableState.Never}'");
+            }
         }
 
         private bool IsLinkPara(XmlElementSyntax elm)
