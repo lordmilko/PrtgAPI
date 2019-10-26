@@ -373,6 +373,7 @@
     <None Include="PowerShell\Infrastructure\Build\Simulate-PrtgCI.Tests.ps1" />
     <None Include="PowerShell\Infrastructure\Build\Start-PrtgAPI.Tests.ps1" />
     <None Include="PowerShell\Infrastructure\Build\Update-PrtgVersion.Tests.ps1" />
+    <None Include="PowerShell\Infrastructure\Get-PrtgClient.Tests.ps1" />
     <None Include="PowerShell\Infrastructure\ProgressMessage.Tests.ps1" />
     <None Include="PowerShell\Infrastructure\Set-PrtgClient.Tests.ps1" />
     <None Include="PowerShell\Infrastructure\Solution.Tests.ps1" />

@@ -302,6 +302,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
                 Tuple.Create("NewSensorDynamicParameterCategory.cs", "ValidateParameters",  "new InvalidOperationException(newMessage, ex)"),
                 Tuple.Create("NewNotificationTriggerParameters.cs",  "CreateParameters",    "ex.InnerException"),
                 Tuple.Create("PrtgCmdlet.cs",                        "BeginProcessing",     "new InvalidOperationException(\"You are not connected to a PRTG Server. Please connect first using Connect-PrtgServer.\")"),
+                Tuple.Create("GetPrtgClient.cs",                     "WriteDiagnostic",     "new InvalidOperationException(\"You are not connected to a PRTG Server. Please connect first using Connect-PrtgServer.\")"),
                 Tuple.Create("GetSensorHistory.cs",                  "ProcessRecordEx",     "new InvalidOperationException($\"Cannot retrieve downtime with an {nameof(Average)} of 0.\")"),
                 Tuple.Create("NewSensorParameters.cs",               "CreateRawParameters", "new InvalidOperationException($\"Hashtable record '{NameParameter}' is mandatory, however a value was not specified.\")"),
                 Tuple.Create("NewSensorParameters.cs",               "CreateRawParameters", "new InvalidOperationException($\"Hashtable record '{SensorTypeParameter}' is mandatory, however a value was not specified.\")"),
@@ -402,7 +403,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             {
                 var str = string.Join("\n\n", found.Select(f => $"{f.Item1} -> {f.Item2} -> {f.Item3}"));
 
-                Assert.Fail($"Found {found.Count} potentially illegal exceptions:\n\n{str}\n\nPlease convert these exceptions to ErrorRecords or whitelist these items.");
+                Assert.Fail($"Found {found.Count} potentially illegal {"exception".Plural(found)}:\n\n{str}\n\nPlease convert these exceptions to ErrorRecords or whitelist these items.");
             }
         }
 

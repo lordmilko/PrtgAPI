@@ -20,5 +20,13 @@ assignees: ''
 
 ```
 
+
+**What is the output of `Get-PrtgClient -Diagnostic`?**
+
+```powershell
+# Output goes here!
+
+```
+
 **Additional context**
 *Anything else I should know to help solve the issue?*
