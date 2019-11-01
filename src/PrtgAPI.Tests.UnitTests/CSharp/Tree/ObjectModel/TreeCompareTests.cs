@@ -300,6 +300,32 @@ namespace PrtgAPI.Tests.UnitTests.Tree
 
         [TestMethod]
         [TestCategory("UnitTest")]
+        public void Tree_Compare_Root()
+        {
+            var first = PrtgNode.Probe(Probe(),
+                PrtgNode.Device(Device()),
+                PrtgNode.Device(Device(id: 3002))
+            );
+
+            var second = PrtgNode.Probe(Probe(id: 1002));
+
+            ValidatePretty(first, second, new[]
+            {
+                "<Red>Local Probe</Red>",
+                "├──<Red>dc-1</Red>",
+                "└──<Red>dc-1</Red>",
+                "<Green>Local Probe</Green>"
+            }, new[]
+            {
+                "<Red>Local Probe</Red>",
+                "<Green>Local Probe</Green>",
+                "├──<Green>dc-1</Green>",
+                "└──<Green>dc-1</Green>"
+            });
+        }
+
+        [TestMethod]
+        [TestCategory("UnitTest")]
         public void Tree_Compare_Grouping_Throws()
         {
             var first = DefaultProbe;
@@ -346,14 +372,14 @@ namespace PrtgAPI.Tests.UnitTests.Tree
 
         private void ValidatePretty(PrtgNode first, PrtgNode second, string[] validateFirst, string[] validateSecond = null)
         {
-            /*if (validateSecond == null)
+            if (validateSecond == null)
                 validateSecond = validateFirst;
 
             var firstComparison = first.CompareTo(second);
             firstComparison.PrettyPrint(new ComparePrettyValidator(validateFirst));
 
             var secondComparison = second.CompareTo(first);
-            secondComparison.PrettyPrint(new ComparePrettyValidator(validateSecond));*/
+            secondComparison.PrettyPrint(new ComparePrettyValidator(validateSecond));
         }
     }
 }

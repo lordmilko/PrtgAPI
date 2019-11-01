@@ -195,6 +195,7 @@
     <Compile Include="PowerShell\RuntimeDefinedParameterEx.cs" />
     <Compile Include="PowerShell\DummyRuntime.cs" />
     <Compile Include="PowerShell\RuntimeDefinedParameterDictionaryEx.cs" />
+    <Compile Include="PowerShell\Tree\PowerShellPrettyColorWriter.cs" />
     <Compile Include="PowerShell\TriggerParameterParser.cs" />
     <Compile Include="Utilities\PSCmdletInvoker.cs" />
     <Compile Include="Utilities\PSObjectUtilities.cs" />

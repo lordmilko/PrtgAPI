@@ -83,6 +83,7 @@
     <Compile Include="CSharp\ObjectManipulation\SetObjectPropertyParameters\ValueConverterWithNullConversionConverter.cs" />
     <Compile Include="CSharp\ObjectManipulation\SetObjectPropertyParameters\ValueConverterWithoutNullConversionConverter.cs" />
     <Compile Include="CSharp\ObjectManipulation\SetTriggerPropertyTests.cs" />
+    <Compile Include="CSharp\Tree\Actions\TreePrettyPrintTests.cs" />
     <Compile Include="CSharp\Tree\BaseTreeTest.cs" />
     <Compile Include="CSharp\Tree\ObjectModel\NodeListTests.cs" />
     <Compile Include="CSharp\Tree\ObjectModel\TreeCompareTests.cs" />
@@ -339,6 +340,8 @@
     <Compile Include="CSharp\Infrastructure\SearchFilterTests.cs" />
     <Compile Include="Support\TestResponses\PassHashResponse.cs" />
     <Compile Include="Support\TestItems\SensorItem.cs" />
+    <Compile Include="Support\Tree\ComparePrettyValidator.cs" />
+    <Compile Include="Support\Tree\PrtgPrettyValidator.cs" />
     <Compile Include="Support\TriggerTranslation.cs" />
     <Compile Include="Support\TriggerTranslator.cs" />
     <Compile Include="Support\WellKnownObjectId.cs" />

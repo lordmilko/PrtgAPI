@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using PrtgAPI.Tree.Converters.Text;
+using PrtgAPI.Tree.Converters.Text.Writers;
 
 namespace PrtgAPI.Tree
 {
@@ -324,6 +326,37 @@ namespace PrtgAPI.Tree
             (TRoot) node?.Update(children);
 
             #endregion
+        #endregion
+        #region PrettyPrint
+
+        /// <summary>
+        /// Pretty prints a <see cref="PrtgNode"/> to a specified writer.
+        /// </summary>
+        /// <param name="node">The root of the tree to print.</param>
+        /// <param name="writer">A writer that will be used for displaying the resulting text.</param>
+        public static void PrettyPrint(this PrtgNode node, PrettyWriter writer)
+        {
+            var visitor = new PrtgNodePrettyTreeVisitor();
+
+            node.Accept(visitor);
+
+            writer.Execute(visitor.Result);
+        }
+
+        /// <summary>
+        /// Pretty prints a <see cref="CompareNode"/> to a specified writer.
+        /// </summary>
+        /// <param name="node">The root of the tree to print.</param>
+        /// <param name="writer">A writer that will be used for displaying the resulting text.</param>
+        public static void PrettyPrint(this CompareNode node, PrettyWriter writer)
+        {
+            var visitor = new CompareNodePrettyTreeVisitor();
+
+            node.Accept(visitor);
+
+            writer.Execute(visitor.Result);
+        }
+
         #endregion
     }
 }

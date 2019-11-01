@@ -174,6 +174,14 @@
       <DependentUpon>VersionClient.Generated.tt</DependentUpon>
     </Compile>
     <Compile Include="Request\Version\VersionClient17_4.cs" />
+    <Compile Include="Tree\Converters\Text\CompareNodePrettyTreeVisitor.cs" />
+    <Compile Include="Tree\Converters\Text\InternalPrettyTreeVisitorBase.cs" />
+    <Compile Include="Tree\Converters\Text\Lines\PrettyColorLine.cs" />
+    <Compile Include="Tree\Converters\Text\Lines\PrettyLine.cs" />
+    <Compile Include="Tree\Converters\Text\PrettyPrintConstants.cs" />
+    <Compile Include="Tree\Converters\Text\PrtgNodePrettyTreeVisitor.cs" />
+    <Compile Include="Tree\Converters\Text\Writers\PrettyColorWriter.cs" />
+    <Compile Include="Tree\Converters\Text\Writers\PrettyWriter.cs" />
     <Compile Include="Tree\Enums\ListEditType.cs" />
     <Compile Include="Tree\Enums\TreeNodeDifference.cs" />
     <Compile Include="Tree\Model\Debug\CompareNodeCollectionDebugView.cs" />
