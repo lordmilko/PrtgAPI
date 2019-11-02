@@ -8,8 +8,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
     [TestClass]
     public class SensorSettingsTests : BaseTest
     {
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void SensorSettings_AccessesProperties()
         {
             var client = Initialize_Client(new MultiTypeResponse());
@@ -22,8 +22,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             }
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public async Task SensorSettings_AccessesPropertiesAsync()
         {
             var client = Initialize_Client(new MultiTypeResponse());
@@ -36,8 +36,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             }
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void SensorSettings_LoadsSchedule_Lazy_AllPropertiesAreSet()
         {
             var client = Initialize_Client(new MultiTypeResponse());
@@ -55,8 +55,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             });
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public async Task SensorSettings_LoadsSchedule_Lazy_AllPropertiesAreSetAsync()
         {
             var client = Initialize_Client(new MultiTypeResponse());
@@ -74,8 +74,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             });
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void SensorSettings_ReadOnly()
         {
             var client = Initialize_ReadOnlyClient(new MultiTypeResponse());
@@ -83,8 +83,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             AssertEx.Throws<InvalidOperationException>(() => client.GetSensorProperties(1001), "Cannot retrieve properties for read-only sensor with ID 1001.");
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public async Task SensorSettings_ReadOnlyAsync()
         {
             var client = Initialize_ReadOnlyClient(new MultiTypeResponse());

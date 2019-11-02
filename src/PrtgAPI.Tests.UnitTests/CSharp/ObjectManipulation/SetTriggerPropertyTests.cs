@@ -12,8 +12,8 @@ namespace PrtgAPI.Tests.UnitTests.CSharp.ObjectManipulation
     [TestClass]
     public class SetTriggerPropertyTests : BaseTest
     {
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void SetTriggerProperty_Normal()
         {
             var trigger = GetTrigger();
@@ -24,8 +24,8 @@ namespace PrtgAPI.Tests.UnitTests.CSharp.ObjectManipulation
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public async Task SetTriggerProperty_NormalAsync()
         {
             var trigger = GetTrigger();
@@ -36,8 +36,8 @@ namespace PrtgAPI.Tests.UnitTests.CSharp.ObjectManipulation
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void SetTriggerProperty_MultipleParameters()
         {
             var trigger = GetTrigger();
@@ -51,8 +51,8 @@ namespace PrtgAPI.Tests.UnitTests.CSharp.ObjectManipulation
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public async Task SetTriggerProperty_MultipleParametersAsync()
         {
             var trigger = GetTrigger();
@@ -66,8 +66,8 @@ namespace PrtgAPI.Tests.UnitTests.CSharp.ObjectManipulation
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void SetTriggerProperty_NotificationAction()
         {
             var trigger = GetTrigger();
@@ -82,8 +82,8 @@ namespace PrtgAPI.Tests.UnitTests.CSharp.ObjectManipulation
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public async Task SetTriggerProperty_NotificationActionAsync()
         {
             var trigger = GetTrigger();
@@ -98,8 +98,8 @@ namespace PrtgAPI.Tests.UnitTests.CSharp.ObjectManipulation
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void SetTriggerProperty_Channel()
         {
             var triggerItem = NotificationTriggerItem.ThresholdTrigger(channel: "Backup State", parentId: "4000");
@@ -128,8 +128,8 @@ namespace PrtgAPI.Tests.UnitTests.CSharp.ObjectManipulation
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public async Task SetTriggerProperty_ChannelAsync()
         {
             var triggerItem = NotificationTriggerItem.ThresholdTrigger(channel: "Backup State", parentId: "4000");
@@ -158,8 +158,8 @@ namespace PrtgAPI.Tests.UnitTests.CSharp.ObjectManipulation
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void SetTriggerProperty_NullNotificationAction()
         {
             var trigger = GetTrigger();
@@ -170,8 +170,8 @@ namespace PrtgAPI.Tests.UnitTests.CSharp.ObjectManipulation
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public async Task SetTriggerProperty_NullNotificationActionAsync()
         {
             var trigger = GetTrigger();
@@ -182,8 +182,8 @@ namespace PrtgAPI.Tests.UnitTests.CSharp.ObjectManipulation
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void SetTriggerProperty_NullChannel()
         {
             var trigger = GetTrigger();
@@ -196,8 +196,8 @@ namespace PrtgAPI.Tests.UnitTests.CSharp.ObjectManipulation
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public async Task SetTriggerProperty_NullChannelAsync()
         {
             var trigger = GetTrigger();

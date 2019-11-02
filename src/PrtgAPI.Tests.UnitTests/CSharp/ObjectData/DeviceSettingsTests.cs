@@ -8,8 +8,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
     [TestClass]
     public class DeviceSettingsTests : BaseTest
     {
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DeviceSettings_CanDeserialize()
         {
             var client = Initialize_Client(new MultiTypeResponse());
@@ -19,8 +19,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             AssertEx.AllPropertiesAreNotDefault(settings);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public async Task DeviceSettings_CanDeserializeAsync()
         {
             var client = Initialize_Client(new MultiTypeResponse());
@@ -30,8 +30,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             AssertEx.AllPropertiesAreNotDefault(settings);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public async Task DeviceSettings_RawAsync()
         {
             var client = Initialize_Client(new MultiTypeResponse());
@@ -41,8 +41,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             Assert.AreEqual("testName", property, "Name was not correct");
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DeviceSettings_Coordinates()
         {
             var client = Initialize_Client(new MultiTypeResponse());
@@ -64,8 +64,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             Assert.AreEqual("-2,-1", settings.Coordinates.ToString());
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DeviceSettings_ReadOnly()
         {
             var client = Initialize_ReadOnlyClient(new MultiTypeResponse());
@@ -73,8 +73,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             AssertEx.Throws<InvalidOperationException>(() => client.GetDeviceProperties(1001), "Cannot retrieve properties for read-only device with ID 1001.");
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public async Task DeviceSettings_ReadOnlyAsync()
         {
             var client = Initialize_ReadOnlyClient(new MultiTypeResponse());

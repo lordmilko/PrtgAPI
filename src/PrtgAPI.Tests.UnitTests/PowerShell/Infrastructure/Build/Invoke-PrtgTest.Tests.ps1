@@ -200,11 +200,11 @@ Describe "Invoke-PrtgTest" -Tag @("PowerShell", "Build") {
             "--logger"
             "trx;LogFileName=PrtgAPI_C#.trx"
             "--filter"
-            "TestCategory=UnitTest|TestCategory=SlowCoverage"
+            "TestCategory=UnitTest|TestCategory=SkipCoverage"
         )
 
         Mock-InvokeProcess $expected {
-            Invoke-PrtgTest -Tag UnitTest,SlowCoverage -Type C# -Build
+            Invoke-PrtgTest -Tag UnitTest,SkipCoverage -Type C# -Build
         }
     }
 
@@ -249,11 +249,11 @@ Describe "Invoke-PrtgTest" -Tag @("PowerShell", "Build") {
             "--logger"
             "trx;LogFileName=PrtgAPI_C#.trx"
             "--filter"
-            "(FullyQualifiedName~dynamic|FullyQualifiedName~potato)&(TestCategory=UnitTest|TestCategory=SlowCoverage)"
+            "(FullyQualifiedName~dynamic|FullyQualifiedName~potato)&(TestCategory=UnitTest|TestCategory=SkipCoverage)"
         )
 
         Mock-InvokeProcess $expected {
-            Invoke-PrtgTest *dynamic*,*potato* -Tag UnitTest,SlowCoverage -Type C# -Build
+            Invoke-PrtgTest *dynamic*,*potato* -Tag UnitTest,SkipCoverage -Type C# -Build
         }
     }
 }

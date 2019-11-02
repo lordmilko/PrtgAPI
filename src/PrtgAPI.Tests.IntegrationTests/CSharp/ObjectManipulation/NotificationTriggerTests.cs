@@ -15,7 +15,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         #region Add Without Customization
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Action_NotificationTrigger_AddWithoutCustomization_State()
         {
             var parameters = new StateTriggerParameters(Settings.Probe);
@@ -24,7 +24,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Action_NotificationTrigger_AddWithoutCustomization_Change()
         {
             var parameters = new ChangeTriggerParameters(Settings.Probe);
@@ -33,7 +33,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Action_NotificationTrigger_AddWithoutCustomization_Volume()
         {
             var parameters = new VolumeTriggerParameters(Settings.Probe);
@@ -42,7 +42,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Action_NotificationTrigger_AddWithoutCustomization_Speed()
         {
             var parameters = new SpeedTriggerParameters(Settings.Probe);
@@ -51,7 +51,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Action_NotificationTrigger_AddWithoutCustomization_Threshold()
         {
             var parameters = new ThresholdTriggerParameters(Settings.Probe);
@@ -63,7 +63,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         #region Add With Customization
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Action_NotificationTrigger_AddWithCustomization_State()
         {
             var actions = client.GetNotificationActions();
@@ -83,7 +83,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Action_NotificationTrigger_AddWithCustomization_Change()
         {
             var action = client.GetNotificationActions().First();
@@ -97,7 +97,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Action_NotificationTrigger_AddWithCustomization_Volume()
         {
             var actions = client.GetNotificationActions();
@@ -114,7 +114,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Action_NotificationTrigger_AddWithCustomization_Speed()
         {
             var actions = client.GetNotificationActions();
@@ -135,7 +135,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Action_NotificationTrigger_AddWithCustomization_Threshold()
         {
             var actions = client.GetNotificationActions();
@@ -157,21 +157,21 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         #region Add From Existing
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Action_NotificationTrigger_CreateFromExistingTrigger_State()
         {
             AddRemoveTriggerFromExisting(TriggerType.State, trigger => new StateTriggerParameters(Settings.Device, trigger));
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Action_NotificationTrigger_CreateFromExistingTrigger_Threshold_Device()
         {
             AddRemoveTriggerFromExisting(TriggerType.Threshold, trigger => new ThresholdTriggerParameters(Settings.Device, trigger));
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Action_NotificationTrigger_CreateFromExistingTrigger_Threshold_Sensor()
         {
             //Create the initial trigger
@@ -211,21 +211,21 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Action_NotificationTrigger_CreateFromExistingTrigger_Speed()
         {
             AddRemoveTriggerFromExisting(TriggerType.Speed, trigger => new SpeedTriggerParameters(Settings.Device, trigger));
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Action_NotificationTrigger_CreateFromExistingTrigger_Volume()
         {
             AddRemoveTriggerFromExisting(TriggerType.Volume, trigger => new VolumeTriggerParameters(Settings.Device, trigger));
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Action_NotificationTrigger_CreateFromExistingTrigger_Change()
         {
             AddRemoveTriggerFromExisting(TriggerType.Change, trigger => new ChangeTriggerParameters(Settings.Device, trigger));
@@ -257,7 +257,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         #region TriggerChannel
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Action_NotificationTrigger_TriggerChannel_StandardTriggerChannel_OnSensor()
         {
             var sensor = client.GetSensors(Property.Tags, FilterOperator.Contains, "wmicpu").First();
@@ -266,14 +266,14 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Action_NotificationTrigger_TriggerChannel_StandardTriggerChannel_OnContainer()
         {
             TestTriggerChannel(Settings.Probe, TriggerChannel.Total);
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Action_NotificationTrigger_TriggerChannel_Channel_OnSensor()
         {
             var sensor = client.GetSensors(Property.Tags, FilterOperator.Contains, "wmicpu").First();
@@ -283,7 +283,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Action_NotificationTrigger_TriggerChannel_Channel_OnContainer()
         {
             var sensor = client.GetSensors(Property.Tags, FilterOperator.Contains, "wmicpu").First();
@@ -293,7 +293,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Action_NotificationTrigger_TriggerChannel_ChannelId_OnSensor()
         {
             var sensor = client.GetSensors(Property.Tags, FilterOperator.Contains, "wmicpu").First();
@@ -317,7 +317,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Action_NotificationTrigger_TriggerChannel_ChannelId_OnContainer()
         {
             var sensor = client.GetSensors(Property.Tags, FilterOperator.Contains, "wmicpu").First(); ;
@@ -327,7 +327,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Action_NotificationTrigger_TriggerChannel_InvalidChannelId_OnSensor()
         {
             var sensor = client.GetSensors(Property.Tags, FilterOperator.Contains, "wmicpu").First();
@@ -336,14 +336,14 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Action_NotificationTrigger_TriggerChannel_InvalidChannelId_OnContainer()
         {
             AssertEx.Throws<InvalidOperationException>(() => TestTriggerChannel(Settings.Probe, new TriggerChannel(99)), "Channel ID '99' is not a valid channel");
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Action_NotificationTrigger_TriggerChannel_Channel_WithStandardTriggerChannelName_OnSensor()
         {
             var sensor = client.GetSensors(Property.Tags, FilterOperator.Contains, "wmicpu").First();
@@ -353,7 +353,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Action_NotificationTrigger_TriggerChannel_Channel_WithStandardTriggerChannelName_OnContainer()
         {
             var sensor = client.GetSensors(Property.Tags, FilterOperator.Contains, "wmicpu").First();
@@ -466,28 +466,28 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void AddNotificationTrigger_Resolves()
         {
             Resolves(true);
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void AddNotificationTrigger_DoesntResolve()
         {
             Resolves(false);
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public async Task AddNotificationTrigger_ResolvesAsync()
         {
             await ResolvesAsync(true);
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public async Task AddNotificationTrigger_DoesntResolveAsync()
         {
             await ResolvesAsync(false);

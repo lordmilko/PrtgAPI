@@ -8,7 +8,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
     public class PrtgClientStateTests : BasePrtgClientTest
     {
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Action_State_AcknowledgeAndResume()
         {
             AssertEx.AreEqual(Status.Down, GetSensor(Settings.DownSensor).Status, $"Initial sensor status was not {Status.Down}");
@@ -31,7 +31,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Action_State_PauseAndResume()
         {
             Logger.LogTestDetail("Pausing object");
@@ -63,7 +63,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Action_State_PauseForDuration()
         {
             var initial = GetSensor(Settings.UpSensor);
@@ -108,7 +108,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Action_State_SimulateErrorAndResume()
         {
             AssertEx.AreEqual(Status.Up, GetSensor(Settings.UpSensor).Status, $"Initial sensor state was not {Status.Up}");
@@ -139,7 +139,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Action_State_GetPausedSensors_HasDifferentTypes()
         {
             var sensors = client.GetSensors(Status.Paused).Select(s => s.Status).ToList();

@@ -13,7 +13,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
     public class SetChannelPropertyTests : BasePrtgClientTest
     {
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Action_Channel_SetChannelProperty_Limits()
         {
             SetAndRevertChannelProperty(3000, ChannelProperty.UpperErrorLimit, c => c.UpperErrorLimit);
@@ -24,7 +24,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public async Task Action_Channel_SetChannelProperty_LimitsAsync()
         {
             await SetAndRevertChannelPropertyAsync(3000, ChannelProperty.UpperErrorLimit, c => c.UpperErrorLimit);
@@ -67,14 +67,14 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
                 #region Manual: Same Channel/Sensor
 
         [TestMethod]
-        [TestCategory("UnitTest")]
+        [IntegrationTest]
         public void Action_SetChannelProperty_Manual_SameID_AndSensor_ExecutesSingleRequest()
         {
             TestNoFactorManual(new[] {Settings.ChannelSensor, Settings.ChannelSensor }, Settings.Channel);
         }
 
         [TestMethod]
-        [TestCategory("UnitTest")]
+        [IntegrationTest]
         public async Task Action_SetChannelProperty_Manual_SameID_AndSensor_ExecutesSingleRequestAsync()
         {
             await TestNoFactorManualAsync(new[] { Settings.ChannelSensor, Settings.ChannelSensor }, Settings.Channel);
@@ -150,14 +150,14 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
                 #region ManualFactor: Same Channel/Sensor
 
         [TestMethod]
-        [TestCategory("UnitTest")]
+        [IntegrationTest]
         public void Action_SetChannelProperty_ManualFactor_SameID_AndSensor_ExecutesSingleRequest()
         {
             TestFactorManual(new[] {WellKnownObjectId.CoreSystemHealth_1001, WellKnownObjectId.CoreSystemHealth_1001}, 3);
         }
 
         [TestMethod]
-        [TestCategory("UnitTest")]
+        [IntegrationTest]
         public async Task Action_SetChannelProperty_ManualFactor_SameID_AndSensor_ExecutesSingleRequestAsync()
         {
             await TestFactorManualAsync(new[] {WellKnownObjectId.CoreSystemHealth_1001, WellKnownObjectId.CoreSystemHealth_1001}, 3);
@@ -167,21 +167,21 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
                 #region ManualFactor: Same Channel, Different Sensors
 
         [TestMethod]
-        [TestCategory("UnitTest")]
+        [IntegrationTest]
         public void Action_SetChannelProperty_ManualFactor_SameID_DifferentSensors_SingleFactor_ExecutesSingleRequest()
         {
             TestFactorManual(new[] {WellKnownObjectId.CoreSystemHealth_1001, WellKnownObjectId.CoreHealth_1002 }, 3);
         }
 
         [TestMethod]
-        [TestCategory("UnitTest")]
+        [IntegrationTest]
         public async Task Action_SetChannelProperty_ManualFactor_SameID_DifferentSensors_SingleFactor_ExecutesSingleRequestAsync()
         {
             await TestFactorManualAsync(new[] {WellKnownObjectId.CoreSystemHealth_1001, WellKnownObjectId.CoreHealth_1002 }, 3);
         }
 
         [TestMethod]
-        [TestCategory("UnitTest")]
+        [IntegrationTest]
         public void Action_SetChannelProperty_ManualFactor_SameID_DifferentSensors_SingleFactor_MultipleFactorProperties_ExecutesSingleRequest()
         {
             TestFactorsManual(
@@ -193,7 +193,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         }
 
         [TestMethod]
-        [TestCategory("UnitTest")]
+        [IntegrationTest]
         public async Task Action_SetChannelProperty_ManualFactor_SameID_DifferentSensors_SingleFactor_MultipleFactorProperties_ExecutesSingleRequestAsync()
         {
             await TestFactorsManualAsync(
@@ -210,7 +210,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
                 #region Channel: Same Channel/Sensor
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Action_SetChannelProperty_Channel_SameID_AndSensor_ExecutesSingleRequest()
         {
             var channel1 = client.GetChannel(Settings.ChannelSensor, Settings.Channel);
@@ -220,7 +220,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public async Task Action_SetChannelProperty_Channel_SameID_AndSensor_ExecutesSingleRequestAsync()
         {
             var channel1 = await client.GetChannelAsync(Settings.ChannelSensor, Settings.Channel);
@@ -233,7 +233,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
                 #region Channel: Different Channels, Same Sensor
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Action_SetChannelProperty_Channel_DifferentIDs_SameSensor_ExecutesSingleRequest()
         {
             var channels = client.GetChannels(Settings.ChannelSensor).Take(2).ToArray();
@@ -244,7 +244,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public async Task Action_SetChannelProperty_Channel_DifferentIDs_SameSensor_ExecutesSingleRequestAsync()
         {
             var channels = (await client.GetChannelsAsync(Settings.ChannelSensor)).Take(2).ToArray();
@@ -258,7 +258,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
                 #region Channel: Same Channel, Different Sensors
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Action_SetChannelProperty_Channel_SameID_DifferentSensors_ExecutesSingleRequest()
         {
             var channel1 = client.GetChannel(Settings.UpSensor, 0);
@@ -268,7 +268,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public async Task Action_SetChannelProperty_Channel_SameID_DifferentSensors_ExecutesSingleRequestAsync()
         {
             var channel1 = await client.GetChannelAsync(Settings.UpSensor, 0);
@@ -281,7 +281,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
                 #region Channel: Different Channels, Different Sensors
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Action_SetChannelProperty_Channel_DifferentIDs_DifferentSensors_ExecutesMultipleRequests()
         {
             var channel1 = client.GetChannel(Settings.UpSensor, 0);
@@ -291,7 +291,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public async Task Action_SetChannelProperty_Channel_DifferentIDs_DifferentSensors_ExecutesMultipleRequestsAsync()
         {
             var channel1 = await client.GetChannelAsync(Settings.UpSensor, 0);
@@ -364,7 +364,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
                 #region ChannelFactor: Same Channel/Sensor
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Action_SetChannelProperty_ChannelFactor_SameID_AndSensor_ExecutesSingleRequest()
         {
             var channel1 = client.GetChannel(WellKnownObjectId.CoreSystemHealth_1001, 3);
@@ -374,7 +374,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public async Task Action_SetChannelProperty_ChannelFactor_SameID_AndSensor_ExecutesSingleRequestAsync()
         {
             var channel1 = await client.GetChannelAsync(WellKnownObjectId.CoreSystemHealth_1001, 3); //Available Memory
@@ -384,7 +384,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         }
 
         [TestMethod]
-        [TestCategory("UnitTest")]
+        [IntegrationTest]
         public void Action_SetChannelProperty_ChannelFactor_SameID_SameSensor_NeedsLimit()
         {
             var channel1 = client.GetChannel(WellKnownObjectId.CoreHealth_1002, 10); //Age of Code
@@ -401,7 +401,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         }
 
         [TestMethod]
-        [TestCategory("UnitTest")]
+        [IntegrationTest]
         public async Task Action_SetChannelProperty_ChannelFactor_SameID_SameSensor_NeedsLimitAsync()
         {
             var channel1 = await client.GetChannelAsync(WellKnownObjectId.CoreHealth_1002, 10); //Age of Code
@@ -421,7 +421,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
                 #region ChannelFactor: Different Channels, Same Sensor
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Action_SetChannelProperty_ChannelFactor_DifferentIDs_SameSensor_ExecutesSingleRequest()
         {
             var channel1 = client.GetChannel(WellKnownObjectId.CoreProbeHealth_1003, 9); //Memory Usage
@@ -435,7 +435,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public async Task Action_SetChannelProperty_ChannelFactor_DifferentIDs_SameSensor_ExecutesSingleRequestAsync()
         {
             var channel1 = await client.GetChannelAsync(WellKnownObjectId.CoreProbeHealth_1003, 9); //Memory Usage
@@ -449,7 +449,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         }
 
         [TestMethod]
-        [TestCategory("UnitTest")]
+        [IntegrationTest]
         public void Action_SetChannelProperty_ChannelFactor_DifferentIDs_SameSensor_NeedsLimit()
         {
             var channel1 = client.GetChannel(WellKnownObjectId.CoreProbeHealth_1003, 9); //Memory Usage
@@ -466,7 +466,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         }
 
         [TestMethod]
-        [TestCategory("UnitTest")]
+        [IntegrationTest]
         public async Task Action_SetChannelProperty_ChannelFactor_DifferentIDs_SameSensor_NeedsLimitAsync()
         {
             var channel1 = await client.GetChannelAsync(WellKnownObjectId.CoreProbeHealth_1003, 9); //Memory Usage
@@ -487,7 +487,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
                     #region Single Factor / Single Factor Property
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Action_SetChannelProperty_ChannelFactor_SameID_DifferentSensors_SingleFactor_SingleFactorProperty_ExecutesSingleFactor()
         {
             var channel1 = client.GetChannel(WellKnownObjectId.CoreSystemHealth_1001, 3);
@@ -501,7 +501,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public async Task Action_SetChannelProperty_ChannelFactor_SameID_DifferentSensors_SingleFactor_SingleFactorProperty_ExecutesSingleFactorAsync()
         {
             var channel1 = await client.GetChannelAsync(WellKnownObjectId.CoreSystemHealth_1001, 3);
@@ -518,7 +518,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
                     #region Single Factor / Multiple Factor Properties
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Action_SetChannelProperty_ChannelFactor_SameID_DifferentSensors_SingleFactor_MultipleFactorProperties_ExecutesSingleFactor()
         {
             var channel1 = client.GetChannel(WellKnownObjectId.CoreSystemHealth_1001, 3);
@@ -536,7 +536,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public async Task Action_SetChannelProperty_ChannelFactor_SameID_DifferentSensors_SingleFactor_MultipleFactorProperties_ExecutesSingleFactorAsync()
         {
             var channel1 = await client.GetChannelAsync(WellKnownObjectId.CoreSystemHealth_1001, 3);
@@ -557,7 +557,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
                     #region Multiple Factors / Single Factor Property
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Action_SetChannelProperty_ChannelFactor_SameID_DifferentSensors_MultipleFactors_SingleFactorProperty_ExecutesMultipleRequests()
         {
             var channel1 = client.GetChannel(WellKnownObjectId.CoreHealth_1002, 1);
@@ -571,7 +571,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public async Task Action_SetChannelProperty_ChannelFactor_SameID_DifferentSensors_MultipleFactors_SingleFactorProperty_ExecutesMultipleRequestsAsync()
         {
             var channel1 = await client.GetChannelAsync(WellKnownObjectId.CoreHealth_1002, 1);
@@ -588,7 +588,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
                     #region Multiple Factors / Multiple Factor Properties
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Action_SetChannelProperty_ChannelFactor_SameID_DifferentSensors_MultipleFactors_MultipleFactorProperties_ExecutesMultipleRequests()
         {
             var channel1 = client.GetChannel(WellKnownObjectId.CoreHealth_1002, 1);
@@ -606,7 +606,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public async Task Action_SetChannelProperty_ChannelFactor_SameID_DifferentSensors_MultipleFactors_MultipleFactorProperties_ExecutesMultipleRequestsAsync()
         {
             var channel1 = await client.GetChannelAsync(WellKnownObjectId.CoreHealth_1002, 1);
@@ -627,7 +627,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
                     #region Multiple Factors / ValueNullOrEmpty
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Action_SetChannelProperty_ChannelFactor_SameID_DifferentSensors_MultipleFactors_ValueNullOrEmpty_ExecutesSingleRequest()
         {
             var channel1 = client.GetChannel(WellKnownObjectId.CoreHealth_1002, 1);
@@ -644,7 +644,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public async Task Action_SetChannelProperty_ChannelFactor_SameID_DifferentSensors_MultipleFactors_ValueNullOrEmpty_ExecutesSingleRequestAsync()
         {
             var channel1 = await client.GetChannelAsync(WellKnownObjectId.CoreHealth_1002, 1);
@@ -663,7 +663,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
                     #endregion
 
         [TestMethod]
-        [TestCategory("UnitTest")]
+        [IntegrationTest]
         public void Action_SetChannelProperty_ChannelFactor_SameID_DifferentSensors_NeedsLimit()
         {
             var channel1 = client.GetChannel(WellKnownObjectId.CoreHealth_1002, 9);
@@ -680,7 +680,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         }
 
         [TestMethod]
-        [TestCategory("UnitTest")]
+        [IntegrationTest]
         public async Task Action_SetChannelProperty_ChannelFactor_SameID_DifferentSensors_NeedsLimitAsync()
         {
             var channel1 = await client.GetChannelAsync(WellKnownObjectId.CoreHealth_1002, 9);
@@ -700,7 +700,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
                 #region ChannelFactor: Different Channels, Different Sensors
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Action_SetChannelProperty_ChannelFactor_DifferentIDs_DifferentSensors_ExecutesMultipleRequests()
         {
             var channel1 = client.GetChannel(WellKnownObjectId.CoreSystemHealth_1001, 3);
@@ -714,7 +714,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public async Task Action_SetChannelProperty_ChannelFactor_DifferentIDs_DifferentSensors_ExecutesMultipleRequestsAsync()
         {
             var channel1 = await client.GetChannelAsync(WellKnownObjectId.CoreSystemHealth_1001, 3);
@@ -728,7 +728,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         }
 
         [TestMethod]
-        [TestCategory("UnitTest")]
+        [IntegrationTest]
         public void Action_SetChannelProperty_ChannelFactor_DifferentIDs_DifferentSensors_NeedsLimit()
         {
             var channel1 = client.GetChannel(WellKnownObjectId.CoreHealth_1002, 10); //Age of Code
@@ -745,7 +745,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         }
 
         [TestMethod]
-        [TestCategory("UnitTest")]
+        [IntegrationTest]
         public async Task Action_SetChannelProperty_ChannelFactor_DifferentIDs_DifferentSensors_NeedsLimitAsync()
         {
             var channel1 = await client.GetChannelAsync(WellKnownObjectId.CoreHealth_1002, 10); //Age of Code
@@ -1070,7 +1070,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         #endregion
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Action_SetChannelProperty_HasAllTests()
         {
             var prefixes = new[]

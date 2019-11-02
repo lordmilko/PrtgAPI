@@ -21,8 +21,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
     [TestClass]
     public class TreeCompareTests : BaseTreeTest
     {
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_Compare_SingleNode()
         {
             var first = PrtgNode.Probe(Probe());
@@ -46,8 +46,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             });
         }*/
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_Compare_Different_SingleNode()
         {
             var first = PrtgNode.Probe(Probe());
@@ -67,8 +67,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             });
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_Compare_HasChildren()
         {
             var first = PrtgNode.Probe(Probe(),
@@ -93,8 +93,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             });
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_Compare_HasMoreChildren()
         {
             var first = PrtgNode.Probe(Probe(),
@@ -129,8 +129,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             });
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_Compare_ChildHasDifference()
         {
             var first = PrtgNode.Probe(Probe(),
@@ -160,8 +160,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_Compare_HasMoreChildren_AndAGrandChild()
         {
             var first = PrtgNode.Probe(Probe(),
@@ -202,8 +202,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             });
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_Compare_ReplaceChild_AndAddAGrandChild()
         {
             var first = PrtgNode.Probe(Probe(),
@@ -247,8 +247,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             });
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_Compare_ReplaceChildWithGrandChild_With_ChildWithGrandChild()
         {
             var first = PrtgNode.Probe(Probe(),
@@ -298,8 +298,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             });
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_Compare_Root()
         {
             var first = PrtgNode.Probe(Probe(),
@@ -324,8 +324,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             });
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_Compare_Grouping_Throws()
         {
             var first = DefaultProbe;

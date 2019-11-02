@@ -8,21 +8,21 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
     public class CountTests : BaseQueryTest
     {
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Count_NoPredicate()
         {
             ExecuteNow(q => q.Count(), r => Assert.AreEqual(Settings.SensorsInTestServer, r));
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Count_WithPredicate()
         {
             ExecuteNow(q => q.Count(s => s.Id == Settings.UpSensor), r => Assert.AreEqual(1, r));
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_CountTests_HasAllTests()
         {
             HasAllTests(typeof(Unit.CountTests));

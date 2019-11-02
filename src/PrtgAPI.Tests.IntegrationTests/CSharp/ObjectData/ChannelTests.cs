@@ -8,7 +8,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
     public class ChannelTests : BasePrtgClientTest
     {
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Channel_GetChannels_HasExpectedResults()
         {
             var channels = client.GetChannels(Settings.ChannelSensor);
@@ -24,7 +24,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Channel_ReadOnlyUser()
         {
             var channel = readOnlyClient.GetChannel(Settings.ChannelSensor, Settings.Channel);
@@ -33,7 +33,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public async Task Data_Channel_ReadOnlyUserAsync()
         {
             var channel = await readOnlyClient.GetChannelAsync(Settings.ChannelSensor, Settings.Channel);

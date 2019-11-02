@@ -7,7 +7,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
     public class GroupTests : BasePrtgClientTest
     {
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Group_GetGroups_HasAnyResults()
         {
             HasAnyResults(client.GetGroups); //todo - it looks like groups DO have a default priority (3) so why is it reporting null?
@@ -18,14 +18,14 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Group_GetGroups_ReturnsJustGroups()
         {
             ReturnsJustObjectsOfType(client.GetGroups, Settings.Probe, Settings.GroupsInTestProbe - 2, BaseType.Group); //Subtract two for the child groups
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Group_ReadOnlyUser()
         {
             var group = readOnlyClient.GetGroup(Settings.Group);
@@ -34,7 +34,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public async Task Data_Group_ReadOnlyUserAsync()
         {
             var group = await readOnlyClient.GetGroupAsync(Settings.Group);

@@ -11,20 +11,20 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
     [TestClass]
     public class NotificationActionTests : StandardObjectTests<NotificationAction, NotificationActionItem, NotificationActionResponse>
     {
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void NotificationAction_CanDeserialize() => Object_CanDeserialize();
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public async Task NotificationAction_CanDeserializeAsync() => await Object_CanDeserializeAsync();
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void NotificationAction_AllFields_HaveValues() => Object_AllFields_HaveValues();
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void NotificationAction_GetObjectsOverloads_CanExecute()
         {
             var client = Initialize_Client_WithItems(GetItem());
@@ -45,8 +45,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             Assert.IsTrue(client.GetNotificationActionAsync("test").Result != null);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void NotificationAction_NotificationTypes_AllFields_HaveValues()
         {
             var obj = GetSingleItem();
@@ -66,8 +66,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             }
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void NotificationAction_FiltersByProperty()
         {
             var urls = new[]
@@ -88,8 +88,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public async Task NotificationAction_FiltersByPropertyAsync()
         {
             var urls = new[]
@@ -114,8 +114,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             );
         }
         
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void NotificationAction_LoadsSchedule_Lazy_AllPropertiesSet()
         {
             var client = Initialize_Client(new NotificationActionResponse(
@@ -135,8 +135,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             });
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public async Task NotificationAction_LoadsSchedule_Lazy_AllPropertiesSetAsync()
         {
             var client = Initialize_Client(new NotificationActionResponse(
@@ -157,8 +157,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             });
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void NotificationAction_Types_ToString()
         {
             var obj = GetSingleItem();
@@ -175,8 +175,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             Assert.AreEqual("PRTG System Administrator, PRTG Administrators", obj.Ticket.ToString(), "Ticket was not correcet");
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void NotificationAction_ReadOnly()
         {
             var client = Initialize_ReadOnlyClient(GetResponse(new[] { GetItem() }));
@@ -188,8 +188,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             AssertEx.AllPropertiesRetrieveValues(action);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public async Task NotificationAction_ReadOnlyAsync()
         {
             var client = Initialize_ReadOnlyClient(GetResponse(new[] { GetItem() }));

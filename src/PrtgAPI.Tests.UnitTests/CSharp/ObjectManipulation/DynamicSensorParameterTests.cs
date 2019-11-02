@@ -18,8 +18,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
     {
         const string exefile = "exefile";
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DynamicSensorParameters_CanExecute()
         {
             var parameters = client.GetDynamicSensorParameters(1001, "exexml");
@@ -29,8 +29,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             Assert.AreEqual("Demo Batchfile - Returns static values in four channels.bat", parameters["exefile"].ToString());
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public async Task DynamicSensorParameters_CanExecuteAsync()
         {
             var parameters = await client.GetDynamicSensorParametersAsync(1001, "exexml");
@@ -40,8 +40,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             Assert.AreEqual("Demo Batchfile - Returns static values in four channels.bat", parameters["exefile"].ToString());
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DynamicSensorParameters_Indexer_SetTarget_ForTarget()
         {
             var parameters = client.GetDynamicSensorParameters(1001, "exexml");
@@ -84,8 +84,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             Assert.AreEqual(str, url, "URL was incorrect");
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DynamicSensorParameters_Indexer_SetMultipleTargets_ForTarget()
         {
             var parameters = client.GetDynamicSensorParameters(1001, "exexml");
@@ -103,8 +103,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             Assert.AreEqual(parameters.Targets[exefile][0], targets[0], "Second target was not correct");
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DynamicSensorParameters_Index_SetsNormal()
         {
             var parameters = client.GetDynamicSensorParameters(1001, "exexml");
@@ -116,8 +116,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             Assert.AreEqual("1", parameters["environment"]);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DynamicSensorParameters_Index_SetsTyped()
         {
             var parameters = client.GetDynamicSensorParameters(1001, "exexml");
@@ -132,8 +132,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             Assert.AreEqual("newName", parameters["name"]);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DynamicSensorParameters_Indexer_Throws_SetMultiple_ForNonTarget()
         {
             var parameters = client.GetDynamicSensorParameters(1001, "exexml");
@@ -146,8 +146,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             Assert.AreEqual(2, arr[1]);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DynamicSensorParameters_Indexer_NewProperty_Throws_WhenLocked()
         {
             var name = "FAKE_PARAMETER";
@@ -160,8 +160,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             AssertEx.Throws<InvalidOperationException>(() => { var val = parameters[name]; }, "Parameter with name 'FAKE_PARAMETER' does not exist.");
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DynamicSensorParameters_Indexer_NewProperty_Adds_WhenUnlocked()
         {
             var name = "FAKE_PARAMETER";
@@ -178,8 +178,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             Assert.AreEqual("test", val, "Value was not correct");
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DynamicSensorParameters_AsDynamic_CanUse_DynamicProperties()
         {
             dynamic dynamic = client.GetDynamicSensorParameters(1001, "exexml");
@@ -192,8 +192,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             Assert.AreEqual("testScript.bat", dynamic.exefile.ToString());
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DynamicSensorParameters_AsDynamic_CanUse_NormalProperties()
         {
             dynamic dynamic = client.GetDynamicSensorParameters(1001, "exexml");
@@ -201,8 +201,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             Assert.AreEqual("exexml", dynamic.SensorType);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DynamicSensorParameters_NewProperty_AsLowerCase_SameAsNormalProperty()
         {
             dynamic dynamic = client.GetDynamicSensorParameters(1001, "exexml");
@@ -213,8 +213,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             Assert.AreEqual("test", dynamic[Parameter.SensorType]);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DynamicSensorParameters_AsDynamic_Throws_WhenLocked()
         {
             dynamic parameters = client.GetDynamicSensorParameters(1001, "exexml");
@@ -225,8 +225,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             AssertEx.Throws<InvalidOperationException>(() => { var val = parameters.FAKE_PARAMETER; }, "Parameter with name 'FAKE_PARAMETER' does not exist.");
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DynamicSensorParameters_AsDynamic_NewProperty_Adds_WhenUnlocked()
         {
             dynamic parameters = client.GetDynamicSensorParameters(1001, "exexml");
@@ -245,7 +245,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
 #if MSTEST2
         [DoNotParallelize]
 #endif
-        [TestCategory("UnitTest")]
+        [UnitTest]
         public void DynamicSensorParameters_WithoutPSObjectUtilities_SingleObject()
         {
             TestHelpers.WithPSObjectUtilities(() =>
@@ -269,7 +269,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
 #if MSTEST2
         [DoNotParallelize]
 #endif
-        [TestCategory("UnitTest")]
+        [UnitTest]
         public void DynamicSensorParameters_WithoutPSObjectUtilities_ObjectArray()
         {
             TestHelpers.WithPSObjectUtilities(() =>
@@ -289,8 +289,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             }, new DefaultPSObjectUtilities());
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DynamicSensorParameters_SensorQueryTarget_ParsesTarget()
         {
             var client = Initialize_Client(new SensorQueryTargetValidatorResponse(new[]
@@ -308,8 +308,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             client.GetDynamicSensorParameters(1001, "snmplibrary", queryParameters: target);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DynamicSensorParameters_SensorQueryTarget_Throws_WhenTargetIsInvalid()
         {
             var client = Initialize_Client(new SensorQueryTargetValidatorResponse(new[]
@@ -323,8 +323,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DynamicSensorParameters_SensorQueryTarget_Throws_WhenTargetIsNotRequired()
         {
             var client = Initialize_Client(new SensorQueryTargetValidatorResponse(new[]
@@ -338,8 +338,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DynamicSensorParameters_SensorQueryTarget_Throws_WhenTargetMissing()
         {
             var client = Initialize_Client(new SensorQueryTargetValidatorResponse(new[]
@@ -353,8 +353,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DynamicSensorParameters_SensorQueryTarget_Throws_WhenTypeIsInvalid()
         {
             AssertEx.Throws<InvalidOperationException>(
@@ -363,8 +363,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DynamicSensorParameters_SensorQueryTarget_Throws_WhenTypeIsInvalid_NoTargetSpecified()
         {
             AssertEx.Throws<InvalidOperationException>(
@@ -373,8 +373,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DynamicSensorParameters_SensorQueryParameters_ParsesParameters()
         {
             var client = Initialize_Client(new SensorQueryTargetParametersValidatorResponse(new[]
@@ -394,8 +394,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             });
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DynamicSensorParameters_SensorQueryParameters_Throws_WhenParametersAreMissing()
         {
             var client = Initialize_Client(new SensorQueryTargetParametersValidatorResponse(new[]
@@ -410,8 +410,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public async Task DynamicSensorParameters_SensorQueryTarget_ParsesTargetAsync()
         {
             var client = Initialize_Client(new SensorQueryTargetValidatorResponse(new[]
@@ -429,8 +429,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             await client.GetDynamicSensorParametersAsync(1001, "snmplibrary", queryParameters: target);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public async Task DynamicSensorParameters_SensorQueryTarget_Throws_WhenTargetIsInvalidAsync()
         {
             var client = Initialize_Client(new SensorQueryTargetValidatorResponse(new[]
@@ -444,8 +444,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public async Task DynamicSensorParameters_SensorQueryTarget_Throws_WhenTargetIsNotRequiredAsync()
         {
             var client = Initialize_Client(new SensorQueryTargetValidatorResponse(new[]
@@ -459,8 +459,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public async Task DynamicSensorParameters_SensorQueryTarget_Throws_WhenTargetMissingAsync()
         {
             var client = Initialize_Client(new SensorQueryTargetValidatorResponse(new[]
@@ -474,8 +474,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public async Task DynamicSensorParameters_SensorQueryTarget_Throws_WhenTypeIsInvalidAsync()
         {
             await AssertEx.ThrowsAsync<InvalidOperationException>(
@@ -484,8 +484,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public async Task DynamicSensorParameters_SensorQueryTarget_Throws_WhenTypeIsInvalid_NoTargetSpecifiedAsync()
         {
             await AssertEx.ThrowsAsync<InvalidOperationException>(
@@ -494,8 +494,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public async Task DynamicSensorParameters_SensorQueryParameters_ParsesParametersAsync()
         {
             var client = Initialize_Client(new SensorQueryTargetParametersValidatorResponse(new[]
@@ -515,8 +515,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             });
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public async Task DynamicSensorParameters_SensorQueryParameters_Throws_WhenParametersAreMissingAsync()
         {
             var client = Initialize_Client(new SensorQueryTargetParametersValidatorResponse(new[]

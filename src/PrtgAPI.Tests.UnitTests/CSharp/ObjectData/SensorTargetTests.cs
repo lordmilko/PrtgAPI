@@ -11,8 +11,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
     [TestClass]
     public class SensorTargetTests : BaseTest
     {
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void SensorTarget_CanExecute()
         {
             var files = client.Targets.GetExeXmlFiles(1001);
@@ -20,8 +20,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             Assert.AreEqual(2, files.Count);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public async Task SensorTarget_CanExecuteAsync()
         {
             var files = await client.Targets.GetExeXmlFilesAsync(1001);
@@ -29,8 +29,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             Assert.AreEqual(2, files.Count);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void SensorTarget_CanAbort()
         {
             var result = client.Targets.GetExeXmlFiles(1001, f => false);
@@ -38,8 +38,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             Assert.AreEqual(null, result);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void SensorTarget_Generic_CanExecute()
         {
             var files = client.Targets.GetSensorTargets(1001, "exexml");
@@ -47,8 +47,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             Assert.AreEqual(2, files.Count);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public async Task SensorTarget_Generic_CanExecuteAsync()
         {
             var files = await client.Targets.GetSensorTargetsAsync(1001, "exexml");
@@ -56,8 +56,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             Assert.AreEqual(2, files.Count);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void SensorTarget_Generic_Resolves_WithTable()
         {
             var files = client.Targets.GetSensorTargets(1001, "exexml", "exefile");
@@ -65,8 +65,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             Assert.AreEqual(2, files.Count);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void SensorTarget_Generic_Throws_WithInvalidTable()
         {
             AssertEx.Throws<ArgumentException>(
@@ -75,8 +75,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             );;
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void SensorTarget_Generic_HasCorrectProperties()
         {
             var file = client.Targets.GetSensorTargets(1001, "exexml").First();
@@ -87,8 +87,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             Assert.AreEqual(string.Empty, file.Properties[2]);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public async Task SensorTarget_CanAbortAsync()
         {
             var result = await client.Targets.GetExeXmlFilesAsync(1001, f => false);
@@ -96,8 +96,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             Assert.AreEqual(null, result);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void SensorTarget_FailedRequest()
         {
             var faultyClient = Initialize_Client(new FaultySensorTargetResponse(FaultySensorTargetResponse.Scenario.Credentials));
@@ -105,8 +105,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             AssertEx.Throws<PrtgRequestException>(() => faultyClient.Targets.GetExeXmlFiles(1001), "Failed to retrieve data from device; required credentials");
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void SensorTarget_ReadOnly()
         {
             var client = Initialize_ReadOnlyClient(new MultiTypeResponse());
@@ -114,8 +114,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             AssertEx.Throws<PrtgRequestException>(() => client.Targets.GetExeXmlFiles(1001), "you may not have sufficient permissions on the specified object. The server responded");
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public async Task SensorTarget_ReadOnlyAsync()
         {
             var client = Initialize_ReadOnlyClient(new MultiTypeResponse());
@@ -123,8 +123,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             await AssertEx.ThrowsAsync<PrtgRequestException>(async () => await client.Targets.GetExeXmlFilesAsync(1001), "you may not have sufficient permissions on the specified object. The server responded");
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void SensorTarget_SensorQueryTarget_ParsesTarget()
         {
             var client = Initialize_Client(new SensorQueryTargetValidatorResponse(new[]
@@ -142,8 +142,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             client.Targets.GetSensorTargets(1001, "snmplibrary", queryParameters: target);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void SensorTarget_SensorQueryTarget_Throws_WhenTargetIsInvalid()
         {
             var client = Initialize_Client(new SensorQueryTargetValidatorResponse(new[]
@@ -157,8 +157,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void SensorTarget_SensorQueryTarget_Throws_WhenTargetIsNotRequired()
         {
             var client = Initialize_Client(new SensorQueryTargetValidatorResponse(new[]
@@ -172,8 +172,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void SensorTarget_SensorQueryTarget_Throws_WhenTargetMissing()
         {
             var client = Initialize_Client(new SensorQueryTargetValidatorResponse(new[]
@@ -187,8 +187,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void SensorTarget_SensorQueryTarget_Throws_WhenTypeIsInvalid()
         {
             AssertEx.Throws<InvalidOperationException>(
@@ -197,8 +197,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void SensorTarget_SensorQueryTarget_Throws_WhenTypeIsInvalid_NoTargetSpecified()
         {
             AssertEx.Throws<InvalidOperationException>(
@@ -207,8 +207,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void SensorTarget_SensorQueryParameters_ParsesParameters()
         {
             var client = Initialize_Client(new SensorQueryTargetParametersValidatorResponse(new[]
@@ -228,8 +228,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             });
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void SensorTarget_SensorQueryParameters_Throws_WhenParametersAreMissing()
         {
             var client = Initialize_Client(new SensorQueryTargetParametersValidatorResponse(new[]
@@ -244,8 +244,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public async Task SensorTarget_SensorQueryTarget_ParsesTargetAsync()
         {
             var client = Initialize_Client(new SensorQueryTargetValidatorResponse(new[]
@@ -263,8 +263,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             await client.Targets.GetSensorTargetsAsync(1001, "snmplibrary", queryParameters: target);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public async Task SensorTarget_SensorQueryTarget_Throws_WhenTargetIsInvalidAsync()
         {
             var client = Initialize_Client(new SensorQueryTargetValidatorResponse(new[]
@@ -278,8 +278,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public async Task SensorTarget_SensorQueryTarget_Throws_WhenTargetIsNotRequiredAsync()
         {
             var client = Initialize_Client(new SensorQueryTargetValidatorResponse(new[]
@@ -293,8 +293,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public async Task SensorTarget_SensorQueryTarget_Throws_WhenTargetMissingAsync()
         {
             var client = Initialize_Client(new SensorQueryTargetValidatorResponse(new[]
@@ -308,8 +308,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public async Task SensorTarget_SensorQueryTarget_Throws_WhenTypeIsInvalidAsync()
         {
             await AssertEx.ThrowsAsync<InvalidOperationException>(
@@ -318,8 +318,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public async Task SensorTarget_SensorQueryTarget_Throws_WhenTypeIsInvalid_NoTargetSpecifiedAsync()
         {
             await AssertEx.ThrowsAsync<InvalidOperationException>(
@@ -328,8 +328,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public async Task SensorTarget_SensorQueryParameters_ParsesParametersAsync()
         {
             var client = Initialize_Client(new SensorQueryTargetParametersValidatorResponse(new[]
@@ -349,8 +349,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             });
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public async Task SensorTarget_SensorQueryParameters_Throws_WhenParametersAreMissingAsync()
         {
             var client = Initialize_Client(new SensorQueryTargetParametersValidatorResponse(new[]

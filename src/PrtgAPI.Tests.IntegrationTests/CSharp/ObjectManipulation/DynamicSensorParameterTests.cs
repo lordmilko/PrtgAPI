@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PrtgAPI.Parameters;
+using PrtgAPI.Tests.UnitTests;
 using PrtgAPI.Tests.UnitTests.Support;
 
 namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
@@ -11,7 +12,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
     public class DynamicSensorParameterTests : BasePrtgClientTest
     {
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Action_DynamicSensorParameters_Adds_ObjectWithTargets()
         {
             var parameters = client.GetDynamicSensorParameters(Settings.Device, "wmivolume");
@@ -38,7 +39,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Action_DynamicSensorParameters_Gets_ObjectWithoutTargets()
         {
             dynamic parameters = client.GetDynamicSensorParameters(Settings.Device, "http");
@@ -73,7 +74,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Action_DynamicSensorParameters_Adds_ObjectWithoutParameters()
         {
             var parameters = client.GetDynamicSensorParameters(Settings.Device, "zen");
@@ -135,8 +136,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         }
 
         [TestMethod]
-        [TestCategory("Unreliable")]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest(TestCategory.Unreliable)]
         public void Action_DynamicSensorParameters_Timeout_CustomTimeout()
         {
             AssertEx.Throws<TimeoutException>(
@@ -146,7 +146,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public async Task Action_DynamicSensorParameters_Timeout_CustomTimeoutAsync()
         {
             await AssertEx.ThrowsAsync<TimeoutException>(
@@ -156,7 +156,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Action_DynamicSensorParameters_AsReadOnlyUser_NoQueryTarget_Throws()
         {
             AssertEx.Throws<PrtgRequestException>(
@@ -166,7 +166,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Action_DynamicSensorParameters_AsReadOnlyUser_WithQueryTarget_Throws()
         {
             AssertEx.Throws<PrtgRequestException>(
@@ -176,7 +176,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Action_DynamicSensorParameters_AsReadOnlyUser_WithQueryTargetParameters_Throws()
         {
             AssertEx.Throws<PrtgRequestException>(
@@ -186,7 +186,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public async Task Action_DynamicSensorParameters_AsReadOnlyUser_NoQueryTarget_ThrowsAsync()
         {
             await AssertEx.ThrowsAsync<PrtgRequestException>(
@@ -196,7 +196,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public async Task Action_DynamicSensorParameters_AsReadOnlyUser_WithQueryTarget_ThrowsAsync()
         {
             await AssertEx.ThrowsAsync<PrtgRequestException>(
@@ -206,7 +206,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public async Task Action_DynamicSensorParameters_AsReadOnlyUser_WithQueryTargetParameters_ThrowsAsync()
         {
             await AssertEx.ThrowsAsync<PrtgRequestException>(
@@ -216,7 +216,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Action_DynamicSensorParameters_SensorQueryTarget_ParsesTarget()
         {
             AssertEx.Throws<TimeoutException>(
@@ -226,7 +226,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Action_DynamicSensorParameters_SensorQueryTarget_Throws_WhenTargetIsInvalid()
         {
             AssertEx.Throws<InvalidOperationException>(
@@ -236,7 +236,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Action_DynamicSensorParameters_SensorQueryTarget_Throws_WhenTargetIsNotRequired()
         {
             AssertEx.Throws<InvalidOperationException>(
@@ -246,7 +246,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Action_DynamicSensorParameters_SensorQueryTarget_Throws_WhenTargetMissing()
         {
             AssertEx.Throws<InvalidOperationException>(
@@ -256,7 +256,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Action_DynamicSensorParameters_SensorQueryParameters_ParsesParameters()
         {
             var queryParameters = new SensorQueryTargetParameters
@@ -273,7 +273,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Action_DynamicSensorParameters_SensorQueryParameters_Throws_WhenParametersAreMissing()
         {
             AssertEx.Throws<InvalidOperationException>(

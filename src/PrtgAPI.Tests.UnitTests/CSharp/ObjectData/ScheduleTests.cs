@@ -12,16 +12,16 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
     [TestClass]
     public class ScheduleTests : StandardObjectTests<Schedule, ScheduleItem, ScheduleResponse>
     {
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Schedule_CanDeserialize() => Object_CanDeserialize();
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public async Task Schedule_CanDeserializeAsync() => await Object_CanDeserializeAsync();
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Schedule_GetObjectsOverloads_CanExecute()
         {
             var client = Initialize_Client_WithItems(GetItem());
@@ -42,8 +42,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             Assert.IsTrue(client.GetScheduleAsync("test").Result != null);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Schedule_AllFields_HaveValues() => Object_AllFields_HaveValues(p =>
         {
             if (p.Name == "Tags")
@@ -52,8 +52,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             return false;
         });
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Schedule_ReadOnly()
         {
             var client = Initialize_ReadOnlyClient(GetResponse(new[] { GetItem() }));
@@ -65,8 +65,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             AssertEx.AllPropertiesRetrieveValues(schedule);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public async Task Schedule_ReadOnlyAsync()
         {
             var client = Initialize_ReadOnlyClient(GetResponse(new[] { GetItem() }));
@@ -88,8 +88,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
 
         #region TimeTable
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Schedule_TimeTable_UsesIndexers()
         {
             var timetable = GetTimeTable();
@@ -106,8 +106,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             Assert.AreEqual(7, timetable[3].Length);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Schedule_TimeTable_Rows_MatchSlots()
         {
             var timetable = GetTimeTable();

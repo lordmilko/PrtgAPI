@@ -9,20 +9,20 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
     [TestClass]
     public class ModificationHistoryTests : StandardObjectTests<ModificationEvent, ModificationHistoryItem, ModificationHistoryResponse>
     {
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void ModificationHistory_CanDeserialize() => Object_CanDeserialize();
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public async Task ModificationHistory_CanDeserializeAsync() => await Object_CanDeserializeAsync();
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void ModificationHistory_AllFields_HaveValues() => Object_AllFields_HaveValues();
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void ModificationHistory_ReadOnly()
         {
             var client = Initialize_ReadOnlyClient(GetResponse(new[] { GetItem() }));
@@ -32,8 +32,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             AssertEx.AllPropertiesRetrieveValues(history);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public async Task ModificationHistory_ReadOnlyAsync()
         {
             var client = Initialize_ReadOnlyClient(GetResponse(new[] { GetItem() }));

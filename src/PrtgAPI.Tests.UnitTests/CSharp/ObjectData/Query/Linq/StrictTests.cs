@@ -9,8 +9,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
     [TestClass]
     public class StrictTests : BaseQueryTests
     {
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Query_Strict_UnsupportedMethod()
         {
             ExecuteUnsupported(
@@ -23,8 +23,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Query_Strict_SensorType()
         {
             ExecuteUnsupported(
@@ -37,8 +37,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Query_Strict_StartsWith()
         {
             ExecuteUnsupported(
@@ -51,8 +51,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Query_Strict_EndsWith()
         {
             ExecuteUnsupported(
@@ -65,8 +65,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Query_Strict_NotContains()
         {
             ExecuteUnsupported(
@@ -79,8 +79,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Query_Strict_InvalidCondition()
         {
             ExecuteUnsupported(
@@ -93,8 +93,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Query_Strict_LastUnsupported_NoPredicate()
         {
             ExecuteUnsupportedNow(
@@ -107,8 +107,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Query_Strict_LastUnsupported_Predicate()
         {
             ExecuteUnsupportedNow(
@@ -121,8 +121,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Query_Strict_InvalidEnumComparison()
         {
             ExecuteUnsupported(
@@ -135,8 +135,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Query_Strict_MultiPartExpression()
         {
             ExecuteUnsupported(
@@ -149,8 +149,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Query_Strict_MergeMultipleParameters()
         {
             ExecuteUnsupported(
@@ -163,8 +163,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Query_Strict_UnsupportedProperty_NoPropertyEnumMember()
         {
             ExecuteUnsupported(
@@ -177,8 +177,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Query_Strict_UnsupportedProperty_WithPropertyEnumMember()
         {
             ExecuteUnsupported(
@@ -191,8 +191,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Query_Strict_UnsupportedValue()
         {
             ExecuteUnsupported(
@@ -205,8 +205,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Query_Strict_AmbiguousIntermediate()
         {
             ExecuteUnsupported(
@@ -219,8 +219,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Query_Strict_AmbiguousCondition()
         {
             ExecuteUnsupported(
@@ -233,8 +233,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Query_Strict_UnconsecutiveCall()
         {
             ExecuteUnsupported(
@@ -247,8 +247,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Query_Strict_LeftRightSameProperty_Standalone()
         {
             //The regular exception won't be thrown because there is no AND/OR condition to cause
@@ -263,8 +263,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Query_Strict_LeftRightSameProperty_WithAnotherCondition()
         {
             ExecuteUnsupported(
@@ -277,8 +277,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Query_Strict_LeftRightSameProperty_AndAlso()
         {
             ExecuteUnsupported(
@@ -291,8 +291,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Query_Strict_LeftRightDifferentProperties()
         {
             ExecuteUnsupported(
@@ -305,8 +305,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Query_Strict_LocalEval_Left()
         {
             ExecuteUnsupported(
@@ -319,8 +319,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Query_Strict_LocalEval_Right()
         {
             ExecuteUnsupported(
@@ -333,8 +333,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Query_Strict_Or_DifferentProperties()
         {
             ExecuteUnsupported(
@@ -347,8 +347,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Query_Strict_Log_DoubleStart()
         {
             ExecuteUnsupportedLog(
@@ -361,8 +361,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Query_Strict_Log_DoubleEnd()
         {
             ExecuteUnsupportedLog(
@@ -375,8 +375,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Query_Strict_Log_UnsupportedFilters()
         {
             ExecuteUnsupportedLog(
@@ -389,8 +389,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Query_Strict_Log_DoubleId()
         {
             ExecuteUnsupportedLog(
@@ -403,8 +403,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Query_Strict_Log_OrRange()
         {
             ExecuteUnsupportedLog(
@@ -417,8 +417,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Query_Strict_And_SameProperty()
         {
             ExecuteUnsupported(
@@ -431,8 +431,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Query_Strict_And_SameProperty_SplitGroup()
         {                   
             ExecuteUnsupported(
@@ -445,8 +445,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Query_Strict_And_SameProperty_SplitWhere()
         {
             ExecuteUnsupported(
@@ -459,8 +459,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Query_Strict_Or_DifferentProperty_SplitGroup()
         {
             ExecuteUnsupported(
@@ -473,8 +473,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Query_Strict_MethodCall_Property()
         {
             ExecuteUnsupported(
@@ -487,8 +487,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Query_Strict_MethodCall_Source()
         {
             ExecuteUnsupported(
@@ -501,8 +501,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Query_Strict_IllegalCast()
         {
             ExecuteUnsupported(
@@ -515,8 +515,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Query_Strict_IllegalToString()
         {
             ExecuteUnsupported(
@@ -529,8 +529,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Query_Strict_BoolToString()
         {
             ExecuteUnsupported(
@@ -543,8 +543,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Query_Strict_IllegalExpressionType()
         {
             ExecuteUnsupported(
@@ -557,8 +557,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Query_Strict_IllegalParent()
         {
             ExecuteUnsupported(
@@ -571,8 +571,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Query_Strict_MissingProperty()
         {
             ExecuteUnsupported(
@@ -585,8 +585,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Query_Strict_ExtraMembers_Where()
         {
             ExecuteUnsupported(

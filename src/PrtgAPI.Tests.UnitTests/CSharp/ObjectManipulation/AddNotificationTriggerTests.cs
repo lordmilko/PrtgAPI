@@ -12,8 +12,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
     [TestClass]
     public class AddNotificationTriggerTests : BaseTest
     {
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void AddNotificationTrigger_SupportedType()
         {
             var client = Initialize_Client(new SetNotificationTriggerResponse());
@@ -26,8 +26,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             client.AddNotificationTrigger(parameters, false);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public async Task AddNotificationTrigger_SupportedTypeAsync()
         {
             var client = Initialize_Client(new SetNotificationTriggerResponse());
@@ -40,8 +40,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             await client.AddNotificationTriggerAsync(parameters, false);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void AddNotificationTrigger_UnsupportedType()
         {
             var client = Initialize_Client(new SetNotificationTriggerResponse());
@@ -51,8 +51,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             AssertEx.Throws<InvalidTriggerTypeException>(() => client.AddNotificationTrigger(parameters), "Trigger type 'State' is not a valid trigger type");
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public async Task AddNotificationTrigger_UnsupportedTypeAsync()
         {
             var client = Initialize_Client(new SetNotificationTriggerResponse());
@@ -62,8 +62,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             await AssertEx.ThrowsAsync<InvalidTriggerTypeException>(async() => await client.AddNotificationTriggerAsync(parameters), "Trigger type 'State' is not a valid trigger type");
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void AddNotificationTrigger_ChannelToContainer()
         {
             var dictionary = new Dictionary<Content, int>
@@ -81,8 +81,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             AssertEx.Throws<InvalidOperationException>(() => client.AddNotificationTrigger(parameters), "Channel ID '1' is not a valid channel for Device, Group or Probe");
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public async Task AddNotificationTrigger_ChannelToContainerAsync()
         {
             var dictionary = new Dictionary<Content, int>
@@ -100,8 +100,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             await AssertEx.ThrowsAsync<InvalidOperationException>(async () => await client.AddNotificationTriggerAsync(parameters), "Channel ID '1' is not a valid channel for Device, Group or Probe");
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void AddNotificationTrigger_EnumToSensor()
         {
             var client = Initialize_Client(new SetNotificationTriggerResponse());
@@ -111,8 +111,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             AssertEx.Throws<InvalidOperationException>(() => client.AddNotificationTrigger(parameters), "Channel 'Primary' is not a valid value for sensor");
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public async Task AddNotificationTrigger_EnumToSensorAsync()
         {
             var client = Initialize_Client(new SetNotificationTriggerResponse());
@@ -122,8 +122,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             await AssertEx.ThrowsAsync<InvalidOperationException>(async () => await client.AddNotificationTriggerAsync(parameters), "Channel 'Primary' is not a valid value for sensor");
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void AddNotificationTrigger_ResolveScenarios()
         {
             var client = Initialize_Client(new DiffBasedResolveResponse(false));
@@ -141,8 +141,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             Assert.AreEqual(null, trigger, "Trigger was not null");
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public async Task AddNotificationTrigger_ResolveScenariosAsync()
         {
             var client = Initialize_Client(new DiffBasedResolveResponse(false));
@@ -160,8 +160,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             Assert.AreEqual(null, trigger, "Trigger was not null");
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void AddNotificationTrigger_Throws_ResolvingMultiple()
         {
             var client = Initialize_Client(new DiffBasedResolveResponse(true));
@@ -176,8 +176,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             AssertEx.Throws<ObjectResolutionException>(() => client.AddNotificationTrigger(parameters), str);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public async Task AddNotificationTrigger_Throws_ResolvingMultipleAsync()
         {
             var client = Initialize_Client(new DiffBasedResolveResponse(true));
@@ -192,8 +192,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             await AssertEx.ThrowsAsync<ObjectResolutionException>(async () => await client.AddNotificationTriggerAsync(parameters), str);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void AddNotificationTrigger_TriggerChannel_StandardTriggerChannel_OnSensor()
         {
             var urls = new[]
@@ -205,8 +205,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             AssertEx.Throws<InvalidOperationException>(() => TestTriggerChannel(TriggerChannel.Total, urls, true), "Channel 'Total' is not a valid value");
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void AddNotificationTrigger_TriggerChannel_StandardTriggerChannel_OnContainer()
         {
             var urls = new[]
@@ -219,8 +219,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             TestTriggerChannel(TriggerChannel.Total, urls, false);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void AddNotificationTrigger_TriggerChannel_Channel_OnSensor()
         {
             var urls = new[]
@@ -241,8 +241,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             TestTriggerChannel(channel, urls, true);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void AddNotificationTrigger_TriggerChannel_Channel_OnContainer()
         {
             var urls = new[]
@@ -260,8 +260,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             AssertEx.Throws<InvalidOperationException>(() => TestTriggerChannel(channel, urls, false), "Channel 'Percent Available Memory' of type 'Channel' is not a valid channel");
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void AddNotificationTrigger_TriggerChannel_ChannelId_OnSensor()
         {
             var urls = new[]
@@ -275,8 +275,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             TestTriggerChannel(new TriggerChannel(3), urls, true);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void AddNotificationTrigger_TriggerChannel_ChannelId_OnContainer()
         {
             var urls = new[]
@@ -288,8 +288,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             AssertEx.Throws<InvalidOperationException>(() => TestTriggerChannel(new TriggerChannel(3), urls, false), "Channel ID '3' is not a valid channel");
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void AddNotificationTrigger_TriggerChannel_InvalidChannelId_OnSensor()
         {
             var urls = new[]
@@ -302,8 +302,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             AssertEx.Throws<InvalidOperationException>(() => TestTriggerChannel(new TriggerChannel(99), urls, true), "Channel ID '99' is not a valid channel");
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void AddNotificationTrigger_TriggerChannel_InvalidChannelId_OnContainer()
         {
             var urls = new[]
@@ -315,8 +315,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             AssertEx.Throws<InvalidOperationException>(() => TestTriggerChannel(new TriggerChannel(99), urls, false), "Channel ID '99' is not a valid channel");
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void AddNotificationTrigger_TriggerChannel_Channel_WithStandardTriggerChannelName_OnSensor()
         {
             var urls = new[]
@@ -337,8 +337,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             TestTriggerChannel(channel, urls, true, new ChannelItem(name: "Total", objId: "1"));
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void AddNotificationTrigger_TriggerChannel_Channel_WithStandardTriggerChannelName_OnContainer()
         {
             var urls = new[]

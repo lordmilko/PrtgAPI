@@ -8,8 +8,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
     [TestClass]
     public class SkipTests : BaseQueryTests
     {
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Query_Skip_Standalone()
         {
             ExecuteSkip(
@@ -25,8 +25,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Query_Skip_Twice()
         {
             ExecuteSkip(
@@ -37,8 +37,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Query_Skip_ThreeTimes()
         {
             ExecuteClient(
@@ -51,8 +51,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Query_Skip_Logs()
         {
             ExecuteClient(
@@ -65,8 +65,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Query_Skip_ToTake()
         {
             ExecuteSkip(
@@ -77,15 +77,15 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Query_Skip_FromTake()
         {
             ExecuteNow(q => q.Take(2).Skip(1).ToList(), "count=2", s => Assert.AreEqual("Volume IO _Total1", s.Single().Name), UrlFlag.Columns);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Query_Skip_ToWhere()
         {
             ExecuteSkip(
@@ -96,8 +96,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Query_Skip_FromWhere()
         {
             ExecuteClient(
@@ -110,8 +110,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Query_Skip_OnePage()
         {
             ExecuteSkip(
@@ -125,8 +125,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Query_Skip_TwoPages()
         {
             ExecuteSkip(
@@ -141,8 +141,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Query_Skip_All()
         {
             ExecuteSkip(
@@ -157,8 +157,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Query_Skip_All_WithCount()
         {
             var parameters = new SensorParameters
@@ -176,8 +176,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Query_Skip_MoreThanAll()
         {
             ExecuteSkip(

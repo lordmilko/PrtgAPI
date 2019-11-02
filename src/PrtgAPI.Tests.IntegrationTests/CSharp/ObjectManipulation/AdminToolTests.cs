@@ -13,7 +13,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         private static string PrtgBackups => $"\\\\{Settings.Server}\\c$\\ProgramData\\Paessler\\PRTG Network Monitor\\Configuration Auto-Backups";
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Action_BackupConfig_SuccessfullyBacksUpConfig()
         {
             var originalFiles = GetBackupFiles();
@@ -24,7 +24,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public async Task Action_BackupConfig_SuccessfullyBacksUpConfigAsync()
         {
             var originalFiles = GetBackupFiles();

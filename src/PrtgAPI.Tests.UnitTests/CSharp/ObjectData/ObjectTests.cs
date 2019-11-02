@@ -11,24 +11,23 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
     [TestClass]
     public class ObjectTests : StreamableObjectTests<PrtgObject, BaseItem, ObjectResponse>
     {
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void PrtgObject_CanDeserialize() => Object_CanDeserialize();
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public async Task PrtgObject_CanDeserializeAsync() => await Object_CanDeserializeAsync();
 
         [TestMethod]
-        [TestCategory("SlowCoverage")]
-        [TestCategory("UnitTest")]
+        [UnitTest(TestCategory.SkipCoverage)]
 #if MSTEST2
         [DoNotParallelize]
 #endif
         public void PrtgObject_CanStream_Ordered_FastestToSlowest() => Object_CanStream_Ordered_FastestToSlowest();
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void PrtgObject_GetObjectsOverloads_CanExecute() => Object_GetObjectsOverloads_CanExecute(
             (c1, c2) => new List<Func<int, object>> { i => c1.GetObject(i), i => c2.GetObjectAsync(i) },
             (c1, c2) => new List<Func<Property, object, object>> { c1.GetObjects, c2.GetObjectsAsync },
@@ -36,8 +35,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             (c1, c2) => new List<Func<SearchFilter[], object>> { c1.GetObjects, c2.GetObjectsAsync }
         );
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void PrtgObject_GetObjectsOverloads_Stream_CanExecute() => Object_GetObjectsOverloads_Stream_CanExecute(
             client => client.StreamObjects,
             client => client.StreamObjects,
@@ -45,16 +44,16 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             client => client.StreamObjects
         );
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void PrtgObject_StreamSerially() => Object_SerialStreamObjects(
             c => c.StreamObjects,
             c => c.StreamObjects,
             new PrtgObjectParameters()
         );
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void PrtgObject_ResolvesAllTypes()
         {
             var client = Initialize_Client(new MultiTypeResponse());
@@ -67,8 +66,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             Assert.IsTrue(client.GetObject(300, true) is NotificationAction);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public async Task PrtgObject_ResolvesAllTypesAsync()
         {
             var client = Initialize_Client(new MultiTypeResponse());
@@ -81,20 +80,20 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             Assert.IsTrue(await client.GetObjectAsync(300, true) is NotificationAction);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void PrtgObject_GetPrtgObject_Throws_WhenNoObjectReturned() => Object_GetSingle_Throws_WhenNoObjectReturned(c => c.GetObject(1001));
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void PrtgObject_GetPrtgObject_Throws_WhenMultipleObjectsReturned() => Object_GetSingle_Throws_WhenMultipleObjectsReturned(c => c.GetObject(1001));
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void PrtgObject_AllFields_HaveValues() => Object_AllFields_HaveValues();
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Object_ReadOnly()
         {
             var client = Initialize_ReadOnlyClient(GetResponse(new[] { GetItem() }));
@@ -104,8 +103,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             AssertEx.AllPropertiesRetrieveValues(@object);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public async Task Object_ReadOnlyAsync()
         {
             var client = Initialize_ReadOnlyClient(GetResponse(new[] { GetItem() }));

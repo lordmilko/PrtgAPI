@@ -9,7 +9,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
     public class OrderByTests : BaseQueryTest
     {
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_OrderBy_MultipleProperties()
         {
             var sensors = client.GetSensors().OrderBy(s => s.Id).OrderBy(s => s.Name).ToList();
@@ -18,7 +18,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_OrderBy_ThreeTimes()
         {
             var sensors = client.GetSensors().OrderBy(s => s.Id).ToList();
@@ -27,7 +27,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_OrderBy_ForwardsThenBackwards()
         {
             var sensors = client.GetSensors().OrderBy(s => s.Id).OrderByDescending(s => s.Name).ToList();
@@ -36,7 +36,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_OrderBy_KeyComparer()
         {
             var sensors = client.GetSensors().OrderBy(s => s.Name).ThenBy(s => s.Id).ToList();
@@ -48,7 +48,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_OrderBy_WithComparer_ToOrderBy_WithoutComparer()
         {
             var sensors = client.GetSensors().OrderBy(s => s.Id).ToList();
@@ -57,7 +57,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_OrderBy_WithoutComparer_ToOrderBy_WithComparer()
         {
             var sensors = client.GetSensors().OrderBy(s => s.Id).OrderBy(s => s.Name, StringComparer.CurrentCulture).ToList();
@@ -66,7 +66,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_OrderByTests_HasAllTests()
         {
             HasAllTests(typeof(Unit.OrderByTests));

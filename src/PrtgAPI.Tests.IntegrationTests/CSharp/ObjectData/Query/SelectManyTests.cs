@@ -11,7 +11,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         #region Overloads
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_SelectMany_Overload_TSourceTResult_SingleProperty()
         {
             var tags = client.GetSensors().SelectMany(s => s.Tags).OrderBy(t => t).ToList();
@@ -20,7 +20,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_SelectMany_Overload_TSourceIntTResult_SelectIndex()
         {
             Execute(q => q.SelectMany((s, i) => new[] { i }), s =>
@@ -33,7 +33,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_SelectMany_Overload_TSourceIntTResult_SelectIndexAndProperty()
         {
             var sensors = client.GetSensors().OrderBy(s => s.Name).ToList();
@@ -57,7 +57,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         #endregion
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_SelectMany_ArrayOfAnonymousType_From_ArrayOfAnonymousType()
         {
             var sensors = client.GetSensors().Select(s => s.Name).OrderBy(n => n).ToList();
@@ -78,7 +78,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_SelectMany_ArrayOfAnonymousType_From_CastedArrayOfAnonymousType()
         {
             var sensors = client.GetSensors().Select(s => s.Name).OrderBy(n => n).ToList();
@@ -96,7 +96,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_SelectMany_ArrayOfAnonymousType_From_ArrayOfAnonymousType_WithSubMember()
         {
             Execute(q => q.SelectMany(s => new[] { new
@@ -117,7 +117,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_SelectMany_ListOfRealType_From_ListOfRealType()
         {
             var sensors = client.GetSensors().Select(s => s.Name).OrderBy(n => n).ToList();
@@ -136,7 +136,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_SelectMany_ListOfRealType_From_CastedListOfRealType()
         {
             var sensors = client.GetSensors().Select(s => s.Name).OrderBy(n => n).ToList();
@@ -154,7 +154,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_SelectMany_ArrayOfAnonymousType_From_ArrayOfAnonymousType_WithMultipleArrayElements()
         {
             var sensors = client.GetSensors().Select(s => s.Name).OrderBy(n => n).SelectMany(v => Enumerable.Repeat(v, 2)).ToList();
@@ -179,7 +179,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_SelectMany_ArrayOfAnonymousType_From_ArrayOfRealType_WithRandom()
         {
             var sensors = client.GetSensors().Select(s => s.Name).OrderBy(n => n).SelectMany(v => new[] {v, "hello"}).ToList();
@@ -200,14 +200,14 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_SelectMany_WithResultSelector_ToSelect()
         {
             Execute(q => q.SelectMany(s => s.Tags, (s, c) => s.Id).Select(s => s), s => s.ToList());
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_SelectMany_WithResultSelector_UsingBothArgs_ToSelect()
         {
             var tags = client.GetSensors().SelectMany(s => s.Tags).OrderBy(t => t).ToList();
@@ -220,7 +220,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_SelectMany_WithResultSelector_UsingBothArgs_ToWhere()
         {
             var upSensor = client.GetSensor(Settings.UpSensor);
@@ -237,7 +237,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_SelectManyTests_HasAllTests()
         {
             HasAllTests(typeof(Unit.SelectManyTests));

@@ -12,8 +12,8 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
     [TestClass]
     public class CancellationTests
     {
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Cancellation_CancelsSynchronous()
         {
             var client = BaseTest.Initialize_Client(new MultiTypeResponse());
@@ -27,8 +27,8 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public async Task Cancellation_CancelsAsynchronous()
         {
             var client = BaseTest.Initialize_Client(new MultiTypeResponse());
@@ -42,8 +42,8 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public async Task Cancellation_CancelsWaitOneAsync()
         {
             var cts = new CancellationTokenSource();
@@ -57,8 +57,8 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             await AssertEx.ThrowsAsync<TaskCanceledException>(async () => await task, "A task was canceled.");
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Cancellation_CancelsLazy()
         {
             var client = BaseTest.Initialize_Client(new NotificationActionResponse(new NotificationActionItem())
@@ -78,8 +78,8 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             }, "A task was canceled.");
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public async Task Cancellation_CancelsLazyAsync()
         {
             var client = BaseTest.Initialize_Client(new NotificationActionResponse(new NotificationActionItem())

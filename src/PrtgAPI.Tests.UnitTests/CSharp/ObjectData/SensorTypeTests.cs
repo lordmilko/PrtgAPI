@@ -9,8 +9,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
     [TestClass]
     public class SensorTypeTests : BaseTest
     {
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void SensorType_CanExecute()
         {
             Execute(
@@ -28,8 +28,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public async Task SensorType_CanExecuteAsync()
         {
             await ExecuteAsync(
@@ -47,8 +47,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void SensorType_ReadOnly()
         {
             var client = Initialize_ReadOnlyClient(new MultiTypeResponse());
@@ -58,8 +58,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             AssertEx.AllPropertiesRetrieveValues(result);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public async Task SensorType_ReadOnlyAsync()
         {
             var client = Initialize_ReadOnlyClient(new MultiTypeResponse());

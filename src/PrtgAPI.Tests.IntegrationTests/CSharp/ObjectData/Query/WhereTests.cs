@@ -13,7 +13,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         #region Overloads
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_Overload_TSourceBool_SingleCondition()
         {
             var upSensor = client.GetSensor(Settings.UpSensor);
@@ -26,7 +26,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_Overload_TSourceIntBool_SingleCondition_IgnoreIndex()
         {
             var name = "Ping";
@@ -43,7 +43,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_Overload_TSourceIntBool_SingleCondition_UseIndex()
         {
             var sensors = client.GetSensors();
@@ -57,7 +57,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_Overload_TSourceIntBool_FirstConditionIgnoreIndex_SecondConditionUseIndex()
         {
             var sensors = client.GetSensors(Property.Name, "Ping");
@@ -70,7 +70,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_Overload_TSourceIntBool_TwoMaybeIndex_YesNo()
         {
             var sensor = client.GetSensors().First();
@@ -82,7 +82,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_Overload_TSourceIntBool_TwoMaybeIndex_NoYes()
         {
             var sensor = client.GetSensors().First();
@@ -94,7 +94,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_Overload_TSourceIntBool_TwoMaybeIndex_YesYes()
         {
             var sensor = client.GetSensors().First();
@@ -106,7 +106,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_Overload_TSourceIntBool_ThreeMaybeIndex_YesNoNo()
         {
             var sensor = client.GetSensors().First();
@@ -123,7 +123,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_Overload_TSourceIntBool_ThreeMaybeIndex_NoYesNo()
         {
             var sensor = client.GetSensors().First();
@@ -140,7 +140,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_Overload_TSourceIntBool_ThreeMaybeIndex_NoNoYes()
         {
             var sensor = client.GetSensors().First();
@@ -157,7 +157,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_Overload_TSourceIntBool_ThreeMaybeIndex_YesYesNo()
         {
             var sensor = client.GetSensors().First();
@@ -174,7 +174,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_Overload_TSourceIntBool_ThreeMaybeIndex_NoYesYes()
         {
             var sensor = client.GetSensors().First();
@@ -191,7 +191,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_Overload_TSourceIntBool_ThreeMaybeIndex_YesNoYes()
         {
             var sensor = client.GetSensors().First();
@@ -208,7 +208,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_Overload_TSourceIntBool_ThreeMaybeIndex_YesYesYes()
         {
             var sensor = client.GetSensors().First();
@@ -228,7 +228,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         #region Serialization
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_Serialize_TimeSpan()
         {
             var sensors = client.GetSensors();
@@ -253,7 +253,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_Serialize_DateTime()
         {
             var sensors = client.GetSensors();
@@ -271,7 +271,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_Serialize_NullableValue()
         {
             var unknown = client.GetSensor(Settings.UnknownSensor);
@@ -287,7 +287,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         #region Operators
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_Operators()
         {
             var sensors = client.GetSensors().OrderBy(s => s.Id).ToList();
@@ -305,7 +305,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_Operators_Backwards()
         {
             var sensors = client.GetSensors().OrderBy(s => s.Id).ToList();
@@ -323,14 +323,14 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_Operators_Equals_EmptyString()
         {
             ExecuteFilter(s => s.Name == string.Empty, s => Assert.AreEqual(0, s.Count));
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_Operators_Contains_IntToString()
         {
             var expected = client.GetSensors().Count(s => s.Id.ToString().Contains("20"));
@@ -339,14 +339,14 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_Operators_Equals_IntToString()
         {
             ExecuteFilter(s => s.Id.ToString() == Settings.DownSensor.ToString(), s => AssertEx.AreEqual(1, s.Count, "Did not return correct number of sensors"));
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_Operators_Equals_NullableDoubleToString()
         {
             var mostCommon = client.GetSensors().Where(s => s.LastValue > 0).GroupBy(s => s.LastValue).OrderBy(s => s.Key).First();
@@ -355,7 +355,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_Operators_Contains_StructToString()
         {
             FilterTests.Retry(retry =>
@@ -372,14 +372,14 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_Operators_Contains_ClassToString()
         {
             ExecuteFilter(s => s.NotificationTypes.ToString().Contains("Volume"), s => AssertEx.AreEqual(Settings.SensorsInTestServer, s.Count, "Did not match all sensors"));
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_Operators_Contains_EnumToString()
         {
             var expected = client.GetSensors().Count(s => s.Status == Status.Up);
@@ -388,7 +388,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_StartsWith()
         {
             var expected = client.GetSensors().Count(s => s.Name.StartsWith("Pi"));
@@ -397,7 +397,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_Operators_Fake_EndsWith()
         {
             var expected = client.GetSensors().Count(s => s.Name.EndsWith("ng"));
@@ -406,7 +406,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_Operators_Fake_StartsWith_Take()
         {
             ExecuteClient(
@@ -416,7 +416,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_Operators_Fake_EndsWith_Take()
         {
             ExecuteClient(
@@ -429,7 +429,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         #region Server Logic
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_ServerLogic_DifferentProperties_And_SingleQuery()
         {
             var upSensor = client.GetSensor(Settings.UpSensor);
@@ -443,7 +443,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_ServerLogic_DifferentProperties_Or()
         {
             var upSensor = client.GetSensor(Settings.UpSensor);
@@ -456,7 +456,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_ServerLogic_SameProperty_And_SingleQuery()
         {
             var first = client.GetSensor(Settings.UpSensor);
@@ -478,7 +478,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_ServerLogic_SameProperty_Or()
         {
             var first = client.GetSensor(Settings.UpSensor);
@@ -496,7 +496,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_ServerLogic_SamePropertyOr_AndDifferentProperty()
         {
             var first = client.GetSensor(Settings.UpSensor);
@@ -513,7 +513,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_ServerLogic_SameProperty_And_TwoQueries()
         {
             var upSensor = client.GetSensor(Settings.UpSensor);
@@ -532,7 +532,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_ServerLogic_DifferentProperties_And_TwoQueries()
         {
             var upSensor = client.GetSensor(Settings.UpSensor);
@@ -548,7 +548,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_ServerLogic_DifferentProperties_And_ThreeQueries()
         {
             var sensor = client.GetSensors(Property.Name, "Ping").First();
@@ -567,7 +567,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         #region Boolean Property Logic
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_Boolean_IsExplicitlyTrue()
         {
             var activeCount = client.GetSensors().Count(s => s.Active);
@@ -576,14 +576,14 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_BooleanExpression_IsExplicitlyTrue_OnLeft()
         {
             ExecuteFilter(s => true == (s.Id == Settings.UpSensor), s => AssertEx.AreEqual(1, s.Count, "Did not return correct number of sensors"));
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_Boolean_IsExplicitlyFalse()
         {
             var inactiveCount = client.GetSensors().Count(s => !s.Active);
@@ -592,7 +592,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_Boolean_IsImplicitlyTrue()
         {
             var activeCount = client.GetSensors().Count(s => s.Active);
@@ -601,21 +601,21 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_Boolean_IsImplicitlyTrue_AndCondition()
         {
             ExecuteFilter(s => s.Active && s.Id == Settings.UpSensor, s => AssertEx.AreEqual(1, s.Count, "Did not return correct number of sensors"));
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_Boolean_IsImplicitlyTrue_OrCondition()
         {
             ExecuteFilter(s => s.Active || !s.Active, s => AssertEx.AreEqual(Settings.SensorsInTestServer, s.Count, "Did not return correct number of sensors"));
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_Boolean_NotEqualsTrue()
         {
             var inactiveCount = client.GetSensors().Count(s => !s.Active);
@@ -624,7 +624,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_Boolean_NotEqualsFalse()
         {
             var activeCount = client.GetSensors().Count(s => s.Active);
@@ -633,7 +633,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_Boolean_IsNotTrue()
         {
             var inactiveCount = client.GetSensors().Count(s => !s.Active);
@@ -642,7 +642,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_Boolean_IsNotNotTrue()
         {
             var activeCount = client.GetSensors().Count(s => s.Active);
@@ -654,7 +654,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         #region Enum Property Logic
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_Enum_Normal()
         {
             var upSensors = client.GetSensors().Count(s => s.Status == Status.Up);
@@ -663,7 +663,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_Enum_ToString()
         {
             var upSensors = client.GetSensors().Where(s => s.Status == Status.Up).Count();
@@ -672,21 +672,21 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_Enum_ToString_IllegalString()
         {
             ExecuteFilter(s => s.Status.ToString() == "Banana", s => AssertEx.AreEqual(0, s.Count, "Did not return correct number of sensors"));
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_Enum_AgainstDifferentEnumType_DifferentNumber()
         {
             ExecuteFilter(s => ((Enum)s.Status).Equals((Enum)RetryMode.Retry), s => AssertEx.AreEqual(0, s.Count, "Did not return correct number of sensors"));
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_Enum_AgainstDifferentEnumType_ManualExpression()
         {
             var lambda = Unit.BaseExpressionTest.CreateLambda(Property.Status, s =>
@@ -703,21 +703,21 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_Enum_AgainstDifferentEnumType_DifferentNumber_RightToLeft()
         {
             ExecuteFilter(s => ((Enum)RetryMode.Retry).Equals((Enum)s.BaseType), s => AssertEx.AreEqual(0, s.Count, "Did not return correct number of sensors"));
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_Enum_AgainstDifferentEnumType_Method()
         {
             ExecuteFilter(s => ((Enum)s.Status).Equals(SomeEnum(s)), s => AssertEx.AreEqual(0, s.Count, "Did not return correct number of sensors"));
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_Enum_AgainstDifferentEnumType_NoCast()
         {
             ExecuteFilter(s => s.Status.Equals(RetryMode.Retry), s => AssertEx.AreEqual(0, s.Count, "Did not return correct number of sensors"));
@@ -729,14 +729,14 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_Enum_AgainstDifferentEnumType_SameNumber()
         {
             ExecuteFilter(s => ((Enum)s.BaseType).Equals((Enum)AuthMode.PassHash), s => AssertEx.AreEqual(0, s.Count, "Did not return correct number of sensors"));
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_Enum_AgainstDifferentEnumType_ToString()
         {
             ExecuteFilter(s => (((Enum)s.Status).ToString()).Equals(((Enum)RetryMode.Retry).ToString()), s => AssertEx.AreEqual(0, s.Count, "Did not return correct number of sensors"));
@@ -746,7 +746,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         #region Illegal Logic
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_IllegalLogic_Property_EqualsNull()
         {
             var unknown = client.GetSensors().Where(s => s.LastUp == null).OrderBy(s => s.Id).ToList();
@@ -758,7 +758,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_IllegalLogic_PropertyOrDifferent_And_Property()
         {
             var upSensor = client.GetSensor(Settings.UpSensor);
@@ -778,7 +778,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_IllegalLogic_PropertyAndProperty_Or_Different()
         {
             var count = client.GetSensors().Where(s => (s.Name.Contains("Pi") && s.Name.Contains("ng")) || s.ParentId == Settings.Device).Count();
@@ -791,14 +791,14 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_IllegalLogic_Property1_Against_Property2()
         {
             ExecuteFilter(s => s.Name == s.Message, s => AssertEx.AreEqual(0, s.Count, "Did not return correct number of sensors"));
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_IllegalLogic_IllegalMethod_EqualsValue()
         {
             var startsWithPi = client.GetSensors().Count(s => s.Name.Substring(0, 2) == "Pi");
@@ -809,7 +809,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_IllegalLogic_InternalLambda()
         {
             var count = client.GetSensors().Where(s => s.Tags.Where(t => t.Contains("wmi")).Any()).Count();
@@ -821,7 +821,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_IllegalLogic_PropertyMember()
         {
             var upToday = client.GetSensors().Where(s => s.LastUp?.DayOfWeek == DateTime.Now.DayOfWeek).OrderBy(s => s.Id).ToList();
@@ -833,7 +833,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_IllegalLogic_PropertyMethod()
         {
             var startsWithPi = client.GetSensors().Where(s => s.Name.StartsWith("Pi")).Count();
@@ -848,7 +848,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         #region Negated Conditions
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_Negation_EqualsFalse_Supported()
         {
             var sensors = client.GetSensors().OrderBy(s => s.Id).ToList();
@@ -865,7 +865,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_Negation_EqualsFalse_RightToLeft()
         {
             ExecuteFilter(
@@ -875,7 +875,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_Negation_NotContains_EqualsFalse()
         {
             var containsPi = client.GetSensors().Where(s => s.Name.Contains("Pi")).Count();
@@ -887,7 +887,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_Negation_NotContains_EqualsCastedFalse()
         {
             var containsPi = client.GetSensors().Where(s => s.Name.Contains("Pi")).Count();
@@ -912,7 +912,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_Negation_NotNotContains_EqualsFalse()
         {
             var sensors = client.GetSensors().Where(s => !s.Name.Contains("Pi")).Count();
@@ -921,7 +921,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_Negation_NotNotContains_EqualsFalse_RightToLeft()
         {
             var sensors = client.GetSensors().Where(s => !s.Name.Contains("Pi")).Count();
@@ -930,7 +930,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_Negation_EqualsFalse_Twice_Supported()
         {
             var sensors = client.GetSensors().Where(s => s.Name == "Ping").Count();
@@ -939,7 +939,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_Negation_Not_Supported()
         {
             var sensors = client.GetSensors().OrderBy(s => s.Id).ToList();
@@ -957,7 +957,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_Negation_NotEqualsTrue_Supported()
         {
             var sensors = client.GetSensors().OrderBy(s => s.Id).ToList();
@@ -975,7 +975,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_Negation_NotEqualsFalse_Supported()
         {
             var sensors = client.GetSensors().OrderBy(s => s.Id).ToList();
@@ -993,7 +993,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_Negation_NotEqualsFalse_RightToLeft()
         {
             var sensors = client.GetSensors().Count(s => s.Name == "Ping");
@@ -1005,7 +1005,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         #region Nested Queries
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_Sensors_MatchAnyDevices()
         {
             var sensor = client.GetSensor(Settings.UpSensor);
@@ -1020,7 +1020,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         #region Cast
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_Cast_Enum_To_TypedEnum()
         {
             var upSensors = client.GetSensors(Status.Up).Count;
@@ -1029,7 +1029,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_Cast_Enum_To_UntypedEnum()
         {
             var upSensors = client.GetSensors(Status.Up).Count;
@@ -1038,7 +1038,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_Cast_Int_To_Enum()
         {
             var upSensors = client.GetSensors(Status.Up).Count;
@@ -1047,7 +1047,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_Cast_NullableDouble_To_Int()
         {
             FilterTests.Retry(retry =>
@@ -1061,19 +1061,19 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_Cast_Int_To_Double() => ExecuteFilter(s => (double)s.Id == 1001.0, s => AssertEx.AreEqual(1, s.Count, "Did not return correct number of sensors"));
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_Cast_Int_To_Illegal() => ExecuteFilter(s => (Unit.IllegalInt)s.Id == Settings.UpSensor, s => AssertEx.AreEqual(1, s.Count, "Did not return correct number of sensors"));
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_Cast_Int_To_NullableInt() => ExecuteFilter(s => (int?)s.Id == Settings.UpSensor, s => AssertEx.AreEqual(1, s.Count, "Did not return correct number of sensors"));
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_Cast_NullableBool_To_Bool()
         {
             var active = client.GetSensors().Where(s => s.Active).Count();
@@ -1082,7 +1082,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_Cast_Object_To_Type()
         {
             var active = client.GetSensors().Where(s => s.Active).Count();
@@ -1091,19 +1091,19 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_Cast_Object_To_NullableType() => ExecuteFilter(s => (int?)(object)s.Id == Settings.UpSensor, s => AssertEx.AreEqual(1, s.Count, "Did not return correct number of sensors"));
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_Cast_Type_To_Object() => ExecuteFilter(s => ((object)s.Id).Equals((object)Settings.UpSensor), s => AssertEx.AreEqual(1, s.Count, "Did not return correct number of sensors"));
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_Cast_Type_To_Object_OperatorEquality() => ExecuteFilter(s => (object)s.Id == (object)Settings.UpSensor, s => AssertEx.AreEqual(0, s.Count, "Did not return correct number of sensors"));
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_Cast_NullableType_To_Object()
         {
             var uptime = client.GetSensors(Property.Tags, FilterOperator.Contains, "wmiuptime").Single();
@@ -1112,7 +1112,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_Cast_IsImplicitlyTrue()
         {
             var active = client.GetSensors().Where(s => s.Active).Count();
@@ -1121,21 +1121,21 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_Cast_Condition_EqualsFalse()
         {
             ExecuteFilter(s => ((bool)(object)(s.Id == Settings.UpSensor)) == false, s => AssertEx.AreEqual(Settings.SensorsInTestServer - 1, s.Count, "Did not return correct number of sensors"));
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_Cast_Condition_EqualsTrue()
         {
             ExecuteFilter(s => ((bool)(object)(s.Id == Settings.UpSensor)) == true, s => AssertEx.AreEqual(1, s.Count, "Did not return correct number of sensors"));
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_Cast_Property_EqualsFalse()
         {
             var inactive = client.GetSensors().Where(s => !s.Active).Count();
@@ -1144,7 +1144,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_Cast_Property_EqualsTrue()
         {
             var active = client.GetSensors().Where(s => s.Active).Count();
@@ -1153,35 +1153,35 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_Cast_Condition_ToNullableBool()
         {
             ExecuteFilter(s => ((bool?)(object)(s.Id == Settings.UpSensor)) == false, s => AssertEx.AreEqual(Settings.SensorsInTestServer - 1, s.Count, "Did not return correct number of sensors"));
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_Cast_Condition_Bool()
         {
             ExecuteFilter(s => ((bool)(object)(s.Id == Settings.UpSensor)) == false, s => AssertEx.AreEqual(Settings.SensorsInTestServer - 1, s.Count, "Did not return correct number of sensors"));
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_Cast_Condition_EqualsBool()
         {
             ExecuteFilter(s => ((bool)(object)(s.Id == Settings.UpSensor)).Equals(false), s => AssertEx.AreEqual(Settings.SensorsInTestServer - 1, s.Count, "Did not return correct number of sensors"));
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_Cast_Condition_EqualsInt()
         {
             ExecuteFilter(s => ((bool)(object)(s.Id == Settings.UpSensor)).Equals(3), s => AssertEx.AreEqual(0, s.Count, "Did not return correct number of sensors"));
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_Cast_Condition_ContainsString()
         {
             //Can't reduce further since Contains("False") would require the FALSE ones, which could
@@ -1190,14 +1190,14 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_Cast_Condition_ContainsCondition()
         {
             ExecuteFilter(s => ((bool)(object)(s.Id == Settings.UpSensor)).ToString().Contains((s.ParentId == Settings.UpSensor).ToString()), s => AssertEx.AreEqual(Settings.SensorsInTestServer - 1, s.Count, "Did not return correct number of sensors"));
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_Cast_Property_Enum()
         {
             var up = client.GetSensors(Status.Up).Count;
@@ -1209,7 +1209,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         #region AsEnumerable / AsQueryable
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_WrapProperty_Add()
         {
             ExecuteFilter(s => s.Id + 3 == 4, s =>
@@ -1219,7 +1219,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_AsEnumerable_AsQueryable()
         {
             ExecuteClient(
@@ -1229,7 +1229,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_AsEnumerable_AsQueryable_QueryableMethod()
         {
             var sensor = client.GetSensor(Settings.UpSensor);
@@ -1241,7 +1241,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_AsEnumerable_EnumerableMethod_AsQueryable()
         {
             var sensor = client.GetSensor(Settings.UpSensor);
@@ -1253,7 +1253,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_AsEnumerable_EnumerableMethod_AsQueryable_QueryableMethod()
         {
             var sensor = client.GetSensor(Settings.UpSensor);
@@ -1271,7 +1271,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         #region Null Access
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_NullAccess_BoolMethod_OnNullProperty()
         {
             ExecuteNullable(
@@ -1283,7 +1283,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_NullAccess_NonBoolMethod_OnNullProperty()
         {
             ExecuteNullable(
@@ -1295,7 +1295,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_NullAccess_BoolMethod_OnMethod_OnNullProperty()
         {
             ExecuteNullable(
@@ -1307,7 +1307,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_NullAccess_NonBoolMethod_OnMethod_OnNullProperty()
         {
             AssertEx.Throws<NullReferenceException>(() =>
@@ -1323,7 +1323,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_NullAccess_NonBoolPropertyAccess_OnNullProperty()
         {
             AssertEx.Throws<NullReferenceException>(() =>
@@ -1333,7 +1333,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_NullAccess_NonBoolPropertyAccess_OnMethod_OnNullProperty()
         {
             AssertEx.Throws<NullReferenceException>(() =>
@@ -1348,7 +1348,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_NullAccess_Value_OfNullProperty()
         {
             ExecuteNullable(
@@ -1373,7 +1373,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         #region Intermediate Types
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_Intermediate_AnonymousType()
         {
             ExecuteFilter(s => new
@@ -1383,7 +1383,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_Intermediate_NewSensorType_Single()
         {
             var sensor = client.GetSensor(Settings.UpSensor);
@@ -1395,7 +1395,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_Intermediate_NewSensor_ToWhere()
         {
             var sensor = client.GetSensor(Settings.UpSensor);
@@ -1407,7 +1407,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_Intermediate_NewSensor_Select_FromSource()
         {
             var sensor = client.GetSensor(Settings.UpSensor);
@@ -1422,7 +1422,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         #region Split Requests
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_SplitRequests_Logs_Select_SingleSet_ReduceParameters()
         {
             var upSensor = client.GetSensor(Settings.UpSensor);
@@ -1434,7 +1434,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_SplitRequests_Logs_Select_MultipleSets_AllParameters()
         {
             var first = client.GetSensor(Settings.UpSensor);
@@ -1447,7 +1447,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_SplitRequests_OmitsId_WithSingleRequest()
         {
             var count = client.GetSensors(Property.Name, "Ping").Count;
@@ -1463,7 +1463,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Where_SplitRequests_IncludesId_WithMultipleRequests()
         {
             var sensors = client.GetSensors().Where(s => s.Name == "Ping" || s.Device == Settings.DeviceName);
@@ -1478,7 +1478,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         #region Type Constraints
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Where_TypeConstraints_SinglePredicate_ConstraintPropertiesOnly()
         {
             var pingCount = client.GetSensors().Count(s => s.Name.Contains("Ping"));
@@ -1487,7 +1487,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Where_TypeConstraints_SinglePredicate_BaseType()
         {
             var pingCount = client.GetSensors().Count(s => s.Name.Contains("Ping"));
@@ -1496,7 +1496,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Where_TypeConstraints_TwoInterfaces()
         {
             var pingCount = client.GetSensors().Count(s => s.Name.Contains("Ping"));
@@ -1507,7 +1507,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         #endregion
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_WhereTests_HasAllTests()
         {
             HasAllTests(typeof(Unit.WhereTests));

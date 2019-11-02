@@ -10,7 +10,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
     public class SystemInfoTests : BasePrtgClientTest
     {
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_SystemInformation_RetrievesFromProbe()
         {
             var info = client.GetSystemInfo(Settings.Probe);
@@ -19,7 +19,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_SystemInformation_RetrievesFromGroup()
         {
             var info = client.GetSystemInfo(Settings.Group);
@@ -28,7 +28,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_SystemInformation_RetrievesFromDevice()
         {
             var info = client.GetSystemInfo(Settings.Device);
@@ -42,7 +42,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_SystemInformation_RetrievesFromSensor()
         {
             var info = client.GetSystemInfo(Settings.UpSensor);
@@ -51,7 +51,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_SystemInformation_RetrievesFromNotificationAction()
         {
             var info = client.GetSystemInfo(Settings.NotificationAction);
@@ -60,7 +60,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_SystemInformation_RetrievesFromNewDevice()
         {
             Device device = null;
@@ -83,14 +83,14 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_SystemInformation_RetrievesFromInvalidId()
         {
             AssertEx.Throws<PrtgRequestException>(() => client.GetSystemInfo(2), "Sorry, there is no object with the specified id.");
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_SystemInformation_RetrievesFromNewNonexistantDevice()
         {
             Device device = null;
@@ -113,7 +113,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_SystemInfo_ReadOnlyUser()
         {
             var info = readOnlyClient.GetSystemInfo(Settings.Device);
@@ -125,7 +125,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public async Task Data_SystemInfo_ReadOnlyUserAsync()
         {
             var info = await readOnlyClient.GetSystemInfoAsync(Settings.Device);

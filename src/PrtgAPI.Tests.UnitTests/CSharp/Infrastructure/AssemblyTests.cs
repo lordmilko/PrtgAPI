@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Management.Automation;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -27,8 +28,8 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
     [TestClass]
     public class AssemblyTests
     {
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void PrtgCmdletTypes_DontImplement_ProcessRecord()
         {
             var assembly = Assembly.GetAssembly(typeof(PrtgCmdlet));
@@ -42,8 +43,8 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             }
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void PrtgOperationCmdlets_Implement_Id()
         {
             var assembly = Assembly.GetAssembly(typeof(PrtgCmdlet));
@@ -79,8 +80,8 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             }
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void AllRequestVersions_HaveVersionMaps()
         {
             var values = Enum.GetValues(typeof(RequestVersion)).Cast<RequestVersion>().ToList();
@@ -93,8 +94,8 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             }
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void ObjectPropertyFields_Have_ObjectPropertyCategories()
         {
             var values = Enum.GetValues(typeof (ObjectProperty)).Cast<ObjectProperty>().ToList();
@@ -105,8 +106,8 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             }
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void InjectedProperties_On_ILazy_AreMarkedInternal()
         {
             var assembly = Assembly.GetAssembly(typeof(PrtgCmdlet));
@@ -133,8 +134,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
 
 #if WINDOWS
         [TestMethod]
-        [TestCategory("SkipCI")]
-        [TestCategory("UnitTest")]
+        [UnitTest(TestCategory.SkipCI)]
         public void AllTextFiles_UseSpaces_AndCRLF()
         {
             var path = TestHelpers.GetProjectRoot(true);
@@ -184,8 +184,8 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
         }
 #endif
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void AllTextFiles_UseEnvironmentNewLine_AndNotCRLF()
         {
             var path = TestHelpers.GetProjectRoot(true);
@@ -279,8 +279,8 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             return true;
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void AllReflection_UsesCacheManagers()
         {
             WithTree((file, tree, model) =>
@@ -293,8 +293,8 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             });
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void AllPowerShell_UsesErrorRecords()
         {
             var allowedUsages = new object[]
@@ -434,8 +434,8 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             throw new InvalidOperationException($"Don't know how to get the member name of {member}");
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void AllPublicAsyncMethods_AcceptACancellationToken_OrHaveAnOverloadThatDoes()
         {
             var methods = typeof(PrtgClient).GetMethods().Where(m => m.Name.EndsWith("Async"));
@@ -455,8 +455,8 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             }
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public async Task AllPublicAsyncMethods_FailWithACancelledCancellationToken()
         {
             var methods = typeof(PrtgClient).GetMethods().Where(m => m.Name.EndsWith("Async"));
@@ -596,8 +596,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
         }
 
         [TestMethod]
-        [TestCategory("SlowCoverage")]
-        [TestCategory("UnitTest")]
+        [UnitTest(TestCategory.SkipCoverage)]
         public void AllAwaits_Call_ConfigureAwaitFalse()
         {
             WithTree((file, tree, model) =>
@@ -642,8 +641,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
         }
 
         [TestMethod]
-        [TestCategory("SlowCoverage")]
-        [TestCategory("UnitTest")]
+        [UnitTest(TestCategory.SkipCoverage)]
         public void AllPowerShellExamples_Have_ProperSpacingBetweenEachOne()
         {
             WithTree((file, tree, model) =>
@@ -708,16 +706,14 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
         }
 
         [TestMethod]
-        [TestCategory("SlowCoverage")]
-        [TestCategory("UnitTest")]
+        [UnitTest(TestCategory.SkipCoverage)]
         public void All_PrtgAPI_ExceptionMessages_EndInAPeriod()
         {
             WithTree(AllExceptionMessages_EndInAPeriodInternal);
         }
 
         [TestMethod]
-        [TestCategory("SlowCoverage")]
-        [TestCategory("UnitTest")]
+        [UnitTest(TestCategory.SkipCoverage)]
         public void All_PowerShell_ExceptionMessages_EndInAPeriod()
         {
             WithTree(AllExceptionMessages_EndInAPeriodInternal, true);
@@ -810,8 +806,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
         }
 
         [TestMethod]
-        [TestCategory("SlowCoverage")]
-        [TestCategory("UnitTest")]
+        [UnitTest(TestCategory.SkipCoverage)]
         public void AllPowerShellCmdlets_HaveOnlineHelp()
         {
             WithTree((file, tree, model) =>
@@ -852,8 +847,8 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             }, true);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void AllDebuggerDisplayProperties_AreDebuggerHidden_WithNoCodeCoverage()
         {
             var types = typeof(PrtgClient).Assembly.GetTypes().ToList();
@@ -879,6 +874,40 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
 
                 if (browsable.State != DebuggerBrowsableState.Never)
                     Assert.Fail($"Property '{property}' on type '{property.DeclaringType}' had a {nameof(DebuggerBrowsableAttribute)} of state '{browsable.State}' instead of '{DebuggerBrowsableState.Never}'");
+            }
+        }
+
+        [UnitTest]
+        [TestMethod]
+        public void AllUnitTestMethods_HaveUnitTestAttribute() => ValidateTestMethodCategory<UnitTestAttribute>(GetType().Assembly);
+
+        public static void ValidateTestMethodCategory<TCategory>(Assembly assembly) where TCategory : TestCategoryBaseAttribute
+        {
+            var methods = assembly.GetTypes().SelectMany(TestHelpers.GetTests).ToArray();
+
+            foreach (var method in methods)
+            {
+                var category = method.GetCustomAttribute<TCategory>();
+
+                if (category == null)
+                    Assert.Fail($"Test '{method.Name}' in class '{method.DeclaringType}' is missing a '{typeof(TCategory).Name}'.");
+
+                var allowedTypes = new[]
+                {
+                    typeof(TCategory),
+                    typeof(TestMethodAttribute),
+                    typeof(AsyncStateMachineAttribute),
+                    typeof(DebuggerStepThroughAttribute)
+                };
+
+                var illegalAttributes = method.GetCustomAttributes().Where(a => !allowedTypes.Contains(a.GetType())).ToList();
+
+                if (illegalAttributes.Count > 0)
+                {
+                    var str = string.Join(", ", illegalAttributes.Select(a => a.GetType().Name));
+
+                    Assert.Fail($"Test '{method.Name}' in class '{method.DeclaringType}' is decorated with additional illegal types of type {str}.");
+                }
             }
         }
 

@@ -12,7 +12,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
     public class GetObjectProperties : BasePrtgClientTest
     {
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_GetObjectProperties_RetrievesAllRawProperties()
         {
             var dictionary = client.GetObjectPropertiesRaw(0, ObjectType.Group);
@@ -23,7 +23,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_GetObjectProperties_CanGetIndividualProperties()
         {
             var blacklist = new[]
@@ -78,7 +78,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_GetObjectProperties_Throws_RetrievingAnInvalidProperty()
         {
             Action action = () => client.GetObjectPropertyRaw(Settings.UpSensor, "banana");
@@ -95,21 +95,21 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_GetObjectProperties_IllegalXmlCharacter_NormalEndpoint()
         {
             TestIllegalXmlCharacter("first & second", Settings.CommentSensor, ObjectProperty.Name, s => s.Name);
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_GetObjectProperties_IllegalXmlCharacter_AlternateEndpoint()
         {
             TestIllegalXmlCharacter("first & second", Settings.CommentSensor, ObjectProperty.Comments, s => s.Comments);
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_GetObjectProperties_IllegalHtmlCharacter_NormalProperty()
         {
             TestIllegalXmlCharacter("Z:\\", Settings.UpSensor, ObjectProperty.Name, s => s.Name);
@@ -141,14 +141,14 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_GetObjectProperties_IllegalXmlCharacter_RawProperty()
         {
             TestIllegalCharacter_RawProperty("first & second");
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_GetObjectProperties_IllegalHtmlCharacter_RawProperty()
         {
             TestIllegalCharacter_RawProperty("Z:\\");
@@ -180,7 +180,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_ObjectProperties_ReadOnlyUser()
         {
             Action<Action> action = f => AssertEx.Throws<InvalidOperationException>(f, "Cannot retrieve properties for read-only");
@@ -192,7 +192,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public async Task Data_ObjectProperties_ReadOnlyUserAsync()
         {
             Func<Func<Task>, Task> action = f => AssertEx.ThrowsAsync<InvalidOperationException>(f, "Cannot retrieve properties for read-only");
@@ -204,14 +204,14 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_ObjectProperties_SplitsSpaceArray()
         {
             TestSplittableString("first second", new[] { "first", "second" });
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_ObjectProperties_SplitsCommaArray()
         {
             TestSplittableString("first,second", new[] { "first", "second" });

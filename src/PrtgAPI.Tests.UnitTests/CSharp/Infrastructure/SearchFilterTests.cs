@@ -6,8 +6,8 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
     [TestClass]
     public class SearchFilterTests
     {
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void SearchFilter_OperatorEquals_EmptyString()
         {
             AssertEx.Throws<ArgumentException>(() => new SearchFilter(Property.Name, string.Empty), "Search Filter value cannot be an empty string.");
@@ -15,22 +15,22 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             var filter = new SearchFilter(Property.Name, FilterOperator.Equals, string.Empty, FilterMode.Illegal);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void SearchFilter_OperatorEquals_ToString_CorrectFormat()
         {
             Operator_ToString_CorrectFormat(FilterOperator.Equals, s => s);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void SearchFilter_OperatorContains_ToString_CorrectFormat()
         {
             Operator_ToString_CorrectFormat(FilterOperator.Contains, s => $"@sub({s})");
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void SearchFilter_OperatorNotEquals_ToString_CorrectFormat()
         {
             AssertEx.Throws<NotSupportedException>(
@@ -39,22 +39,22 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void SearchFilter_OperatorGreaterThan_ToString_CorrectFormat()
         {
             Operator_ToString_CorrectFormat(FilterOperator.GreaterThan, s => $"@above({s})", FilterMode.Illegal);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void SearchFilter_OperatorLessThan_ToString_CorrectFormat()
         {
             Operator_ToString_CorrectFormat(FilterOperator.LessThan, s => $"@below({s})", FilterMode.Illegal);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void SearchFilter_EnumValue_WithXmlEnum_CorrectFormat()
         {
             ToString_CorrectFormat(Property.Priority, FilterOperator.Equals, Priority.Four, "priority", "4");

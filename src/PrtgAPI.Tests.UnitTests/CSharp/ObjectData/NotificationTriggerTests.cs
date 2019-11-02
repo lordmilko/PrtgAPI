@@ -20,16 +20,16 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
     {
         #region Normal
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void NotificationTrigger_CanDeserialize() => Object_CanDeserialize_Multiple();
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public async Task NotificationTrigger_CanDeserializeAsync() => await Object_CanDeserializeAsync_Multiple();
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void NotificationTrigger_AllFields_HaveValues()
         {
             var objs = GetMultipleItems();
@@ -64,8 +64,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             }
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void NotificationTrigger_ResolvesASensorChannel()
         {
             var client = GetResolvesASensorChannelResponseClient();
@@ -75,8 +75,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             Assert.AreEqual(triggers.Channel.channel.GetType(), typeof (Channel));
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public async Task NotificationTrigger_ResolvesASensorChannelAsync()
         {
             var client = GetResolvesASensorChannelResponseClient();
@@ -96,8 +96,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             return client;
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void NotificationTrigger_Throws_WhenChannelCantBeResolved()
         {
             var client = Initialize_Client(new NotificationTriggerResponse(NotificationTriggerItem.ThresholdTrigger(channel: "Backup State")));
@@ -108,8 +108,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public async Task NotificationTrigger_Throws_WhenChannelCantBeResolvedAsync()
         {
             var client = Initialize_Client(
@@ -124,8 +124,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void NotificationTrigger_CanRemove()
         {
             var triggerClient = Initialize_Client(new NotificationTriggerResponse(NotificationTriggerItem.StateTrigger()));
@@ -137,8 +137,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public async Task NotificationTrigger_CanRemoveAsync()
         {
             var triggerClient = Initialize_Client(new NotificationTriggerResponse(NotificationTriggerItem.StateTrigger()));
@@ -150,8 +150,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public async Task NotificationTriggerTypes_CanExecuteAsync()
         {
             var client = Initialize_Client(new SetNotificationTriggerResponse());
@@ -159,8 +159,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             await client.GetNotificationTriggerTypesAsync(1001);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void NotificationTrigger_LoadsAction_Lazy()
         {
             var client = Initialize_Client(new NotificationTriggerResponse(NotificationTriggerItem.StateTrigger(offNotificationAction: "302|Email to all members of group PRTG Administrator")));
@@ -198,8 +198,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             Assert.IsTrue(validator.Finished, "Did not process all requests");
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public async Task NotificationTrigger_LoadsAction_Efficiently_WhenAsync()
         {
             var client = Initialize_Client(new NotificationTriggerResponse(
@@ -235,8 +235,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             Assert.IsTrue(validator.Finished, "Did not process all requests");
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void NotificationTrigger_LoadsSchedule_Lazy()
         {
             var client = Initialize_Client(new NotificationTriggerResponse(
@@ -298,8 +298,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             Assert.IsTrue(validator.Finished, "Did not process all requests");
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public async Task NotificationTrigger_LoadsSchedule_LazyAsync()
         {
             var client = Initialize_Client(new NotificationTriggerResponse(
@@ -353,8 +353,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             Assert.IsTrue(validator.Finished, "Did not process all requests");
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void NotificationTrigger_LoadsAction_Lazy_AllPropertiesAreSet()
         {
             var client = Initialize_Client(new NotificationTriggerResponse(NotificationTriggerItem.StateTrigger(offNotificationAction: "302|Email to all members of group PRTG Administrator")));
@@ -365,8 +365,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             AssertEx.AllPropertiesAreNotDefault(val);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public async Task NotificationTrigger_LoadsAction_Lazy_AllPropertiesAreSetAsync()
         {
             var client = Initialize_Client(new NotificationTriggerResponse(NotificationTriggerItem.StateTrigger(offNotificationAction: "302|Email to all members of group PRTG Administrator")));
@@ -377,8 +377,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             AssertEx.AllPropertiesAreNotDefault(val);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void NotificationTrigger_LoadsSchedule_Lazy_AllPropertiesAreSet()
         {
             var client = Initialize_Client(new NotificationTriggerResponse(
@@ -399,8 +399,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             });
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public async Task NotificationTrigger_LoadsSchedule_Lazy_AllPropertiesAreSetAsync()
         {
             var client = Initialize_Client(new NotificationTriggerResponse(
@@ -421,8 +421,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             });
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void NotificationTrigger_ReadOnlyUser()
         {
             var client = Initialize_ReadOnlyClient(new MultiTypeResponse());
@@ -439,8 +439,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             }
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public async Task NotificationTrigger_ReadOnlyUserAsync()
         {
             var client = Initialize_ReadOnlyClient(new MultiTypeResponse());
@@ -555,8 +555,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         #region Translation
         #region English vs. Foreign
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void NotificationTrigger_Translates_State()
         {
             var translation = GetStandardState();
@@ -564,8 +564,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             TestTriggerTranslation(translation);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void NotificationTrigger_Translates_Volume()
         {
             var translation = GetStandardVolume();
@@ -573,8 +573,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             TestTriggerTranslation(translation, true);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void NotificationTrigger_Translates_Speed()
         {
             var translation = GetStandardSpeed();
@@ -582,8 +582,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             TestTriggerTranslation(translation, true);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void NotificationTrigger_Translates_Threshold()
         {
             var translation = GetStandardThreshold();
@@ -591,8 +591,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             TestTriggerTranslation(translation, true);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void NotificationTrigger_Translates_Change()
         {
             var translation = GetStandardChange();
@@ -707,8 +707,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
 
         #endregion
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public async Task NotificationTrigger_Translates_TriggerAsync()
         {
             var translation = GetStandardState();
@@ -716,8 +716,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             await TestTriggerTranslationAsync(translation);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void NotificationTrigger_Translates_Enum_WithMismatchedRawName()
         {
             //e.g. triggers.json says TimeUnit is "Minute", but table.xml says "Min."
@@ -740,8 +740,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             Assert.AreEqual(TimeUnit.Minute, trigger.UnitTime);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void NotificationTrigger_Translates_InheritedOnly()
         {
             var xml = NotificationTriggerItem.SpeedTrigger(parentId: "2", condition: "以下の");
@@ -764,8 +764,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             Assert.AreEqual(TriggerCondition.Below, trigger.Condition);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void NotificationTrigger_Translates_InheritedAfterNormal()
         {
             var possibleConditions = new[] {"以上の", "以下の", "と同じ", "と同じでない"};
@@ -798,8 +798,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             Assert.AreEqual(TriggerCondition.Equals, triggers[1].Condition);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void NotificationTrigger_Translates_PrioritizesIdByCount()
         {
             var obj1aXml = NotificationTriggerItem.VolumeTrigger(parentId: "1", subId: "1");
@@ -844,8 +844,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
 
         #region Non Inherited, Cache
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void NotificationTrigger_Translates_UsingCache_NonInherited_State()
         {
             var translation = GetStandardState();
@@ -853,8 +853,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             TestTranslationCache(translation);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void NotificationTrigger_Translates_UsingCache_NonInherited_Volume()
         {
             var translation = GetStandardVolume();
@@ -862,8 +862,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             TestTranslationCache(translation, true);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void NotificationTrigger_Translates_UsingCache_NonInherited_Speed()
         {
             var translation = GetStandardSpeed();
@@ -871,8 +871,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             TestTranslationCache(translation, true);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void NotificationTrigger_Translates_UsingCache_NonInherited_Threshold()
         {
             var translation = GetStandardThreshold();
@@ -880,8 +880,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             TestTranslationCache(translation, true);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void NotificationTrigger_Translates_UsingCache_NonInherited_Change()
         {
             var translation = GetStandardChange();
@@ -889,8 +889,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             TestTranslationCache(translation);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void NotificationTrigger_Translates_UsingCache_NonInherited_NoAction_Change()
         {
             var changeConfig = new object[]
@@ -908,8 +908,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
 
         #endregion
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void NotificationTrigger_Translates_InheritedAfterNormal_SomePropertiesMissing()
         {
             var firstPossibleConditions = new[] { "以上の", "以下の", };
@@ -944,8 +944,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             Assert.AreEqual(TriggerCondition.Equals, triggers[1].Condition);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void NotificationTrigger_Translates_NotificationAction_None()
         {
             var xml = NotificationTriggerItem.SpeedTrigger(onNotificationAction: "-1|なし|");
@@ -966,8 +966,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             Assert.AreEqual("None", trigger.OnNotificationAction.Name);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void NotificationTrigger_Translates_NotificationAction_CachedInherited_None()
         {
             var xml = NotificationTriggerItem.SpeedTrigger(onNotificationAction: "-1|なし|", parentId: "2");
@@ -995,8 +995,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             CompareTranslatedProperties(trigger1, trigger2, new string[]{});
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void NotificationTrigger_Translates_NotificationAction_NotNull_Skips()
         {
             var xml = NotificationTriggerItem.SpeedTrigger(onNotificationAction: "302|Ticket Notification|ticketnoti:チケット", parentId: "2");
@@ -1016,8 +1016,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             Assert.AreEqual("Ticket Notification", trigger.OnNotificationAction.Name);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void NotificationTrigger_Translates_NotificationAction_NotNull_CachedInherited_Skips()
         {
             var xml = NotificationTriggerItem.SpeedTrigger(onNotificationAction: "302|Ticket Notification|ticketnoti:チケット", parentId: "2");
@@ -1045,8 +1045,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             CompareTranslatedProperties(trigger1, trigger2, new string[] {});
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void NotificationTrigger_Translates_Channel_Sensor()
         {
             var channelInput = new[]
@@ -1079,8 +1079,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
 
         #region Multiple Languages, Single Client
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void NotificationTrigger_Translates_MultipleLanguages_InOneSession_State()
         {
             var stateConfig = new object[]
@@ -1103,8 +1103,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             TestMultipleLanguageTriggerTranslation(translation);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void NotificationTrigger_Translates_MultipleLanguages_InOneSession_Volume()
         {
             var volumeConfig = new object[]
@@ -1126,8 +1126,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             TestMultipleLanguageTriggerTranslation(translation, true);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void NotificationTrigger_Translates_MultipleLanguages_InOneSession_Speed()
         {
             var speedConfig = new object[]
@@ -1153,8 +1153,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             TestMultipleLanguageTriggerTranslation(translation, true);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void NotificationTrigger_Translates_MultipleLanguages_InOneSession_Threshold()
         {
             var thresholdConfig = new object[]
@@ -1177,8 +1177,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             TestMultipleLanguageTriggerTranslation(translation, true);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void NotificationTrigger_Translates_MultipleLanguages_InOneSession_Change()
         {
             var changeConfig = new object[]

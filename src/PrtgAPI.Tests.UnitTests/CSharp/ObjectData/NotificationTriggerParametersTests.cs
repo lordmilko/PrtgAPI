@@ -16,43 +16,43 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
     #region Mandatory Fields Cannot Be Null
         #region Add
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void StateTriggerParameters_Add_MandatoryFields_CannotBeNull()
         {
             TriggerParameters_MandatoryFields_CannotBeNull(new StateTriggerParameters(1));
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void ChangeTriggerParameters_Add_MandatoryFields_CannotBeNull()
         {
             TriggerParameters_MandatoryFields_CannotBeNull(new ChangeTriggerParameters(1));
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void VolumeTriggerParameters_Add_MandatoryFields_CannotBeNull()
         {
             TriggerParameters_MandatoryFields_CannotBeNull(new VolumeTriggerParameters(1));
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void SpeedTriggerParameters_Add_MandatoryFields_CannotBeNull()
         {
             TriggerParameters_MandatoryFields_CannotBeNull(new SpeedTriggerParameters(1));
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void ThresholdTriggerParameters_Add_MandatoryFields_CannotBeNull()
         {
             TriggerParameters_MandatoryFields_CannotBeNull(new ThresholdTriggerParameters(1));
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void VolumeTriggerParameters_Add_ValidatesUnitSize()
         {
             var parameters = new VolumeTriggerParameters(1);
@@ -66,36 +66,36 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         #endregion
         #region Edit
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void StateTriggerParameters_Edit_CanSetUnsetValue()
         {
             TriggerParameters_Edit_CanSetUnsetValue(new StateTriggerParameters(1, 1));
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void ChangeTriggerParameters_Edit_CanSetUnsetValue()
         {
             TriggerParameters_Edit_CanSetUnsetValue(new ChangeTriggerParameters(1, 1));
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void VolumeTriggerParameters_Edit_CanSetUnsetValue()
         {
             TriggerParameters_Edit_CanSetUnsetValue(new VolumeTriggerParameters(1, 1));
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void SpeedTriggerParameters_Edit_CanSetUnsetValue()
         {
             TriggerParameters_Edit_CanSetUnsetValue(new SpeedTriggerParameters(1, 1));
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void ThresholdTriggerParameters_Edit_CanSetUnsetValue()
         {
             TriggerParameters_Edit_CanSetUnsetValue(new ThresholdTriggerParameters(1, 1));
@@ -173,8 +173,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
     #endregion
     #region All Properties Have Default Values
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void StateTriggerParameters_AllProperties_HaveDefault()
         {
             var parameters = new StateTriggerParameters(1, 1);
@@ -182,8 +182,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             TriggerParameters_AllProperties_HaveDefault(parameters);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void ChangeTriggerParameters_AllProperties_HaveDefault()
         {
             var parameters = new ChangeTriggerParameters(1);
@@ -191,8 +191,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             TriggerParameters_AllProperties_HaveDefault(parameters);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void VolumeTriggerParameters_AllProperties_HaveDefault()
         {
             var parameters = new VolumeTriggerParameters(1, 1);
@@ -200,8 +200,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             TriggerParameters_AllProperties_HaveDefault(parameters);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void SpeedTriggerParameters_AllProperties_HaveDefault()
         {
             var parameters = new SpeedTriggerParameters(1, 1);
@@ -209,8 +209,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             TriggerParameters_AllProperties_HaveDefault(parameters);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void ThresholdTriggerParameters_AllProperties_HaveDefault()
         {
             var parameters = new ThresholdTriggerParameters(1, 1);
@@ -244,8 +244,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
     #endregion
     #region All Properties Have Values
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void StateTriggerParameters_AllProperties_HaveValues()
         {
             var parameters = new StateTriggerParameters(1)
@@ -275,8 +275,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             TriggerParameters_AllProperties_HaveValues(parameters, additionalChecks);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void ChangeTriggerParameters_AllProperties_HaveValues()
         {
             var parameters = new ChangeTriggerParameters(1)
@@ -287,8 +287,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             TriggerParameters_AllProperties_HaveValues(parameters);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void VolumeTriggerParameters_AllProperties_HaveValues()
         {
             var parameters = new VolumeTriggerParameters(1)
@@ -302,8 +302,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             TriggerParameters_AllProperties_HaveValues(parameters);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void SpeedTriggerParameters_AllProperties_HaveValues()
         {
             var parameters = new SpeedTriggerParameters(1)
@@ -321,8 +321,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             TriggerParameters_AllProperties_HaveValues(parameters);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void ThresholdTriggerParameters_AllProperties_HaveValues()
         {
             var parameters = new ThresholdTriggerParameters(1)
@@ -363,8 +363,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         #endregion
     #region Create Parameters From Existing Trigger
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void StateTriggerParameters_Create_FromExistingTrigger()
         {
             var trigger = GetMultipleItems().First(t => t.Type == TriggerType.State);
@@ -373,8 +373,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             TriggerParameters_Create_FromExistingTrigger(trigger, parameters);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void ChangeTriggerParameters_Create_FromExistingTrigger()
         {
             var trigger = GetMultipleItems().First(t => t.Type == TriggerType.Change);
@@ -383,8 +383,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             TriggerParameters_Create_FromExistingTrigger(trigger, parameters);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void VolumeTriggerParameters_Create_FromExistingTrigger()
         {
             var trigger = GetMultipleItems().First(t => t.Type == TriggerType.Volume);
@@ -393,8 +393,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             TriggerParameters_Create_FromExistingTrigger(trigger, parameters);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void SpeedTriggerParameters_Create_FromExistingTrigger()
         {
             var trigger = GetMultipleItems().First(t => t.Type == TriggerType.Speed);
@@ -403,8 +403,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             TriggerParameters_Create_FromExistingTrigger(trigger, parameters);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void ThresholdTriggerParameters_Create_FromExistingTrigger()
         {
             var trigger = GetMultipleItems().First(t => t.Type == TriggerType.Threshold);
@@ -413,15 +413,15 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             TriggerParameters_Create_FromExistingTrigger(trigger, parameters);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void TriggerParameters_Create_FromNullTrigger()
         {
             AssertEx.Throws<ArgumentNullException>(() => new StateTriggerParameters(1234, null), $"Value cannot be null.{Environment.NewLine}Parameter name: sourceTrigger");
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void TriggerParameters_Create_FromInvalidTriggerType()
         {
             var trigger = GetMultipleItems().First(t => t.Type == TriggerType.State);

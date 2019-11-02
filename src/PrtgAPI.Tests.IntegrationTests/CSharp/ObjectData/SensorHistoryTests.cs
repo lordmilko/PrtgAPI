@@ -7,7 +7,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
     public class SensorHistoryTests : BasePrtgClientTest
     {
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_SensorHistory_SetsRawValues()
         {
             var history = client.GetSensorHistory(Settings.UpSensor);

@@ -8,8 +8,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
     [TestClass]
     public class FlagEnumTests
     {
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void FlagEnum_DefaultConstructor_ShouldBeDefaultValue()
         {
             var value = new FlagEnum<TreeNodeDifference>();
@@ -21,8 +21,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             Assert.IsTrue(value.GetValues().Single() == TreeNodeDifference.None);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void FlagEnum_ValueConstructor_DefaultValue()
         {
             var value = new FlagEnum<TreeNodeDifference>(TreeNodeDifference.None);
@@ -30,8 +30,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             Assert.IsTrue(value.GetValues().Single() == TreeNodeDifference.None);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void FlagEnum_ValueConstructor_SingleValue()
         {
             var value = new FlagEnum<TreeNodeDifference>(TreeNodeDifference.Name);
@@ -39,8 +39,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             Assert.IsTrue(value.GetValues().Single() == TreeNodeDifference.Name);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void FlagEnum_ValueConstructor_FlagValue()
         {
             var value = new FlagEnum<TreeNodeDifference>(TreeNodeDifference.Name | TreeNodeDifference.NumberOfChildren);
@@ -50,8 +50,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             Assert.IsTrue(value.Contains(TreeNodeDifference.NumberOfChildren));
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void FlagEnum_ArrayConstructor_DefaultValue()
         {
             var value = new FlagEnum<TreeNodeDifference>(new[] { TreeNodeDifference.None });
@@ -59,8 +59,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             Assert.IsTrue(value.GetValues().Single() == TreeNodeDifference.None);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void FlagEnum_ArrayConstructor_SingleValue()
         {
             var value = new FlagEnum<TreeNodeDifference>(new[] { TreeNodeDifference.Name });
@@ -68,8 +68,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             Assert.IsTrue(value.GetValues().Single() == TreeNodeDifference.Name);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void FlagEnum_ArrayConstructor_FlagValue()
         {
             var both = TreeNodeDifference.Name | TreeNodeDifference.NumberOfChildren;
@@ -79,8 +79,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             Assert.IsTrue(value.GetValues().Single() == both);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void FlagEnum_ArrayConstructor_IndividualValues()
         {
             var value = new FlagEnum<TreeNodeDifference>(new[] { TreeNodeDifference.Name, TreeNodeDifference.NumberOfChildren });
@@ -90,8 +90,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             Assert.IsTrue(TreeNodeDifference.NumberOfChildren == value.GetValues()[1]);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void FlagEnum_ArrayConstructor_Null()
         {
             var value = new FlagEnum<TreeNodeDifference>(null);
@@ -99,8 +99,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             Assert.IsTrue(value.GetValues().Single() == TreeNodeDifference.None);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void FlagEnum_ArrayConstructor_EmptyList()
         {
             var value = new FlagEnum<TreeNodeDifference>(new TreeNodeDifference[] { });
@@ -108,8 +108,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             Assert.IsTrue(value.GetValues().Single() == TreeNodeDifference.None);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void FlagEnum_Implicit_ToFlagEnum()
         {
             FlagEnum<TreeNodeDifference> value = TreeNodeDifference.Name | TreeNodeDifference.NumberOfChildren;
@@ -120,8 +120,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             Assert.IsTrue(TreeNodeDifference.NumberOfChildren == value.GetValues()[1]);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void FlagEnum_Implicit_FromFlagEnum()
         {
             var value = new FlagEnum<TreeNodeDifference>(TreeNodeDifference.Name | TreeNodeDifference.NumberOfChildren);
@@ -132,8 +132,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             Assert.IsTrue((enumValue & TreeNodeDifference.NumberOfChildren) == TreeNodeDifference.NumberOfChildren);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void FlagEnum_Operators_BitwiseOr()
         {
             FlagEnum<TreeNodeDifference> first = TreeNodeDifference.Name;
@@ -147,8 +147,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             Assert.IsTrue(value.Contains(TreeNodeDifference.NumberOfChildren));
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void FlagEnum_Operators_BitwiseAnd()
         {
             FlagEnum<TreeNodeDifference> first = TreeNodeDifference.Name | TreeNodeDifference.NumberOfChildren;
@@ -158,8 +158,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             Assert.IsTrue(value == TreeNodeDifference.Name);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void FlagEnum_NonEnumValue_Throws()
         {
             AssertEx.Throws<ArgumentException>(
@@ -168,8 +168,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void FlagEnum_NonEnumArray_Throws()
         {
             AssertEx.Throws<ArgumentException>(
@@ -178,8 +178,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void FlagEnum_ToString_SingleFlag()
         {
             var value = new FlagEnum<TreeNodeDifference>(TreeNodeDifference.Name);
@@ -187,8 +187,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             Assert.AreEqual("Name", value.ToString());
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void FlagEnum_ToString_MultipleFlags()
         {
             var value = new FlagEnum<TreeNodeDifference>(TreeNodeDifference.Name | TreeNodeDifference.NumberOfChildren);
@@ -196,8 +196,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             Assert.AreEqual("Name, NumberOfChildren", value.ToString());
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void FlagEnum_GetHashCode_EqualsEnum()
         {
             var value = new FlagEnum<TreeNodeDifference>(TreeNodeDifference.Name);
@@ -205,8 +205,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             Assert.IsTrue(value.Equals((object) TreeNodeDifference.Name));
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void FlagEnum_GetHashCode_EqualsFlagEnum()
         {
             var value = new FlagEnum<TreeNodeDifference>(TreeNodeDifference.Name);
@@ -214,8 +214,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             Assert.IsTrue(value.Equals((object) new FlagEnum<TreeNodeDifference>(TreeNodeDifference.Name)));
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void FlagEnum_GetHashCode_EqualsEnumHashCode()
         {
             var value = new FlagEnum<TreeNodeDifference>(TreeNodeDifference.Name);

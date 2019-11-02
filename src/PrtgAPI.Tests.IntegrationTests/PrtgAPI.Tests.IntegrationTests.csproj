@@ -60,6 +60,7 @@
     <Compile Include="..\PrtgAPI\Enums\Serialization\ObjectPropertyCategory.cs">
       <Link>Support\ObjectPropertyCategory.cs</Link>
     </Compile>
+    <Compile Include="CSharp\Infrastructure\AssemblyTests.cs" />
     <Compile Include="CSharp\ObjectData\ObjectTests.cs" />
     <Compile Include="CSharp\ObjectData\Query\AnyTests.cs" />
     <Compile Include="CSharp\ObjectData\Query\BaseQueryTest.cs" />
@@ -106,6 +107,7 @@
     <Compile Include="CSharp\ObjectManipulation\StateTests.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="Settings.Local.cs" Condition="Exists('Settings.Local.cs')" />
+    <Compile Include="Support\TestCategory\IntegrationTestAttribute.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\PrtgAPI.Tests.UnitTests\PrtgAPI.Tests.UnitTests.csproj">

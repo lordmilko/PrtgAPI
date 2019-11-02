@@ -11,7 +11,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
     public class SensorTests : BasePrtgClientTest
     {
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Sensor_GetSensors_HasExpectedCount()
         {
             var sensors = client.GetSensors();
@@ -20,7 +20,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Sensor_GetSensors_WithFilters_ResultsMatch()
         {
             var str = "disk";
@@ -31,14 +31,14 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Sensor_GetSensors_ReturnsJustSensors()
         {
             ReturnsJustObjectsOfType(client.GetSensors, Settings.Device, Settings.SensorsInTestDevice, BaseType.Sensor);
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_GetSensors_WithParameters_FiltersByStatus()
         {
             var parameters = new SensorParameters();
@@ -63,7 +63,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_GetSensors_WithParameters_SortsByProperty()
         {
             var parameters = new SensorParameters {SortBy = Property.Id};
@@ -80,7 +80,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_GetSensors_FiltersByTimeSpan()
         {
             var sensor = client.AddSensor(Settings.Device, new HttpSensorParameters()).Single();
@@ -104,7 +104,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_GetSensors_FiltersByDateTime()
         {
             var sensor = client.AddSensor(Settings.Device, new HttpSensorParameters()).Single();
@@ -134,7 +134,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_GetSensors_FiltersByBool()
         {
             var sensor = client.GetSensor(Settings.UpSensor);
@@ -162,7 +162,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_StreamSensors_StartOffset_CorrectCount()
         {
             var count = 15;
@@ -180,7 +180,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_StreamSensors_WithCorrectPageSize()
         {
             LogTests.Stream_WithCorrectPageSize(
@@ -203,7 +203,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_StreamSensors_WithIncorrectPageSize()
         {
             var normalParameters = new SensorParameters { Count = 15 };
@@ -236,7 +236,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Sensor_ReadOnlyUser()
         {
             var sensor = readOnlyClient.GetSensor(Settings.UpSensor);
@@ -245,7 +245,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public async Task Data_Sensor_ReadOnlyUserAsync()
         {
             var sensor = await readOnlyClient.GetSensorAsync(Settings.UpSensor);

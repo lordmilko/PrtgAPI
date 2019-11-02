@@ -29,8 +29,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
     {
         #region TableParameters
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void TableParameters_CanSetSortDirection()
         {
             var parameters = new SensorParameters();
@@ -66,8 +66,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             Assert.AreEqual(parameters.SortBy, Property.Name, "Retrieve property directly set using string");
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void TableParameters_AddsAndRemovesFilters()
         {
             var parameters = new SensorParameters();
@@ -86,8 +86,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             Assert.AreEqual(filter1, parameters.SearchFilters.Single());
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void TableParameters_AddRemoveFilters_ThrowsSpecifyingNull()
         {
             var parameters = new SensorParameters();
@@ -96,8 +96,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             AssertEx.Throws<ArgumentNullException>(() => parameters.RemoveFilters(null), $"Value cannot be null.{Environment.NewLine}Parameter name: filters");
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void TableParameters_AddFilters_ToSearchFiltersProperty()
         {
             var parameters = new SensorParameters();
@@ -113,8 +113,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             Assert.AreEqual(0, parameters.SearchFilters.Count);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void TableParameters_MergesMultiParameterFilterValues_SameProperty()
         {
             var sensor = new SensorParameters
@@ -133,8 +133,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void TableParameters_MergesMultiParameterFilterValues_IgnoresDifferentProperty()
         {
             var sensor = new SensorParameters
@@ -152,8 +152,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void TableParameters_MergesMultipleParameterFilterValues_AddsInvalidValue()
         {
             var sensor = new SensorParameters
@@ -172,8 +172,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         #endregion
         #region CustomParameters
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void CustomParameter_ToString_FormatsCorrectly()
         {
             var parameter = new CustomParameter("name", "val");
@@ -184,8 +184,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         #endregion
         #region SensorParameters
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void SensorParameters_Status_CanBeGetAndSet()
         {
             var parameters = new SensorParameters();
@@ -203,8 +203,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             Assert.IsTrue(parameters.Status.Length == 1 && parameters.Status.First() == Status.Down, "Status was not down");
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void SensorParameters_HttpSensor_CanBeGetAndSet()
         {
             var parameters = new HttpSensorParameters();
@@ -218,8 +218,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             SetAndGet(parameters, nameof(HttpSensorParameters.UseSNIFromUrl), true);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void SensorParameters_FactorySensor_CanBeGetAndSet()
         {
             var parameters = new FactorySensorParameters(Enumerable.Empty<string>());
@@ -260,8 +260,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         #endregion
         #region LogParameters
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void LogParameters_Date_CanBeGetAndSet()
         {
             var parameters = new LogParameters(null);
@@ -281,8 +281,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             Assert.IsTrue(parameters.EndDate.ToString() == tomorrowEnd.ToString(), $"Updated end status was not {date}");
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void LogParameters_SetsRecordAge_InConstructor()
         {
             var parameters = new LogParameters(1001, RecordAge.LastSixMonths);
@@ -290,8 +290,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             Assert.AreEqual(parameters.RecordAge, RecordAge.LastSixMonths);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void LogParameters_SetsStartAndEnd_InConstructor()
         {
             var start = DateTime.Now;
@@ -306,8 +306,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         #endregion
         #region NewSensorParameters
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void NewSensorParameters_Enum_CanBeSet()
         {
             var parameters = new ExeXmlSensorParameters("test.ps1")
@@ -318,8 +318,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             Assert.AreEqual(Priority.Three, parameters.Priority);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void NewSensorParameters_Enum_CanBeSetToNull()
         {
             var parameters = new ExeXmlSensorParameters("test.ps1")
@@ -330,8 +330,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             Assert.AreEqual(null, parameters.Priority);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void NewSensorParameters_Enum_Throws_WhenSetNotEnum()
         {
             var parameters = new FakeSensorParameters();
@@ -339,8 +339,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             AssertEx.Throws<InvalidCastException>(() => parameters.RestartStage = 1, "Unable to cast object of type 'System.Int32' to type 'System.Enum'");
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void NewSensorParameters_EnablesDependentProperties()
         {
             var parameters = new ExeXmlSensorParameters("test.ps1");
@@ -352,8 +352,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             Assert.AreEqual(false, parameters.InheritInterval);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void NewSensorParameters_AllPropertiesHavePropertyParameterAttributes()
         {
             var properties = typeof(NewSensorParameters).Assembly.GetTypes()
@@ -389,8 +389,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         #endregion
         #region RawSensorParameters
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void RawSensorParameters_Parameters_InitializesIfNull()
         {
             var parameters = new RawSensorParameters("testName", "sensorType")
@@ -401,8 +401,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             Assert.AreEqual(typeof (List<CustomParameter>), parameters.Parameters.GetType());
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void RawSensorParameters_CanBeUsedAsDictionary()
         {
             var parameters = new RawSensorParameters("testName", "sensorType");
@@ -436,7 +436,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
 #if MSTEST2
         [DoNotParallelize]
 #endif
-        [TestCategory("UnitTest")]
+        [UnitTest]
         public void RawSensorParameters_WithoutPSObjectUtilities_SingleObject()
         {
             TestHelpers.WithPSObjectUtilities(() =>
@@ -460,7 +460,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
 #if MSTEST2
         [DoNotParallelize]
 #endif
-        [TestCategory("UnitTest")]
+        [UnitTest]
         public void RawSensorParameters_WithoutPSObjectUtilities_ObjectArray()
         {
             TestHelpers.WithPSObjectUtilities(() =>
@@ -483,8 +483,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         #endregion
         #region SensorHistoryParameters
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void SensorHistoryParameters_GetsProperties()
         {
             var start = DateTime.Now;
@@ -495,8 +495,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             Assert.AreEqual(parameters.Average, 600);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void SensorHistoryParameters_Throws_WhenAverageIsLessThanZero()
         {
             AssertEx.Throws<ArgumentException>(() => new SensorHistoryParameters(1001, -1, null, null, null), "Average must be greater than or equal to 0");
@@ -505,8 +505,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         #endregion
         #region NewDeviceParameters
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void NewDeviceParameters_SwapsHostWithIPVersion()
         {
             var parameters = new NewDeviceParameters("device", "dc-1");
@@ -524,8 +524,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             Assert.AreEqual("dc-1", parameters.Host);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void NewDeviceParameters_AssignsHostToCorrectProperty()
         {
             var parameters = new NewDeviceParameters("device", "dc-1");
@@ -541,8 +541,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             Assert.AreEqual("dc-3", GetCustomParameter(parameters, "hostv6_"));
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void NewDeviceParameters_SetsAutomaticTemplate_WhenTemplatesAssigned()
         {
             var templates = Execute(c => c.GetDeviceTemplates());
@@ -555,8 +555,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             Assert.AreEqual(AutoDiscoveryMode.AutomaticTemplate, parameters.AutoDiscoveryMode);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void NewDeviceParameters_DoesNotChangeAutoDiscoveryMode_WhenNoTemplatesAssigned()
         {
             var parameters = new NewDeviceParameters("dc-1");
@@ -569,8 +569,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             Assert.AreEqual(AutoDiscoveryMode.Manual, parameters.AutoDiscoveryMode);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void NewDeviceParameters_ClearsTemplates_WhenAutoDiscoveryModeChanged()
         {
             var templates = Execute(c => c.GetDeviceTemplates());
@@ -592,8 +592,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         #endregion
         #region PageableParameters
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void PageableParameters_IncreasesPage_StartAtZero()
         {
             var parameters = new SensorParameters();
@@ -625,8 +625,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             Assert.AreEqual(3, parameters.Page);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void PageableParameters_IncreasesPage_StartAtOne()
         {
             var parameters = new LogParameters(null);
@@ -661,8 +661,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         #endregion
         #region ProbeParameters
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void ProbeParameters_SearchFilter_ParentId_Equals_0()
         {
             var parameters = new ProbeParameters(new SearchFilter(Property.ParentId, 0));
@@ -672,8 +672,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             Assert.AreEqual(UnitRequest.Probes("filter_parentid=0"), url);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void ProbeParameters_SearchFilter_ParentId_NotEquals_0()
         {
             AssertEx.Throws<InvalidOperationException>(
@@ -682,8 +682,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void ProbeParameters_SearchFilter_ParentId_Equals_1()
         {
             AssertEx.Throws<InvalidOperationException>(
@@ -692,8 +692,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void ProbeParameters_SearchFilter_ParentId_Equals_ArrayWith_0()
         {
             var parameters = new ProbeParameters(new SearchFilter(Property.ParentId, new[] {0}));
@@ -703,8 +703,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             Assert.AreEqual(UnitRequest.Probes("filter_parentid=0"), url);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void ProbeParameters_SearchFilter_ParentId_Equals_ArrayWithout_0()
         {
             AssertEx.Throws<InvalidOperationException>(
@@ -713,8 +713,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void ProbeParameters_SearchFilter_ParentId_Equals_ArrayWith_0_AndSomethingElse()
         {
             AssertEx.Throws<InvalidOperationException>(
@@ -726,8 +726,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         #endregion
         #region GetObjectPropertyRawParameters
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void GetObjectPropertyRawParameters_SpecifiesShow_WithStringProperty()
         {
             Execute(
@@ -736,8 +736,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void GetObjectPropertyRawParameters_DoesNotSpecifyShow_WithNonStringProperty()
         {
             Execute(
@@ -749,8 +749,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         #endregion
         #region SetChannelPropertyParameters
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void SetChannelPropertyParameters_ConstructorValidation()
         {
             var settings = new[] { new ChannelParameter(ChannelProperty.LimitsEnabled, true) };
@@ -764,8 +764,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         #endregion
         #region NewObjectParameters
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void NewSensorParameters_NameOverride_CanOverride()
         {
             var parameters = new RawSensorParameters("test", "snmplibrary");
@@ -780,8 +780,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             Assert.AreEqual("test1", parameters.Name);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void NewSensorParameters_NameOverride_RemovesProperly()
         {
             var parameters = new RawSensorParameters("test", "snmplibrary");
@@ -800,8 +800,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             Assert.AreEqual("test1", parameters.Name);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void NewSensorParameters_NameOverride_RemovesWhenNotAdded()
         {
             var parameters = new RawSensorParameters("test", "snmplibrary");
@@ -809,8 +809,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             Assert.IsFalse(parameters.RemoveNameOverride(ObjectProperty.Name));
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void NewSensorParameters_NameOverride_RetrievesOverrides()
         {
             var parameters = new RawSensorParameters("test", "snmplibrary");
@@ -846,8 +846,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             return targetParameter?.Value?.ToString();
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Parameters_ReplacesCounterpart()
         {
             var parameters = new BaseParameters
@@ -861,8 +861,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             Assert.AreEqual(null, parameters[Parameter.Password]);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void AllParameterProperties_CanSetAndRetrieveNull()
         {
             var groups = typeof(BaseParameters).Assembly.GetTypes()

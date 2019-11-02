@@ -19,8 +19,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
     {
         #region Ancestors
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_PrtgNode_Ancestors()
         {
             var probe = PrtgNode.Probe(Probe(),
@@ -45,8 +45,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             Assert.AreEqual(probe, ancestors[2]);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_PrtgNode_AncestorsAndSelf()
         {
             var probe = PrtgNode.Probe(Probe(),
@@ -72,8 +72,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             Assert.AreEqual(probe, ancestors[3]);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_PrtgNode_Ancestors_Indexer_DuplicateName()
         {
             var probe = PrtgNode.Probe(Probe(),
@@ -99,8 +99,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
         #endregion
         #region Descendants
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_PrtgNode_DescendantNodes()
         {
             var probe = PrtgNode.Probe(Probe(),
@@ -134,8 +134,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
         #region Indexer
             #region TreeOrphan
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_TreeOrphan_Indexer_SingleChild()
         {
             var tree = PrtgOrphan.Probe(Probe(),
@@ -149,8 +149,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             Assert.AreEqual("Device1", device.ToString());
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_TreeOrphan_Indexer_IgnoreCase()
         {
             var tree = PrtgOrphan.Probe(Probe(),
@@ -164,8 +164,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             Assert.AreEqual("Device1", device.ToString());
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_TreeOrphan_Indexer_MultipleChildren()
         {
             var tree = PrtgOrphan.Probe(Probe(),
@@ -188,8 +188,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             Assert.AreEqual("Device1", devices.ToString());
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_TreeOrphan_Indexer_GrandChild_FromMultipleChindren()
         {
             var tree = PrtgOrphan.Probe(Probe(),
@@ -209,8 +209,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             Assert.AreEqual("Sensor1", sensor.ToString());
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_TreeOrphan_Indexer_NoChildren()
         {
             var tree = PrtgOrphan.Probe(Probe(),
@@ -220,8 +220,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             Assert.IsNull(tree["Device2"]);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_TreeOrphan_Indexer_Collection()
         {
             var tree = PrtgOrphan.TriggerCollection(PrtgOrphan.Trigger(Trigger()));
@@ -235,8 +235,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             #endregion
             #region TreeNode
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_TreeNode_Indexer_SingleChild()
         {
             var tree = PrtgNode.Probe(Probe(),
@@ -250,8 +250,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             Assert.AreEqual("Device1", device.ToString());
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_TreeNode_Indexer_IgnoreCase()
         {
             var tree = PrtgNode.Probe(Probe(),
@@ -265,8 +265,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             Assert.AreEqual("Device1", device.ToString());
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_TreeNode_Indexer_MultipleChildren()
         {
             var tree = PrtgNode.Probe(Probe(),
@@ -289,8 +289,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             Assert.AreEqual("Device1", devices.ToString());
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_TreeNode_Indexer_GrandChild_FromMultipleChindren()
         {
             var tree = PrtgNode.Probe(Probe(),
@@ -310,8 +310,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             Assert.AreEqual("Sensor1", sensor.ToString());
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_TreeNode_Indexer_NoChildren()
         {
             var tree = PrtgNode.Probe(Probe(),
@@ -321,8 +321,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             Assert.IsNull(tree["Device2"]);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_TreeNode_Indexer_Collection()
         {
             var tree = PrtgNode.TriggerCollection(DefaultTrigger);
@@ -336,6 +336,7 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             #endregion
             #region CompareOrphan
 
+        [UnitTest]
         [TestMethod]
         public void Tree_CompareOrphan_Indexer_SingleChild_Original()
         {
@@ -356,6 +357,7 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             Assert.AreEqual("Device1", device.Name);
         }
 
+        [UnitTest]
         [TestMethod]
         public void Tree_CompareOrphan_Indexer_SingleChild_New()
         {
@@ -377,8 +379,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             Assert.AreEqual("Device1", device.Name);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_CompareOrphan_Indexer_IgnoreCase()
         {
             var tree = PrtgNode.Probe(Probe(),
@@ -394,8 +396,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             Assert.AreEqual("Device1", device.ToString());
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_CompareOrphan_Indexer_MultipleChildren()
         {
             var tree = PrtgNode.Probe(Probe(),
@@ -420,8 +422,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             Assert.AreEqual("Device1", devices.ToString());
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_CompareOrphan_Indexer_GrandChild_FromMultipleChindren()
         {
             var tree = PrtgNode.Probe(Probe(),
@@ -443,8 +445,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             Assert.AreEqual("Sensor1", sensor.ToString());
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_CompareOrphan_Indexer_NoChildren()
         {
             var tree = PrtgNode.Probe(Probe(),
@@ -456,8 +458,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             Assert.IsNull(comparison["Device2"]);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_CompareOrphan_Indexer_Collection()
         {
             var tree = PrtgNode.TriggerCollection(DefaultTrigger);
@@ -470,6 +472,7 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             Assert.AreEqual(comparison.Children[0], child);
         }
 
+        [UnitTest]
         [TestMethod]
         public void Tree_CompareOrphan_Indexer_ReplacedOrphan()
         {
@@ -490,6 +493,7 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             Assert.AreEqual<TreeNodeDifference>(TreeNodeDifference.Added, addedDevice.Difference);
         }
 
+        [UnitTest]
         [TestMethod]
         public void Tree_CompareOrphan_Indexer_RenamedOrphan()
         {
@@ -512,6 +516,7 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             #endregion
             #region CompareNode
 
+        [UnitTest]
         [TestMethod]
         public void Tree_CompareNode_Indexer_SingleChild_Original()
         {
@@ -532,6 +537,7 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             Assert.AreEqual("Device1", device.Name);
         }
 
+        [UnitTest]
         [TestMethod]
         public void Tree_CompareNode_Indexer_SingleChild_New()
         {
@@ -553,8 +559,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             Assert.AreEqual("Device1", device.Name);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_CompareNode_Indexer_IgnoreCase()
         {
             var tree = PrtgNode.Probe(Probe(),
@@ -570,8 +576,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             Assert.AreEqual("Device1", device.ToString());
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_CompareNode_Indexer_MultipleChildren()
         {
             var tree = PrtgNode.Probe(Probe(),
@@ -596,8 +602,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             Assert.AreEqual("Device1", devices.ToString());
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_CompareNode_Indexer_GrandChild_FromMultipleChindren()
         {
             var tree = PrtgNode.Probe(Probe(),
@@ -619,8 +625,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             Assert.AreEqual("Sensor1", sensor.ToString());
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_CompareNode_Indexer_NoChildren()
         {
             var tree = PrtgNode.Probe(Probe(),
@@ -632,8 +638,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             Assert.IsNull(comparison["Device2"]);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_CompareNode_Indexer_Collection()
         {
             var tree = PrtgNode.TriggerCollection(DefaultTrigger);
@@ -646,6 +652,7 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             Assert.AreEqual(comparison.Children[0], child);
         }
 
+        [UnitTest]
         [TestMethod]
         public void Tree_CompareNode_Indexer_ReplacedNode()
         {
@@ -666,6 +673,7 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             Assert.AreEqual<TreeNodeDifference>(TreeNodeDifference.Added, addedDevice.Difference);
         }
 
+        [UnitTest]
         [TestMethod]
         public void Tree_CompareNode_Indexer_RenamedNode()
         {
@@ -690,8 +698,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
         #region Find
             #region PrtgOrphan
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_PrtgOrphan_FindOrphan_Untyped()
         {
             var parent = PrtgOrphan.Group(Group(),
@@ -706,8 +714,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             Assert.AreEqual("Child3", match.Name);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_PrtgOrphan_FindOrphan_Untyped_NoMatches()
         {
             var parent = PrtgOrphan.Group(Group(),
@@ -722,8 +730,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             Assert.IsNull(match);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_PrtgOrphan_FindOrphan_Untyped_MultipleMatches_Throws()
         {
             var parent = PrtgOrphan.Group(Group(),
@@ -739,8 +747,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_PrtgOrphan_FindOrphans_Untyped()
         {
             var parent = PrtgOrphan.Group(Group(),
@@ -755,8 +763,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             Assert.AreEqual(3, matches.Count());
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_PrtgOrphan_FindOrphan_Typed()
         {
             var parent = PrtgOrphan.Group(Group(),
@@ -771,8 +779,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             Assert.IsNotNull(match);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_PrtgOrphan_FindOrphan_Typed_NoMatches()
         {
             var parent = PrtgOrphan.Group(Group(),
@@ -787,8 +795,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             Assert.IsNull(match);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_PrtgOrphan_FindOrphan_Typed_MultipleMatches_Throws()
         {
             var parent = PrtgOrphan.Group(Group(),
@@ -804,8 +812,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_PrtgOrphan_FindOrphans_Typed()
         {
             var parent = PrtgOrphan.Group(Group(),
@@ -820,8 +828,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             Assert.AreEqual(2, matches.Count());
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_PrtgOrphan_FindOrphans_NullRoot()
         {
             var result = OrphanExtensions.FindOrphan((PrtgOrphan) null, s => true);
@@ -832,8 +840,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             #endregion
             #region PrtgNode
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_PrtgNode_FindNode_Untyped()
         {
             var parent = PrtgNode.Group(Group(),
@@ -848,8 +856,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             Assert.AreEqual("Child3", match.Name);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_PrtgNode_FindNode_Untyped_NoMatches()
         {
             var parent = PrtgNode.Group(Group(),
@@ -864,8 +872,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             Assert.IsNull(match);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_PrtgNode_FindNode_Untyped_MultipleMatches_Throws()
         {
             var parent = PrtgNode.Group(Group(),
@@ -881,8 +889,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_PrtgNode_FindNodes_Untyped()
         {
             var parent = PrtgNode.Group(Group(),
@@ -897,8 +905,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             Assert.AreEqual(3, matches.Count());
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_PrtgNode_FindNode_Typed()
         {
             var parent = PrtgNode.Group(Group(),
@@ -913,8 +921,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             Assert.IsNotNull(match);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_PrtgNode_FindNode_Typed_NoMatches()
         {
             var parent = PrtgNode.Group(Group(),
@@ -929,8 +937,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             Assert.IsNull(match);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_PrtgNode_FindNode_Typed_MultipleMatches_Throws()
         {
             var parent = PrtgNode.Group(Group(),
@@ -946,8 +954,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_PrtgNode_FindNodes_Typed()
         {
             var parent = PrtgNode.Group(Group(),
@@ -962,8 +970,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             Assert.AreEqual(2, matches.Count());
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_PrtgNode_FindNodes_NullRoot()
         {
             var result = NodeExtensions.FindNode((PrtgNode) null, s => true);
@@ -974,8 +982,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             #endregion
             #region CompareNode
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_CompareNode_FindNode()
         {
             var parent = PrtgNode.Group(Group(),
@@ -992,8 +1000,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             Assert.AreEqual("Child3", match.Name);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_CompareNode_FindNode_NoMatches()
         {
             var parent = PrtgNode.Group(Group(),
@@ -1010,8 +1018,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             Assert.IsNull(match);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_CompareNode_FindNode_MultipleMatches_Throws()
         {
             var parent = PrtgNode.Group(Group(),
@@ -1029,8 +1037,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_CompareNode_FindNodes_WithPredicate()
         {
             var parent = PrtgNode.Group(Group(),
@@ -1047,8 +1055,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             Assert.AreEqual(3, matches.Count());
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_CompareNode_FindNodes_NoPredicate()
         {
             var parent = PrtgNode.Group(Group(),
@@ -1065,8 +1073,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             Assert.AreEqual(3, matches.Count());
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_CompareNode_FindNodes_NullRoot()
         {
             var result = NodeExtensions.FindNode((CompareNode) null, s => true);
@@ -1078,8 +1086,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
         #endregion
         #region Insert
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_PrtgNode_InsertNodeAfter()
         {
             var probe = PrtgNode.Probe(Probe(),
@@ -1093,8 +1101,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             Assert.IsTrue(newProbe["Servers"] == newProbe.Children[1]);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_PrtgNode_InsertNodeBefore()
         {
             var probe = PrtgNode.Probe(Probe(),
@@ -1108,8 +1116,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             Assert.IsTrue(newProbe["dc-1"] == newProbe.Children[1]);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_PrtgNode_InsertNodesAfter()
         {
             var probe = PrtgNode.Probe(Probe(),
@@ -1128,8 +1136,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             Assert.IsTrue(newProbe["Linux"] == newProbe.Children[2]);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_PrtgNode_InsertNodesBefore()
         {
             var probe = PrtgNode.Probe(Probe(),
@@ -1148,8 +1156,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             Assert.IsTrue(newProbe["dc-1"] == newProbe.Children[2]);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_PrtgNode_InsertNodeAfter_NullRoot()
         {
             var result = NodeExtensions.InsertNodeAfter<DeviceNode>(null, DefaultDevice, DefaultDevice);
@@ -1157,8 +1165,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             Assert.IsNull(result);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_PrtgNode_InsertNodeBefore_NullRoot()
         {
             var result = NodeExtensions.InsertNodeBefore<DeviceNode>(null, DefaultDevice, DefaultDevice);
@@ -1166,8 +1174,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             Assert.IsNull(result);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_PrtgNode_InsertNodeAfter_NullNodeInList()
         {
             var root = DefaultDevice;
@@ -1177,8 +1185,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             Assert.AreEqual(root, result);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_PrtgNode_InsertNodeBefore_NullNodeInList()
         {
             var root = DefaultDevice;
@@ -1188,8 +1196,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             Assert.AreEqual(root, result);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_PrtgNode_InsertNodeAfter_NullNewNode()
         {
             var probe = DefaultProbe.WithChildren(DefaultDevice);
@@ -1200,8 +1208,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_PrtgNode_InsertNodeBefore_NullNewNode()
         {
             var probe = DefaultProbe.WithChildren(DefaultDevice);
@@ -1215,8 +1223,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
         #endregion
         #region RemoveNodes
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_PrtgNode_RemoveNodes_SingleChild()
         {
             var device = PrtgNode.Device(Device(),
@@ -1235,8 +1243,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             Assert.IsNull(deviceWithoutPing["Ping"]);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_PrtgNode_RemoveNodes_SingleGrandChild()
         {
             var group = PrtgNode.Group(Group(),
@@ -1257,8 +1265,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             Assert.IsNull(newPing);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_PrtgNode_RemoveNode_NullRoot()
         {
             var result = NodeExtensions.RemoveNode<DeviceNode>(null, DefaultDevice);
@@ -1266,8 +1274,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             Assert.IsNull(result);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_PrtgNode_RemoveNode_NullNode()
         {
             var root = DefaultDevice;
@@ -1280,8 +1288,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
         #endregion
         #region ReplaceNodes
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_PrtgNode_ReplaceNode_SameNode()
         {
             var device = PrtgNode.Device(Device(),
@@ -1296,8 +1304,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             Assert.AreEqual(device, sameDevice);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_PrtgNode_ReplaceNodes_SingleChild()
         {
             var device = PrtgNode.Device(Device(),
@@ -1314,8 +1322,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             Assert.IsNotNull(newDevice["Pong"]);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_PrtgNode_ReplaceNodes_SingleGrandChild()
         {
             var probe = PrtgNode.Probe(Probe(),
@@ -1334,8 +1342,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             Assert.IsNotNull(newProbe["dc-1"]["Ping"]);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_PrtgNode_ReplaceNodes_MultipleNodes()
         {
             var device = PrtgNode.Device(Device(),
@@ -1356,8 +1364,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             Assert.AreEqual("Email to Admin", newNode.Children[0].Name);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_PrtgNode_ReplaceNode_NullRoot()
         {
             var result = NodeExtensions.ReplaceNode<DeviceNode>(null, DefaultDevice, DefaultDevice);
@@ -1365,8 +1373,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             Assert.IsNull(result);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_PrtgNode_ReplaceNode_NullOldNode()
         {
             var root = DefaultDevice;
@@ -1376,8 +1384,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             Assert.AreEqual(root, result);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_PrtgNode_ReplaceNode_NullNewNode()
         {
             var root = DefaultProbe.WithChildren(DefaultDevice);
@@ -1392,8 +1400,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
         #region Update
             #region PrtgOrphan
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_PrtgOrphan_Update_WithChildren()
         {
             var excluded = new[]
@@ -1422,8 +1430,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             }
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_PrtgOrphan_Update_WithValue()
         {
             var excluded = new[]
@@ -1455,8 +1463,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             }
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_PrtgOrphan_Update_WithChildren_WithGrouping_RemovesGrouping()
         {
             var tree = PrtgOrphan.Device(Device(),
@@ -1521,8 +1529,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             #endregion
             #region PrtgNode
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_PrtgNode_Update_WithChildren()
         {
             var excluded = new[]
@@ -1551,8 +1559,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             }
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_PrtgNode_Update_WithValue()
         {
             var excluded = new[]
@@ -1634,8 +1642,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             #endregion
             #region CompareOrphan
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_CompareOrphan_Update_WithChildren()
         {
             var first = PrtgNode.Probe(Probe(),
@@ -1659,8 +1667,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             Assert.AreEqual(4, newParent.Children.Count);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_CompareOrphan_Update_Root_WithNull()
         {
             var comparison = GetCompareNodeUpdateTree().Orphan;
@@ -1668,8 +1676,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             Assert.IsNull(comparison.Update(null));
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_CompareOrphan_Update_Root_NoChildren()
         {
             var comparison = GetCompareNodeUpdateTree().Orphan;
@@ -1677,8 +1685,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             Assert.IsNull(comparison.Update(Enumerable.Empty<CompareOrphan>()));
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_CompareOrphan_Update_Root_OneChild()
         {
             var comparison = GetCompareNodeUpdateTree().Orphan;
@@ -1688,8 +1696,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             Assert.AreEqual(typeof(CompareOrphan), newNode.GetType());
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_CompareOrphan_Update_Root_OneNullChild()
         {
             var comparison = GetCompareNodeUpdateTree().Orphan;
@@ -1699,8 +1707,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             Assert.IsNull(newNode);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_CompareOrphan_Update_Root_TwoChildren()
         {
             var comparison = GetCompareNodeUpdateTree().Orphan;
@@ -1711,8 +1719,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             Assert.AreNotEqual(comparison, newNode);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_CompareOrphan_Update_Root_TwoChildren_OneNull()
         {
             var comparison = GetCompareNodeUpdateTree().Orphan;
@@ -1723,8 +1731,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_CompareOrphan_Update_Root_OverTwoChildren_Throws()
         {
             var comparison = GetCompareNodeUpdateTree().Orphan;
@@ -1738,8 +1746,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             #endregion
             #region CompareNode
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_CompareNode_Update_WithChildren()
         {
             var first = PrtgNode.Probe(Probe(),
@@ -1765,8 +1773,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
 
                 #region Root
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_CompareNode_Update_Root_WithNull()
         {
             var comparison = GetCompareNodeUpdateTree();
@@ -1774,8 +1782,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             Assert.IsNull(comparison.Update(null));
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_CompareNode_Update_Root_NoChildren()
         {
             var comparison = GetCompareNodeUpdateTree();
@@ -1783,8 +1791,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             Assert.IsNull(comparison.Update(Enumerable.Empty<CompareNode>()));
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_CompareNode_Update_Root_OneChild()
         {
             var comparison = GetCompareNodeUpdateTree();
@@ -1795,8 +1803,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             Assert.IsNull(newNode.Parent);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_CompareNode_Update_Root_OneNullChild()
         {
             var comparison = GetCompareNodeUpdateTree();
@@ -1806,8 +1814,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             Assert.IsNull(newNode);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_CompareNode_Update_Root_TwoChildren()
         {
             var comparison = GetCompareNodeUpdateTree();
@@ -1818,8 +1826,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             Assert.AreNotEqual(comparison, newNode);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_CompareNode_Update_Root_TwoChildren_OneNull()
         {
             var comparison = GetCompareNodeUpdateTree();
@@ -1830,8 +1838,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_CompareNode_Update_Root_OverTwoChildren_Throws()
         {
             var comparison = GetCompareNodeUpdateTree();
@@ -1856,8 +1864,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
                 #endregion
                 #region Normal
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_CompareNode_Update_WithNull()
         {
             var node = PrtgNode.Probe(Probe(),
@@ -1873,8 +1881,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             Assert.AreEqual(0, result.Children.Count);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_CompareNode_Update_OneNullChild()
         {
             var node = PrtgNode.Probe(Probe(),
@@ -1897,8 +1905,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
         #region ValidChildren
             #region PrtgOrphan
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_PrtgOrphan_ValidChildren_Sensor()
         {
             var valid = new PrtgOrphan[]
@@ -1920,8 +1928,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             ValidateChildren(DefaultSensor.Orphan, valid, invalid);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_PrtgOrphan_ValidChildren_Device()
         {
             var valid = new PrtgOrphan[]
@@ -1943,8 +1951,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             ValidateChildren(DefaultDevice.Orphan, valid, invalid);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_PrtgOrphan_ValidChildren_Group()
         {
             var valid = new PrtgOrphan[]
@@ -1975,8 +1983,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             ValidateChildren(DefaultGroup.Orphan, valid, invalid);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_PrtgOrphan_ValidChildren_Probe()
         {
             var valid = new PrtgOrphan[]
@@ -2000,8 +2008,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             ValidateChildren(DefaultProbe.Orphan, valid, invalid);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_PrtgOrphan_ValidChildren_Trigger()
         {
             var invalid = new PrtgOrphan[]
@@ -2027,8 +2035,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             }
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_PrtgOrphan_ValidChildren_Property()
         {
             var invalid = new PrtgOrphan[]
@@ -2054,8 +2062,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             }
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_PrtgOrphan_ValidChildren_TriggerCollection()
         {
             var collection = PrtgOrphan.TriggerCollection();
@@ -2091,8 +2099,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             }
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_PrtgOrphan_ValidChildren_PropertyCollection()
         {
             var collection = PrtgOrphan.PropertyCollection();
@@ -2128,8 +2136,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             }
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_PrtgOrphan_ValidChildren_Grouping()
         {
             var valid = new PrtgOrphan[]
@@ -2155,8 +2163,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             }
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_PrtgOrphan_ValidChildren_RootGroup()
         {
             var valid = new PrtgOrphan[]
@@ -2224,8 +2232,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             #endregion
             #region PrtgNode
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_PrtgNode_ValidChildren_Sensor()
         {
             var valid = new PrtgNode[]
@@ -2247,8 +2255,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             ValidateChildren(DefaultSensor, valid, invalid);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_PrtgNode_ValidChildren_Device()
         {
             var valid = new PrtgNode[]
@@ -2270,8 +2278,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             ValidateChildren(DefaultDevice, valid, invalid);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_PrtgNode_ValidChildren_Group()
         {
             var valid = new PrtgNode[]
@@ -2302,8 +2310,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             ValidateChildren(DefaultGroup, valid, invalid);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_PrtgNode_ValidChildren_Probe()
         {
             var valid = new PrtgNode[]
@@ -2327,8 +2335,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             ValidateChildren(DefaultProbe, valid, invalid);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_PrtgNode_ValidChildren_Trigger()
         {
             var invalid = new PrtgNode[]
@@ -2354,8 +2362,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             }
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_PrtgNode_ValidChildren_Property()
         {
             var invalid = new PrtgNode[]
@@ -2381,8 +2389,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             }
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_PrtgNode_ValidChildren_TriggerCollection()
         {
             var collection = PrtgNode.TriggerCollection();
@@ -2418,8 +2426,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             }
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_PrtgNode_ValidChildren_PropertyCollection()
         {
             var collection = PrtgNode.PropertyCollection();
@@ -2455,8 +2463,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             }
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_PrtgNode_ValidChildren_Grouping()
         {
             var valid = new PrtgNode[]
@@ -2514,8 +2522,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
         #endregion
         #region Dynamic
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_PrtgNode_Dynamic_GetsValidChild()
         {
             dynamic probe = PrtgNode.Probe(Probe(),
@@ -2527,8 +2535,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             Assert.AreEqual(probe.Children[0], group);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_PrtgNode_Dynamic_GetsInvalidChild()
         {
             dynamic probe = PrtgNode.Probe(Probe(),
@@ -2541,8 +2549,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_PrtgNode_Dynamic_GetsValidGrandChild()
         {
             dynamic probe = PrtgNode.Probe(Probe(),
@@ -2556,8 +2564,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             Assert.AreEqual(probe["Servers"]["dc"], device);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_PrtgNode_Dynamic_SetsChild_Throws()
         {
             dynamic probe = PrtgNode.Probe(Probe(),
@@ -2573,8 +2581,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
         #endregion
         #region TreeDifference
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_CompareNode_Difference_None()
         {
             var first = PrtgNode.Probe(Probe());
@@ -2584,8 +2592,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             Assert.IsTrue(TreeNodeDifference.None == comparison.Difference);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_CompareNode_Difference_Type()
         {
             var first = PrtgNode.Probe(Probe());
@@ -2595,8 +2603,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             Assert.IsTrue(TreeNodeDifference.Type == comparison.Difference);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_CompareNode_Difference_ParentId()
         {
             var first = PrtgNode.Probe(Probe());
@@ -2606,8 +2614,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             Assert.IsTrue(TreeNodeDifference.ParentId == comparison.Difference);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_CompareNode_Difference_Name()
         {
             var first = PrtgNode.Probe(Probe(),
@@ -2623,8 +2631,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             Assert.IsTrue(TreeNodeDifference.Name == comparison["dc-2"].Difference);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_CompareNode_Difference_HasChildren()
         {
             var first = PrtgNode.Probe(Probe(),
@@ -2638,8 +2646,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             Assert.IsTrue((TreeNodeDifference.NumberOfChildren | TreeNodeDifference.HasChildren) == comparison.Difference);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_CompareNode_Difference_NumberOfChildren()
         {
             var first = PrtgNode.Probe(Probe(),
@@ -2656,8 +2664,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             Assert.IsTrue((TreeNodeDifference.NumberOfChildren) == comparison.Difference);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_CompareNode_Difference_Added()
         {
             var first = PrtgNode.Probe(Probe());
@@ -2671,8 +2679,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             Assert.IsTrue(TreeNodeDifference.Added == comparison["dc-1"].Difference);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_CompareNode_Difference_Removed()
         {
             var first = PrtgNode.Probe(Probe(),
@@ -2688,8 +2696,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
 
         #endregion
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_CompareNode_TreeDifference()
         {
             var first = PrtgNode.Probe(Probe(),
@@ -2706,8 +2714,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             Assert.IsTrue(TreeNodeDifference.Name == comparison.TreeDifference);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_CompareNode_Type()
         {
             var first = PrtgNode.Probe(Probe(),
@@ -2725,8 +2733,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             Assert.AreEqual(TreeNodeType.Grouping, comparison["Local Probe"].Type);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_PrtgNode_Contains_Null()
         {
             var probe = PrtgNode.Probe(Probe());
@@ -2734,8 +2742,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             Assert.IsFalse(probe.Contains(null));
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_PrtgNode_Contains_GrandChild()
         {
             var probe = PrtgNode.Probe(Probe(),
@@ -2749,8 +2757,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             Assert.IsTrue(probe.Contains(sensor));
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_PrtgNode_Contains_DoesNotContain()
         {
             var probe = PrtgNode.Probe(Probe(),
@@ -2764,8 +2772,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             Assert.IsFalse(probe.Contains(sensor));
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_PrtgNode_NullValues_Throws()
         {
             var createNodes = new Func<PrtgNode>[]
@@ -2800,8 +2808,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             }
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_PrtgNode_Children_ContainsNull_Throws()
         {
             AssertEx.Throws<ArgumentNullException>(
@@ -2814,8 +2822,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_CompareOrphan_NullNodes()
         {
             var orphan = new CompareOrphan(null, null, new[] { new CompareOrphan(null, null, null) });
@@ -2824,8 +2832,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             Assert.IsNull(orphan["dc-1"]);
         }
 
-        /*[TestMethod]
-        [TestCategory("UnitTest")]
+        /*[UnitTest]
+        [TestMethod]
         public void Tree_PrtgOrphan_Collection_Name_WhenEmpty_IsCorrect()
         {
             var collection = PrtgOrphan.TriggerCollection();
@@ -2833,8 +2841,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             Assert.AreEqual("Empty", collection.Name);
         }*/
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_PrtgOrphan_Collection_Name_WhenSingleValue_IsCorrect()
         {
             var first = PrtgNode.Probe(Probe());
@@ -2845,8 +2853,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             Assert.AreEqual("Local Probe", comparison.Name);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_PrtgOrphan_Collection_Name_WhenMultipleValues_IsCorrect()
         {
             var node = PrtgOrphan.Probe(Probe(),
@@ -2859,8 +2867,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             Assert.AreEqual("dc-1 / DC-1", device.Name);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_PrtgOrphan_Collection_Name_Specialized_IsCorrect()
         {
             var triggers = PrtgOrphan.TriggerCollection();
@@ -2870,8 +2878,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             Assert.AreEqual("Properties", properties.Name);
         }
 
-        /*[TestMethod]
-        [TestCategory("UnitTest")]
+        /*[UnitTest]
+        [TestMethod]
         public void Tree_PrtgNode_Collection_Name_WhenEmpty_IsCorrect()
         {
             var collection = PrtgNode.TriggerCollection();
@@ -2879,8 +2887,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             Assert.AreEqual("Empty", collection.Name);
         }*/
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_PrtgNode_Collection_Name_WhenSingleValue_IsCorrect()
         {
             var first = PrtgNode.Probe(Probe());
@@ -2891,8 +2899,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             Assert.AreEqual("Local Probe", comparison.Name);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_PrtgNode_Collection_Name_WhenMultipleValues_IsCorrect()
         {
             var node = PrtgNode.Probe(Probe(),
@@ -2905,8 +2913,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             Assert.AreEqual("dc-1 / DC-1", device.Name);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_PrtgNode_Collection_Name_Specialized_IsCorrect()
         {
             var triggers = PrtgNode.TriggerCollection();
@@ -2916,8 +2924,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             Assert.AreEqual("Properties", properties.Name);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_TreeNode_AllTypesHaveDebugView()
         {
             var exclusionMap = new Dictionary<Type, string[]>
@@ -2973,8 +2981,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             }
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_NodeExtensions_AllUniqueMethodsHaveETSDefinitions()
         {
             var exclusions = new[]
@@ -3010,8 +3018,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
                 Assert.Fail($"Methods {(string.Join(", ", missing))} are missing from PrtgAPI.Types.ps1xml.");
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_PropertyValuePair_MembersCorrect_TypedProperty()
         {
             var pair = new PropertyValuePair(Device(), ObjectProperty.Host, "dc-1.contoso.local");
@@ -3024,8 +3032,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             Assert.AreEqual("Host", ((ITreeValue) pair).Name);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_PropertyValuePair_MembersCorrect_RawProperty()
         {
             var pair = new PropertyValuePair(Device(), "host_", "dc-1.contoso.local");
@@ -3037,8 +3045,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             Assert.AreEqual("host_", ((ITreeValue)pair).Name);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_PropertyValuePair_NullProperty_Throws()
         {
             AssertEx.Throws<ArgumentNullException>(

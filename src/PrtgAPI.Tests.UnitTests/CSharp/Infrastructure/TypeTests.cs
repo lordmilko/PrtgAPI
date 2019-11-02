@@ -72,8 +72,8 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
     {
         #region Sensor Target
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void SensorTarget_ObjectEquals_SensorTarget()
         {
             TestObjectEquals(
@@ -83,8 +83,8 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void SensorTarget_TypeEquals_SensorTarget()
         {
             TestTypeEquals<SqlServerQueryTarget>(
@@ -94,8 +94,8 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void SensorTarget_HashCodeEquals_SensorTarget()
         {
             TestHashCode<ExeFileTarget>(
@@ -106,8 +106,8 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void SensorTarget_Parse()
         {
             TestParse<ExeFileTarget>(
@@ -121,8 +121,8 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
         #endregion
         #region Scanning Interval
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void ScanningInterval_Equals()
         {
             TestObjectEquals(
@@ -144,8 +144,8 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void ScanningInterval_Parse()
         {
             TestParse<ScanningInterval>(
@@ -157,8 +157,8 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void ScanningInterval_HasCorrectHashCode()
         {
             TestHashCode(
@@ -171,8 +171,8 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
         #endregion
         #region Trigger Channel
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void TriggerChannel_Equals()
         {
             TestObjectEquals(
@@ -194,8 +194,8 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void TriggerChannel_Parse()
         {
             TestParse<TriggerChannel>(
@@ -207,8 +207,8 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void TriggerChannel_HasCorrectHashCode()
         {
             TestHashCode(
@@ -221,8 +221,8 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
         #endregion
         #region Device Template
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DeviceTemplate_ObjectEquals_DeviceTemplate()
         {
             TestObjectEquals(
@@ -232,8 +232,8 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DeviceTemplate_TypeEquals_DeviceTemplate()
         {
             TestTypeEquals(
@@ -243,8 +243,8 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DeviceTemplate_HashCodeEquals_DeviceTemplate()
         {
             TestHashCode(
@@ -254,8 +254,8 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DeviceTemplate_StringEquals_DeviceTemplate()
         {
             DeviceTemplate template1 = new DeviceTemplate("file.odt|File||");
@@ -267,8 +267,8 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
         #endregion
         #region Schedule
         
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Schedule_ObjectEquals_Schedule()
         {
             TestObjectEquals(
@@ -278,8 +278,8 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Schedule_TypeEquals_Schedule()
         {
             TestTypeEquals(
@@ -289,8 +289,8 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Schedule_HashCodeEquals_Schedule()
         {
             TestHashCode(
@@ -303,8 +303,8 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
         #endregion
         #region TimeTable
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void TimeTable_ObjectEquals_TimeTable()
         {
             var thursday = TimeSlot.Default(DayOfWeek.Thursday, i => i != 3);
@@ -318,8 +318,8 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void TimeTable_TypeEquals_TimeTable()
         {
             var thursday = TimeSlot.Default(DayOfWeek.Thursday, i => i != 3);
@@ -332,8 +332,8 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void TimeTable_HashCodeEquals_TimeTable()
         {
             var thursday = TimeSlot.Default(DayOfWeek.Thursday, i => i != 3);
@@ -346,8 +346,8 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void TimeTable_Equals_DifferentDaysActive()
         {
             var normal = new TimeTable();
@@ -363,8 +363,8 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             assert(new TimeTable(sunday: TimeSlot.Default(DayOfWeek.Sunday, i => i != 0)));
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void TimeTable_Requires24Hours()
         {
             AssertEx.Throws<ArgumentException>(() => new TimeTable(new TimeSlot[] { }), "Must specify 24 records however only 0 were specified.");
@@ -373,8 +373,8 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
         #endregion
         #region TimeSlotRow
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void TimeSlotRow_ObjectEquals_TimeSlotRow()
         {
             TestObjectEquals(
@@ -384,8 +384,8 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void TimeSlotRow_TypeEquals_TimeSlotRow()
         {
             TestTypeEquals(
@@ -395,8 +395,8 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void TimeSlotRow_Equals_DifferentDaysActive()
         {
             var normal = new TimeSlotRow(1);
@@ -413,8 +413,8 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             assert(new TimeSlotRow(1, sunday: false));
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void TimeSlotRow_HashCodeEquals_TimeSlotRow()
         {
             TestHashCode(
@@ -424,8 +424,8 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void TimeSlotRow_CompareTo()
         {
             var row1 = new TimeSlotRow(1);
@@ -451,8 +451,8 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             Assert.AreEqual(1, row3_2.CompareTo(row3_1));
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void TimeSlotRow_CompareTo_DifferentDays()
         {
             var normal = new TimeSlotRow(1);
@@ -472,22 +472,22 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
         #endregion
         #region TimeSlot
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void TimeSlot_InvalidHour()
         {
             AssertEx.Throws<ArgumentException>(() => new TimeSlot(30, DayOfWeek.Monday), "Hour must be between 0-23.");
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void TimeSlot_InvalidDay()
         {
             AssertEx.Throws<ArgumentException>(() => new TimeSlot(1, (DayOfWeek) 10), "'10' is not a valid System.DayOfWeek.");
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void TimeSlot_ObjectEquals_TimeSlot()
         {
             TestObjectEquals(
@@ -497,8 +497,8 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void TimeSlot_TypeEquals_Schedule()
         {
             TestTypeEquals(
@@ -508,8 +508,8 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void TimeSlot_HashCodeEquals_TimeSlot()
         {
             TestHashCode(
@@ -519,8 +519,8 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void TimeSlot_CompareTo_Same()
         {
             var slot1 = new TimeSlot(1, DayOfWeek.Monday);
@@ -530,8 +530,8 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             Assert.AreEqual(0, slot1.CompareTo((object)slot2));
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void TimeSlot_CompareTo_Illegal()
         {
             var slot1 = new TimeSlot(1, DayOfWeek.Tuesday);
@@ -540,8 +540,8 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             AssertEx.Throws<ArgumentException>(() => slot1.CompareTo(1), "Cannot compare TimeSlot with value of type Int32.");
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void TimeSlot_CompareTo_SameDay_DifferentHour()
         {
             var slot1 = new TimeSlot(0, DayOfWeek.Monday);
@@ -551,8 +551,8 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             Assert.AreEqual(-1, slot1.CompareTo(slot2));
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void TimeSlot_CompareTo_DifferentDay_SameHour()
         {
             var slot1 = new TimeSlot(1, DayOfWeek.Monday);
@@ -562,8 +562,8 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             Assert.AreEqual(-1, slot1.CompareTo(slot2));
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void TimeSlot_CompareTo_SameDay_SameHour_DifferentActive()
         {
             var slot1 = new TimeSlot(0, DayOfWeek.Monday);
@@ -573,8 +573,8 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             Assert.AreEqual(-1, slot2.CompareTo(slot1));
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void TimeSlot_CompareTo_OrderOfDays()
         {
             var monday = new TimeSlot(1, DayOfWeek.Monday);
@@ -590,8 +590,8 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
         #endregion
         #region Notification Types
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void NotificationTypes_ObjectEquals_NotificationTypes()
         {
             TestObjectEquals(
@@ -601,8 +601,8 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void NotificationTypes_TypeEquals_NotificationTypes()
         {
             TestTypeEquals(
@@ -612,8 +612,8 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void NotificationTypes_HashCodeEquals_NotificationTypes()
         {
             TestHashCode(
@@ -626,8 +626,8 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
         #endregion
         #region IShallowCloneable
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void IShallowCloneable_PrtgObjectParameters_CloneFully()
         {
             CloneTable<PrtgObject, PrtgObjectParameters>(new PrtgObjectParameters(), i =>
@@ -639,8 +639,8 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             });
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void IShallowCloneable_SensorParameters_CloneFully()
         {
             CloneTable<Sensor, SensorParameters>(new SensorParameters
@@ -655,8 +655,8 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             });
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void IShallowCloneable_DeviceParameters_CloneFully()
         {
             CloneTable<Device, DeviceParameters>(new DeviceParameters(), i =>
@@ -668,8 +668,8 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             });
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void IShallowCloneable_GroupParameters_CloneFully()
         {
             CloneTable<Group, GroupParameters>(new GroupParameters(), i =>
@@ -681,8 +681,8 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             });
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void IShallowCloneable_ProbeParameters_CloneFully()
         {
             CloneTable<Probe, ProbeParameters>(new ProbeParameters(), i =>
@@ -697,8 +697,8 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             });
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void IShallowCloneable_LogParameters_CloneFully()
         {
             CloneTable<Log, LogParameters>(new LogParameters(3000)
@@ -709,8 +709,8 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             });
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void IShallowCloneable_SensorHistoryParameters_CloneFully()
         {
             Clone(new SensorHistoryParameters(1001, 30, DateTime.Now, DateTime.Now.AddHours(-1), 300)
@@ -727,8 +727,8 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             });
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void IShallowCloneable_SetChannelPropertyParameters_CloneFully()
         {
             var ids = new[] {1001, 1002, 1003};
@@ -798,8 +798,8 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             AssertEx.AllPropertiesAndFieldsAreEqual(parameters, clone);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void All_IShallowCloneable_Types_HaveTests()
         {
             var types = typeof(IShallowCloneable).Assembly.GetTypes().Where(t => typeof(IShallowCloneable).IsAssignableFrom(t) && !t.IsInterface).ToList();
@@ -817,8 +817,8 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
         #endregion
         #region Log
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Log_EqualityComparer_Equals_DifferentObjectsSameValues()
         {
             var client = BaseTest.Initialize_Client(new MessageResponse(new MessageItem()));
@@ -832,8 +832,8 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             Assert.IsTrue(comparer.Equals(log1, log2), "Logs were not equal");
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Log_EqualityComparer_Equals_DifferentObjectsNullableValues()
         {
             var item = new MessageItem(null, null, "43042.2573037732", null, null, "604", null, null, null, null, "1", null, null, "2304", null, null, null, null);
@@ -849,8 +849,8 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             Assert.IsTrue(comparer.Equals(log1, log2), "Logs were not equal");
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Log_EqualityComparer_GetHashCode_UniqueValues()
         {
             var random = new Random();
@@ -886,8 +886,8 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
                 Assert.AreEqual(comparer.GetHashCode(log), comparer.GetHashCode(log));
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Log_EqualityComparer_GetHashCode_NullableValues()
         {
             var random = new Random();
@@ -920,8 +920,8 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
         #endregion
         #region SensorType
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void SensorType_AllValues_HaveTypeAttributes()
         {
             //All SensorType values should have type attributes
@@ -962,8 +962,8 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
         #endregion
         #region ToString
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void ToStringTests()
         {
             var client = BaseTest.Initialize_Client(new MultiTypeResponse());
@@ -1082,8 +1082,8 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
                 AssertEx.Throws<ArgumentException>(() => parse("abc123"), "Cannot convert value 'abc123' of type 'System.String'");
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void All_PrtgObjectProperties_HaveArrayLookupProperties()
         {
             var properties = PrtgObjectFilterTests.GetPrtgObjectProperties(new[] {"NotificationTypes"});
@@ -1097,8 +1097,8 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
                 Assert.Fail($"{missing.Count}/{propertyTypes.Count} properties are missing are missing: " + string.Join(", ", missing));
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void AllBoolean_PrtgObjectProperties_HaveXmlBoolAttribute()
         {
             var values = GetFilterPropertiesForPrtgObjectProperties(p => p.PropertyType == typeof(bool) || p.PropertyType == typeof(bool?));
@@ -1112,8 +1112,8 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             }
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void AllString_FilterProperties_HaveStringFilterHandler()
         {
             AllPropertiesOfTypeHaveFilterHandler<StringFilterHandler>(
@@ -1122,8 +1122,8 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void AllTimeSpan_FilterProperties_HaveTimeSpanValueConverter()
         {
             var exclusions = new[]
@@ -1134,8 +1134,8 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             AllPropertiesOfTypeHaveValueConverter<TimeSpanConverter>(p => p.PropertyType == typeof(TimeSpan) || p.PropertyType == typeof(TimeSpan?), exclusions);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void AllDateTime_FilterProperties_HaveDateTimeValueConverter()
         {
             AllPropertiesOfTypeHaveValueConverter<DateTimeConverter>(p => p.PropertyType == typeof(DateTime) || p.PropertyType == typeof(DateTime?));

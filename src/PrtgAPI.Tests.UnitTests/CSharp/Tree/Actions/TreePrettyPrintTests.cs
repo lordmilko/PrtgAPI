@@ -7,6 +7,7 @@ namespace PrtgAPI.Tests.UnitTests.Tree
     [TestClass]
     public class TreePrettyPrintTests : BaseTreeTest
     {
+        [UnitTest]
         [TestMethod]
         public void Tree_PrettyPrint_SingleNode()
         {
@@ -20,6 +21,7 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             Validate(tree, expected);
         }
 
+        [UnitTest]
         [TestMethod]
         public void Tree_PrettyPrint_SingleChild()
         {
@@ -36,6 +38,7 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             Validate(tree, expected);
         }
 
+        [UnitTest]
         [TestMethod]
         public void Tree_PrettyPrint_SingleChildCollection()
         {
@@ -52,6 +55,7 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             Validate(tree, expected);
         }
 
+        [UnitTest]
         [TestMethod]
         public void Tree_PrettyPrint_TwoChildren()
         {
@@ -70,6 +74,7 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             Validate(tree, expected);
         }
 
+        [UnitTest]
         [TestMethod]
         public void Tree_PrettyPrint_TwoCollectionChildren()
         {
@@ -90,8 +95,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             Validate(tree, expected);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_PrettyPrint_SingleGrandChild()
         {
             var tree = PrtgNode.Probe(Probe(),
@@ -110,8 +115,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             Validate(tree, expected);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_PrettyPrint_SingleGrandChildCollection()
         {
             var tree = PrtgNode.Probe(Probe(),
@@ -130,8 +135,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             Validate(tree, expected);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_PrettyPrint_TwoChildrenOneGrandChild()
         {
             var tree = PrtgNode.Probe(Probe(),
@@ -152,8 +157,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             Validate(tree, expected);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_PrettyPrint_TwoChildrenOneGrandChildCollection()
         {
             var tree = PrtgNode.Probe(Probe(),
@@ -174,8 +179,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             Validate(tree, expected);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_PrettyPrint_TwoGrandChildren()
         {
             var tree = PrtgNode.Probe(Probe(),
@@ -196,8 +201,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             Validate(tree, expected);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_PrettyPrint_TwoChildren_TwoGrandChildren()
         {
             var tree = PrtgNode.Probe(Probe(),
@@ -220,8 +225,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             Validate(tree, expected);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_PrettyPrint_TwoChildren_OneHasTwoChildren_WithOneGrandChildEach()
         {
             var tree = PrtgNode.Group(Group("PRTG Network Monitor", 0),
@@ -250,8 +255,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             Validate(tree, expected);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_PrettyPrint_TwoChildren_OneHasTwoChildren_WithOneGrandChildCollectionEach()
         {
             var tree = PrtgNode.Group(Group("PRTG Network Monitor", 0),
@@ -280,8 +285,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             Validate(tree, expected);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_PrettyPrint_TwoTriggers()
         {
             var group = Group();
@@ -301,8 +306,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             Validate(tree, expected);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_PrettyPrint_NodeAndTwoTriggers()
         {
             var tree = PrtgNode.Group(Group(),
@@ -324,8 +329,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             Validate(tree, expected);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_PrettyPrint_Grouping()
         {
             var tree = PrtgNode.Device(Device(),

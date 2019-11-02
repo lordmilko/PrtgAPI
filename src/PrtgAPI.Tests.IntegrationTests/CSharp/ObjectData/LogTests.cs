@@ -13,14 +13,14 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
     public class LogTests : BasePrtgClientTest
     {
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Log_GetLogs_HasAnyResults()
         {
             HasAnyResults(() => client.GetLogs());
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Log_GetLogs_SpecifiesStartDate()
         {
             var count = 6000;
@@ -35,7 +35,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Log_GetLogs_SpecifiesEndDate()
         {
             var logs = client.GetLogs(null, DateTime.Now.AddDays(-1), null);
@@ -48,7 +48,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Log_GetLogs_FiltersByStatus()
         {
             var logs = client.GetLogs(status: LogStatus.Up);
@@ -60,7 +60,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_StreamLogs_SerialVsNonSerial_Normal()
         {
             FilterTests.Retry(retry =>
@@ -73,7 +73,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_StreamLogs_SerialVsNonSerial_StartOffset()
         {
             FilterTests.Retry(retry =>
@@ -152,7 +152,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_StreamLogs_WithCorrectPageSize()
         {
             FilterTests.Retry(retry =>
@@ -202,7 +202,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_StreamLogs_WithIncorrectPageSize()
         {
             FilterTests.Retry(retry =>
@@ -260,7 +260,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Log_ReadOnlyUser()
         {
             var logs = readOnlyClient.GetLogs();
@@ -270,7 +270,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public async Task Data_Log_ReadOnlyUserAsync()
         {
             var logs = await readOnlyClient.GetLogsAsync();

@@ -10,8 +10,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
     {
         #region Add
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_NodeList_Add_NoExistingChildren()
         {
             var probe = PrtgNode.Probe(Probe());
@@ -28,8 +28,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             Assert.IsNotNull(newProbe.Children[0].Parent);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_NodeList_Add_ExistingChildren()
         {
             var probe = PrtgNode.Probe(Probe(),
@@ -47,8 +47,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             Assert.IsTrue(newProbe.Children.All(c => c != null));
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_NodeList_AddRange_NoExistingChildren()
         {
             var probe = PrtgNode.Probe(Probe());
@@ -69,8 +69,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             Assert.IsTrue(newProbe.Children.All(v => v.Parent != null));
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_NodeList_AddRange_ExistingChildren()
         {
             var probe = PrtgNode.Probe(Probe(),
@@ -96,8 +96,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
         #endregion
         #region Insert
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_NodeList_Insert_Null_Throws()
         {
             var probe = PrtgNode.Probe(Probe());
@@ -108,8 +108,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_NodeList_InsertRange_Null_Throws()
         {
             var probe = PrtgNode.Probe(Probe());
@@ -120,8 +120,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_NodeList_InsertRange_InvalidIndex_Throws()
         {
             var probe = PrtgNode.Probe(Probe());
@@ -137,8 +137,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_NodeList_InsertRange_EmptyList()
         {
             var probe = PrtgNode.Probe(Probe());
@@ -151,8 +151,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
         #endregion
         #region Remove
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_NodeList_RemoveAt()
         {
             var probe = PrtgNode.Probe(Probe(),
@@ -166,8 +166,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             Assert.AreEqual(newList[0].Name, "Servers");
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_NodeList_Remove_Null_Throws()
         {
             var probe = PrtgNode.Probe(Probe(),
@@ -183,8 +183,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
         #endregion
         #region Replace
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_NodeList_Replace()
         {
             var probe = PrtgNode.Probe(Probe(),
@@ -200,8 +200,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             Assert.AreEqual("Servers", newList[0].Name);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_NodeList_ReplaceRange_OldNode_Null_Throws()
         {
             var probe = PrtgNode.Probe(Probe(),
@@ -214,8 +214,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_NodeList_ReplaceRange_NewNodes_Null_Throws()
         {
             var probe = PrtgNode.Probe(Probe(),
@@ -231,8 +231,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
         #endregion
         #region Item
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_NodeList_Item_InBounds()
         {
             var probe = PrtgNode.Probe(Probe(),
@@ -243,8 +243,8 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             Assert.IsNotNull(device);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Tree_NodeList_Item_OutOfBounds()
         {
             var probe = PrtgNode.Probe(Probe(),

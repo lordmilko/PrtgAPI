@@ -11,8 +11,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
     [TestClass]
     public class SetObjectPropertyParametersTests : BaseTest
     {
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void SetObjectProperty_SetsAChild_OfAnInternalProperty()
         {
             Execute(
@@ -23,71 +23,71 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
 
         #region SetObjectPropertyParameters
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void SetObjectPropertyParameters_WithTypeLookup_NormalProperty()
         {
             ExecuteWithTypeLookup(FakeObjectProperty.NormalProperty, "normalproperty_");
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void SetObjectPropertyParameters_WithTypeLookup_NormalProperty_SetsNull()
         {
             ExecuteWithTypeLookupInternal(FakeObjectProperty.NormalProperty, null, "normalproperty_=");
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void SetObjectPropertyParameters_WithTypeLookup_MissingXmlElementButHasDescription()
         {
             ExecuteWithTypeLookup(FakeObjectProperty.MissingXmlElementButHasDescription, "missingxmlelementbuthasdescription_");
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void SetObjectPropertyParameters_WithTypeLookup_MissingXmlElementAndDescription_ShouldThrow()
         {
             ExecuteExceptionWithTypeLookup<MissingAttributeException>(FakeObjectProperty.MissingXmlElementAndDescription, "missing a System.ComponentModel.DescriptionAttribute");
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void SetObjectPropertyParameters_WithTypeLookup_MissingTypeLookupAttribute_ShouldThrow()
         {
             ExecuteExceptionWithTypeLookup<MissingAttributeException>(FakeObjectProperty.MissingTypeLookup, "missing a PrtgAPI.Attributes.TypeLookupAttribute");
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void SetObjectPropertyParameters_WithTypeLookup_HasSecondaryProperty()
         {
             ExecuteWithTypeLookupInternal(FakeObjectProperty.HasSecondaryProperty, new FakeMultipleSerializable(), "hassecondaryproperty_=firstValue", "secondaryproperty_=secondValue");
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void SetObjectPropertyParameters_WithTypeLookup_MissingFromTypeLookupTarget()
         {
             ExecuteExceptionWithTypeLookup<MissingMemberException>(FakeObjectProperty.MissingFromTypeLookupTarget, "MissingFromTypeLookupTarget cannot be found on type");
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void SetObjectPropertyParameters_WithTypeLookup_SetsAParent()
         {
             ExecuteWithTypeLookup(FakeObjectProperty.ParentProperty, "parentproperty_");
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void SetObjectPropertyParameters_WithTypeLookup_ChildDependsOnWrongValueType_ShouldThrow()
         {
             ExecuteExceptionWithTypeLookup<InvalidTypeException>(FakeObjectProperty.ParentOfWrongType, "Dependencies of property 'ParentOfWrongType' should be of type System.String");
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void SetObjectPropertyParameters_WithTypeLookup_ParentOfChildWithReverseDependency()
         {
             ExecuteWithTypeLookupInternal(
@@ -101,29 +101,29 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void SetObjectPropertyParameters_WithTypeLookup_ChildWithReverseDependency()
         {
             ExecuteWithTypeLookup(FakeObjectProperty.ChildPropertyWithReverseDependency, "childpropertywithreversedependency_", "parentofreversedependency_");
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void SetObjectPropertyParameters_WithTypeLookup_ChildHasReverseDependency_AndIsMissingTypeLookup_ShouldThrow()
         {
             ExecuteExceptionWithTypeLookup<MissingAttributeException>(FakeObjectProperty.ParentOfReverseDependencyMissingTypeLookup, "missing a PrtgAPI.Attributes.TypeLookupAttribute");
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void SetObjectPropertyParameters_WithPropertyParameter_NormalProperty()
         {
             ExecuteWithPropertyParameter(FakeObjectProperty.PropertyParameterProperty);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void SetObjectPropertyParameters_WithPropertyParameter_MissingPropertyParameterAttribute()
         {
             ExecuteExceptionWithPropertyParameter<MissingAttributeException>(FakeObjectProperty.NormalProperty, "missing a PrtgAPI.Attributes.PropertyParameterAttribute");
@@ -133,27 +133,27 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         #region DynamicPropertyTypeParser
         #region Array Serialization
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DynamicPropertyTypeParser_Serializes_Array_WithoutSplittableStringAttribute_ShouldThrow()
         {
             ExecuteExceptionWithTypeLookupAndValue<NotSupportedException>(FakeObjectProperty.ArrayPropertyMissingSplittableString, new[] { "a", "b" }, "missing a SplittableStringAttribute");
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DynamicPropertyTypeParser_Serializes_Array_WithUntypedArray() => ExecuteWithTypeLookupInternal(FakeObjectProperty.ArrayProperty, new object[] { "1", "2" }, "arrayproperty_=1 2");
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DynamicPropertyTypeParser_Serializes_Array_WithNull() => ExecuteWithTypeLookupInternal(FakeObjectProperty.ArrayProperty, null, "arrayproperty_=");
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DynamicPropertyTypeParser_Serializes_Array_WithEmptyArray() => ExecuteWithTypeLookupInternal(FakeObjectProperty.ArrayProperty, new string[] { }, "arrayproperty_=");
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DynamicPropertyTypeParser_Serializes_Array_WithEmptyArrayIllegalType_Throws()
         {
             AssertEx.Throws<NotSupportedException>(
@@ -162,18 +162,18 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DynamicPropertyTypeParser_Serializes_Array_WithList() =>
             ExecuteWithTypeLookupInternal(FakeObjectProperty.ArrayProperty, new List<string> { "first", "second" }, "arrayproperty_=first second");
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DynamicPropertyTypeParser_Serializes_Array_WithEmptyList() =>
             ExecuteWithTypeLookupInternal(FakeObjectProperty.ArrayProperty, new List<string>(), "arrayproperty_=");
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DynamicPropertyTypeParser_Serializes_Array_WithEmptyListIllegalType_Throws()
         {
             AssertEx.Throws<NotSupportedException>(
@@ -182,18 +182,18 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DynamicPropertyTypeParser_Serializes_Array_WithEnumerable() =>
             ExecuteWithTypeLookupInternal(FakeObjectProperty.ArrayProperty, new List<string> { "first", "second" }.Select(v => v), "arrayproperty_=first second");
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DynamicPropertyTypeParser_Serializes_Array_WithEmptyEnumerable() =>
             ExecuteWithTypeLookupInternal(FakeObjectProperty.ArrayProperty, Enumerable.Empty<string>(), "arrayproperty_=");
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DynamicPropertyTypeParser_Serializes_Array_WithEmptyEnumerableIllegalType_Throws()
         {
             AssertEx.Throws<NotSupportedException>(
@@ -202,8 +202,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DynamicPropertyTypeParser_Serializes_Array_WithIllegalTypeMembers()
         {
             AssertEx.Throws<NotSupportedException>(
@@ -212,8 +212,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DynamicPropertyTypeParser_Serializes_Array_WithRandomType()
         {
             AssertEx.Throws<InvalidTypeException>(
@@ -224,22 +224,22 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
 
         #endregion
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DynamicPropertyTypeParser_Serializes_ISerializable()
         {
             ExecuteWithTypeLookupInternal(FakeObjectProperty.SerializableProperty, new FakeSerializable(), "serializableproperty_=serializedValue");
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DynamicPropertyTypeParser_Serializes_ISerializable_WithNull()
         {
             ExecuteWithTypeLookupInternal(FakeObjectProperty.SerializableProperty, null, "serializableproperty_=");
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DynamicPropertyTypeParser_Serializes_ISerializable_WithRandomType_Throws()
         {
             AssertEx.Throws<InvalidTypeException>(
@@ -248,8 +248,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DynamicPropertyTypeParser_Serializes_ISerializable_IllegalTypeAttributeType_Throws()
         {
             AssertEx.Throws<InvalidOperationException>(
@@ -258,13 +258,13 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DynamicPropertyTypeParser_Serializes_Enum_WithEnum_CorrectType() =>
             ExecuteWithTypeLookupInternal(FakeObjectProperty.EnumProperty, Status.Up, "enumproperty_=3");
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DynamicPropertyTypeParser_Serializes_Enum_WithEnum_CastedInt()
         {
             AssertEx.Throws<InvalidOperationException>(
@@ -273,8 +273,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DynamicPropertyTypeParser_Serializes_Enum_WithEnum_DifferentType()
         {
             AssertEx.Throws<ArgumentException>(
@@ -283,18 +283,18 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DynamicPropertyTypeParser_Serializes_AlternateEnum_WithEnum() =>
             ExecuteWithTypeLookupInternal(FakeObjectProperty.AlternateEnumProperty, HttpMode.HTTPS, "alternateenumproperty_=https");
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DynamicPropertyTypeParser_Serializes_Enum_WithValidString() =>
             ExecuteWithTypeLookupInternal(FakeObjectProperty.EnumProperty, "up", "enumproperty_=3");
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DynamicPropertyTypeParser_Serializes_Enum_WithInvalidString_Throws()
         {
             AssertEx.Throws<ArgumentException>(
@@ -303,8 +303,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DynamicPropertyTypeParser_Serializes_Enum_WithValidInt_Throws()
         {
             AssertEx.Throws<ArgumentException>(
@@ -313,13 +313,13 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DynamicPropertyTypeParser_Serializes_NumericEnum_WithValidInt() =>
             ExecuteWithTypeLookupInternal(FakeObjectProperty.NumericEnumProperty, 3, "numericenumproperty_=3");
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DynamicPropertyTypeParser_Serializes_NumericEnum_WithInvalidInt()
         {
             AssertEx.Throws<InvalidOperationException>(
@@ -328,8 +328,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DynamicPropertyTypeParser_Serializes_ValueConverter_NonNull()
         {
             /* Strictly speaking we want to perform the following test
@@ -346,26 +346,26 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DynamicPropertyTypeParser_Serializes_ValueConverter_WithNull_WithNullConversion() =>
             ExecuteWithTypeLookupInternal(FakeObjectProperty.ValueConverterWithNullConversion, null, "valueconverterwithnullconversion_=serializednull");
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DynamicPropertyTypeParser_Serializes_ValueConverter_WithNull_WithoutNullConversion() =>
             ExecuteWithTypeLookupInternal(FakeObjectProperty.ValueConverterWithoutNullConversion, null, "valueconverterwithoutnullconversion_=");
 
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DynamicPropertyTypeParser_Serializes_ValueConverter_AndISerializable_WithNull()
         {
             ExecuteWithTypeLookupInternal(FakeObjectProperty.SerializableValueConverter, null, "serializablevalueconverter_=serializednull");
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DynamicPropertyTypeParser_Serializes_ValueConverter_AndISerializable_WithValue()
         {
             //Currently the only scenario we support where an ISerializable has a ValueConverter is for converting null values,
@@ -377,28 +377,28 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DynamicPropertyTypeParser_Serializes_Bool_True() =>
             ExecuteWithTypeLookupInternal(FakeObjectProperty.BoolProperty, true, "boolproperty_=1");
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DynamicPropertyTypeParser_Serializes_Bool_False() =>
             ExecuteWithTypeLookupInternal(FakeObjectProperty.BoolProperty, false, "boolproperty_=0");
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DynamicPropertyTypeParser_Serializes_Bool_IntTrue() =>
             ExecuteWithTypeLookupInternal(FakeObjectProperty.BoolProperty, 1, "boolproperty_=1");
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DynamicPropertyTypeParser_Serializes_Bool_IntFalse() =>
             ExecuteWithTypeLookupInternal(FakeObjectProperty.BoolProperty, 0, "boolproperty_=0");
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DynamicPropertyTypeParser_Serializes_Bool_WithNull_Throws()
         {
             AssertEx.Throws<ArgumentNullException>(
@@ -407,8 +407,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DynamicPropertyTypeParser_Serializes_KnownType_WithRandomType_Throws()
         {
             AssertEx.Throws<ArgumentException>(
@@ -417,8 +417,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DynamicPropertyTypeParser_Serializes_NonSerializableClassType_Throws()
         {
             AssertEx.Throws<InvalidTypeException>(
@@ -427,60 +427,60 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DynamicPropertyTypeParser_Serializes_WithTypeAttribute_AndNotISerializable_ShouldThrow()
         {
             ExecuteExceptionWithTypeLookup<InvalidOperationException>(FakeObjectProperty.TypeWithoutISerializable, "Property 'TypeWithoutISerializable' has a TypeAttribute of type 'System.Int32' which does not implement 'PrtgAPI.Request.ISerializable'");
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DynamicPropertyTypeParser_Serializes_Double_ToInt_WithoutDecimalPlaces_ShouldThrow()
         {
             ExecuteWithTypeLookupInternal(FakeObjectProperty.IntegerProperty, 1.0, "integerproperty_=1");
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DynamicPropertyTypeParser_Serializes_Double_ToInt_WithDecimalPlaces_ShouldThrow()
         {
             ExecuteExceptionWithTypeLookupAndValue<InvalidTypeException>(FakeObjectProperty.IntegerProperty, 1.2, "Expected type: 'System.Int32'. Actual type: 'System.Double'");
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DynamicPropertyTypeParser_Serializes_Double_WithStringDouble() =>
             ExecuteWithTypeLookupInternal(FakeObjectProperty.DoubleProperty, "1.2", "doubleproperty_=1.2");
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DynamicPropertyTypeParser_Serializes_Implicit_FromCorrectType() =>
             ExecuteWithTypeLookupInternal(FakeObjectProperty.ImplicitlyConvertable, "test.ps1", "implicitlyconvertable_=test.ps1|test.ps1||");
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DynamicPropertyTypeParser_Serializes_Implicit_FromNull() =>
             TestIllegalNullDeserialization(FakeObjectProperty.ImplicitlyConvertable, typeof(ExeFileTarget));
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DynamicPropertyTypeParser_Serializes_Implicit_FromIncorrectType() =>
             ExecuteExceptionWithTypeLookupAndValue<InvalidTypeException>(FakeObjectProperty.ImplicitlyConvertable, 2, "Expected type: 'PrtgAPI.Targets.ExeFileTarget'. Actual type: 'System.Int32'.");
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DynamicPropertyTypeParser_Serializes_Implicit_FromFinalType() =>
             ExecuteWithTypeLookupInternal(FakeObjectProperty.ImplicitlyConvertable, (ExeFileTarget)"test.ps1", "implicitlyconvertable_=test.ps1|test.ps1||");
 
         #region Deserialization
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DynamicPropertyTypeParser_Deserializes_FinalType() => TestDeserialization(FakeObjectProperty.BoolProperty, true, true);
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DynamicPropertyTypeParser_Deserializes_ISerializable()
         {
             var val = new FakeSerializable();
@@ -488,13 +488,13 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             TestDeserialization(FakeObjectProperty.SerializableProperty, val, val);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DynamicPropertyTypeParser_Deserializes_ISerializable_WithNull() =>
             TestIllegalNullDeserialization(FakeObjectProperty.SerializableProperty, typeof(FakeSerializable));
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DynamicPropertyTypeParser_Deserializes_ISerializable_IllegalTypeAttributeType_Throws()
         {
             AssertEx.Throws<InvalidOperationException>(
@@ -503,38 +503,38 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DynamicPropertyTypeParser_Deserializes_String() =>
             TestDeserialization(FakeObjectProperty.NormalProperty, new Sensor(), "PrtgAPI.Sensor");
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DynamicPropertyTypeParser_Deserializes_String_WithNull() =>
             TestDeserialization(FakeObjectProperty.NormalProperty, null, null);
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DynamicPropertyTypeParser_Deserializes_Double_WithInt() =>
             TestDeserialization(FakeObjectProperty.DoubleProperty, 1, 1.0);
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DynamicPropertyTypeParser_Deserializes_Double_WithDouble() =>
             TestDeserialization(FakeObjectProperty.DoubleProperty, 1.0, 1.0);
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DynamicPropertyTypeParser_Deserializes_Double_WithString() =>
             TestDeserialization(FakeObjectProperty.DoubleProperty, "1", 1.0);
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DynamicPropertyTypeParser_Deserializes_Double_WithNull() =>
             TestDeserialization(FakeObjectProperty.DoubleProperty, null, null);
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DynamicPropertyTypeParser_Deserializes_ValueConverter_NonNull()
         {
             /* Strictly speaking we want to perform the following test
@@ -551,68 +551,68 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DynamicPropertyTypeParser_Deserializes_ValueConverter_WithNull_WithNullConversion() =>
             TestDeserialization(FakeObjectProperty.ValueConverterWithNullConversion, null, "deserializednull");
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DynamicPropertyTypeParser_Deserializes_ValueConverter_WithNull_WithoutNullConversion() =>
             TestDeserialization(FakeObjectProperty.ValueConverterWithoutNullConversion, null, null);
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DynamicPropertyTypeParser_Deserializes_Bool_WithInt_True() =>
             TestDeserialization(FakeObjectProperty.BoolProperty, 1, true);
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DynamicPropertyTypeParser_Deserializes_Bool_WithInt_False() =>
             TestDeserialization(FakeObjectProperty.BoolProperty, 0, false);
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DynamicPropertyTypeParser_Deserializes_Bool_WithDouble() =>
             TestDeserialization(FakeObjectProperty.BoolProperty, 1.0, true);
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DynamicPropertyTypeParser_Deserializes_Bool_WithIntString() =>
             TestDeserialization(FakeObjectProperty.BoolProperty, "1", true);
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DynamicPropertyTypeParser_Deserializes_Bool_WithDoubleString() =>
             TestDeserialization(FakeObjectProperty.BoolProperty, "1", true);
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DynamicPropertyTypeParser_Deserializes_Bool_WithBoolString() =>
             TestDeserialization(FakeObjectProperty.BoolProperty, "TRUE", true);
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DynamicPropertyTypeParser_Deserializes_Bool_WithNull() =>
             TestIllegalNullDeserialization(FakeObjectProperty.BoolProperty, typeof(bool));
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DynamicPropertyTypeParser_Deserializes_Nullable_WithNull() =>
             TestDeserialization(FakeObjectProperty.NullableIntegerProperty, null, null);
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DynamicPropertyTypeParser_Deserializes_Nullable_WithUnderlying() =>
             TestDeserialization(FakeObjectProperty.NullableIntegerProperty, 1, 1);
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DynamicPropertyTypeParser_Deserializes_Nullable_WithBoxed() =>
             TestDeserialization(FakeObjectProperty.NullableIntegerProperty, 1, new int?(1));
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DynamicPropertyTypeParser_Deserializes_Class_WithRandomType()
         {
             AssertEx.Throws<InvalidTypeException>(
@@ -621,13 +621,13 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DynamicPropertyTypeParser_Deserializes_Enum_WithEnum_CorrectType() =>
             TestDeserialization(FakeObjectProperty.EnumProperty, Status.Up, Status.Up);
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DynamicPropertyTypeParser_Deserializes_Enum_WithEnum_DifferentType()
         {
             AssertEx.Throws<ArgumentException>(
@@ -636,18 +636,18 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DynamicPropertyTypeParser_Deserializes_AlternateEnum_WithEnum() =>
             TestDeserialization(FakeObjectProperty.AlternateEnumProperty, HttpMode.HTTPS, HttpMode.HTTPS);
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DynamicPropertyTypeParser_Deserializes_Enum_WithValidString() =>
             TestDeserialization(FakeObjectProperty.EnumProperty, "up", Status.Up);
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DynamicPropertyTypeParser_Deserializes_Enum_WithInvalidString_Throws()
         {
             AssertEx.Throws<ArgumentException>(
@@ -656,8 +656,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DynamicPropertyTypeParser_Deserializes_Enum_WithValidInt_Throws()
         {
             AssertEx.Throws<ArgumentException>(
@@ -666,25 +666,25 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DynamicPropertyTypeParser_Deserializes_NumericEnum_WithValidInt() =>
             TestDeserialization(FakeObjectProperty.NumericEnumProperty, 3, Priority.Three);
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DynamicPropertyTypeParser_Deserializes_NumericEnum_WithInvalidInt() =>
             TestDeserialization(FakeObjectProperty.NumericEnumProperty, -1, (Priority)(object)-1);
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DynamicPropertyTypeParser_Deserializes_Int_WithDouble() =>
             TestDeserialization(FakeObjectProperty.IntegerProperty, 1.0, 1);
 
         #region Array Deserialization
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DynamicPropertyTypeParser_Deserializes_Array_WithUntypedArray() =>
             TestArrayDeserialization(
                 FakeObjectProperty.ArrayProperty,
@@ -692,8 +692,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
                 new string[] { "1", "2" }
             );
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DynamicPropertyTypeParser_Deserializes_Array_WithUntypedArray_WithDifferentElementTypes() =>
             TestArrayDeserialization(
                 FakeObjectProperty.ArrayProperty,
@@ -701,23 +701,23 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
                 new string[] { "1", "PrtgAPI.Sensor" }
             );
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DynamicPropertyTypeParser_Deserializes_Array_WithNull() =>
             TestArrayDeserialization(FakeObjectProperty.ArrayProperty, null, null);
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DynamicPropertyTypeParser_Deserializes_Array_WithEmptyArray() =>
             TestArrayDeserialization(FakeObjectProperty.ArrayProperty, new string[] { }, new string[] { });
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DynamicPropertyTypeParser_Deserializes_Array_WithEmptyArrayIllegalType_Throws() =>
             TestArrayDeserialization(FakeObjectProperty.ArrayProperty, new int[] { }, new string[] { });
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DynamicPropertyTypeParser_Deserializes_Array_WithList() =>
             TestArrayDeserialization(
                 FakeObjectProperty.ArrayProperty,
@@ -725,18 +725,18 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
                 new string[] { "first", "second" }
             );
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DynamicPropertyTypeParser_Deserializes_Array_WithEmptyList() =>
             TestArrayDeserialization(FakeObjectProperty.ArrayProperty, new List<string>(), new string[] { });
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DynamicPropertyTypeParser_Deserializes_Array_WithEmptyListIllegalType() =>
             TestArrayDeserialization(FakeObjectProperty.ArrayProperty, new List<int>(), new string[] { });
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DynamicPropertyTypeParser_Deserializes_Array_WithEnumerable() =>
             TestArrayDeserialization(
                 FakeObjectProperty.ArrayProperty,
@@ -744,8 +744,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
                 new string[] { "first", "second" }
             );
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DynamicPropertyTypeParser_Deserializes_Array_WithEmptyEnumerable() =>
             TestArrayDeserialization(
                 FakeObjectProperty.ArrayProperty,
@@ -753,8 +753,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
                 new string[] {}
             );
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DynamicPropertyTypeParser_Deserializes_Array_WithEmptyEnumerableIllegalType() =>
             TestArrayDeserialization(
                 FakeObjectProperty.ArrayProperty,
@@ -762,44 +762,44 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
                 new string[] { }
             );
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DynamicPropertyTypeParser_Deserializes_Array_FromSingleString() =>
             TestArrayDeserialization(FakeObjectProperty.ArrayProperty, "first", new string[] { "first" });
 
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DynamicPropertyTypeParser_Deserializes_Array_FromSingleString_NonSplittable() =>
             TestArrayDeserialization(FakeObjectProperty.NonSplittableArrayProperty, "first", new string[] { "first" });
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DynamicPropertyTypeParser_Deserializes_Array_FromSingleInt() =>
             TestArrayDeserialization(FakeObjectProperty.ArrayProperty, 1, new string[] { "1" });
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DynamicPropertyTypeParser_Deserializes_Array_WithArray_ContainingNull() =>
             TestArrayDeserialization(FakeObjectProperty.ArrayProperty, new[]{ "first", null }, new[]{ "first", null });
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DynamicPropertyTypeParser_Deserializes_Array_WithList_ContainingNull() =>
             TestArrayDeserialization(FakeObjectProperty.ArrayProperty, new List<string> {"first", null}, new[] {"first"});
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DynamicPropertyTypeParser_Deserializes_Array_SplittableString_Space() =>
             TestArrayDeserialization(FakeObjectProperty.ArrayProperty, "first second", new string[] { "first", "second" });
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DynamicPropertyTypeParser_Deserializes_Array_SplittableString_Comma() =>
             TestArrayDeserialization(FakeObjectProperty.ArrayProperty, "first,second", new string[] { "first", "second" });
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void DynamicPropertyTypeParser_Deserializes_Array_SplittableString_Hybrid() =>
             TestArrayDeserialization(FakeObjectProperty.ArrayProperty, "first second,third", new string[] { "first", "second", "third" });
 

@@ -107,6 +107,9 @@
     <Compile Include="Support\Serialization\XmlReflectionSerializerImpl.cs" />
     <Compile Include="Support\Serialization\XmlSerializerManual.cs" />
     <Compile Include="Support\PrtgAPIHelpers.cs" />
+    <Compile Include="Support\TestCategory\CustomTestCategoryAttribute.cs" />
+    <Compile Include="Support\TestCategory\TestCategory.cs" />
+    <Compile Include="Support\TestCategory\UnitTestAttribute.cs" />
     <Compile Include="Support\TestItems\NotificationTriggerJsonItem.cs" />
     <Compile Include="Support\TestReflectionUtilities.cs" />
     <Compile Include="Support\TestHelpers.cs" />

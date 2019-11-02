@@ -110,7 +110,7 @@ class CodeCoverage
             $nameFilter = "&FullyQualifiedName~$trimmedName"
         }
 
-        $filter = "TestCategory!=SlowCoverage&TestCategory!=SkipCI$nameFilter"
+        $filter = "TestCategory!=SkipCoverage&TestCategory!=SkipCI$nameFilter"
 
         $testParams = @()
 

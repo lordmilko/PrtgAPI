@@ -9,7 +9,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
     public class SensorTargetTests : BasePrtgClientTest
     {
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_SensorTargets_Retrieves_FromSensorWithTargets()
         {
             var targets = client.Targets.GetSensorTargets(Settings.Device, "wmivolume");
@@ -23,14 +23,14 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_SensorTargets_Throws_Retrieving_FromSensorWithoutTargets()
         {
             AssertEx.Throws<ArgumentException>(() => client.Targets.GetSensorTargets(Settings.Device, "http"), "Cannot guess sensor target table. Please specify tableName");
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_SensorTargets_Timeout_CustomTimeout()
         {
             AssertEx.Throws<TimeoutException>(
@@ -40,7 +40,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public async Task Data_SensorTargets_Timeout_CustomTimeoutAsync()
         {
             await AssertEx.ThrowsAsync<TimeoutException>(
@@ -50,7 +50,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_SensorTargets_AsReadOnlyUser_NoQueryTarget_Throws()
         {
             AssertEx.Throws<PrtgRequestException>(
@@ -60,7 +60,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_SensorTargets_AsReadOnlyUser_WithQueryTarget_Throws()
         {
             AssertEx.Throws<PrtgRequestException>(
@@ -70,7 +70,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_SensorTargets_AsReadOnlyUser_WithQueryTargetParameters_Throws()
         {
             AssertEx.Throws<PrtgRequestException>(
@@ -80,7 +80,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public async Task Data_SensorTargets_AsReadOnlyUser_NoQueryTarget_ThrowsAsync()
         {
             await AssertEx.ThrowsAsync<PrtgRequestException>(
@@ -90,7 +90,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public async Task Data_SensorTargets_AsReadOnlyUser_WithQueryTarget_ThrowsAsync()
         {
             await AssertEx.ThrowsAsync<PrtgRequestException>(
@@ -100,7 +100,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public async Task Data_SensorTargets_AsReadOnlyUser_WithQueryTargetParameters_ThrowsAsync()
         {
             await AssertEx.ThrowsAsync<PrtgRequestException>(
@@ -110,7 +110,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_SensorTargets_SensorQueryTarget_ParsesTarget()
         {
             AssertEx.Throws<TimeoutException>(
@@ -120,7 +120,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_SensorTargets_SensorQueryTarget_Throws_WhenTargetIsInvalid()
         {
             AssertEx.Throws<InvalidOperationException>(
@@ -130,7 +130,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_SensorTargets_SensorQueryTarget_Throws_WhenTargetIsNotRequired()
         {
             AssertEx.Throws<InvalidOperationException>(
@@ -140,7 +140,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_SensorTargets_SensorQueryTarget_Throws_WhenTargetMissing()
         {
             AssertEx.Throws<InvalidOperationException>(
@@ -150,7 +150,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_SensorTargets_SensorQueryParameters_ParsesParameters()
         {
             var queryParameters = new SensorQueryTargetParameters
@@ -167,7 +167,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_SensorTargets_SensorQueryParameters_Throws_WhenParametersAreMissing()
         {
             AssertEx.Throws<InvalidOperationException>(

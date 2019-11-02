@@ -13,16 +13,16 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
     [TestClass]
     public class LogTests : StreamableObjectTests<Log, MessageItem, MessageResponse>
     {
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Log_CanDeserialize() => Object_CanDeserialize();
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public async Task Log_CanDeserializeAsync() => await Object_CanDeserializeAsync();
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Log_AllFields_HaveValues() => Object_AllFields_HaveValues();
 
         protected override List<Log> GetObjects(PrtgClient client) => client.GetLogs();
@@ -35,8 +35,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
 
         protected override MessageResponse GetResponse(MessageItem[] items) => new MessageResponse(items);
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Log_ExecutesAllOverloads()
         {
             var client = Initialize_Client_WithItems(GetItem());
@@ -65,8 +65,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             var logsWatchObject = client.WatchLogs(1001);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Log_Stream_WithCorrectPageSize()
         {
             var urls = new[]
@@ -91,8 +91,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Log_SanitizesSystemMessage()
         {
             var client = Initialize_Client(new MessageResponse(new MessageItem(messageRaw: "#O18", message: "<div class=\"logmessage\">Timeout (code: PE018)<div class=\"moreicon\"></div></div>")));
@@ -102,8 +102,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             Assert.AreEqual(log.Message, "Timeout (code: PE018)");
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Log_Watch_KeepsRequestingMoreRecords()
         {
             var client = Initialize_Client(new InfiniteLogResponse());
@@ -113,8 +113,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             Assert.AreEqual(320, logs.Count);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Log_Watch_StopsWhenCallbackReturnsFalse()
         {
             var client = Initialize_Client(new InfiniteLogResponse());
@@ -130,8 +130,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             Assert.AreEqual(550, logs.Count);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Log_Watch_StopsWhenCancelled()
         {
             var client = Initialize_Client(new InfiniteLogResponse());
@@ -150,8 +150,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             }, "The operation was canceled.");
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Log_Watch_UpdatesStartDate()
         {
             var client = Initialize_Client(new InfiniteLogValidatorResponse(DateTime.Now));
@@ -161,8 +161,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             Assert.AreEqual(7, logs.Count);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void Log_ReadOnly()
         {
             var client = Initialize_ReadOnlyClient(GetResponse(new[] { GetItem() }));
@@ -172,8 +172,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             AssertEx.AllPropertiesRetrieveValues(log);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public async Task Log_ReadOnlyAsync()
         {
             var client = Initialize_ReadOnlyClient(GetResponse(new[] { GetItem() }));

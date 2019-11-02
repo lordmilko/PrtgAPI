@@ -8,14 +8,14 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
     public class AnyTests : BaseQueryTest
     {
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Any_NoPredicate()
         {
             ExecuteNow(q => q.Any(), Assert.IsTrue);
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Any_WithPredicate()
         {
             var upSensor = client.GetSensor(Settings.UpSensor);
@@ -24,7 +24,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_Any_WithPredicate_AfterWhere()
         {
             var upSensor = client.GetSensor(Settings.UpSensor);
@@ -33,7 +33,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_AnyTests_HasAllTests()
         {
             HasAllTests(typeof(Unit.AnyTests));

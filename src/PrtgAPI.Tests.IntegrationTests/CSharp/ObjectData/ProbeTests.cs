@@ -7,21 +7,21 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
     public class ProbeTests : BasePrtgClientTest
     {
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Probe_GetProbes_HasAnyResults()
         {
             HasAnyResults(client.GetProbes);
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Probe_GetProbes_ReturnsJustProbes()
         {
             ReturnsJustObjectsOfType(client.GetProbes, 0, Settings.ProbesInTestServer, BaseType.Probe);
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Probe_ReadOnlyUser()
         {
             var probe = readOnlyClient.GetProbe(Settings.Probe);
@@ -30,7 +30,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public async Task Data_Probe_ReadOnlyUserAsync()
         {
             var probe = await readOnlyClient.GetProbeAsync(Settings.Probe);

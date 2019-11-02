@@ -8,7 +8,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
     public class FirstTests : BaseQueryTest
     {
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_First_NoPredicate()
         {
             var first = client.QuerySensors().First();
@@ -17,7 +17,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_First_WithPredicate()
         {
             var upSensor = client.GetSensor(Settings.UpSensor);
@@ -26,7 +26,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_First_NoPredicate_WithWhere()
         {
             var upSensor = client.GetSensor(Settings.UpSensor);
@@ -35,7 +35,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_First_WithPredicate_WithWhere()
         {
             var pingSensors = client.GetSensors(Property.Name, "Ping");
@@ -46,7 +46,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_First_NoPredicate_AfterTake()
         {
             var first = client.GetSensors().First();
@@ -55,7 +55,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_First_Predicate_AfterTake()
         {
             var second = client.GetSensors().Skip(1).First();
@@ -64,7 +64,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_First_Backwards()
         {
             var sensor = client.GetSensors().OrderByDescending(s => s.Name).First();
@@ -73,7 +73,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_FirstOrDefault_NoPredicate()
         {
             var first = client.GetSensors().First();
@@ -82,14 +82,14 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_Query_FirstOrDefault_WithPredicate()
         {
             ExecuteNow(q => q.FirstOrDefault(s => s.Name == "FAKE_SENSOR"), r => Assert.AreEqual(null, r));
         }
 
         [TestMethod]
-        [TestCategory("IntegrationTest")]
+        [IntegrationTest]
         public void Data_FirstTests_HasAllTests()
         {
             HasAllTests(typeof(Unit.FirstTests));

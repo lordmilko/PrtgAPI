@@ -42,289 +42,289 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
     {
         #region PrtgObject
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void QueryFilter_PrtgObjectProperties_Name() => QuerySensor(s => s.Name == "ping", "filter_name=ping");
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void QueryFilter_PrtgObjectProperties_Id() => QuerySensor(s => s.Id == 1001, "filter_objid=1001");
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void QueryFilter_PrtgObjectProperties_ParentId() => QuerySensor(s => s.ParentId == 3, "filter_parentid=3");
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void QueryFilter_PrtgObjectProperties_Active() => QuerySensor(s => s.Active, "filter_active=-1");
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void QueryFilter_PrtgObjectProperties_Type() => QuerySensor(s => s.Type == "exexml", "filter_type=exexml");
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void QueryFilter_PrtgObjectProperties_Type_WithStringEnum() => QuerySensor(s => s.Type == new StringEnum<ObjectType>(ObjectType.Probe), "filter_type=probenode");
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void QueryFilter_PrtgObjectProperties_Type_WithSensor() => QuerySensor(s => s.Type == ObjectType.Sensor, string.Empty);
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void QueryFilter_PrtgObjectProperties_Tags_Index() => QuerySensor(s => s.Tags[0] == "wmivolumesensor", "filter_tags=wmivolumesensor");
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void QueryFilter_PrtgObjectProperties_Tags_Contains() => QuerySensor(s => s.Tags.Contains("test"), "filter_tags=@sub(test)");
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void QueryFilter_PrtgObjectProperties_DisplayType() => QuerySensor(s => s.DisplayType == "EXE/Script Advanced", string.Empty); //to filter or not to filter
 
         #endregion
         #region SensorOrDeviceOrGroupOrProbe
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void QueryFilter_SensorOrDeviceOrGroupOrProbeProperties_Access() => QuerySensor(s => s.Access == Access.Full, "filter_access=0000000400");
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void QueryFilter_SensorOrDeviceOrGroupOrProbeProperties_BaseType() => QuerySensor(s => s.BaseType == BaseType.Sensor, "filter_basetype=sensor");
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void QueryFilter_SensorOrDeviceOrGroupOrProbeProperties_Comments() => QuerySensor(s => s.Comments == "Windows Server", "filter_comments=Windows+Server");
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void QueryFilter_SensorOrDeviceOrGroupOrProbeProperties_Dependency() => QuerySensor(s => s.Dependency == "dc-1", "filter_dependency=dc-1");
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void QueryFilter_SensorOrDeviceOrGroupOrProbeProperties_InheritInterval() => QuerySensor(s => s.InheritInterval, string.Empty);
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void QueryFilter_SensorOrDeviceOrGroupOrProbeProperties_InheritInterval_False() => QuerySensor(s => !s.InheritInterval, string.Empty);
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void QueryFilter_SensorOrDeviceOrGroupOrProbeProperties_Interval() => QuerySensor(s => s.Interval.TotalSeconds == 60, "filter_intervalx=0000000060");
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void QueryFilter_SensorOrDeviceOrGroupOrProbeProperties_NotificationTypes() => QuerySensor(s => s.NotificationTypes.ToString() == "test", string.Empty);
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void QueryFilter_SensorOrDeviceOrGroupOrProbeProperties_Position() => QuerySensor(s => s.Position == 4, "filter_position=0000000040");
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void QueryFilter_SensorOrDeviceOrGroupOrProbeProperties_Schedule() => QuerySensor(s => s.Schedule == "Weekends [GMT+0800]", "filter_schedule=Weekends+%5BGMT%2B0800%5D");
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void QueryFilter_SensorOrDeviceOrGroupOrProbeProperties_Status() => QuerySensor(s => s.Status == Status.Down, "filter_status=5");
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void QueryFilter_SensorOrDeviceOrGroupOrProbeProperties_Url() => QuerySensor(s => s.Url == "/sensor.htm?id=1001", "filter_baselink=1001");
 
 
         #endregion
         #region SensorOrDeviceOrGroupOrProbeOrTicket
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void QueryFilter_SensorOrDeviceOrGroupOrProbeOrTicketProperties_Priority() => QuerySensor(s => s.Priority == Priority.Four, "filter_priority=4");
 
         #endregion
         #region SensorOrDeviceOrGroupOrProbeOrTicketOrTicketData
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void QueryFilter_SensorOrDeviceOrGroupOrProbeOrTicketOrTicketDataProperties_Message() => QuerySensor(s => s.Message == "test", "filter_message=test");
 
         #endregion
         #region DeviceOrGroupOrProbe
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void QueryFilter_DeviceOrGroupOrProbeProperties_DownAcknowledgedSensors() => QueryDevice(d => d.DownAcknowledgedSensors == 2, "filter_downacksens=0000000002");
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void QueryFilter_DeviceOrGroupOrProbeProperties_DownSensors() => QueryDevice(d => d.DownSensors == 3, "filter_downsens=0000000003");
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void QueryFilter_DeviceOrGroupOrProbeProperties_PartialDownSensors() => QueryDevice(d => d.PartialDownSensors == 4, "filter_partialdownsens=0000000004");
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void QueryFilter_DeviceOrGroupOrProbeProperties_PausedSensors() => QueryDevice(d => d.PausedSensors == 5, "filter_pausedsens=0000000005");
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void QueryFilter_DeviceOrGroupOrProbeProperties_TotalSensors() => QueryDevice(d => d.TotalSensors == 6, "filter_totalsens=0000000006");
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void QueryFilter_DeviceOrGroupOrProbeProperties_UnknownSensors() => QueryDevice(d => d.UnknownSensors == 7, "filter_undefinedsens=0000000007");
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void QueryFilter_DeviceOrGroupOrProbeProperties_UnusualSensors() => QueryDevice(d => d.UnusualSensors == 8, "filter_unusualsens=0000000008");
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void QueryFilter_DeviceOrGroupOrProbeProperties_UpSensors() => QueryDevice(d => d.UpSensors == 9, "filter_upsens=0000000009");
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void QueryFilter_DeviceOrGroupOrProbeProperties_WarningSensors() => QueryDevice(d => d.WarningSensors == 10, "filter_warnsens=0000000010");
 
         #endregion
         #region GroupOrProbe
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void QueryFilter_GroupOrProbeProperties_Collapsed() => QueryGroup(g => g.Collapsed, "filter_fold=-1");
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void QueryFilter_GroupOrProbeProperties_TotalDevices() => QueryGroup(g => g.TotalDevices == 2, "filter_devicenum=0000000002");
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void QueryFilter_GroupOrProbeProperties_TotalGroups() => QueryGroup(g => g.TotalGroups == 3, "filter_groupnum=0000000003");
 
         #endregion
         #region Sensor
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void QueryFilter_SensorProperties_DataCollectedSince() => QuerySensor(s => s.DataCollectedSince == new DateTime(2000, 10, 2, 12, 10, 5, DateTimeKind.Utc), "filter_cumsince=36801.5070023148");
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void QueryFilter_SensorProperties_Device() => QuerySensor(s => s.Device == "dc-1", "filter_device=dc-1");
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void QueryFilter_SensorProperties_DownDuration() => QuerySensor(s => s.DownDuration == TimeSpan.FromSeconds(50), "filter_downtimesince=000000000000050");
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void QueryFilter_SensorProperties_Downtime() => QuerySensor(s => s.Downtime == 10.1, "filter_downtime=000000000101000");
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void QueryFilter_SensorProperties_LastCheck() => QuerySensor(s => s.LastCheck == new DateTime(2000, 10, 2, 12, 10, 5, DateTimeKind.Utc), "filter_lastcheck=36801.5070023148");
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void QueryFilter_SensorProperties_LastUp() => QuerySensor(s => s.LastUp == new DateTime(2000, 10, 2, 12, 10, 5, DateTimeKind.Utc), "filter_lastup=36801.5070023148");
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void QueryFilter_SensorProperties_LastDown() => QuerySensor(s => s.LastDown == new DateTime(2000, 10, 2, 12, 10, 5, DateTimeKind.Utc), "filter_lastdown=36801.5070023148");
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void QueryFilter_SensorProperties_LastValue() => QuerySensor(s => s.LastValue > 3, "filter_lastvalue=@above(0000000000000030.0000)");
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void QueryFilter_SensorProperties_MiniGraph() => QuerySensor(s => s.MiniGraph == "0,0,0,0", "filter_minigraph=0%2C0%2C0%2C0");
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void QueryFilter_SensorProperties_TotalDowntime() => QuerySensor(s => s.TotalDowntime == TimeSpan.FromMinutes(2), "filter_downtimetime=000000000000120");
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void QueryFilter_SensorProperties_TotalMonitorTime() => QuerySensor(s => s.TotalMonitorTime == TimeSpan.FromSeconds(30), "filter_knowntime=000000000000030");
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void QueryFilter_SensorProperties_TotalUptime() => QuerySensor(s => s.TotalUptime == new TimeSpan(0, 2, 3), "filter_uptimetime=000000000000123");
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void QueryFilter_SensorProperties_UpDuration() => QuerySensor(s => s.UpDuration == new TimeSpan(0, 2, 1), "filter_uptimesince=000000000000121");
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void QueryFilter_SensorProperties_Uptime() => QuerySensor(s => s.Uptime == 90, "filter_uptime=000000000900000");
 
         #endregion
         #region Device
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void QueryFilter_DeviceProperties_Condition() => QueryDevice(d => d.Condition == "Auto-Discovery (10%)", "filter_condition=Auto-Discovery+(10%25)");
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void QueryFilter_DeviceProperties_Favorite() => QueryDevice(d => d.Favorite, "filter_favorite=1");
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void QueryFilter_DeviceProperties_Favorite_False() => QueryDevice(d => !d.Favorite, string.Empty);
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void QueryFilter_DeviceProperties_Host() => QueryDevice(d => d.Host == "dc-1", "filter_host=dc-1");
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void QueryFilter_DeviceProperties_Group() => QueryDevice(d => d.Group == "Servers", "filter_group=Servers");
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void QueryFilter_DeviceProperties_Location() => QueryDevice(d => d.Location.Contains("Nebraska"), "filter_location=@sub(Nebraska)");
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void QueryFilter_DeviceProperties_Probe() => QueryDevice(d => d.Probe == "Local Probe", "filter_probe=Local+Probe");
 
         #endregion
         #region Probe
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void QueryFilter_ProbeProperties_ProbeStatus() => QueryProbe(p => p.ProbeStatus == ProbeStatus.Connected, "filter_condition=2");
 
         #endregion
         #region Log
             #region Date Ranges
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void QueryFilter_LogProperties_DateTime_Equals() => QueryLog(
             l => l.DateTime == Time.Yesterday,
             c => c.StreamLogs(Time.Yesterday, Time.Yesterday, serial: true),
             new[] {$"start=1&filter_dstart={Time.YesterdayStr}&filter_dend={Time.YesterdayStr}"}
         );
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void QueryFilter_LogProperties_DateTime_DoubleEquals() => QueryLogIllegal<InvalidOperationException>(
             l => l.DateTime == Time.Yesterday || l.DateTime == Time.Today
         );
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void QueryFilter_LogProperties_DateTime_NotEquals() => QueryLogIllegal<InvalidOperationException>(
             l => l.DateTime != Time.Yesterday
         );
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void QueryFilter_LogProperties_DateTime_BackwardsAndForwards()
         {
             var url = new[] { UnitRequest.Logs($"count=500&start=1&filter_dend={Time.TodayStr}", UrlFlag.Columns)};
@@ -333,56 +333,56 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
             ExecuteClient(c => c.QueryLogs().Where(l => Time.Today > l.DateTime), url, l => l.ToList());
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void QueryFilter_LogProperties_DateTime_Illegal_WithRange() => QueryLog(
             l => l.DateTime > Time.LastWeek && l.DateTime != Time.TwoDaysAgo && l.DateTime < Time.Yesterday,
             c => c.StreamLogs(Time.Yesterday, Time.LastWeek, serial: true),
             new[] {$"start=1&filter_dstart={Time.LastWeekStr}&filter_dend={Time.YesterdayStr}"}
         );
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void QueryFilter_LogProperties_DateTime_GreaterThan() => QueryLog(
             l => l.DateTime > Time.Yesterday,
             c => c.StreamLogs(null, Time.Yesterday, serial: true),
             new[] {$"start=1&filter_dstart={Time.YesterdayStr}"}
         );
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void QueryFilter_LogProperties_DateTime_LessThan() => QueryLog(
             l => l.DateTime < Time.Yesterday,
             c => c.StreamLogs(Time.Yesterday, serial: true),
             new[] {$"start=1&filter_dend={Time.YesterdayStr}"}
         );
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void QueryFilter_LogProperties_DateTime_DoubleGreaterThan() => QueryLog(
             l => l.DateTime > Time.Yesterday && l.DateTime > Time.Today,
             c => c.StreamLogs(null, Time.Yesterday, serial: true),
             new[] {$"start=1&filter_dstart={Time.YesterdayStr}"}
         );
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void QueryFilter_LogProperties_DateTime_DoubleGreaterThan_LessThan() => QueryLog(
             l => l.DateTime > Time.LastWeek && l.DateTime > Time.TwoDaysAgo && l.DateTime < Time.Yesterday,
             c => c.StreamLogs(Time.Yesterday, Time.LastWeek, serial: true),
             new[] {$"start=1&filter_dstart={Time.LastWeekStr}&filter_dend={Time.YesterdayStr}"}
         );
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void QueryFilter_LogProperties_DateTime_DoubleLessThan() => QueryLog(
             l => l.DateTime < Time.Yesterday && l.DateTime < Time.TwoDaysAgo,
             c => c.StreamLogs(Time.Yesterday, serial: true),
             new[] {$"start=1&filter_dend={Time.YesterdayStr}"}
         );
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void QueryFilter_LogProperties_DateTime_DoubleLessThan_GreaterThan() => QueryLog(
             l => l.DateTime < Time.Yesterday && l.DateTime < Time.TwoDaysAgo && l.DateTime > Time.LastWeek,
             c => c.StreamLogs(Time.Yesterday, Time.LastWeek, serial: true),
@@ -390,16 +390,16 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
             new Enum[] {Property.StartDate, Property.EndDate}
         );
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void QueryFilter_LogProperties_DateTime_Range() => QueryLog(
             l => l.DateTime > Time.Yesterday && l.DateTime < Time.Today,
             c => c.StreamLogs(Time.Today, Time.Yesterday, serial: true),
             new[] {$"start=1&filter_dstart={Time.YesterdayStr}&filter_dend={Time.TodayStr}"}
         );
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void QueryFilter_LogProperties_DateTime_DoubleRange() => QueryLog(
             l => l.DateTime > Time.Yesterday && l.DateTime < Time.Today || l.DateTime > Time.TwoWeeksAgo && l.DateTime < Time.LastWeek,
             c => c.StreamLogs(Time.Today, Time.Yesterday, serial: true).ToList(),
@@ -410,8 +410,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
             }
         );
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void QueryFilter_LogProperties_DateTime_Range_Or_PartialRangeStart() => QueryLog(
             l => l.DateTime > Time.Yesterday && l.DateTime < Time.Today || l.DateTime > Time.TwoDaysAgo,
             c => c.StreamLogs(Time.Today, Time.Yesterday, serial: true).ToList(),
@@ -422,8 +422,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
             } 
         );
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void QueryFilter_LogProperties_DateTime_Range_Or_PartialRangeEnd() => QueryLog(
             l => l.DateTime > Time.Yesterday && l.DateTime < Time.Today || l.DateTime < Time.TwoDaysAgo,
             c => c.StreamLogs(Time.Today, Time.Yesterday, serial: true).ToList(),
@@ -434,8 +434,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
             } 
         );
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void QueryFilter_LogProperties_DateTime_PartialRange_WithId() => QueryLog(
             l => l.DateTime > Time.TwoDaysAgo && l.Id == 4004,
             c => c.StreamLogs(4004, endDate: Time.TwoDaysAgo, serial: true),
@@ -446,8 +446,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
             #endregion
             #region Id
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void QueryFilter_LogProperties_Id_IllegalOperator() => QueryLog(
             l => l.Id.ToString().Contains("2"),
             c => c.StreamLogs(RecordAge.All, serial: true),
@@ -456,72 +456,72 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
 
             #endregion
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void QueryFilter_LogProperties_Device() => QueryLogUnsupported(
             l => l.Device == "Probe Device",
             c => c.StreamLogs(RecordAge.All, serial: true),
             "start=1&filter_device=Probe+Device"
         );
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void QueryFilter_LogProperties_Group() => QueryLogUnsupported(
             l => l.Group == "Servers",
             c => c.StreamLogs(RecordAge.All, serial: true),
             "start=1&filter_group=Servers"
         );
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void QueryFilter_LogProperties_Parent() => QueryLogUnsupported(
             l => l.Parent == "dc-1",
             c => c.StreamLogs(RecordAge.All, serial: true),
             "start=1&filter_parent=dc-1"
         );
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void QueryFilter_LogProperties_Probe() => QueryLogUnsupported(
             l => l.Probe == "Local Probe",
             c => c.StreamLogs(RecordAge.All, serial: true),
             "start=1&filter_probe=Local+Probe"
         );
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void QueryFilter_LogProperties_Sensor() => QueryLogUnsupported(
             l => l.Sensor == "Ping",
             c => c.StreamLogs(RecordAge.All, serial: true),
             "start=1&filter_sensor=Ping"
         );
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void QueryFilter_LogProperties_Name() => QueryLogUnsupported(
             l => l.Name == "Ping",
             c => c.StreamLogs(RecordAge.All, serial: true),
             "start=1&filter_name=Ping"
         );
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void QueryFilter_LogProperties_Status() => QueryLog(
             l => l.Status == LogStatus.Active,
             c => c.StreamLogs(RecordAge.All, status: LogStatus.Active, serial: true),
             new[] {"start=1&filter_status=618"}
         );
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void QueryFilter_LogProperties_Id() => QueryLog(
             l => l.Id == 1001,
             c => c.StreamLogs(1001, serial: true),
             new[] { "start=1&id=1001" }
         );
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void QueryFilter_LogProperties_IdOrId() => QueryLog(
             l => l.Id == 1001 || l.Id == 1002,
             c => c.StreamLogs(1001, serial: true).ToList(),
@@ -532,24 +532,24 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
             }
         );
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void QueryFilter_LogProperties_IdAndId() => QueryLog(
             l => l.Id == 1001 && l.Id == 1002,
             c => c.StreamLogs(1001, serial: true),
             new[] { "start=1&id=1001" }
         );
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void QueryFilter_LogProperties_Message() => QueryLogUnsupported(
             l => l.Message == "test",
             c => c.StreamLogs(RecordAge.All, serial: true),
             "start=1"
         );
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void QueryFilter_Log_WithTake()
         {
             ExecuteClient(c => c.QueryLogs(), new[] { UnitRequest.Logs("count=500&start=1", UrlFlag.Columns)}, s => s.ToList());
@@ -722,69 +722,69 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         #endregion
         #region IZeroPaddingConverter
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void ZeroPadding_LastValueConverter_Pads_True()
         {
             TestZeroPadding<LastValueConverter>(Property.LastValue, 3, "0000000000000030.0000", true);
             TestZeroPadding<LastValueConverter>(Property.LastValue, 4.56789, "0000000000000040.5679", true);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void ZeroPadding_LastValueConverter_Pads_False()
         {
             TestZeroPadding<LastValueConverter>(Property.LastValue, 3, "3", false);
             TestZeroPadding<LastValueConverter>(Property.LastValue, 4.56789, "40.5679", false);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void ZeroPadding_PositionConverter_Pads_True() =>
             TestZeroPadding<PositionConverter>(Property.Position, 3, "0000000030", true);
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void ZeroPadding_PositionConverter_Pads_False() =>
             TestZeroPadding<PositionConverter>(Property.Position, 3, "30", false);
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void ZeroPadding_TimeSpanConverter_Pads_True() =>
             TestZeroPadding<TimeSpanConverter>(Property.UpDuration, 120, "000000000000120", true);
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void ZeroPadding_TimeSpanConverter_Pads_False() =>
             TestZeroPadding<TimeSpanConverter>(Property.UpDuration, 120, "120", false);
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void ZeroPadding_DateTimeConverter_Pads_True() =>
             TestZeroPadding<DateTimeConverter>(Property.LastUp, "42972.6522125", "42972.6522125000", true);
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void ZeroPadding_DateTimeConverter_Pads_False() =>
             TestZeroPadding<DateTimeConverter>(Property.LastUp, "42972.6522125", "42972.6522125", false);
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void ZeroPadding_UpDownTimeConverter_Pads_True() =>
             TestZeroPadding<UpDownTimeConverter>(Property.Uptime, 90.9, "000000000909000", true);
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void ZeroPadding_UpDownTimeConverter_Pads_False() =>
             TestZeroPadding<UpDownTimeConverter>(Property.Uptime, 90.9, "909000", false);
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void ZeroPadding_ZeroPaddingConverter_Pads_True() =>
             TestZeroPadding<ZeroPaddingConverter>(Property.Interval, 120, "0000000120", true);
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void ZeroPadding_ZeroPaddingConverter_Pads_False() =>
             TestZeroPadding<ZeroPaddingConverter>(Property.Interval, 120, "120", false);
 
@@ -797,15 +797,15 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
             AssertEx.Throws<TException>(() => QueryLog(predicate, null, new[]{string.Empty}, null), exceptionMessage);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void AllPrtgObjectProperties_HaveTests()
         {
             AllPrtgObjectProperties_HaveTests(GetType());
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void AllIZeroPaddingConverters_HavePaddingTrueFalseTests()
         {
             var types = typeof(IZeroPaddingConverter).Assembly.GetTypes()

@@ -10,29 +10,29 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
     [TestClass]
     public class PrtgRequestMessageTests
     {
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void PrtgRequestMessage_Server_Prefix_Http()
         {
             Server_Prefix("http://prtg.example.com", "http://prtg.example.com");
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void PrtgRequestMessage_Server_Prefix_Https()
         {
             Server_Prefix("https://prtg.example.com", "https://prtg.example.com");
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void PrtgRequestMessage_Server_Prefix_None()
         {
             Server_Prefix("prtg.example.com", "https://prtg.example.com");
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void PrtgRequestMessage_SpecifiedNoPass_Yields_PassHash()
         {
             var url = CreateUrl(new BaseParameters(), false);
@@ -41,8 +41,8 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             Assert.IsFalse(url.Contains("password=12345678"));
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void PrtgRequestMessage_SpecifiedPassHash_Yields_PassHash()
         {
             var url = CreateUrl(new BaseParameters
@@ -54,8 +54,8 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             Assert.IsFalse(url.Contains("password=password"));
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void PrtgRequestMessage_SpecifiedPassword_Yields_Password()
         {
             var url = CreateUrl(new BaseParameters
@@ -67,8 +67,8 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             Assert.IsTrue(url.Contains("password=password"));
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void PrtgRequestMessage_MultiParameter_WithoutIEnumerable_Equals_WithIEnumerable()
         {
             var urlWithoutArray = CreateUrl(new BaseParameters
@@ -86,8 +86,8 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             Assert.AreEqual(expected, urlWithArray, "URL with array was not correct");
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void PrtgRequestMessage_MultiValue_WithoutIEnumerable_Equals_WithIEnumerable()
         {
             var urlWithoutArray = CreateUrl(new BaseParameters
@@ -105,8 +105,8 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             Assert.AreEqual(expected, urlWithArray, "URL with array was not correct");
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void PrtgRequestMessage_CustomParameter_WithoutIEnumerable_Equals_WithIEnumerable()
         {
             var urlWithoutArray = CreateUrl(new BaseParameters
@@ -124,8 +124,8 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             Assert.AreEqual(expected, urlWithArray, "URL with array was not correct");
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void PrtgRequestMessage_SearchFilter_FromParameters_With_EnumFlags()
         {
             var flagsParameters = new SensorParameters
@@ -159,8 +159,8 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             Assert.AreEqual(expected, manualUrl, "Manual URL was not correct");
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void PrtgRequestMessage_FilterValue_With_EnumFlags()
         {
             //Specifying FilterXyz doesn't actually make sense here (we should be using a SearchFilter) however
@@ -186,8 +186,8 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             Assert.AreEqual(expected, manualUrl, "Manual URL was not correct");
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void PrtgRequestMessage_SearchFilter_With_EnumFlags()
         {
             var flagsUrl = CreateUrl(new BaseParameters
@@ -211,8 +211,8 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             Assert.AreEqual(expected, manualUrl, "Manual URL was not correct");
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void PrtgRequestMessage_SearchFilter_With_TimeSpan()
         {
             var url = CreateUrl(new BaseParameters
@@ -223,8 +223,8 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             Assert.AreEqual("filter_uptimesince=000000000003723", url);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void PrtgRequestMessage_Parameter_WithBool()
         {
             var url = CreateUrl(new BaseParameters
@@ -242,8 +242,8 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             Assert.AreEqual("action=0", url);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void PrtgRequestMessage_SearchFilter_With_DateTime()
         {
             var url = CreateUrl(new BaseParameters
@@ -254,8 +254,8 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             Assert.AreEqual("filter_lastup=36801.5070023148", url);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void PrtgRequestMessage_Throws_WhenCustomParameterValueIsWrongType()
         {
             AssertEx.Throws<ArgumentException>(() =>
@@ -267,8 +267,8 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             }, "Expected parameter 'Custom' to contain one or more objects of type 'CustomParameter', however value was of type 'System.Int32'");
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void PrtgRequestMessage_IgnoresCustomParameterValue_WhenValueIsNull()
         {
             var url = CreateUrl(new BaseParameters
@@ -279,8 +279,8 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             Assert.AreEqual(string.Empty, url);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void PrtgRequestMessage_IgnoresCustomParameterValue_WhenValueIsEmptyList()
         {
             var url = CreateUrl(new BaseParameters
@@ -291,8 +291,8 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             Assert.AreEqual(string.Empty, url);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void PrtgRequestMessage_MultiValue_CustomParameter_FormatsCorrectly()
         {
             var url = CreateUrl(new BaseParameters
@@ -303,8 +303,8 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             Assert.AreEqual("name=first,second", url);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void PrtgRequestMessage_MultiParameter_CustomParameter_FormatsCorrectly()
         {
             var url = CreateUrl(new BaseParameters
@@ -315,8 +315,8 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             Assert.AreEqual("name=first&name=second", url);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void PrtgRequestMessage_MultiValue_CustomParameterList_FormatsCorrectly()
         {
             var url = CreateUrl(new BaseParameters
@@ -331,8 +331,8 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             Assert.AreEqual("name=first,second&name=first,second", url);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void PrtgRequestMessage_MultiParameter_CustomParameterList_FormatsCorrectly()
         {
             var url = CreateUrl(new BaseParameters
@@ -347,8 +347,8 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             Assert.AreEqual("name=first&name=second&name=first&name=second", url);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void PrtgRequestMessage_MultiParameter_With_Enum()
         {
             var url = CreateUrl(new BaseParameters
@@ -361,8 +361,8 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             Assert.AreEqual(expected, url);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void PrtgRequestMessage_MultiParameter_With_EnumFlags()
         {
             var url = CreateUrl(new BaseParameters
@@ -375,8 +375,8 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             Assert.AreEqual(expected, url);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void PrtgRequestMessage_Throws_UsingList_With_SingleParameter()
         {
             AssertEx.Throws<ArgumentException>(() =>
@@ -388,8 +388,8 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             }, "Parameter 'Name' is of type SingleValue, however a list of elements was specified");
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void PrtgRequestMessage_Null_SearchFilter()
         {
             var url = CreateUrl(new SensorParameters
@@ -401,8 +401,8 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             Assert.AreEqual("content=sensors&columns=name&count=*", url);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void PrtgRequestMessage_Empty_SearchFilters()
         {
             var url = CreateUrl(new SensorParameters

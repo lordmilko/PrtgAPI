@@ -9,8 +9,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
     [TestClass]
     public class SensorHistoryTests : BaseTest
     {
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void SensorHistory_CanExecute()
         {
             var client = Initialize_Client(new MultiTypeResponse());
@@ -20,8 +20,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             Assert.AreEqual(2, records.Count);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public async Task SensorHistory_CanExecuteAsync()
         {
             var client = Initialize_Client(new MultiTypeResponse());
@@ -31,8 +31,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             Assert.AreEqual(records.Count, 2);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void SensorHistory_CanStream()
         {
             var client = Initialize_Client(new MultiTypeResponse());
@@ -42,8 +42,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             Assert.AreEqual(2, records.Count);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void SensorHistory_SetsRawValues()
         {
             var client = Initialize_Client(new MultiTypeResponse());
@@ -54,8 +54,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             Assert.AreEqual(1104646144, records[0].ChannelRecords[1].Value);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void SensorHistory_CanProcess_TrafficSensorsWithDuplicateChannelNames()
         {
             var channels = new[]
@@ -89,8 +89,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             }
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void SensorHistory_NoData_AllLanguages()
         {
             AssertEx.AssertErrorResponseAllLanguages<PrtgRequestException>(
@@ -102,8 +102,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public async Task SensorHistory_NoData_AllLanguagesAsync()
         {
             await AssertEx.AssertErrorResponseAllLanguagesAsync<PrtgRequestException>(
@@ -115,8 +115,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             );
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public void SensorHistory_ReadOnly()
         {
             var client = Initialize_ReadOnlyClient(new MultiTypeResponse());
@@ -132,8 +132,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             AssertEx.AllPropertiesRetrieveValues(channel);
         }
 
+        [UnitTest]
         [TestMethod]
-        [TestCategory("UnitTest")]
         public async Task SensorHistory_ReadOnlyAsync()
         {
             var client = Initialize_ReadOnlyClient(new MultiTypeResponse());
