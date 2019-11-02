@@ -28,6 +28,71 @@ Describe "NodeExtension" -Tag @("PowerShell", "UnitTest") {
 
             $comparison.TreeDifference | Should Be "None"
         }
+
+        It "reduces a tree" {
+
+            SetMultiTypeResponse
+
+            $first  = ProbeNode -Id 1000 {
+                DeviceNode -Id 3000 {
+                    SensorNode -Id 4000
+                }
+
+                DeviceNode -Id 3001 {
+                    SensorNode -Id 4001
+                }
+            }
+
+            $second  = ProbeNode -Id 1000 {
+                DeviceNode -Id 3000 {
+                    SensorNode -Id 4000
+                }
+            }
+
+            $comparison = $first.CompareTo($second)
+            $reduced = $comparison.Reduce()
+
+            $reduced | Should Not Be $comparison
+
+            $comparison.Children.Count | Should Be 2
+            $reduced.Children.Count | Should Be 1
+        }
+
+        It "reduces to nothing" {
+
+            $tree = CreateTestTree
+
+            $reduced = $tree.CompareTo($tree).Reduce()
+
+            $reduced | Should BeNullOrEmpty
+        }
+
+        It "does not need reducing" {
+            SetMultiTypeResponse
+
+            $first  = ProbeNode -Id 1000 {
+                DeviceNode -Id 3000 {
+                    SensorNode -Id 4000
+                }
+
+                DeviceNode -Id 3001 {
+                    SensorNode -Id 4001
+                }
+            }
+
+            $second  = ProbeNode -Id 1000 {
+                DeviceNode -Id 3000 {
+                    SensorNode -Id 4000
+                }
+            }
+
+            $comparison = $first.CompareTo($second)
+            $reduced = $comparison.Reduce()
+
+            $reducedAgain = $reduced.Reduce()
+
+            $reduced | Should Be $reducedAgain
+        }
     }
 
     Context "FindNodes" {

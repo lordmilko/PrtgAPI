@@ -274,6 +274,7 @@
     <Compile Include="Tree\Model\Visitors\Prtg\PrtgOrphanVisitor.cs" />
     <Compile Include="Tree\Model\Visitors\Prtg\PrtgOrphanVisitor`1.cs" />
     <Compile Include="Tree\Model\Visitors\Prtg\PrtgOrphanWalker.cs" />
+    <Compile Include="Tree\Visitors\CompareNodeReducer.cs" />
     <Compile Include="Tree\Visitors\CompareTreeVisitor.cs" />
     <Compile Include="Tree\Visitors\PrtgNodeListEditor.cs" />
     <Compile Include="Tree\Visitors\PrtgNodeRemover.cs" />

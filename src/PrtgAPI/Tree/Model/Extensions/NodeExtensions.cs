@@ -11,6 +11,8 @@ namespace PrtgAPI.Tree
     /// </summary>
     public static class NodeExtensions
     {
+        #region Compare Extensions
+
         /// <summary>
         /// Compares a <see cref="PrtgNode"/> to another node and creates a tree that describes their differences.
         /// </summary>
@@ -26,6 +28,22 @@ namespace PrtgAPI.Tree
             return result.ToStandaloneNode<CompareNode>();
         }
 
+        /// <summary>
+        /// Reduces a <see cref="CompareNode"/> to a new tree consisting of only the branches that contain differences.<para/>
+        /// If every node in the specified tree has <see cref="TreeNodeDifference.None"/>, this method returns null.
+        /// </summary>
+        /// <param name="node">The root of the tree to reduce.</param>
+        /// <returns>A tree with all branches consisting of <see cref="TreeNodeDifference.None"/> removed.</returns>
+        public static CompareNode Reduce(this CompareNode node)
+        {
+            var reducer = new CompareNodeReducer();
+
+            var reduced = reducer.Visit(node);
+
+            return reduced;
+        }
+
+        #endregion
         #region FindNodes
             #region PrtgNode
 

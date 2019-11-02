@@ -16,6 +16,12 @@
                 </Script>
             </ScriptMethod>
             <ScriptMethod>
+                <Name>Reduce</Name>
+                <Script>
+                    [PrtgAPI.Tree.NodeExtensions]::Reduce($this)
+                </Script>
+            </ScriptMethod>
+            <ScriptMethod>
                 <Name>WithChildren</Name>
                 <Script>
                     [PrtgAPI.Tree.NodeExtensions]::WithChildren($this, $args[0])
