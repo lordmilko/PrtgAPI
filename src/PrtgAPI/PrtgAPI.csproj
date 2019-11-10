@@ -254,6 +254,7 @@
     <Compile Include="Tree\Model\Node\Public\PropertyNode.cs" />
     <Compile Include="Tree\Model\Node\Public\PrtgNode.cs" />
     <Compile Include="Tree\Model\Node\Public\PrtgNode.Factory.cs" />
+    <Compile Include="Tree\Model\Node\Public\PrtgNodeFactory.cs" />
     <Compile Include="Tree\Model\Node\Public\PrtgNode`1.cs" />
     <Compile Include="Tree\Model\Node\Public\SensorNode.cs" />
     <Compile Include="Tree\Model\Node\Public\TreeNode.cs" />

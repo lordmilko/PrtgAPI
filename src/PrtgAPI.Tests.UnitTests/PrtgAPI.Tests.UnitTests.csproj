@@ -86,6 +86,7 @@
     <Compile Include="CSharp\Tree\Actions\TreeCompareReduceTests.cs" />
     <Compile Include="CSharp\Tree\Actions\TreePrettyPrintTests.cs" />
     <Compile Include="CSharp\Tree\BaseTreeTest.cs" />
+    <Compile Include="CSharp\Tree\ObjectModel\NodeFactoryTests.cs" />
     <Compile Include="CSharp\Tree\ObjectModel\NodeListTests.cs" />
     <Compile Include="CSharp\Tree\ObjectModel\TreeCompareTests.cs" />
     <Compile Include="CSharp\Tree\ObjectModel\TreeMemberTests.cs" />
