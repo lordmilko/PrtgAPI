@@ -12,6 +12,9 @@ using PrtgAPI.Linq;
 using PrtgAPI.Parameters;
 using PrtgAPI.Request;
 using PrtgAPI.Request.Serialization;
+using PrtgAPI.Tree;
+using PrtgAPI.Tree.Converters.Tree;
+using PrtgAPI.Tree.Progress;
 using PrtgAPI.Utilities;
 
 /* Static code used by the PrtgClient class
@@ -658,6 +661,36 @@ namespace PrtgAPI
             parameters.GetParameters().Remove(Parameter.Count);
 
             return Convert.ToInt32(data.TotalCount);
+        }
+
+        #endregion
+        #region Tree
+
+        /// <summary>
+        /// Retrieves a <see cref="PrtgNode"/> tree for a specified object. If no object is specified, the Root node will be used.
+        /// </summary>
+        /// <param name="value">The object at the root of the tree.</param>
+        /// <param name="progressCallback">A callback used to receive progress notifications.</param>
+        /// <returns>A <see cref="PrtgNode"/> encapsulating the specified <paramref name="value"/> and all its descendants.</returns>
+        public PrtgNode GetTree(PrtgObject value = null, ITreeProgressCallback progressCallback = null)
+        {
+            if (value != null)
+                return GetTree((Either<PrtgObject, int>) value, progressCallback);
+
+            return GetTree(WellKnownId.Root, progressCallback);
+        }
+
+        /// <summary>
+        /// Retrieves a <see cref="PrtgNode"/> tree for a specified object or ID.
+        /// </summary>
+        /// <param name="objectOrId">The object or ID of the object at the root of the tree.</param>
+        /// <param name="progressCallback">A callback used to receive progress notifications.</param>
+        /// <returns>A <see cref="PrtgNode"/> encapsulating the specified object and all its descendants.</returns>
+        public PrtgNode GetTree(Either<PrtgObject, int> objectOrId, ITreeProgressCallback progressCallback = null)
+        {
+            var builder = new TreeBuilder(this, progressCallback);
+
+            return builder.GetTree(objectOrId).ToStandaloneNode<PrtgNode>();
         }
 
         #endregion

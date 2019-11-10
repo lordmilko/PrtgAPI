@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace PrtgAPI.PowerShell.Progress
 {
@@ -18,9 +19,17 @@ namespace PrtgAPI.PowerShell.Progress
 
         public int? TotalRecords { get; set; }
 
+#if DEBUG
+        public StackTrace Origin { get; }
+#endif
+
         public ProgressState(int offset, long sourceId)
         {
             ProgressRecord = new ProgressRecordEx(offset + 1, sourceId);
+
+#if DEBUG
+            Origin = new StackTrace();
+#endif
         }
     }
 }

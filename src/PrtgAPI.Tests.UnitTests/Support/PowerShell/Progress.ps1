@@ -161,11 +161,16 @@ function Gen2($activity, $description, $percentage, $operation)
     return IndentGen $str 1
 }
 
-function Gen3($activity, $description, $percentage, $operation)
+function Gen3($activity, $description, $percentage, $operation) { GenInternal 2 }
+function Gen4($activity, $description, $percentage, $operation) { GenInternal 3 }
+function Gen5($activity, $description, $percentage, $operation) { GenInternal 4 }
+function Gen6($activity, $description, $percentage, $operation) { GenInternal 5 }
+
+function GenInternal($level)
 {
     $str = Gen $activity $description $percentage $operation
 
-    return "`n" + (IndentGen $str 2)
+    return "`n" + (IndentGen $str $level)
 }
 
 function IndentGen($str, $levels)
@@ -211,7 +216,7 @@ function GenerateStreamRecords($total)
         }
 
         $records += "PRTG Sensor Search`n" +
-                    "    Retrieving all sensors $i/$total`n" +
+                    "    Retrieving all sensors ($i/$total)`n" +
                     "    $percentBar"
     }
 

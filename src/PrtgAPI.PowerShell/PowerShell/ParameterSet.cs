@@ -124,5 +124,7 @@
 
         internal const string ObjectWithManual = "ObjectWithManualSet";
         internal const string ManualWithManual = "ManualWithManualSet";
+
+        internal const string Object = "ObjectSet";
     }
 }

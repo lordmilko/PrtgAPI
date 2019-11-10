@@ -167,6 +167,15 @@
     <Compile Include="Support\TestResponses\TakeIterator\TakeScenario.cs" />
     <Compile Include="Support\TestResponses\TakeIterator\SensorScenarios\Group\TakeUnfilteredSensorsFromGroupScenario.cs" />
     <Compile Include="Support\TestResponses\TakeIterator\SensorScenarios\Normal\TakeUnfilteredSensorsScenario.cs" />
+    <Compile Include="Support\TestResponses\Tree\Scenarios\ActionPipeToContainerWithChildScenario.cs" />
+    <Compile Include="Support\TestResponses\Tree\Scenarios\ContainerWithChildScenario.cs" />
+    <Compile Include="Support\TestResponses\Tree\Scenarios\ContainerWithGrandChildScenario.cs" />
+    <Compile Include="Support\TestResponses\Tree\Scenarios\MultiLevelContainerScenario.cs" />
+    <Compile Include="Support\TestResponses\Tree\Scenarios\ObjectPipeToContainerWithChildScenario.cs" />
+    <Compile Include="Support\TestResponses\Tree\Scenarios\StandaloneContainerScenario.cs" />
+    <Compile Include="Support\TestResponses\Tree\TreeRequestResponse.cs" />
+    <Compile Include="Support\TestResponses\Tree\TreeRequestScenario.cs" />
+    <Compile Include="Support\TestResponses\Tree\TreeScenario.cs" />
     <Compile Include="Support\TestResponses\WebServerOptionsResponse.cs" />
     <Compile Include="Support\TreeNodes\DeviceNode.cs" />
     <Compile Include="Support\TreeNodes\GroupNode.cs" />
@@ -434,6 +443,7 @@
     <None Include="PowerShell\ObjectManipulation\Simulate-ErrorStatus.Tests.ps1" />
     <None Include="PowerShell\ObjectManipulation\Sort-PrtgObject.Tests.ps1" />
     <None Include="PowerShell\ObjectManipulation\Start-AutoDiscovery.Tests.ps1" />
+    <None Include="PowerShell\Tree\Get-PrtgTree.Tests.ps1" />
     <None Include="PowerShell\Tree\New-DeviceNode.Tests.ps1" />
     <None Include="PowerShell\Tree\New-GroupNode.Tests.ps1" />
     <None Include="PowerShell\Tree\New-ProbeNode.Tests.ps1" />
@@ -441,6 +451,8 @@
     <None Include="PowerShell\Tree\New-SensorNode.Tests.ps1" />
     <None Include="PowerShell\Tree\New-TriggerNode.Tests.ps1" />
     <None Include="PowerShell\Tree\NodeExtension.Tests.ps1" />
+    <None Include="PowerShell\Tree\ProgressTree.Tests.ps1" />
+    <None Include="PowerShell\Tree\Show-PrtgTree.Tests.ps1" />
     <None Include="Support\PowerShell\BuildCore.ps1" />
     <None Include="Support\PowerShell\Build.ps1" />
     <None Include="Support\PowerShell\GoPrtg.ps1" />

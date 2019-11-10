@@ -60,6 +60,7 @@
     <Compile Include="PowerShell\Cmdlets\Tree\NewPropertyNode.cs" />
     <Compile Include="PowerShell\Cmdlets\Tree\NewSensorNode.cs" />
     <Compile Include="PowerShell\Cmdlets\Tree\NewTriggerNode.cs" />
+    <Compile Include="PowerShell\Cmdlets\Tree\ShowPrtgTree.cs" />
     <Compile Include="PowerShell\ETSHelpers.cs" />
     <Compile Include="PowerShell\EventStack.cs" />
     <Compile Include="PowerShell\EventState.cs" />
@@ -195,7 +196,10 @@
     <Compile Include="PowerShell\RuntimeDefinedParameterEx.cs" />
     <Compile Include="PowerShell\DummyRuntime.cs" />
     <Compile Include="PowerShell\RuntimeDefinedParameterDictionaryEx.cs" />
+    <Compile Include="PowerShell\Cmdlets\Tree\GetPrtgTree.cs" />
     <Compile Include="PowerShell\Tree\PowerShellPrettyColorWriter.cs" />
+    <Compile Include="PowerShell\Tree\PowerShellProgressDepthManager.cs" />
+    <Compile Include="PowerShell\Tree\PowerShellTreeProgressCallback.cs" />
     <Compile Include="PowerShell\TriggerParameterParser.cs" />
     <Compile Include="Utilities\PSCmdletInvoker.cs" />
     <Compile Include="Utilities\PSObjectUtilities.cs" />

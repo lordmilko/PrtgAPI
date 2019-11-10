@@ -1101,8 +1101,8 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         Validate(@(
             (Gen "PRTG Sensor Search" "Detecting total number of items")
-            (Gen "PRTG Sensor Search" "Retrieving all sensors 1/501" 0)
-            (Gen "PRTG Sensor Search (Completed)" "Retrieving all sensors 1/501" 0)
+            (Gen "PRTG Sensor Search" "Retrieving all sensors (1/501)" 0)
+            (Gen "PRTG Sensor Search (Completed)" "Retrieving all sensors (1/501)" 0)
         ))
     }
 
@@ -1528,7 +1528,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         Validate(@(
             (Gen "PRTG Sensor Search" "Detecting total number of items")
             ((GenerateStreamRecords 501) | Select -SkipLast 1)
-            (Gen "PRTG Sensor Search (Completed)" "Retrieving all sensors 501/501" 100)
+            (Gen "PRTG Sensor Search (Completed)" "Retrieving all sensors (501/501)" 100)
         ))
     }
 
@@ -1964,7 +1964,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         Validate(@(
             (Gen "PRTG Sensor Search" "Detecting total number of items")
             (GenerateStreamRecords 501)
-            (Gen "PRTG Sensor Search (Completed)" "Retrieving all sensors 501/501" 100)
+            (Gen "PRTG Sensor Search (Completed)" "Retrieving all sensors (501/501)" 100)
         ))
     }
 
@@ -2312,7 +2312,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         Validate(@(
             (Gen "PRTG Sensor Search" "Detecting total number of items")
             ((GenerateStreamRecords 501) | Select -SkipLast 2)
-            (Gen "PRTG Sensor Search (Completed)" "Retrieving all sensors 500/501" 99)
+            (Gen "PRTG Sensor Search (Completed)" "Retrieving all sensors (500/501)" 99)
         ))
     }
 
@@ -2688,8 +2688,8 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         Validate(@(
             (Gen "PRTG Sensor Search" "Detecting total number of items")
-            (Gen "PRTG Sensor Search" "Retrieving all sensors 1/501" 0)
-            (Gen "PRTG Sensor Search (Completed)" "Retrieving all sensors 1/501" 0)
+            (Gen "PRTG Sensor Search" "Retrieving all sensors (1/501)" 0)
+            (Gen "PRTG Sensor Search (Completed)" "Retrieving all sensors (1/501)" 0)
         ))
     }
 
@@ -10565,14 +10565,14 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
 
         Validate(@(
             (Gen "PRTG Log Watcher" "Waiting for first event")
-            (Gen "PRTG Log Watcher" "Retrieving all logs 1/∞" 0)
-            (Gen "PRTG Log Watcher" "Retrieving all logs 2/∞" 0)
-            (Gen "PRTG Log Watcher" "Retrieving all logs 3/∞" 0)
-            (Gen "PRTG Log Watcher" "Retrieving all logs 4/∞" 0)
-            (Gen "PRTG Log Watcher" "Retrieving all logs 5/∞" 0)
-            (Gen "PRTG Log Watcher" "Retrieving all logs 6/∞" 0)
-            (Gen "PRTG Log Watcher" "Retrieving all logs 7/∞" 0)
-            (Gen "PRTG Log Watcher (Completed)" "Retrieving all logs 7/∞" 0)
+            (Gen "PRTG Log Watcher" "Retrieving all logs (1/∞)" 0)
+            (Gen "PRTG Log Watcher" "Retrieving all logs (2/∞)" 0)
+            (Gen "PRTG Log Watcher" "Retrieving all logs (3/∞)" 0)
+            (Gen "PRTG Log Watcher" "Retrieving all logs (4/∞)" 0)
+            (Gen "PRTG Log Watcher" "Retrieving all logs (5/∞)" 0)
+            (Gen "PRTG Log Watcher" "Retrieving all logs (6/∞)" 0)
+            (Gen "PRTG Log Watcher" "Retrieving all logs (7/∞)" 0)
+            (Gen "PRTG Log Watcher (Completed)" "Retrieving all logs (7/∞)" 0)
         ))
     }
 
@@ -10594,13 +10594,13 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         {
             $p = [Math]::Floor(($i % $progressLength) / $progressLength * 100)
 
-            $progress += (Gen "PRTG Log Watcher" "Retrieving all logs $i/∞" $p)
+            $progress += (Gen "PRTG Log Watcher" "Retrieving all logs ($i/∞)" $p)
         }
 
         Validate(@(
             (Gen "PRTG Log Watcher" "Waiting for first event")
             $progress
-            (Gen "PRTG Log Watcher (Completed)" "Retrieving all logs 1101/∞" 10)
+            (Gen "PRTG Log Watcher (Completed)" "Retrieving all logs (1101/∞)" 10)
         ))
     }
 
@@ -12134,7 +12134,7 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         Validate(@(
             (Gen "PRTG Sensor Search" "Detecting total number of items")
             (GenerateStreamRecords 501)
-            (Gen "PRTG Sensor Search (Completed)" "Retrieving all sensors 501/501" 100)
+            (Gen "PRTG Sensor Search (Completed)" "Retrieving all sensors (501/501)" 100)
         ))
     }
 

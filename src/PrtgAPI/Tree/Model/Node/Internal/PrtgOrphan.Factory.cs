@@ -77,5 +77,31 @@ namespace PrtgAPI.Tree.Internal
             new PrtgOrphanGrouping(children);
 
         #endregion
+
+        internal static PrtgOrphan Object(ITreeValue value, params PrtgOrphan[] children) =>
+            Object(value, (IEnumerable<PrtgOrphan>) children);
+
+        internal static PrtgOrphan Object(ITreeValue value, IEnumerable<PrtgOrphan> children)
+        {
+            if (value is Probe)
+                return Probe((Probe) value, children);
+
+            if (value is Group)
+                return Group((Group) value, children);
+
+            if (value is Device)
+                return Device((Device) value, children);
+
+            if (value is Sensor)
+                return Sensor((Sensor) value, children);
+
+            if (value is NotificationTrigger)
+                return Trigger((NotificationTrigger) value);
+
+            if (value is PropertyValuePair)
+                return Property((PropertyValuePair) value);
+
+            throw new NotImplementedException($"Don't know what type of orphan object of type '{value.GetType().FullName}' should be.");
+        }
     }
 }

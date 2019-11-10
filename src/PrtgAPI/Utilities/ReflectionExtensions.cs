@@ -208,6 +208,11 @@ namespace PrtgAPI.Reflection
             return false;
         }
 
+        internal static bool ImplementsRawGenericInterface(this Type type, Type generic)
+        {
+            return type.GetInterfaces().Where(i => i.IsGenericType).Any(i => i.GetGenericTypeDefinition() == generic);
+        }
+
         internal static bool IsPrtgAPIProperty(Type callerType, PropertyInfo property)
         {
             return IsPrtgAPIType(callerType, property.PropertyType);

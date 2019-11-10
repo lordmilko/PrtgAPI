@@ -235,6 +235,19 @@ namespace PrtgAPI.PowerShell.Progress
 
         public bool NextCmdletIsOperation => CacheManager.GetNextPrtgCmdlet() is PrtgOperationCmdlet;
 
+        public bool NextCmdletIsInternalOperation
+        {
+            get
+            {
+                var cmdlet = CacheManager.GetNextPrtgCmdlet();
+
+                if (cmdlet is PrtgOperationCmdlet && cmdlet.ProgressManager?.InternalProgress == true)
+                    return true;
+
+                return false;
+            }
+        }
+
         public bool NextCmdletIsPostProcessMode => PostProcessMode(true);
 
         public bool PostProcessMode(bool downstream = false)
@@ -608,6 +621,11 @@ namespace PrtgAPI.PowerShell.Progress
         public Pipeline CmdletPipeline { get; set; }
 
         public Pipeline SelectPipeline { get; set; }
+
+        /// <summary>
+        /// Specifies that that this progress manager represents an internal operation.
+        /// </summary>
+        public bool InternalProgress { get; set; }
 
         #endregion
         #region Regular Fields
@@ -1060,8 +1078,10 @@ namespace PrtgAPI.PowerShell.Progress
         public void UpdateRecordsProcessed(ProgressRecordEx record, IObject obj, bool writeObject = true)
         {
             //When a variable to cmdlet chain contains an operation, responsibility for updating the number of records processed
-            //"resets", and we become responsible for updating our own count again
-            if (NormalSeemsLikePipeFromVariable)
+            //"resets", and we become responsible for updating our own count again.
+            //If we are the internal progress of a PrtgOperationCmdlet however (such as calling GetTree() in Show-PrtgTree -Id <value>)
+            //we might not have a pipeline at all, in which case we should proceed as if we're simply incrementing from total records
+            if (NormalSeemsLikePipeFromVariable && !(InternalProgress && Pipeline == null))
             {
                 //If we're the only cmdlet, the first cmdlet, or the pipeline contains an operation cmdlet
                 //we're responsible for updating our own progress, which we must do via analyzing the pipeline.
@@ -1119,7 +1139,7 @@ namespace PrtgAPI.PowerShell.Progress
                 if (obj != null && Scenario != ProgressScenario.StreamProgress)
                     record.StatusDescription = GetObjectStatusDescription(obj, str);
                 else
-                    record.StatusDescription = $"{InitialDescription} {str}";
+                    record.StatusDescription = $"{InitialDescription} ({str})";
 
                 if (manager.RecordsProcessed > 0)
                     record.PercentComplete = GetPercentComplete(manager.RecordsProcessed, manager.TotalRecords.Value);
@@ -1132,8 +1152,9 @@ namespace PrtgAPI.PowerShell.Progress
 
                 //If the next cmdlet is an operation cmdlet, avoid saying "Processing record x/y", as the operation cmdlet will display this for us
                 //But if the previous cmdlet is a post process cmdlet executing with -PassThru, we're effectively operating in "variable progress"
-                //mode, so we need to display some progress for the record that was piped into us
-                if ((NextCmdletIsOperation && manager.RecordsProcessed < 2) || !NextCmdletIsOperation || PipeFromPrtgCmdletPostProcessMode) //todo: what happens when WE'RE an operation cmdlet?
+                //mode, so we need to display some progress for the record that was piped into us.
+                //If the next cmdlet is an internal operation cmdlet however (e.g. Show-PrtgTree) we do want to show progress.
+                if ((NextCmdletIsOperation && (manager.RecordsProcessed < 2 || NextCmdletIsInternalOperation)) || !NextCmdletIsOperation || PipeFromPrtgCmdletPostProcessMode) //todo: what happens when WE'RE an operation cmdlet?
                     WriteProgress();
 
                 CompletePrematurely(manager);

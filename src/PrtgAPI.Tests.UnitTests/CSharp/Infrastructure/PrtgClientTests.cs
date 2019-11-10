@@ -20,6 +20,8 @@ using PrtgAPI.Tests.UnitTests.Support;
 using PrtgAPI.Tests.UnitTests.Support.Serialization;
 using PrtgAPI.Tests.UnitTests.Support.TestItems;
 using PrtgAPI.Tests.UnitTests.Support.TestResponses;
+using PrtgAPI.Tree;
+using PrtgAPI.Tree.Progress;
 
 namespace PrtgAPI.Tests.UnitTests.Infrastructure
 {
@@ -962,6 +964,8 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
 
                 return new Either<IPrtgObject, int>(1001);
             }
+            if (t == typeof(Either<PrtgObject, int>))
+                return new Either<PrtgObject, int>(new Group {Id = 0});
             if (t == typeof(Either<Sensor, int>))
                 return new Either<Sensor, int>(1001);
             if (t == typeof(Either<Device, int>))
@@ -974,6 +978,10 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
                 return new Either<GroupOrProbe, int>(1001);
             if (t == typeof(Either<DeviceOrGroupOrProbe, int>))
                 return new Either<DeviceOrGroupOrProbe, int>(1001);
+            if (t == typeof(PrtgObject))
+                return new Group {Id = 0};
+            if (t == typeof(ITreeProgressCallback))
+                return new DummyTreeProgressCallback();
             if (t == typeof(Dictionary<string, string>))
                 return new Dictionary<string, string>();
             if (parameter.Name == "versionSpecific")
@@ -1662,5 +1670,21 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
         }
 
         #endregion
+    }
+
+    internal class DummyTreeProgressCallback : ITreeProgressCallback
+    {
+        public DepthManager DepthManager { get; }
+        public void OnLevelBegin(ITreeValue parent, PrtgNodeType parentType, int depth)
+        {
+        }
+
+        public void OnLevelWidthKnown(ITreeValue parent, PrtgNodeType parentType, int width)
+        {
+        }
+
+        public void OnProcessValue(ITreeValue value)
+        {
+        }
     }
 }
