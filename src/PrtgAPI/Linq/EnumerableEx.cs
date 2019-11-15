@@ -54,6 +54,9 @@ namespace PrtgAPI.Linq
             }
         }
 
+        internal static IEnumerable<TSource> ToCached<TSource>(this IEnumerable<TSource> source) =>
+            new CachedEnumerableIterator<TSource>(source);
+
         internal static T SingleObject<T>(this List<T> source, object value, string property = "ID") where T : IObject
         {
             if (source.Count == 1)

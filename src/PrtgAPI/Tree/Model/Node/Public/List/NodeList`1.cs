@@ -48,7 +48,7 @@ namespace PrtgAPI.Tree
 
         protected override ListBase<TNode> CreateList(IEnumerable<TNode> nodes)
         {
-            return new NodeList<TNode>(new OrphanList(nodes?.Select(n => n?.Orphan)).ToStandaloneNode<NodeList>());
+            return new NodeList<TNode>(new StrictOrphanList(nodes?.Select(n => n?.Orphan)).ToStandaloneNode<NodeList>());
         }
     }
 }

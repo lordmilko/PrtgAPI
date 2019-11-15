@@ -8,15 +8,19 @@ namespace PrtgAPI.Tree.Converters.Tree
     /// </summary>
     class TreeBuilder
     {
-        private TreeProgressManager progressManager;
-        private ObjectManager objectManager;
+        internal TreeProgressManager ProgressManager;
+        internal ObjectManager ObjectManager;
+        internal FlagEnum<TreeBuilderOptions> Options;
+
         private PrtgClient client;
 
-        internal TreeBuilder(PrtgClient client, ITreeProgressCallback progressCallback)
+        internal TreeBuilder(PrtgClient client, ITreeProgressCallback progressCallback, FlagEnum<TreeBuilderOptions> options)
         {
-            progressManager = new TreeProgressManager(progressCallback);
+            ProgressManager = new TreeProgressManager(progressCallback);
+            ObjectManager = new ObjectManager(client);
+            Options = options;
+
             this.client = client;
-            objectManager = new ObjectManager(client);
         }
 
         internal PrtgOrphan GetTree(Either<PrtgObject, int> objectOrId)
@@ -30,7 +34,7 @@ namespace PrtgAPI.Tree.Converters.Tree
             }
 
             //With each additional level we parse, a new TreeBuilderLevel will be constructed and recursed
-            var level = new TreeBuilderLevel(objectOrId.Left, progressManager, objectManager);
+            var level = new TreeBuilderLevel(objectOrId.Left, this);
 
             return level.ProcessObject();
         }

@@ -17,6 +17,9 @@ namespace PrtgAPI.Tests.UnitTests
             this.response = response;
         }
 
+        /// <summary>
+        /// Specifies whether to switch back to the original thread context in asynchronous requests.
+        /// </summary>
         public bool SwitchContext { get; set; }
 
         public Task<HttpResponseMessage> SendSync(PrtgRequestMessage request, CancellationToken token)

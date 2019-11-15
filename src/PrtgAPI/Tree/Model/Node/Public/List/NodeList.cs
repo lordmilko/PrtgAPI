@@ -5,32 +5,23 @@ using PrtgAPI.Tree.Internal;
 namespace PrtgAPI.Tree
 {
     /// <summary>
-    /// Represents a collection of tree nodes capable of lazily converting each <see cref="TreeOrphan"/>
+    /// Represents an abstract collection of tree nodes capable of lazily converting each <see cref="TreeOrphan"/>
     /// in the underlying <see cref="OrphanList"/> to a <see cref="TreeNode"/> as required.
     /// </summary>
-    [DebuggerDisplay("Count = {Count}")]
-    [DebuggerTypeProxy(typeof(NodeListDebugView))]
-    internal class NodeList : TreeNode
+    internal abstract class NodeList : TreeNode
     {
         /// <summary>
-        /// The underlying store of nodes contained in this list. Nodes will only be created from orphans on demand as required;
-        /// if a child is never accessed, the corresponding node for it in this tree will not be created.
+        /// Gets the number of elements contained in the <see cref="StrictNodeList"/>.
         /// </summary>
-        internal readonly ArrayElement<TreeNode>[] children;
-
-        /// <summary>
-        /// Gets the number of elements contained in the <see cref="NodeList"/>.
-        /// </summary>
-        public int Count => children.Length;
+        internal abstract int Count { get; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="NodeList"/> class with the orphan list this node encapsulates and the parent of this node.
         /// </summary>
-        /// <param name="orphanList"></param>
-        /// <param name="parent"></param>
+        /// <param name="orphanList">The orphan list this node list encapsulates.</param>
+        /// <param name="parent">The parent of this node list.</param>
         internal NodeList(OrphanList orphanList, TreeNode parent) : base(orphanList, parent)
         {
-            children = new ArrayElement<TreeNode>[orphanList.Count];
         }
 
         /// <summary>
@@ -39,8 +30,8 @@ namespace PrtgAPI.Tree
         /// wrapped on a previous invocation.
         /// </summary>
         /// <param name="index">The index of the orphan to wrap.</param>
-        /// <returns></returns>
-        internal TreeNode ElementToNode(int index) => ElementToNode(ref children[index].Value, index);
+        /// <returns>The node at the specified index.</returns>
+        internal abstract TreeNode ElementToNode(int index);
 
         /// <summary>
         /// Wraps a <see cref="TreeOrphan"/> at the specified <paramref name="index"/> as a <see cref="TreeNode"/>,
@@ -49,8 +40,8 @@ namespace PrtgAPI.Tree
         /// </summary>
         /// <param name="element">The value of a field that will cache the wrapped value. If this value is null the node will be created.</param>
         /// <param name="index">The index of the orphan to wrap.</param>
-        /// <returns></returns>
-        private TreeNode ElementToNode(ref TreeNode element, int index)
+        /// <returns>The node at the specified index.</returns>
+        protected TreeNode ElementToNode(ref TreeNode element, int index)
         {
             var result = element;
 

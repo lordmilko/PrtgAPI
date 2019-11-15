@@ -1,22 +1,35 @@
 ﻿using System;
+using System.Text.RegularExpressions;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace PrtgAPI.Tests.UnitTests.Support
 {
-    class EventValidator<T>
+    class EventValidator
     {
         private bool ready { get; set; }
         private int i { get; set; } = -1;
 
         private int count;
 
-        private T[] list;
+        private string[] list;
 
         private object lockObj = new object();
 
-        public EventValidator(T[] list)
+        public EventValidator(PrtgClient client, string[] list)
         {
             this.list = list;
+
+            client.LogVerbose += (s, e) =>
+            {
+                var message = e.Message;
+
+                if (message.StartsWith("Synchronously") || message.StartsWith("Asynchronously"))
+                {
+                    message = Regex.Replace(e.Message, "(.+ request )(.+)", "$2");
+                }
+
+                Assert.AreEqual(Get(message), message);
+            };
         }
 
         public bool Finished => i == list.Length - 1;
@@ -28,7 +41,7 @@ namespace PrtgAPI.Tests.UnitTests.Support
             ready = true;
         }
 
-        public T Get(string next)
+        public string Get(string next)
         {
             lock (lockObj)
             {
@@ -48,7 +61,7 @@ namespace PrtgAPI.Tests.UnitTests.Support
                     return val;
                 }
 
-                throw new InvalidOperationException($"Was not ready for request '{next}'");
+                throw new InvalidOperationException($"Was not ready for request {i + 1} '{next}'");
             }
         }
     }

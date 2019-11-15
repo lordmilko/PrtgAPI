@@ -36,7 +36,7 @@ namespace PrtgAPI.Tree.Internal
         /// Initializes a new instance of the <see cref="OrphanList{TOrphan}"/> class as an empty list.
         /// </summary>
         [ExcludeFromCodeCoverage]
-        internal OrphanList() : this(new OrphanList())
+        internal OrphanList() : this(new StrictOrphanList())
         {
         }
 
@@ -45,7 +45,7 @@ namespace PrtgAPI.Tree.Internal
         /// </summary>
         /// <param name="orphan">The orphan to contain in the list.</param>
         [ExcludeFromCodeCoverage]
-        internal OrphanList(TreeOrphan orphan) : this(new OrphanList(orphan))
+        internal OrphanList(TreeOrphan orphan) : this(new StrictOrphanList(orphan))
         {
         }
 
@@ -58,7 +58,7 @@ namespace PrtgAPI.Tree.Internal
             this.list = list;
         }
 
-        internal OrphanList(IEnumerable<TOrphan> orphans) : this(new OrphanList(orphans))
+        internal OrphanList(IEnumerable<TOrphan> orphans) : this(new StrictOrphanList(orphans))
         {
         }
 

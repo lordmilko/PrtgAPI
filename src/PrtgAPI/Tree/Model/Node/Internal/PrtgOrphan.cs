@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using PrtgAPI.Linq;
 
 namespace PrtgAPI.Tree.Internal
 {
@@ -39,10 +40,22 @@ namespace PrtgAPI.Tree.Internal
         {
             Value = value;
 
-            ValidateChildren(Children);
+            //We only have a cached enumeration of children when we lazily retrieved them from PRTG in a TreeLevelBuilder.
+            //As such, skip validating the children.
+            if (!(children is CachedEnumerableIterator<PrtgOrphan>))
+                ValidateChildren(Children);
         }
 
         private static IEnumerable<PrtgOrphan> ReduceChildren(IEnumerable<PrtgOrphan> children)
+        {
+            //If we have a CachedEnumerableIterator we implicitly are a safe collection that doesn't need reducing
+            if (children is CachedEnumerableIterator<PrtgOrphan>)
+                return children;
+
+            return ReduceChildrenInternal(children);
+        }
+
+        private static IEnumerable<PrtgOrphan> ReduceChildrenInternal(IEnumerable<PrtgOrphan> children)
         {
             if (children == null)
                 yield break;

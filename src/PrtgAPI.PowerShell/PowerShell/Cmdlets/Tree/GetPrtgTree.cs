@@ -47,6 +47,12 @@ namespace PrtgAPI.PowerShell.Cmdlets
         public int Id { get; set; }
 
         /// <summary>
+        /// <para type="description">Specifies that child nodes should be retrieved lazily on demand rather than synchronously all at once.</para>
+        /// </summary>
+        [Parameter(Mandatory = false)]
+        public SwitchParameter Lazy { get; set; }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="GetPrtgTree"/> class.
         /// </summary>
         public GetPrtgTree() : base("Tree")
@@ -58,18 +64,20 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// </summary>
         protected override void ProcessRecordEx()
         {
-            var callback = new PowerShellTreeProgressCallback(this);
-
             PrtgNode tree = null;
 
             switch (ParameterSetName)
             {
                 case ParameterSet.Default:
-                    tree = client.GetTree(Object, callback);
+
+                    if (Object == null)
+                        Object = client.GetGroup(WellKnownId.Root);
+
+                    tree = GetTree(Object);
                     break;
 
                 case ParameterSet.Manual:
-                    tree = client.GetTree(Id, callback);
+                    tree = GetTree(Id);
                     break;
 
                 default:
@@ -77,6 +85,14 @@ namespace PrtgAPI.PowerShell.Cmdlets
             }
 
             WriteObject(tree);
+        }
+
+        private PrtgNode GetTree(PrtgAPI.Either<PrtgObject, int> objectOrId)
+        {
+            if (Lazy)
+                return client.GetTreeLazy(objectOrId);
+
+            return client.GetTree(objectOrId, new PowerShellTreeProgressCallback(this));
         }
     }
 }

@@ -688,7 +688,36 @@ namespace PrtgAPI
         /// <returns>A <see cref="PrtgNode"/> encapsulating the specified object and all its descendants.</returns>
         public PrtgNode GetTree(Either<PrtgObject, int> objectOrId, ITreeProgressCallback progressCallback = null)
         {
-            var builder = new TreeBuilder(this, progressCallback);
+            var builder = new TreeBuilder(this, progressCallback, TreeBuilderOptions.Synchronous);
+
+            return builder.GetTree(objectOrId).ToStandaloneNode<PrtgNode>();
+        }
+
+        /// <summary>
+        /// Lazily retrieves a <see cref="PrtgNode"/> tree fo a specified object. If no object is specified, the Root node will be used.<para/>
+        /// Children of the root object will be retrieved on demand upon being accessed.
+        /// </summary>
+        /// <param name="value">The object at the root of the tree.</param>
+        /// <param name="progressCallback">A callback used to retrieve progress notifications when children are lazily resolved.</param>
+        /// <returns>A <see cref="PrtgNode"/> encapsulating the specified <paramref name="value"/> that lazily calculates its descendants.</returns>
+        public PrtgNode GetTreeLazy(PrtgObject value = null, ITreeProgressCallback progressCallback = null)
+        {
+            if (value != null)
+                return GetTreeLazy((Either<PrtgObject, int>) value, progressCallback);
+
+            return GetTreeLazy(WellKnownId.Root, progressCallback);
+        }
+
+        /// <summary>
+        /// Lazily retrieves a <see cref="PrtgNode"/> tree fo a specified object or ID.<para/>
+        /// Children of the root object will be retrieved on demand upon being accessed.
+        /// </summary>
+        /// <param name="objectOrId">The object or ID of the object at the root of the tree.</param>
+        /// <param name="progressCallback">A callback used to retrieve progress notifications when children are lazily resolved.</param>
+        /// <returns>A <see cref="PrtgNode"/> encapsulating the specified object that lazily calculates its descendants.</returns>
+        public PrtgNode GetTreeLazy(Either<PrtgObject, int> objectOrId, ITreeProgressCallback progressCallback = null)
+        {
+            var builder = new TreeBuilder(this, progressCallback, TreeBuilderOptions.Synchronous | TreeBuilderOptions.Lazy);
 
             return builder.GetTree(objectOrId).ToStandaloneNode<PrtgNode>();
         }

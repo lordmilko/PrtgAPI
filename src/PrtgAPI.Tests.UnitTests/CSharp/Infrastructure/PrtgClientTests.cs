@@ -341,7 +341,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
 
             var client = Initialize_Client(new BasicResponse(xml.ToString()));
 
-            var validator = new EventValidator<string>(new[]
+            var validator = new EventValidator(client, new[]
             {
                 //First - retry a dirty response
                 UnitRequest.Objects(),
@@ -351,18 +351,6 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
                 //Second - engine should be already marked as dirty
                 UnitRequest.Objects()
             });
-
-            client.LogVerbose += (s, e) =>
-            {
-                var message = e.Message;
-
-                if (message.StartsWith("Synchronously") || message.StartsWith("Asynchronously"))
-                {
-                    message = Regex.Replace(e.Message, "(.+ request )(.+)", "$2");
-                }
-
-                Assert.AreEqual(validator.Get(message), message);
-            };
 
             validator.MoveNext(3);
             var result = client.ObjectEngine.GetObject<DummyElementRoot>(new PrtgObjectParameters());
@@ -381,7 +369,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
 
             var client = Initialize_Client(new BasicResponse(xml.ToString()));
 
-            var validator = new EventValidator<string>(new[]
+            var validator = new EventValidator(client, new[]
             {
                 //First - retry a dirty response
                 UnitRequest.Objects(),
@@ -391,18 +379,6 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
                 //Second - engine should be already marked as dirty
                 UnitRequest.Objects()
             });
-
-            client.LogVerbose += (s, e) =>
-            {
-                var message = e.Message;
-
-                if (message.StartsWith("Synchronously") || message.StartsWith("Asynchronously"))
-                {
-                    message = Regex.Replace(e.Message, "(.+ request )(.+)", "$2");
-                }
-
-                Assert.AreEqual(validator.Get(message), message);
-            };
 
             validator.MoveNext(3);
             var result = await client.ObjectEngine.GetObjectAsync<DummyElementRoot>(new PrtgObjectParameters());

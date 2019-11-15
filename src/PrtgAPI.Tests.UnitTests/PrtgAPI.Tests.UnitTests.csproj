@@ -89,6 +89,7 @@
     <Compile Include="CSharp\Tree\ObjectModel\NodeFactoryTests.cs" />
     <Compile Include="CSharp\Tree\ObjectModel\NodeListTests.cs" />
     <Compile Include="CSharp\Tree\ObjectModel\TreeCompareTests.cs" />
+    <Compile Include="CSharp\Tree\ObjectModel\TreeLazyTests.cs" />
     <Compile Include="CSharp\Tree\ObjectModel\TreeMemberTests.cs" />
     <Compile Include="Support\AdvancedItemGenerator.cs" />
     <Compile Include="Support\AssertEx.cs" />

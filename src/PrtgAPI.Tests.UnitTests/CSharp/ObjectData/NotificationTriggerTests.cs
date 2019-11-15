@@ -165,7 +165,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         {
             var client = Initialize_Client(new NotificationTriggerResponse(NotificationTriggerItem.StateTrigger(offNotificationAction: "302|Email to all members of group PRTG Administrator")));
 
-            var validator = new EventValidator<string>(new[]
+            var validator = new EventValidator(client, new[]
             {
                 //First - get all triggers
                 UnitRequest.Triggers(1001),
@@ -178,13 +178,6 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
                 //Third - touch an unsupported property of another action
                 UnitRequest.NotificationProperties(302)
             });
-
-            client.LogVerbose += (s, e) =>
-            {
-                var message = Regex.Replace(e.Message, "(.+ request )(.+)", "$2");
-
-                Assert.AreEqual(validator.Get(message), message);
-            };
 
             validator.MoveNext(2);
             var triggers = client.GetNotificationTriggers(1001);
@@ -206,7 +199,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
                 NotificationTriggerItem.StateTrigger(offNotificationAction: "302|Email to all members of group PRTG Administrator")
             ) {HasSchedule = new[] {302}});
 
-            var validator = new EventValidator<string>(new[]
+            var validator = new EventValidator(client, new[]
             {
                 //First
                 UnitRequest.Triggers(1001),
@@ -217,13 +210,6 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
                 UnitRequest.Schedules("filter_objid=623"),
                 UnitRequest.ScheduleProperties(623)
             });
-
-            client.LogVerbose += (s, e) =>
-            {
-                var message = Regex.Replace(e.Message, "(.+ request )(.+)", "$2");
-
-                Assert.AreEqual(validator.Get(message), message);
-            };
 
             validator.MoveNext(7);
             var triggers = await client.GetNotificationTriggersAsync(1001);
@@ -245,7 +231,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             { HasSchedule = new[] {301, 302, 303}}
             );
 
-            var validator = new EventValidator<string>(new[]
+            var validator = new EventValidator(client, new[]
             {
                 //First - get all triggers
                 UnitRequest.Triggers(1001),
@@ -267,13 +253,6 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
                 UnitRequest.Schedules("filter_objid=623"),
                 UnitRequest.ScheduleProperties(623),
             });
-
-            client.LogVerbose += (s, e) =>
-            {
-                var message = Regex.Replace(e.Message, "(.+ request )(.+)", "$2");
-
-                Assert.AreEqual(validator.Get(message), message);
-            };
 
             validator.MoveNext(2);
             var triggers = client.GetNotificationTriggers(1001);
@@ -308,7 +287,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             { HasSchedule = new[] { 301, 302, 303 } }
             );
 
-            var validator = new EventValidator<string>(new[]
+            var validator = new EventValidator(client, new[]
             {
                 //First - get all triggers. Automatically retrieves all notifications, and their properties.
                 //All of the schedules of the notifications are retrieved, as well as each schedule's properties
@@ -323,13 +302,6 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
                 UnitRequest.Schedules("filter_objid=623"),
                 UnitRequest.ScheduleProperties(623),
             });
-
-            client.LogVerbose += (s, e) =>
-            {
-                var message = Regex.Replace(e.Message, "(.+ request )(.+)", "$2");
-
-                Assert.AreEqual(validator.Get(message), message);
-            };
 
             validator.MoveNext(8);
             var triggers = await client.GetNotificationTriggersAsync(1001);

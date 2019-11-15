@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using PrtgAPI.Linq;
 using PrtgAPI.Tree.Internal;
 using PrtgAPI.Tree.Progress;
 
@@ -13,8 +14,11 @@ namespace PrtgAPI.Tree.Converters.Tree
     [DebuggerDisplay("{Value} ({ValueType})")]
     class TreeBuilderLevel
     {
-        private TreeProgressManager progressManager;
-        private ObjectManager objectManager;
+        private TreeBuilder builder;
+
+        private TreeProgressManager ProgressManager => builder.ProgressManager;
+        private ObjectManager ObjectManager => builder.ObjectManager;
+        private FlagEnum<TreeBuilderOptions> Options => builder.Options;
 
         /// <summary>
         /// Gets the value whose children are being processed at the current level.
@@ -28,27 +32,29 @@ namespace PrtgAPI.Tree.Converters.Tree
 
         private Func<ITreeValue, IEnumerable<PrtgOrphan>, PrtgOrphan> GetOrphan;
 
-        internal TreeBuilderLevel(ITreeValue value, TreeProgressManager progressManager, ObjectManager objectManager) :
-            this(value, GetNodeType(value), PrtgOrphan.Object, progressManager, objectManager)
+        internal TreeBuilderLevel(ITreeValue value, TreeBuilder builder) :
+            this(value, GetNodeType(value), PrtgOrphan.Object, builder)
         {
         }
 
-        internal TreeBuilderLevel(ITreeValue value, PrtgNodeType valueType, Func<ITreeValue, IEnumerable<PrtgOrphan>, PrtgOrphan> getOrphan, TreeProgressManager progressManager, ObjectManager objectManager)
+        internal TreeBuilderLevel(ITreeValue value, PrtgNodeType valueType, Func<ITreeValue, IEnumerable<PrtgOrphan>, PrtgOrphan> getOrphan, TreeBuilder builder)
         {
             Value = value;
             ValueType = valueType;
             GetOrphan = getOrphan;
-            this.progressManager = progressManager;
-            this.objectManager = objectManager;
+            this.builder = builder;
         }
 
         internal PrtgOrphan ProcessObject()
         {
-            using (progressManager.ProcessLevel())
+            using (ProgressManager.ProcessLevel())
             {
-                progressManager.OnLevelBegin(Value, ValueType);
+                ProgressManager.OnLevelBegin(Value, ValueType);
 
-                var children = GetChildren().ToList();
+                var children = GetChildren();
+
+                if (Options.Contains(TreeBuilderOptions.Lazy))
+                    children = children.ToCached();
 
                 return GetOrphan(Value, children);
             }
@@ -78,7 +84,7 @@ namespace PrtgAPI.Tree.Converters.Tree
         {
             if (device.TotalSensors > 0)
             {
-                var sensors = GetOrphans(objectManager.Sensor);
+                var sensors = GetOrphans(ObjectManager.Sensor);
 
                 return sensors;
             }
@@ -91,14 +97,14 @@ namespace PrtgAPI.Tree.Converters.Tree
             List<ObjectFactory> factories = new List<ObjectFactory>();
 
             if (parent.Id == WellKnownId.Root)
-                factories.Add(objectManager.Probe);
+                factories.Add(ObjectManager.Probe);
             else
             {
                 if (parent.TotalDevices > 0)
-                    factories.Add(objectManager.Device);
+                    factories.Add(ObjectManager.Device);
 
                 if (parent.TotalGroups > 0)
-                    factories.Add(objectManager.Group);
+                    factories.Add(ObjectManager.Group);
             }
 
             var results = GetOrphans(factories.ToArray());
@@ -125,8 +131,8 @@ namespace PrtgAPI.Tree.Converters.Tree
 
             if (obj != null && obj.NotificationTypes.TotalTriggers > 0)
             {
-                var triggers = objectManager.Trigger.Objects(Value.Id.Value);
-                var orphans = triggers.Select(t => objectManager.Trigger.Orphan(t, null)).Cast<TriggerOrphan>();
+                var triggers = ObjectManager.Trigger.Objects(Value.Id.Value);
+                var orphans = triggers.Select(t => ObjectManager.Trigger.Orphan(t, null)).Cast<TriggerOrphan>();
 
                 return PrtgOrphan.TriggerCollection(orphans);
             }
@@ -140,8 +146,8 @@ namespace PrtgAPI.Tree.Converters.Tree
 
             if (obj != null)
             {
-                var properties = objectManager.Property.Objects(obj.Id);
-                var orphans = properties.Select(p => objectManager.Property.Orphan(p, null)).Cast<PropertyOrphan>();
+                var properties = ObjectManager.Property.Objects(obj.Id);
+                var orphans = properties.Select(p => ObjectManager.Property.Orphan(p, null)).Cast<PropertyOrphan>();
 
                 return PrtgOrphan.PropertyCollection(orphans);
             }
@@ -166,15 +172,15 @@ namespace PrtgAPI.Tree.Converters.Tree
                 results.AddRange(objs.Select(o => Tuple.Create(o, factory)));
             }
 
-            progressManager.OnLevelWidthKnown(Value, ValueType, results.Count);
+            ProgressManager.OnLevelWidthKnown(Value, ValueType, results.Count);
 
             var orphans = new List<PrtgOrphan>();
 
             foreach (var item in results)
             {
-                progressManager.OnProcessValue(item.Item1);
+                ProgressManager.OnProcessValue(item.Item1);
 
-                var level = new TreeBuilderLevel(item.Item1, item.Item2.Type, item.Item2.Orphan, progressManager, objectManager);
+                var level = new TreeBuilderLevel(item.Item1, item.Item2.Type, item.Item2.Orphan, builder);
 
                 orphans.Add(level.ProcessObject());
             }

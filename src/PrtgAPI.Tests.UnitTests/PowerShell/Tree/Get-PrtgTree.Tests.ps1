@@ -57,4 +57,12 @@ class TreeVisitor : PrtgAPI.Tree.PrtgNodeWalker
 
         $visitor.Names -join ", " | Should Be "Volume IO _Total0, Volume IO _Total1"
     }
+
+    It "retrieves lazily" {
+        SetAddressValidatorResponse @(
+            [Request]::Groups("filter_objid=0", [Request]::DefaultObjectFlags)
+        )
+
+        $tree = Get-PrtgTree -Lazy
+    }
 }

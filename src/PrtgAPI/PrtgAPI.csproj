@@ -130,6 +130,7 @@
     <Compile Include="Enums\ConfigFileType.cs" />
     <Compile Include="Enums\RequestVersion.cs" />
     <Compile Include="Enums\SystemInfoType.cs" />
+    <Compile Include="Linq\CachedEnumerableIterator.cs" />
     <Compile Include="Objects\Models\Either.cs" />
     <Compile Include="Objects\WellKnownId.cs" />
     <Compile Include="Parameters\Helpers\ConversionState.cs" />
@@ -192,6 +193,7 @@
     <Compile Include="Tree\Converters\Tree\Factory\TriggerFactory.cs" />
     <Compile Include="Tree\Converters\Tree\TreeBuilder.cs" />
     <Compile Include="Tree\Enums\ListEditType.cs" />
+    <Compile Include="Tree\Enums\TreeBuilderOptions.cs" />
     <Compile Include="Tree\Enums\TreeNodeDifference.cs" />
     <Compile Include="Tree\Model\Debug\CompareNodeCollectionDebugView.cs" />
     <Compile Include="Tree\Model\Debug\CompareNodeDebugView.cs" />
@@ -211,6 +213,10 @@
     <Compile Include="Tree\Model\Debug\PrtgOrphanGroupingDebugView.cs" />
     <Compile Include="Tree\Model\Extensions\NodeExtensions.cs" />
     <Compile Include="Tree\Model\Extensions\OrphanExtensions.cs" />
+    <Compile Include="Tree\Model\Node\Internal\List\LazyOrphanList.cs" />
+    <Compile Include="Tree\Model\Node\Internal\List\StrictOrphanList.cs" />
+    <Compile Include="Tree\Model\Node\Public\List\LazyNodeList.cs" />
+    <Compile Include="Tree\Model\Node\Public\List\StrictNodeList.cs" />
     <Compile Include="Tree\Model\Progress\DefaultDepthManager.cs" />
     <Compile Include="Tree\Model\Progress\ITreeProgressCallback.cs" />
     <Compile Include="Tree\Model\ITreeValue.cs" />

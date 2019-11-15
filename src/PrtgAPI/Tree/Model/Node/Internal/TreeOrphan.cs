@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using PrtgAPI.Linq;
 
 namespace PrtgAPI.Tree.Internal
 {
@@ -53,15 +54,20 @@ namespace PrtgAPI.Tree.Internal
                 return new OrphanList<TTreeOrphan>();
             else
             {
+                if (children is CachedEnumerableIterator<TTreeOrphan>)
+                    return new OrphanList<TTreeOrphan>(new LazyOrphanList(children));
+                else
+                {
 #if DEBUG
-                var orphanList = new OrphanList<TTreeOrphan>(children);
+                    var orphanList = new OrphanList<TTreeOrphan>(children);
 
-                Debug.Assert(!orphanList.Contains(null), "TreeOrphans cannot contain null children");
+                    Debug.Assert(!orphanList.Contains(null), "TreeOrphans cannot contain null children");
 
-                return orphanList;
+                    return orphanList;
 #else
-                return new OrphanList<TTreeOrphan>(children);
+                    return new OrphanList<TTreeOrphan>(children);
 #endif
+                }
             }
         }
 

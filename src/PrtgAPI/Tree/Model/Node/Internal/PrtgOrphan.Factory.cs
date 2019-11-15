@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 namespace PrtgAPI.Tree.Internal
 {
@@ -78,9 +79,11 @@ namespace PrtgAPI.Tree.Internal
 
         #endregion
 
+        [ExcludeFromCodeCoverage]
         internal static PrtgOrphan Object(ITreeValue value, params PrtgOrphan[] children) =>
             Object(value, (IEnumerable<PrtgOrphan>) children);
 
+        [ExcludeFromCodeCoverage]
         internal static PrtgOrphan Object(ITreeValue value, IEnumerable<PrtgOrphan> children)
         {
             if (value is Probe)
