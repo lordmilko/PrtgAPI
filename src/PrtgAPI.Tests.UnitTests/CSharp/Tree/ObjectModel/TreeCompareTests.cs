@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using PrtgAPI.Tests.UnitTests.Support.TestResponses;
 using PrtgAPI.Tests.UnitTests.Support.Tree;
 using PrtgAPI.Tree;
 

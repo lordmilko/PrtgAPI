@@ -6,7 +6,7 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
     {
         private TreeScenario scenario;
 
-        public TreeRequestResponse(TreeRequestScenario scenario)
+        public TreeRequestResponse(TreeRequestScenario scenario, bool async = false)
         {
             switch (scenario)
             {
@@ -23,7 +23,7 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
                     break;
 
                 case TreeRequestScenario.MultiLevelContainer:
-                    this.scenario = new MultiLevelContainerScenario();
+                    this.scenario = new MultiLevelContainerScenario(async);
                     break;
 
                 case TreeRequestScenario.ObjectPipeToContainerWithChild:

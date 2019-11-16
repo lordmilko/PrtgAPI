@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
+using System.Diagnostics.CodeAnalysis;
+using System.Threading;
+using System.Threading.Tasks;
 using PrtgAPI.Linq;
 using PrtgAPI.Tree.Internal;
 using PrtgAPI.Tree.Progress;
@@ -12,12 +14,13 @@ namespace PrtgAPI.Tree.Converters.Tree
     /// Constructs a <see cref="PrtgOrphan"/> encapsulating a specified <see cref="ITreeValue"/> and its children.
     /// </summary>
     [DebuggerDisplay("{Value} ({ValueType})")]
-    class TreeBuilderLevel
+    internal partial class TreeBuilderLevel
     {
         private TreeBuilder builder;
 
         private TreeProgressManager ProgressManager => builder.ProgressManager;
         private ObjectManager ObjectManager => builder.ObjectManager;
+        private CancellationToken Token => builder.Token;
         private FlagEnum<TreeBuilderOptions> Options => builder.Options;
 
         /// <summary>
@@ -47,6 +50,8 @@ namespace PrtgAPI.Tree.Converters.Tree
 
         internal PrtgOrphan ProcessObject()
         {
+            Token.ThrowIfCancellationRequested();
+
             using (ProgressManager.ProcessLevel())
             {
                 ProgressManager.OnLevelBegin(Value, ValueType);
@@ -55,6 +60,20 @@ namespace PrtgAPI.Tree.Converters.Tree
 
                 if (Options.Contains(TreeBuilderOptions.Lazy))
                     children = children.ToCached();
+
+                return GetOrphan(Value, children);
+            }
+        }
+
+        internal async Task<PrtgOrphan> ProcessObjectAsync()
+        {
+            Token.ThrowIfCancellationRequested();
+
+            using (ProgressManager.ProcessLevel())
+            {
+                ProgressManager.OnLevelBegin(Value, ValueType);
+
+                var children = await GetChildrenAsync().ConfigureAwait(false);
 
                 return GetOrphan(Value, children);
             }
@@ -80,36 +99,25 @@ namespace PrtgAPI.Tree.Converters.Tree
                 yield return child;
         }
 
-        private IEnumerable<PrtgOrphan> GetDeviceChildren(Device device)
+        private async Task<List<PrtgOrphan>> GetChildrenAsync()
         {
-            if (device.TotalSensors > 0)
-            {
-                var sensors = GetOrphans(ObjectManager.Sensor);
+            var children = new List<PrtgOrphan>();
 
-                return sensors;
+            switch (ValueType)
+            {
+                case PrtgNodeType.Device:
+                    children.AddRange(await GetDeviceChildrenAsync((Device) Value).ConfigureAwait(false));
+                    break;
+
+                case PrtgNodeType.Group:
+                case PrtgNodeType.Probe:
+                    children.AddRange(await GetContainerChildrenAsync((GroupOrProbe) Value).ConfigureAwait(false));
+                    break;
             }
 
-            return Enumerable.Empty<PrtgOrphan>();
-        }
+            children.AddRange(await GetCommonChildrenAsync().ConfigureAwait(false));
 
-        private List<PrtgOrphan> GetContainerChildren(GroupOrProbe parent)
-        {
-            List<ObjectFactory> factories = new List<ObjectFactory>();
-
-            if (parent.Id == WellKnownId.Root)
-                factories.Add(ObjectManager.Probe);
-            else
-            {
-                if (parent.TotalDevices > 0)
-                    factories.Add(ObjectManager.Device);
-
-                if (parent.TotalGroups > 0)
-                    factories.Add(ObjectManager.Group);
-            }
-
-            var results = GetOrphans(factories.ToArray());
-
-            return results;
+            return children;
         }
 
         private IEnumerable<PrtgOrphan> GetCommonChildren()
@@ -125,69 +133,25 @@ namespace PrtgAPI.Tree.Converters.Tree
                 yield return properties;
         }
 
-        private TriggerOrphanCollection GetTriggers()
+        private async Task<List<PrtgOrphan>> GetCommonChildrenAsync()
         {
-            var obj = Value as SensorOrDeviceOrGroupOrProbe;
+            var children = new List<PrtgOrphan>();
 
-            if (obj != null && obj.NotificationTypes.TotalTriggers > 0)
-            {
-                var triggers = ObjectManager.Trigger.Objects(Value.Id.Value);
-                var orphans = triggers.Select(t => ObjectManager.Trigger.Orphan(t, null)).Cast<TriggerOrphan>();
+            var triggers = GetTriggersAsync();
+            var properties = GetPropertiesAsync();
 
-                return PrtgOrphan.TriggerCollection(orphans);
-            }
+            await Task.WhenAll(triggers, properties).ConfigureAwait(false);
 
-            return null;
+            if (triggers.Result != null)
+                children.Add(triggers.Result);
+
+            if (properties.Result != null)
+                children.Add(properties.Result);
+
+            return children;
         }
 
-        private PropertyOrphanCollection GetProperties()
-        {
-            var obj = Value as SensorOrDeviceOrGroupOrProbe;
-
-            if (obj != null)
-            {
-                var properties = ObjectManager.Property.Objects(obj.Id);
-                var orphans = properties.Select(p => ObjectManager.Property.Orphan(p, null)).Cast<PropertyOrphan>();
-
-                return PrtgOrphan.PropertyCollection(orphans);
-            }
-
-            return null;
-        }
-
-        /// <summary>
-        /// Retrieves <see cref="ITreeValue"/> values objects from a set of object factories, retrieves the children
-        /// of each object from the next <see cref="TreeBuilderLevel"/> and encapsulates the object and its children in a <see cref="PrtgOrphan"/>.
-        /// </summary>
-        /// <param name="factories">The factories to retrieve objects from.</param>
-        /// <returns>A list of <see cref="PrtgOrphan"/> objects encapsulating the values returnd from the factories and their respective children.</returns>
-        private List<PrtgOrphan> GetOrphans(params ObjectFactory[] factories)
-        {
-            List<Tuple<ITreeValue, ObjectFactory>> results = new List<Tuple<ITreeValue, ObjectFactory>>();
-
-            foreach (var factory in factories)
-            {
-                var objs = factory.Objects(Value.Id.Value);
-
-                results.AddRange(objs.Select(o => Tuple.Create(o, factory)));
-            }
-
-            ProgressManager.OnLevelWidthKnown(Value, ValueType, results.Count);
-
-            var orphans = new List<PrtgOrphan>();
-
-            foreach (var item in results)
-            {
-                ProgressManager.OnProcessValue(item.Item1);
-
-                var level = new TreeBuilderLevel(item.Item1, item.Item2.Type, item.Item2.Orphan, builder);
-
-                orphans.Add(level.ProcessObject());
-            }
-
-            return orphans;
-        }
-
+        [ExcludeFromCodeCoverage]
         private static PrtgNodeType GetNodeType(ITreeValue value)
         {
             if (value is Sensor)

@@ -1,4 +1,6 @@
-﻿using PrtgAPI.Tree.Internal;
+﻿using System.Threading;
+using System.Threading.Tasks;
+using PrtgAPI.Tree.Internal;
 using PrtgAPI.Tree.Progress;
 
 namespace PrtgAPI.Tree.Converters.Tree
@@ -10,14 +12,16 @@ namespace PrtgAPI.Tree.Converters.Tree
     {
         internal TreeProgressManager ProgressManager;
         internal ObjectManager ObjectManager;
+        internal CancellationToken Token;
         internal FlagEnum<TreeBuilderOptions> Options;
 
         private PrtgClient client;
 
-        internal TreeBuilder(PrtgClient client, ITreeProgressCallback progressCallback, FlagEnum<TreeBuilderOptions> options)
+        internal TreeBuilder(PrtgClient client, ITreeProgressCallback progressCallback, FlagEnum<TreeBuilderOptions> options, CancellationToken token)
         {
             ProgressManager = new TreeProgressManager(progressCallback);
             ObjectManager = new ObjectManager(client);
+            Token = token;
             Options = options;
 
             this.client = client;
@@ -27,6 +31,8 @@ namespace PrtgAPI.Tree.Converters.Tree
         {
             if (!objectOrId.IsLeft)
             {
+                Token.ThrowIfCancellationRequested();
+
                 if (objectOrId.Right == WellKnownId.Root)
                     objectOrId = client.GetGroup(WellKnownId.Root);
                 else
@@ -37,6 +43,24 @@ namespace PrtgAPI.Tree.Converters.Tree
             var level = new TreeBuilderLevel(objectOrId.Left, this);
 
             return level.ProcessObject();
+        }
+
+        internal async Task<PrtgOrphan> GetTreeAsync(Either<PrtgObject, int> objectOrId)
+        {
+            if (!objectOrId.IsLeft)
+            {
+                Token.ThrowIfCancellationRequested();
+
+                if (objectOrId.Right == WellKnownId.Root)
+                    objectOrId = await client.GetGroupAsync(WellKnownId.Root).ConfigureAwait(false);
+                else
+                    objectOrId = await client.GetObjectAsync(objectOrId.Right, true).ConfigureAwait(false);
+            }
+
+            //With each additional level we parse, a new TreeBuilderLevel will be constructed and recursed
+            var level = new TreeBuilderLevel(objectOrId.Left, this);
+
+            return await level.ProcessObjectAsync().ConfigureAwait(false);
         }
     }
 }

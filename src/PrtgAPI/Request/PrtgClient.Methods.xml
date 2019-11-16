@@ -754,6 +754,69 @@
             <MethodImpl name="ServerStatus" type="ServerStatus" description="Server Status" template="ServerStatus" region="true" pluralRegion="false"/>
             <MethodImpl name="SystemInfo" type="SystemInfo" description="System Information" template="SystemInfo" region="true"/>
             <MethodImpl name="TotalObjects" type="int" description="Total Objects" template="TotalObjects" region="true" pluralRegion="false"/>
+
+            <Region name="Tree">
+                <InlineMethodDef name="GetTree" returns="PrtgNode" tokenMode="MandatoryDefault">
+                    <Summary>Retrieves a &lt;see cref="PrtgNode"/&gt; tree for a specified object. If no object is specified, the Root node will be used.</Summary>
+                    <ReturnDescription>A &lt;see cref="PrtgNode"/&gt; encapsulating the specified &lt;paramref name="value"/&gt; and all its descendants.</ReturnDescription>
+
+                    <Parameter name="value" type="PrtgObject" default="null" description="The object at the root of the tree."/>
+                    <Parameter name="progressCallback" type="ITreeProgressCallback" default="null" description="A callback used to receive progress notifications."/>
+
+                    <Body expression="false">
+                        if (value != null)
+                            return <Call name="GetTree" args="(Either&lt;PrtgObject, int&gt;) value, progressCallback"/>;
+
+                        return <Call name="GetTree" args="WellKnownId.Root, progressCallback"/>;
+                    </Body>
+                </InlineMethodDef>
+                <InlineMethodDef name="GetTree" returns="PrtgNode" tokenMode="MandatoryDefault">
+                    <Summary>Retrieves a &lt;see cref="PrtgNode"/&gt; tree for a specified object or ID.</Summary>
+                    <ReturnDescription>A &lt;see cref="PrtgNode"/&gt; encapsulating the specified object and all its descendants.</ReturnDescription>
+
+                    <Parameter name="objectOrId" type="Either&lt;PrtgObject, int&gt;" description="The object or ID of the object at the root of the tree."/>
+                    <Parameter name="progressCallback" type="ITreeProgressCallback" default="null" description="A callback used to receive progress notifications."/>
+
+                    <Body expression="false">
+                        var builder = new TreeBuilder(this, progressCallback, TreeBuilderOptions.{Request}, token);
+
+                        return <Call name="builder.GetTree" args="objectOrId" needsToken="false"/>.ToStandaloneNode&lt;PrtgNode&gt;();
+                    </Body>
+                </InlineMethodDef>
+                <InlineMethodDef name="GetTreeLazy" returns="PrtgNode" tokenMode="MandatoryDefault" needsAsync="false">
+                    <Summary>
+                        Lazily retrieves a &lt;see cref="PrtgNode"/&gt; tree for a specified object. If no object is specified, the Root node will be used.&lt;para/&gt;
+                        Children of the root object will be retrieved on demand upon being accessed.
+                    </Summary>
+                    <ReturnDescription>A &lt;see cref="PrtgNode"/&gt; encapsulating the specified &lt;paramref name="value"/&gt; that lazily calculates its descendants.</ReturnDescription>
+
+                    <Parameter name="value" type="PrtgObject" default="null" description="The object at the root of the tree."/>
+                    <Parameter name="progressCallback" type="ITreeProgressCallback" default="null" description="A callback used to retrieve progress notifications when children are lazily resolved."/>
+
+                    <Body expression="false">
+                        if (value != null)
+                            return <Call name="GetTreeLazy" args="(Either&lt;PrtgObject, int&gt;) value, progressCallback"/>;
+
+                        return <Call name="GetTreeLazy" args="WellKnownId.Root, progressCallback"/>;
+                    </Body>
+                </InlineMethodDef>
+                <InlineMethodDef name="GetTreeLazy" returns="PrtgNode" tokenMode="MandatoryDefault" needsAsync="false">
+                    <Summary>
+                        Lazily retrieves a &lt;see cref="PrtgNode"/&gt; tree for a specified object or ID.&lt;para/&gt;
+                        Children of the root object will be retrieved on demand upon being accessed.
+                    </Summary>
+                    <ReturnDescription>A &lt;see cref="PrtgNode"/&gt; encapsulating the specified object that lazily calculates its descendants.</ReturnDescription>
+
+                    <Parameter name="objectOrId" type="Either&lt;PrtgObject, int&gt;" description="The object or ID of the object at the root of the tree."/>
+                    <Parameter name="progressCallback" type="ITreeProgressCallback" default="null" description="A callback used to retrieve progress notifications when children are lazily resolved."/>
+
+                    <Body expression="false">
+                        var builder = new TreeBuilder(this, progressCallback, TreeBuilderOptions.{Request} | TreeBuilderOptions.Lazy, token);
+
+                        return <Call name="builder.GetTree" args="objectOrId" needsToken="false"/>.ToStandaloneNode&lt;PrtgNode&gt;();
+                    </Body>
+                </InlineMethodDef>
+            </Region>
         </Region>
         <Region name="Object Manipulation">
             <Region name="Add Objects">
@@ -1504,7 +1567,7 @@
                         var approved = <Call name="GetProbeApprovalStatus" args="probeOrId"/>;
 
                         if (approved)
-                        throw new InvalidOperationException($"Cannot change approval status of probe with ID '{probeOrId}': probe has already been approved.");
+                            throw new InvalidOperationException($"Cannot change approval status of probe with ID '{probeOrId}': probe has already been approved.");
 
                         <Call name="ApproveProbeInternal" args="probeOrId, action"/>;
                     </Body>

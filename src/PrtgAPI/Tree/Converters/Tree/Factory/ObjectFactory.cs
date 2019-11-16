@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using PrtgAPI.Tree.Internal;
 
 namespace PrtgAPI.Tree.Converters.Tree
@@ -21,6 +23,14 @@ namespace PrtgAPI.Tree.Converters.Tree
         /// <param name="parentId">The object to retrieve objects from.</param>
         /// <returns>A list of objects of a certain <see cref="ITreeValue"/> type under the specified parent.</returns>
         public abstract List<ITreeValue> Objects(int parentId);
+
+        /// <summary>
+        /// Asynchronously retrieves all objects of a certain <see cref="ITreeValue"/> type of a specified parent.
+        /// </summary>
+        /// <param name="parentId">The object to retrieve objects from.</param>
+        /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>A list of objects of a certain <see cref="ITreeValue"/> type under the specified parent.</returns>
+        public abstract Task<List<ITreeValue>> ObjectsAsync(int parentId, CancellationToken token);
 
         /// <summary>
         /// Encapsulates an <see cref="ITreeValue"/> and its children as a <see cref="PrtgOrphan"/>.

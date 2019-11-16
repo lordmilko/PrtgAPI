@@ -192,6 +192,11 @@
     <Compile Include="Tree\Converters\Tree\Factory\SensorFactory.cs" />
     <Compile Include="Tree\Converters\Tree\Factory\TriggerFactory.cs" />
     <Compile Include="Tree\Converters\Tree\TreeBuilder.cs" />
+    <Compile Include="Tree\Converters\Tree\TreeBuilderLevel.Generated.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>TreeBuilderLevel.Generated.tt</DependentUpon>
+    </Compile>
     <Compile Include="Tree\Enums\ListEditType.cs" />
     <Compile Include="Tree\Enums\TreeBuilderOptions.cs" />
     <Compile Include="Tree\Enums\TreeNodeDifference.cs" />
@@ -722,6 +727,10 @@
     <Content Include="Request\Version\VersionClient18_1.Generated.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>VersionClient18_1.Generated.cs</LastGenOutput>
+    </Content>
+    <Content Include="Tree\Converters\Tree\TreeBuilderLevel.Generated.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>TreeBuilderLevel.Generated.cs</LastGenOutput>
     </Content>
   </ItemGroup>
   <ItemGroup>

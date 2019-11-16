@@ -63,6 +63,10 @@
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>VersionClient18_1.Generated.cs</LastGenOutput>
     </None>
+    <None Update="Tree\Converters\Tree\TreeBuilderLevel.Generated.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>TreeBuilderLevel.Generated.cs</LastGenOutput>
+    </None>
   </ItemGroup>
 
   <ItemGroup>
@@ -85,6 +89,11 @@
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>VersionClient18_1.Generated.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Tree\Converters\Tree\TreeBuilderLevel.Generated.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>TreeBuilderLevel.Generated.tt</DependentUpon>
     </Compile>
   </ItemGroup>
 

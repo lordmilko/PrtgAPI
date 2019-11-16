@@ -5,6 +5,13 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
 {
     class MultiLevelContainerScenario : TreeScenario
     {
+        private bool async;
+
+        public MultiLevelContainerScenario(bool async)
+        {
+            this.async = async;
+        }
+
         protected override IWebResponse GetResponse(string address, Content content)
         {
             switch (requestNum)
@@ -52,6 +59,12 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
                 case 11:
                     Assert.AreEqual(UnitRequest.Triggers(1001), address);
                     return new NotificationTriggerResponse();
+
+                case 12:
+                    if (!async)
+                        goto default;
+                    Assert.AreEqual(UnitRequest.Notifications(), address);
+                    return new NotificationActionResponse(new NotificationActionItem());
 
                 default:
                     throw UnknownRequest(address);

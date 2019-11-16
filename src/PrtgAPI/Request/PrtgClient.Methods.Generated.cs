@@ -12,6 +12,9 @@ using PrtgAPI.Linq;
 using PrtgAPI.Linq.Expressions;
 using PrtgAPI.Parameters;
 using PrtgAPI.Request;
+using PrtgAPI.Tree;
+using PrtgAPI.Tree.Converters.Tree;
+using PrtgAPI.Tree.Progress;
 
 namespace PrtgAPI
 {
@@ -2605,6 +2608,98 @@ namespace PrtgAPI
             (await ObjectEngine.GetObjectsRawAsync<object>(new TotalObjectParameters(content, filters), token: token).ConfigureAwait(false)).TotalCount;
 
         #endregion
+        #region Tree
+
+        /// <summary>
+        /// Retrieves a <see cref="PrtgNode"/> tree for a specified object. If no object is specified, the Root node will be used.
+        /// </summary>
+        /// <param name="value">The object at the root of the tree.</param>
+        /// <param name="progressCallback">A callback used to receive progress notifications.</param>
+        /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>A <see cref="PrtgNode"/> encapsulating the specified <paramref name="value"/> and all its descendants.</returns>
+        public PrtgNode GetTree(PrtgObject value = null, ITreeProgressCallback progressCallback = null, CancellationToken token = default(CancellationToken))
+        {
+            if (value != null)
+                return GetTree((Either<PrtgObject, int>) value, progressCallback, token);
+
+            return GetTree(WellKnownId.Root, progressCallback, token);
+        }
+
+        /// <summary>
+        /// Asynchronously retrieves a <see cref="PrtgNode"/> tree for a specified object. If no object is specified, the Root node will be used.
+        /// </summary>
+        /// <param name="value">The object at the root of the tree.</param>
+        /// <param name="progressCallback">A callback used to receive progress notifications.</param>
+        /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>A <see cref="PrtgNode"/> encapsulating the specified <paramref name="value"/> and all its descendants.</returns>
+        public async Task<PrtgNode> GetTreeAsync(PrtgObject value = null, ITreeProgressCallback progressCallback = null, CancellationToken token = default(CancellationToken))
+        {
+            if (value != null)
+                return await GetTreeAsync((Either<PrtgObject, int>) value, progressCallback, token).ConfigureAwait(false);
+
+            return await GetTreeAsync(WellKnownId.Root, progressCallback, token).ConfigureAwait(false);
+        }
+
+        /// <summary>
+        /// Retrieves a <see cref="PrtgNode"/> tree for a specified object or ID.
+        /// </summary>
+        /// <param name="objectOrId">The object or ID of the object at the root of the tree.</param>
+        /// <param name="progressCallback">A callback used to receive progress notifications.</param>
+        /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>A <see cref="PrtgNode"/> encapsulating the specified object and all its descendants.</returns>
+        public PrtgNode GetTree(Either<PrtgObject, int> objectOrId, ITreeProgressCallback progressCallback = null, CancellationToken token = default(CancellationToken))
+        {
+            var builder = new TreeBuilder(this, progressCallback, TreeBuilderOptions.Synchronous, token);
+
+            return builder.GetTree(objectOrId).ToStandaloneNode<PrtgNode>();
+        }
+
+        /// <summary>
+        /// Asynchronously retrieves a <see cref="PrtgNode"/> tree for a specified object or ID.
+        /// </summary>
+        /// <param name="objectOrId">The object or ID of the object at the root of the tree.</param>
+        /// <param name="progressCallback">A callback used to receive progress notifications.</param>
+        /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>A <see cref="PrtgNode"/> encapsulating the specified object and all its descendants.</returns>
+        public async Task<PrtgNode> GetTreeAsync(Either<PrtgObject, int> objectOrId, ITreeProgressCallback progressCallback = null, CancellationToken token = default(CancellationToken))
+        {
+            var builder = new TreeBuilder(this, progressCallback, TreeBuilderOptions.Asynchronous, token);
+
+            return (await builder.GetTreeAsync(objectOrId).ConfigureAwait(false)).ToStandaloneNode<PrtgNode>();
+        }
+
+        /// <summary>
+        /// Lazily retrieves a <see cref="PrtgNode"/> tree for a specified object. If no object is specified, the Root node will be used.<para/>
+        /// Children of the root object will be retrieved on demand upon being accessed.
+        /// </summary>
+        /// <param name="value">The object at the root of the tree.</param>
+        /// <param name="progressCallback">A callback used to retrieve progress notifications when children are lazily resolved.</param>
+        /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>A <see cref="PrtgNode"/> encapsulating the specified <paramref name="value"/> that lazily calculates its descendants.</returns>
+        public PrtgNode GetTreeLazy(PrtgObject value = null, ITreeProgressCallback progressCallback = null, CancellationToken token = default(CancellationToken))
+        {
+            if (value != null)
+                return GetTreeLazy((Either<PrtgObject, int>) value, progressCallback, token);
+
+            return GetTreeLazy(WellKnownId.Root, progressCallback, token);
+        }
+
+        /// <summary>
+        /// Lazily retrieves a <see cref="PrtgNode"/> tree for a specified object or ID.<para/>
+        /// Children of the root object will be retrieved on demand upon being accessed.
+        /// </summary>
+        /// <param name="objectOrId">The object or ID of the object at the root of the tree.</param>
+        /// <param name="progressCallback">A callback used to retrieve progress notifications when children are lazily resolved.</param>
+        /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>A <see cref="PrtgNode"/> encapsulating the specified object that lazily calculates its descendants.</returns>
+        public PrtgNode GetTreeLazy(Either<PrtgObject, int> objectOrId, ITreeProgressCallback progressCallback = null, CancellationToken token = default(CancellationToken))
+        {
+            var builder = new TreeBuilder(this, progressCallback, TreeBuilderOptions.Synchronous | TreeBuilderOptions.Lazy, token);
+
+            return builder.GetTree(objectOrId).ToStandaloneNode<PrtgNode>();
+        }
+
+        #endregion
     #endregion
     #region Object Manipulation
         #region Add Objects
@@ -4379,7 +4474,7 @@ namespace PrtgAPI
             var approved = GetProbeApprovalStatus(probeOrId);
 
             if (approved)
-            throw new InvalidOperationException($"Cannot change approval status of probe with ID '{probeOrId}': probe has already been approved.");
+                throw new InvalidOperationException($"Cannot change approval status of probe with ID '{probeOrId}': probe has already been approved.");
 
             ApproveProbeInternal(probeOrId, action);
         }
@@ -4405,7 +4500,7 @@ namespace PrtgAPI
             var approved = await GetProbeApprovalStatusAsync(probeOrId, token).ConfigureAwait(false);
 
             if (approved)
-            throw new InvalidOperationException($"Cannot change approval status of probe with ID '{probeOrId}': probe has already been approved.");
+                throw new InvalidOperationException($"Cannot change approval status of probe with ID '{probeOrId}': probe has already been approved.");
 
             await ApproveProbeInternalAsync(probeOrId, action, token).ConfigureAwait(false);
         }

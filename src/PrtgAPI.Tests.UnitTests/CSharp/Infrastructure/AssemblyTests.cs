@@ -492,7 +492,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
 
                         try
                         {
-                            await AssertEx.ThrowsAsync<TaskCanceledException>(async () => await task, "A task was canceled.");
+                            await AssertEx.ThrowsAsync<OperationCanceledException>(async () => await task, "was canceled.");
                         }
                         catch (AssertFailedException)
                         {
@@ -517,7 +517,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
 
                         try
                         {
-                            await AssertEx.ThrowsAsync<TaskCanceledException>(async () => await task, "A task was canceled.");
+                            await AssertEx.ThrowsAsync<OperationCanceledException>(async () => await task, "was canceled.");
                         }
                         catch (AssertFailedException)
                         {
@@ -558,12 +558,16 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
                 "GetField"
             };
 
-            var cacheClasses = new[]
+            var excludedClasses = new[]
             {
+                //Caches
                 "AttributeCache",
                 "ReflectionExtensions",
                 "TypeCache",
-                "XmlSerializerMembers"
+                "XmlSerializerMembers",
+
+                //Mistaken identity
+                "TreeBuilderLevel"
             };
 
             var invocationNode = (InvocationExpressionSyntax) item.AsNode();
@@ -578,7 +582,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
 
                 var className = myClass.Identifier.Text;
 
-                if (!cacheClasses.Contains(className))
+                if (!excludedClasses.Contains(className))
                 {
                     var invocation = invocationNode.FirstAncestorOrSelf<InvocationExpressionSyntax>(t => true);
 

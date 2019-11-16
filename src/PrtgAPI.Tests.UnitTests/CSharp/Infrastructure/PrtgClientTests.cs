@@ -6,7 +6,6 @@ using System.Linq.Expressions;
 using System.Net;
 using System.Net.Sockets;
 using System.Reflection;
-using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml.Linq;
@@ -156,7 +155,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
                 "GetType"
             };
 
-            var syncMethods = methods.Where(m => !m.Name.EndsWith("Async") && !skipStartsWith.Any(m.Name.StartsWith) && !skipFull.Any(m.Name.StartsWith)).ToList();
+            var syncMethods = methods.Where(m => !m.Name.EndsWith("Async") && !m.Name.EndsWith("Lazy") && !skipStartsWith.Any(m.Name.StartsWith) && !skipFull.Any(m.Name.StartsWith)).ToList();
 
             var methodFullNames = methods.Select(m =>
             {
