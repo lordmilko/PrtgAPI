@@ -1310,6 +1310,39 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             Assert.AreEqual("1 & 2", result["propertyName"]);
         }
 
+        [UnitTest]
+        [TestMethod]
+        public void HtmlParser_Decodes_Multiline_InputTagValue()
+        {
+            var client = BaseTest.Initialize_Client(new BasicResponse("<input name=\"propertyName\" type=\"text\" value=\"1\n2\"/>"));
+
+            var result = client.GetObjectPropertiesRaw(1001);
+
+            Assert.AreEqual("1\n2", result["propertyName"]);
+        }
+
+        [UnitTest]
+        [TestMethod]
+        public void HtmlParser_Decodes_Multiline_TextAreaValue()
+        {
+            var client = BaseTest.Initialize_Client(new BasicResponse("<textarea class=\"textarea\"  id=\"propertyName\" name=\"propertyName\" rows=\"2\" >1\n2</textarea>"));
+
+            var result = client.GetObjectPropertiesRaw(1001);
+
+            Assert.AreEqual("1\n2", result["propertyName"]);
+        }
+
+        [UnitTest]
+        [TestMethod]
+        public void HtmlParser_Decodes_Multiline_DropDownListValue()
+        {
+            var client = BaseTest.Initialize_Client(new BasicResponse("<select name=\"propertyName\"><option value=\"1\n2\" selected=\"selected\">Yes</option></select>"));
+
+            var result = client.GetObjectPropertiesRaw(1001);
+
+            Assert.AreEqual("1\n2", result["propertyName"]);
+        }
+
         private void CheckScanningIntervalSerializedValue(ScanningInterval interval, string value)
         {
             Assert.AreEqual(((ISerializable) interval).GetSerializedFormat(), value, "Serialized format was not correct");

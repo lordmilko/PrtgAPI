@@ -15,16 +15,16 @@ namespace PrtgAPI.Request
 
         internal const string DefaultPropertyPrefix = "injected_";
 
-        internal const string DefaultBasicMatchRegex = "<input.+?name=\".*?\".+?value=\".*?\".*?>";
+        internal const string DefaultBasicMatchRegex = "<input.+?name=\".*?\".+?(value=\".*?\".*?)?>";
         internal const string DefaultBackwardsMatchRegex = "<input.+?value=\".*?\".+?name=\".*?\".*?>";
         internal const string DefaultStandardNameRegex = "(.+?name=\")(.*?)(_*\".+)";
         internal const string DefaultDropDownListRegex = "<select.+?>.*?<\\/select>";
         internal const string DefaultTextAreaRegex = "(<textarea.+?>)(.*?)(<\\/textarea>)";
         internal const string DefaultDependencyDiv = "(<div.+?data-inputname=\"dependency_\")(.+?>)";
 
-        private static Regex inputValueRegex = new Regex("(.+?value=\")(.*?)(\".+)", RegexOptions.Compiled);
-        private static Regex ddlOptionValueRegex = new Regex("(.+?value=\")(.*?)(\".+)", RegexOptions.Compiled);
-        private static Regex ddlOptionInnerHtmlRegex = new Regex("(<.+?>)(.*?)(</.+>)", RegexOptions.Compiled);
+        private static Regex inputValueRegex = new Regex("(.+?value=\")(.*?)(\".+)", RegexOptions.Compiled | RegexOptions.Singleline);
+        private static Regex ddlOptionValueRegex = new Regex("(.+?value=\")(.*?)(\".+)", RegexOptions.Compiled | RegexOptions.Singleline);
+        private static Regex ddlOptionInnerHtmlRegex = new Regex("(<.+?>)(.*?)(</.+>)", RegexOptions.Compiled | RegexOptions.Singleline);
 
         #region PropertyPrefix
 
@@ -135,11 +135,11 @@ namespace PrtgAPI.Request
 
         internal XElement GetDependency(string response)
         {
-            var match = Regex.Match(response, DependencyDiv);
+            var match = Regex.Match(response, DependencyDiv, RegexOptions.Singleline);
 
             if (match.Success)
             {
-                var idStr = Regex.Replace(match.Value, "(.+data-selid=\")(.+?)(\".+)", "$2");
+                var idStr = Regex.Replace(match.Value, "(.+data-selid=\")(.+?)(\".+)", "$2", RegexOptions.Singleline);
                 var id = idStr == "null" ? null : (int?)Convert.ToInt32(idStr);
 
                 return new XElement($"{PropertyPrefix}dependencyvalue", id);
@@ -159,8 +159,8 @@ namespace PrtgAPI.Request
             if (nameRegex == null)
                 nameRegex = StandardNameRegex;
 
-            var matches = Regex.Matches(response, matchRegex);
-            var inputs = (matches.Cast<Match>().Select(match => match.Value)).ToList();
+            var matches = Regex.Matches(response, matchRegex, RegexOptions.Singleline);
+            var inputs = (matches.Cast<Match>().Select(match => match.Value)).Where(v => v.Contains("value=\"")).ToList();
 
             var properties = GetProperties(inputs, nameRegex, nameTransformer);
 
@@ -296,11 +296,11 @@ namespace PrtgAPI.Request
 
             var properties = inputs.Select(input => new Input
             {
-                Name = nameTransformer(Regex.Replace(input, nameRegex, "$2")).Replace("/", "_").Replace(" ", "_"), // Forward slash and space are not valid characters for an XElement name
+                Name = nameTransformer(Regex.Replace(input, nameRegex, "$2", RegexOptions.Singleline)).Replace("/", "_").Replace(" ", "_"), // Forward slash and space are not valid characters for an XElement name
                 Value = WebUtility.HtmlDecode(inputValueRegex.Replace(input, "$2")),
                 Type = GetInputType(input),
-                Checked = Regex.Match(input, "checked").Success,
-                Hidden = Regex.Match(input, "type=\"hidden\"").Success,
+                Checked = input.Contains("checked"),
+                Hidden = input.Contains("type=\"hidden\""),
                 Html = input
             }).Where(i => i.Name != string.Empty).ToArray();
 
@@ -309,9 +309,9 @@ namespace PrtgAPI.Request
 
         private InputType GetInputType(string input)
         {
-            if (Regex.Match(input, "type=\"radio\"").Success)
+            if (input.Contains("type=\"radio\""))
                 return InputType.Radio;
-            if (Regex.Match(input, "type=\"checkbox\"").Success)
+            if (input.Contains("type=\"checkbox\""))
                 return InputType.Checkbox;
             return InputType.Other;
         }
@@ -341,7 +341,7 @@ namespace PrtgAPI.Request
                     ddl.Options.Add(new Option
                     {
                         Value = WebUtility.HtmlDecode(ddlOptionValueRegex.Replace(match, "$2")),
-                        Selected = Regex.Match(match, "selected").Success,
+                        Selected = match.Contains("selected"),
                         InnerHtml = WebUtility.HtmlDecode(ddlOptionInnerHtmlRegex.Replace(match, "$2")),
                         Html = match
                     });
