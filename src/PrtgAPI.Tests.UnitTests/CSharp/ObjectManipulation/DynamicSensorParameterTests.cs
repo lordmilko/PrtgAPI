@@ -396,6 +396,28 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
 
         [UnitTest]
         [TestMethod]
+        public void DynamicSensorParameters_SensorQueryParameters_ParsesParameters_ContainingNewLines()
+        {
+            //The issue is that even though we encode our newlines, the response URI has then un-encoded. This causes our attempts to extract a tmpid to fail without specifying RegexOptions.Singleline
+            var client = Initialize_Client(new SensorQueryTargetParametersValidatorResponse(new[]
+            {
+                UnitRequest.SensorTypes(1001),
+                UnitRequest.BeginAddSensorQuery(1001, "ptfadsreplfailurexml"),
+                UnitRequest.ContinueAddSensorQuery(2055, 7, "database_=First%0ASecond&sid_type_=0&prefix_=0"),
+                UnitRequest.AddSensorProgress(1001, 7),
+                UnitRequest.EndAddSensorQuery(1001, 7)
+            }) {DecodeNewlines = true});
+
+            client.GetDynamicSensorParameters(1001, "ptfadsreplfailurexml", queryParameters: new SensorQueryTargetParameters
+            {
+                ["database"] = $"First\nSecond",
+                ["sid_type"] = 0,
+                ["prefix"] = 0
+            });
+        }
+
+        [UnitTest]
+        [TestMethod]
         public void DynamicSensorParameters_SensorQueryParameters_Throws_WhenParametersAreMissing()
         {
             var client = Initialize_Client(new SensorQueryTargetParametersValidatorResponse(new[]

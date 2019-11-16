@@ -5,7 +5,7 @@ Compiles PrtgAPI from source
 .DESCRIPTION
 The Invoke-PrtgBuild cmdlet compiles PrtgAPI from source. By default, all projects in the PrtgAPI solution will uilt using the Debug configuration. A specific project can be built by specifying a wildcard expression to the -Name parameter.
 
-In the event you wish to debug your build, the -Dbg parameter can be specified. This will generate a *.binlog file in the root of the project solution that will be automatically opened in the MSBuild Structured Log Viewer when the built has completed (assuming it is installed).
+In the event you wish to debug your build, the -Dbg parameter can be specified. This will generate a *.binlog file in the root of the project solution that will be automatically opened in the MSBuild Structured Log Viewer when the build has completed (assuming it is installed).
 
 .PARAMETER Name
 Wildcard specifying the name of a single PrtgAPI project to build. If no value is specified, the entire PrtgAPI solution will be built.

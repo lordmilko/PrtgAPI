@@ -4,6 +4,8 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
 {
     public class SensorQueryTargetParametersValidatorResponse : AddressValidatorResponse
     {
+        public bool DecodeNewlines { get; set; }
+
 #pragma warning disable 618
         public SensorQueryTargetParametersValidatorResponse(object str, bool exactMatch) : base(str, exactMatch)
         {
@@ -17,6 +19,9 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
         protected override IWebResponse GetResponse(ref string address, string function)
         {
             ValidateAddress(address);
+
+            if (DecodeNewlines)
+                address = address.Replace("%0A", "\n");
 
             switch (function)
             {

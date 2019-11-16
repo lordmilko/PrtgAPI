@@ -12,7 +12,6 @@ using PrtgAPI.Parameters;
 using PrtgAPI.Parameters.Helpers;
 using PrtgAPI.Reflection;
 using PrtgAPI.Schedules;
-using PrtgAPI.Targets;
 using PrtgAPI.Utilities;
 
 namespace PrtgAPI.Request
@@ -510,7 +509,8 @@ namespace PrtgAPI.Request
             return new ContinueAddSensorQueryParameters(deviceId, tmpId, dict);
         }
 
-        internal static PrtgResponse GetSensorTargetTmpId(HttpResponseMessage message) => Regex.Replace(message.RequestMessage.RequestUri.ToString(), "(.+tmpid=)(\\d+)(.*)", "$2");
+        internal static PrtgResponse GetSensorTargetTmpId(HttpResponseMessage message) =>
+            Regex.Replace(message.RequestMessage.RequestUri.ToString(), "(.+tmpid=)(\\d+)(.*)", "$2", RegexOptions.Singleline);
 
         internal static void ValidateAddSensorProgressResult(AddSensorProgress p, bool addFull)
         {
