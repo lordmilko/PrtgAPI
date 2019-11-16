@@ -60,6 +60,8 @@ namespace PrtgAPI.CodeGenerator.MethodBuilder
                         if (Regex.Match(trimmed, "^ +$").Success)
                             trimmed = string.Empty;
 
+                        trimmed = trimmed.Replace("{Request}", methodConfig.MethodType.ToString());
+
                         nodeBuilder.Append(trimmed);
 
                         //If this isn't the last line of text and the next line isn't all just spaces, or there are at least two more lines to go, insert a newline
@@ -194,15 +196,17 @@ namespace PrtgAPI.CodeGenerator.MethodBuilder
             return attrib.Value;
         }
 
-        public bool GetBooleanAttribute(XElement elm, string name)
+        public bool? GetBooleanAttribute(XElement elm, string name)
         {
             var attrib = elm.Attribute(name);
 
             if (attrib == null)
-                return false;
+                return null;
 
             return Convert.ToBoolean(attrib.Value);
         }
+
+        public bool GetBooleanAttributeOrDefault(XElement elm, string name) => GetBooleanAttribute(elm, name) ?? false;
 
         public Exception ThrowMissing(string field)
         {

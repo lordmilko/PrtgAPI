@@ -180,7 +180,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             var template = GetResolvedTemplate(methodImpl, config);
 
             var region = template.Regions.First(r => r.Name == regionName);
-            var methodDef = region.MethodDefs.First();
+            var methodDef = region.Elements.OfType<MethodDef>().First();
 
             var writer = new SourceWriter();
 
@@ -202,7 +202,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             var template = GetResolvedTemplate(methodImpl, config);
 
             var parametersRegion = template.Regions.First(r => r.Name == regionName);
-            var methodDef = parametersRegion.MethodDefs.Single();
+            var methodDef = parametersRegion.Elements.OfType<MethodDef>().Single();
 
             var method = methodDef.Serialize(methodImpl, config, parametersRegion);
 
@@ -215,15 +215,15 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
         {
             var region = doc.Methods.Regions.First(r => r.Name == "Object Data");
 
-            return region.MethodImpls.First(m => m.Name == "Sensor");
+            return region.Elements.OfType<MethodImpl>().First(m => m.Name == "Sensor");
         }
 
         private InlineMethodDef GetActionMethod(Document doc)
         {
             var region = doc.Methods.Regions.First(r => r.Name == "Object Manipulation");
 
-            return region.Regions.First(r => r.Name == "Sensor State").Regions.First(r => r.Name == "Acknowledge")
-                .InlineMethodDefs.First();
+            return region.Elements.OfType<RegionImpl>().First(r => r.Name == "Sensor State").Elements.OfType<RegionImpl>().First(r => r.Name == "Acknowledge")
+                .Elements.OfType<InlineMethodDef>().First();
         }
 
         private Template GetResolvedTemplate(IMethodImpl methodImpl, DocumentConfig config)

@@ -1,4 +1,6 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using PrtgAPI.CodeGenerator.CSharp;
 using PrtgAPI.CodeGenerator.Xml;
@@ -14,7 +16,7 @@ namespace PrtgAPI.CodeGenerator.Model
         bool HasTokenRegion { get; }
     }
 
-    internal class RegionDef : IRegion
+    internal class RegionDef : IRegion, IElementDef
     {
         private RegionDefXml regionDefXml;
 
@@ -29,9 +31,11 @@ namespace PrtgAPI.CodeGenerator.Model
             }
         }
 
-        public ReadOnlyCollection<RegionDef> Regions { get; set; }
+        public ReadOnlyCollection<IElementDef> Elements { get; set; }
 
-        public ReadOnlyCollection<MethodDef> MethodDefs { get; }
+        private RegionDef[] Regions => Elements.OfType<RegionDef>().ToArray();
+
+        private MethodDef[] Methods => Elements.OfType<MethodDef>().ToArray();
 
         public string After => regionDefXml.After;
 
@@ -48,16 +52,28 @@ namespace PrtgAPI.CodeGenerator.Model
             IsTokenRegion = tokenRegion;
 
             regionDefXml = region;
-            Regions = region.Regions.Select(r => new RegionDef(r, tokenRegion)).ToReadOnlyList();
-            MethodDefs = region.MethodDefs.Select(m => new MethodDef(m)).ToReadOnlyList();
+
+            var defs = new List<IElementDef>();
+
+            foreach (var element in region.Elements)
+            {
+                if (element is RegionDefXml)
+                    defs.Add(new RegionDef((RegionDefXml) element, tokenRegion));
+                else if (element is MethodDefXml)
+                    defs.Add(new MethodDef((MethodDefXml) element));
+                else
+                    throw new NotImplementedException($"Don't know how to process element definition of type '{element.GetType()}'.");
+            }
+
+            Elements = defs.ToReadOnlyList();
         }
 
-        public RegionDef(RegionDef originalRegion, bool tokenRegion = false, ReadOnlyCollection<RegionDef> regions = null, ReadOnlyCollection<MethodDef> methods = null)
+        public RegionDef(RegionDef originalRegion, bool tokenRegion = false, ReadOnlyCollection<IElementDef> elements = null)
         {
             regionDefXml = originalRegion.regionDefXml;
 
-            Regions = regions ?? originalRegion.Regions; ;
-            MethodDefs = methods ?? originalRegion.MethodDefs;
+            Elements = (elements ?? originalRegion.Elements) ?? new ReadOnlyCollection<IElementDef>(new List<IElementDef>());
+
             HasTokenRegion = originalRegion.HasTokenRegion;
 
             IsTokenRegion = tokenRegion;
@@ -68,10 +84,19 @@ namespace PrtgAPI.CodeGenerator.Model
             if (Type == MethodType.Query && !method.Query)
                 return null;
 
-            var regions = Regions.Select(r => r.Serialize(method, documentConfig)).ToReadOnlyList();
-            var methods = MethodDefs.SelectMany(m => m.Serialize(method, documentConfig, this)).ToReadOnlyList();
+            var serialized = new List<IElement>();
 
-            return new Region(Name, regions, methods, false);
+            foreach (var element in Elements)
+            {
+                if (element is RegionDef)
+                    serialized.Add(((RegionDef) element).Serialize(method, documentConfig));
+                else if (element is MethodDef)
+                    serialized.AddRange(((MethodDef) element).Serialize(method, documentConfig, this));
+                else
+                    throw new NotImplementedException($"Don't know how to serialize element of type '{element.GetType()}'.");
+            }
+
+            return new Region(Name, serialized.ToReadOnlyList(), false);
         }
 
         public override string ToString()

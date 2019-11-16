@@ -7,7 +7,7 @@ namespace PrtgAPI.CodeGenerator.Xml
     /// Represents the parameters required to instantiate a method defined in a template.
     /// </summary>
     [XmlRoot("MethodImpl")]
-    public class MethodImplXml
+    public class MethodImplXml : IElementImplXml
     {
         [XmlAttribute("name")]
         public string Name { get; set; }

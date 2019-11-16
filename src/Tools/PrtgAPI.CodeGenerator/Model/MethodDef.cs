@@ -11,7 +11,7 @@ using PrtgAPI.CodeGenerator.Xml;
 
 namespace PrtgAPI.CodeGenerator.Model
 {
-    internal class MethodDef : IMethodDef, IInsertableDefinition
+    internal class MethodDef : IMethodDef, IInsertableDefinition, IElementDef
     {
         MethodDefXml methodDefXml;
 

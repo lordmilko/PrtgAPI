@@ -6,7 +6,7 @@ using System.Xml.Serialization;
 namespace PrtgAPI.CodeGenerator.Xml
 {
     [XmlRoot("MethodDef")]
-    public class MethodDefXml : IMethodDef
+    public class MethodDefXml : IElementDefXml, IMethodDef
     {
         [XmlAttribute("name")]
         public string Name { get; set; }

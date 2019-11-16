@@ -52,7 +52,8 @@ namespace PrtgAPI.CodeGenerator.Model
             }
         }
 
-        public static Tuple<Region, List<Method>> Serialize(IMethodImpl method, DocumentConfig documentConfig)
+        //Serialize to either a collection of methods or a region that contains the methods
+        public static IEnumerable<IElement> Serialize(IMethodImpl method, DocumentConfig documentConfig)
         {
             var template = documentConfig.Templates.FirstOrDefault(t => t.Name == method.Template);
 
@@ -61,7 +62,7 @@ namespace PrtgAPI.CodeGenerator.Model
 
             template = new TemplateEvaluator(method, template, documentConfig.Templates).ResolveAll();
 
-            var finalRegions = template.Regions.Select(r => r.Serialize(method, documentConfig)).Where(r => r != null).ToReadOnlyList();
+            var finalRegions = template.Regions.Select(r => r.Serialize(method, documentConfig)).Where(r => r != null);
             var finalMethods = template.MethodDefs.SelectMany(m => m.Serialize(method, documentConfig)).ToList();
 
             if (method.Region)
@@ -71,10 +72,14 @@ namespace PrtgAPI.CodeGenerator.Model
                 if (method.PluralRegion)
                     regionName += "s";
 
-                return Tuple.Create(new Region(regionName, finalRegions, finalMethods.ToReadOnlyList(), false), new List<Method>());
+                var regionMembers = new List<IElement>();
+                regionMembers.AddRange(finalRegions);
+                regionMembers.AddRange(finalMethods);
+
+                return new IElement[] { new Region(regionName, regionMembers.ToReadOnlyList(), false) };
             }
             else
-                return Tuple.Create<Region, List<Method>>(null, finalMethods);
+                return finalMethods;
         }
 
         public string GetValue(string value, bool spaces)

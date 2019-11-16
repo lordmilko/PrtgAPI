@@ -3,7 +3,7 @@
     /// <summary>
     /// Represents a fully constructed method ready to be emitted to a source file.
     /// </summary>
-    internal class Method
+    internal class Method : IElement
     {
         public string Name { get; }
 

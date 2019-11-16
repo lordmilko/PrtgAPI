@@ -1,43 +1,65 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using PrtgAPI.CodeGenerator.CSharp;
 using PrtgAPI.CodeGenerator.Xml;
 
 namespace PrtgAPI.CodeGenerator.Model
 {
-    internal class RegionImpl
+    internal class RegionImpl : IElementImpl
     {
         public string Name { get; }
 
         public bool GroupOverloads { get; }
 
-        public ReadOnlyCollection<RegionImpl> Regions { get; }
+        public ReadOnlyCollection<IElementImpl> Elements { get; }
 
-        public ReadOnlyCollection<MethodImpl> MethodImpls { get; }
+        private RegionImpl[] Regions => Elements.OfType<RegionImpl>().ToArray();
 
-        public ReadOnlyCollection<InlineMethodDef> InlineMethodDefs { get; }
+        private MethodImpl[] MethodImpls => Elements.OfType<MethodImpl>().ToArray();
+
+        private InlineMethodDef[] InlineMethodDefs => Elements.OfType<InlineMethodDef>().ToArray();
 
         public RegionImpl(RegionImplXml regionImpl)
         {
             Name = regionImpl.Name;
             GroupOverloads = regionImpl.GroupOverloads;
-            Regions = regionImpl.Regions.Select(r => new RegionImpl(r)).ToReadOnlyList();
-            MethodImpls = regionImpl.MethodImpls.Select(m => new MethodImpl(m)).ToReadOnlyList();
-            InlineMethodDefs = regionImpl.InlineMethodDefs.Select(m => new InlineMethodDef(m)).ToReadOnlyList();
+
+            var elements = new List<IElementImpl>();
+
+            foreach (var element in regionImpl.Elements)
+            {
+                if (element is RegionImplXml)
+                    elements.Add(new RegionImpl((RegionImplXml) element));
+                else if (element is MethodImplXml)
+                    elements.Add(new MethodImpl((MethodImplXml) element));
+                else if (element is InlineMethodDefXml)
+                    elements.Add(new InlineMethodDef((InlineMethodDefXml) element));
+                else
+                    throw new NotImplementedException($"Don't know how to handle XML object of type '{element.GetType()}'.");
+            }
+
+            Elements = elements.ToReadOnlyList();
         }
 
         public Region Serialize(DocumentConfig documentConfig)
         {
-            var regions = Regions.Select(r => r.Serialize(documentConfig)).ToList();
+            var serializedElements = new List<IElement>();
 
-            var implMethodsAndRegions = MethodImpls.Select(m => MethodImpl.Serialize(m, documentConfig)).ToList();
+            foreach (var element in Elements)
+            {
+                if (element is RegionImpl)
+                    serializedElements.Add(((RegionImpl) element).Serialize(documentConfig));
+                else if (element is MethodImpl)
+                    serializedElements.AddRange(MethodImpl.Serialize((MethodImpl) element, documentConfig));
+                else if (element is InlineMethodDef)
+                    serializedElements.AddRange(((InlineMethodDef) element).Serialize((InlineMethodDef)element, documentConfig));
+                else
+                    throw new NotImplementedException($"Don't know how to serialize object of type '{element.GetType()}'.");
+            }
 
-            regions.AddRange(implMethodsAndRegions.Select(i => i.Item1).Where(v => v != null));
-
-            var implMethods = implMethodsAndRegions.SelectMany(i => i.Item2).ToList();
-            var inlineMethods = InlineMethodDefs.SelectMany(m => m.Serialize(m, documentConfig)).ToList();
-
-            return new Region(Name, regions.ToReadOnlyList(), implMethods.Union(inlineMethods).ToReadOnlyList(), GroupOverloads);
+            return new Region(Name, serializedElements.ToReadOnlyList(), GroupOverloads);
         }
 
         public override string ToString()

@@ -17,13 +17,13 @@ namespace PrtgAPI.CodeGenerator
         {
             StartRegion(region.Name, level);
 
-            foreach (var r in region.Regions)
+            foreach (var r in region.Elements.OfType<Region>())
                 WriteRegion(r, level + 1);
 
-            if (region.Methods.Count > 0)
-                WriteLine("");
+            var methods = region.Elements.OfType<Method>().ToReadOnlyList();
 
-            var methods = region.Methods;
+            if (methods.Count > 0)
+                WriteLine("");
 
             if (region.GroupOverloads)
                 methods = OrderOverloads(methods);

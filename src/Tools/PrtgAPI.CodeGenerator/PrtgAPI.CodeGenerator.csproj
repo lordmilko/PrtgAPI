@@ -45,6 +45,7 @@
     <Compile Include="CSharp\Region.cs" />
     <Compile Include="EnumerableHelpers.cs" />
     <Compile Include="IInsertableDefinition.cs" />
+    <Compile Include="Interface\IElement.cs" />
     <Compile Include="Interface\IException.cs" />
     <Compile Include="Interface\IGenericArg.cs" />
     <Compile Include="Interface\IMethodDef.cs" />

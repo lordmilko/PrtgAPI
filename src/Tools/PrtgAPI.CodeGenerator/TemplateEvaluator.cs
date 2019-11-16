@@ -56,39 +56,46 @@ namespace PrtgAPI.CodeGenerator
 
         private RegionDef GetRegionOverride(RegionDef originalRegion, RegionDef regionOverride)
         {
-            var regionList = new List<RegionDef>();
-            var methodList = new List<MethodDef>();
             var modified = false;
 
-            //Traverse the region tree to find the method we want to override
-            foreach (var region in originalRegion.Regions)
+            var newList = new List<IElementDef>();
+
+            foreach (var element in originalRegion.Elements)
             {
-                var replacementRegion = regionOverride.Regions.FirstOrDefault(r => r.Name == region.Name);
+                if (element is RegionDef)
+                {
+                    var replacementRegion = regionOverride.Elements.OfType<RegionDef>().FirstOrDefault(r => r.Name == ((RegionDef) element).Name);
 
-                if (replacementRegion == null)
-                    regionList.Add(region);
+                    if (replacementRegion == null)
+                        newList.Add(element);
+                    else
+                    {
+                        var newRegion = GetRegionOverride((RegionDef) element, replacementRegion);
 
-                var newRegion = GetRegionOverride(region, replacementRegion);
+                        modified = true;
+                        newList.Add(newRegion);
+                    }
+                }
+                else if (element is MethodDef)
+                {
+                    var replacementMethod = regionOverride.Elements.OfType<MethodDef>().FirstOrDefault(m => m.Name == ((MethodDef) element).Name);
 
-                modified = true;
-                regionList.Add(newRegion);
-            }
+                    if (replacementMethod == null)
+                        newList.Add(element);
+                    else
+                    {
+                        var newMethod = MethodDef.Merge((MethodDef) element, replacementMethod);
 
-            foreach (var method in originalRegion.MethodDefs)
-            {
-                var replacementMethod = regionOverride.MethodDefs.FirstOrDefault(m => m.Name == method.Name);
+                        modified = true;
+                        newList.Add(newMethod);
+                    }
 
-                if (replacementMethod == null)
-                    methodList.Add(method);
-
-                var newMethod = MethodDef.Merge(method, replacementMethod);
-
-                modified = true;
-                methodList.Add(newMethod);
+                    
+                }
             }
 
             if (modified)
-                return new RegionDef(originalRegion, false, regionList.ToReadOnlyList(), methodList.ToReadOnlyList());
+                return new RegionDef(originalRegion, false, newList.ToReadOnlyList());
 
             return originalRegion;
         }
@@ -191,14 +198,22 @@ namespace PrtgAPI.CodeGenerator
 
             foreach (var region in pointerRegions)
             {
-                var newRegions = ResolveRegionsContainingTemplatedMethods(region.Regions);
+                var originalRegions = region.Elements.OfType<RegionDef>().ToReadOnlyList();
+                var originalMethods = region.Elements.OfType<MethodDef>().ToReadOnlyList();
 
-                var newMethods = ResolveTemplatedMethods(region.MethodDefs);
+                var newRegions = ResolveRegionsContainingTemplatedMethods(originalRegions);
 
-                if (newRegions != region.Regions || newMethods != region.MethodDefs)
+                var newMethods = ResolveTemplatedMethods(originalMethods);
+
+                if (newRegions != originalRegions || newMethods != originalMethods)
                 {
                     modified = true;
-                    list.Add(new RegionDef(region, false, newRegions, newMethods));
+
+                    var elements = new List<IElementDef>();
+                    elements.AddRange(newRegions);
+                    elements.AddRange(newMethods);
+
+                    list.Add(new RegionDef(region, false, elements.ToReadOnlyList()));
                 }
                 else
                     list.Add(region);
@@ -298,14 +313,14 @@ namespace PrtgAPI.CodeGenerator
                 yield return methodDef;
         }
 
-        private IEnumerable<MethodDef> GetTemplatedMethodResolutionCandidatesFromRegions(ReadOnlyCollection<RegionDef> regions)
+        private IEnumerable<MethodDef> GetTemplatedMethodResolutionCandidatesFromRegions(IEnumerable<RegionDef> regions)
         {
             foreach (var region in regions)
             {
-                foreach (var methodDef in GetTemplatedMethodResolutionCandidatesFromRegions(region.Regions))
+                foreach (var methodDef in GetTemplatedMethodResolutionCandidatesFromRegions(region.Elements.OfType<RegionDef>()))
                     yield return methodDef;
 
-                foreach (var methodDef in region.MethodDefs)
+                foreach (var methodDef in region.Elements.OfType<MethodDef>())
                     yield return methodDef;
             }
         }

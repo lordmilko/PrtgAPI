@@ -4,6 +4,7 @@ using PrtgAPI.CodeGenerator.Xml;
 
 namespace PrtgAPI.CodeGenerator.Model
 {
+    //Implements IElementDef via MethodDef and an IElementImpl via IMethodImpl
     internal class InlineMethodDef : MethodDef, IMethodImpl
     {
         public InlineMethodDef(InlineMethodDefXml inlineMethodDef) : base(inlineMethodDef)

@@ -41,7 +41,7 @@ namespace PrtgAPI.CodeGenerator.MethodBuilder.Builders
             var elm = GetBodyXml();
 
             var isExpression = Convert.ToBoolean(xmlHelper.GetAttribute(elm, "expression"));
-            var singleLine = xmlHelper.GetBooleanAttribute(elm, "singleLine");
+            var singleLine = xmlHelper.GetBooleanAttributeOrDefault(elm, "singleLine");
 
             if (methodConfig.IsTokenInterface)
                 singleLine = false;
@@ -85,7 +85,7 @@ namespace PrtgAPI.CodeGenerator.MethodBuilder.Builders
         {
             if (elm.Name.LocalName == "Call")
             {
-                var str = CallMethod(elm, index < nodes.Count - 1 && isExpression, index < nodes.Count - 1 ? nodes[index + 1] : null);
+                var str = CallMethod(elm, index < nodes.Count - 1, index < nodes.Count - 1 ? nodes[index + 1] : null);
 
                 if (isExpression || index < nodes.Count - 1)
                     return str;
@@ -104,7 +104,11 @@ namespace PrtgAPI.CodeGenerator.MethodBuilder.Builders
 
             args = ResolveInnerCalls(elm, args);
 
-            if (elm.Attribute("alias") == null || xmlHelper.GetBooleanAttribute(elm, "needsToken"))
+            var needsToken = xmlHelper.GetBooleanAttribute(elm, "needsToken");
+            
+            //Add a token if we have no alias and haven't specified we need a token,
+            //or regardless if we explicitly specified that we do need one
+            if ((elm.Attribute("alias") == null && needsToken != false) || needsToken == true)
             {
                 if (methodConfig.IsTokenInterface)
                 {

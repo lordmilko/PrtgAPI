@@ -5,7 +5,7 @@ namespace PrtgAPI.CodeGenerator.Model
     /// <summary>
     /// Represents an inline method specification or a method that implements a template.
     /// </summary>
-    internal interface IMethodImpl
+    internal interface IMethodImpl : IElementImpl
     {
         string Name { get; }
 
