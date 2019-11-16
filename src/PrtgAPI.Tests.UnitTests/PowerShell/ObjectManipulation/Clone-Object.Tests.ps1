@@ -194,12 +194,22 @@ Describe "Clone-Object" -Tag @("PowerShell", "UnitTest") {
         Clone-Object -Id 300 -DestinationId -3 "test" -Resolve:$false
     }
 
-    it "clones an object by ID without specifying a Destination ID" {
+    It "clones an object by ID without specifying a Destination ID" {
         SetAddressValidatorResponse @(
             [Request]::Objects("filter_objid=300", [Request]::DefaultObjectFlags)
             [Request]::Get("api/duplicateobject.htm?id=300&name=test&targetid=-3")
         )
 
         Clone-Object -Id 300 "test" -Resolve:$false
+    }
+
+    It "resumes after cloning" {
+        SetAddressValidatorResponse @(
+            [Request]::Objects("filter_objid=300", [Request]::DefaultObjectFlags)
+            [Request]::Get("api/duplicateobject.htm?id=300&name=test&targetid=-3")
+            [Request]::Get("api/pause.htm?id=9999&action=1")
+        )
+
+        Clone-Object -Id 300 "test" -Resolve:$false -Resume
     }
 }

@@ -44,8 +44,13 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <para type="description">If you do not wish to resolve the resultant object, you can specify -Resolve:$false, which will
     /// cause Clone-Object to output a clone summary, including the object ID, name and hostname (for devices) of the new object. When
     /// cloning triggers, is -Resolve:$false is specified, no summary will be returned (as PRTG does not automatically return any information
-    /// regarding cloned triggers). As PRTG pauses all cloned sensors, devices and groups by default, it is generally recommended to resolve
-    /// the new object so that you may unpause the object with Resume-Object.</para>
+    /// regarding cloned triggers).</para>
+    ///
+    /// <para type="description">As PRTG pauses all cloned sensors, devices and groups by default, it is generally recommended to resolve
+    /// the new object so that you may unpause the object with Resume-Object. Objects can alternatively be resumed as Clone-Object progresses
+    /// by specifying the -<see cref="Resume"/> parameter, however note that this will cause an additional resume API request to be executed for
+    /// every cloned object, as opposed to Resume-Object which will simply resume all of the cloned objects in one go once all of the objects
+    /// have been created.</para>
     ///
     /// <para type="description">Object types that are not conventionally supported by the Clone-Object cmdlet can still be cloned by specifying
     /// both a -<see cref="SourceId"/> and -<see cref="DestinationId"/>. When cloning objects that fall outside the conventional object tree (such as
@@ -86,6 +91,16 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <example>
     ///     <code>C:\> Clone-Object -Id 1001 -DestinationId 2002</code>
     ///     <para>Clone the object with ID 1001 to under the object with ID 2002.</para>
+    ///     <para/>
+    /// </example>
+    /// <example>
+    ///     <code>C:\> Get-Device *exch* | Clone-Object -SourceId 2002 | Resume-Object</code>
+    ///     <para>Clone the object with ID 2002 to all devices whose name contains "exch" and resume all the created objects once they have been created.</para>
+    ///     <para/>
+    /// </example>
+    /// <example>
+    ///     <code>C:\> Get-Device *exch* | Clone-Object -SourceId 2002 -Resume</code>
+    ///     <para>Clone the object with ID 2002 to all devices whose name contains "exch", resuming each object as it is created.</para>
     ///     <para/>
     /// </example>
     /// <example>
@@ -175,6 +190,16 @@ namespace PrtgAPI.PowerShell.Cmdlets
         [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = ParameterSet.TargetForSource)]
         public DeviceOrGroupOrProbe Destination { get; set; }
 
+        /// <summary>
+        /// <para type="description">Resume the object immediately after cloning it.</para> 
+        /// </summary>
+        [Parameter(Mandatory = false, ParameterSetName = ParameterSet.SensorToDestination)]
+        [Parameter(Mandatory = false, ParameterSetName = ParameterSet.DeviceToDestination)]
+        [Parameter(Mandatory = false, ParameterSetName = ParameterSet.GroupToDestination)]
+        [Parameter(Mandatory = false, ParameterSetName = ParameterSet.TargetForSource)]
+        [Parameter(Mandatory = false, ParameterSetName = ParameterSet.Manual)]
+        public SwitchParameter Resume { get; set; }
+
         private PrtgObject sourceObj;
         private Func<int, List<IObject>> sourceObjResolver;
 
@@ -244,6 +269,12 @@ namespace PrtgAPI.PowerShell.Cmdlets
 
                 WriteObject(response);
             }
+
+            //This method is called from ProcessRecordEx; as such it's OK if we try and resume an unresumable object -
+            //our exception will be converted into a non-terminating exception and we'll carry on with the next element
+            //in the pipeline.
+            if (Resume)
+                client.ResumeObject(id);
         }
 
         private void CloneTrigger()
