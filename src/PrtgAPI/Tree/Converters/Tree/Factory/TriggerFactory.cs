@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using PrtgAPI.Tree.Internal;
 
@@ -20,7 +21,8 @@ namespace PrtgAPI.Tree.Converters.Tree
         /// </summary>
         /// <param name="parentId">The object to retrieve notification triggers from.</param>
         /// <returns>A list of notification triggers under the specified parent.</returns>
-        public override List<ITreeValue> Objects(int parentId) => client.GetNotificationTriggers(parentId).Cast<ITreeValue>().ToList();
+        public override List<ITreeValue> Objects(int parentId) =>
+            client.GetNotificationTriggers(parentId).Where(t => !t.Inherited).Cast<ITreeValue>().ToList();
 
         /// <summary>
         /// Asynchronously retrieves all <see cref="NotificationTrigger"/> objects of a specified parent.

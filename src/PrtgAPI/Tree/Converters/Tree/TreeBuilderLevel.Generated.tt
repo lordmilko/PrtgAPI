@@ -93,6 +93,10 @@ for(int i = 0; i < 2; i++)
                 Token.ThrowIfCancellationRequested();
 
                 var triggers = <#= CallFunctionWithAsyncOnlyToken("ObjectManager.Trigger.Objects", "Value.Id.Value", "Token", i) #>;
+
+                if (triggers.Count == 0)
+                    return null;
+
                 var orphans = triggers.Select(t => ObjectManager.Trigger.Orphan(t, null)).Cast<TriggerOrphan>();
 
                 return PrtgOrphan.TriggerCollection(orphans);

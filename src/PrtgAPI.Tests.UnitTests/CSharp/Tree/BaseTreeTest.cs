@@ -59,10 +59,15 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             var action = new NotificationAction
             {
                 Name = name,
-                Id = id
+                Id = 300
             };
 
-            var obj = new NotificationTrigger();
+            var obj = new NotificationTrigger
+            {
+                SubId = id,
+                ObjectId = 1001
+            };
+
             var info = obj.GetInternalFieldInfo("onNotificationAction");
             info.SetValue(obj, action);
 

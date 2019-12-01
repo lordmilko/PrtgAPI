@@ -26,15 +26,15 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             );
 
             var response = new NotificationTriggerResponse(
-                NotificationTriggerItem.StateTrigger(),
-                NotificationTriggerItem.SpeedTrigger()
+                NotificationTriggerItem.StateTrigger(parentId: "3000"),
+                NotificationTriggerItem.SpeedTrigger(parentId: "3000")
             );
 
             var triggerClient = BaseTest.Initialize_Client(response);
 
             var triggerFactory = new PrtgNodeFactory(triggerClient);
 
-            Assert.IsNotNull(triggerFactory.Trigger(4000, "Email and push notification to admin"));
+            Assert.IsNotNull(triggerFactory.Trigger(3000, "Email and push notification to admin"));
         }
 
         [UnitTest]
@@ -48,8 +48,18 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             var groups = factory.Groups(Property.Name, "Windows Infrastructure");
             var devices = factory.Devices(Property.Name, "dc-1");
             var sensors = factory.Sensors(Property.Name, "Ping");
-            var triggers = factory.Triggers(4000);
-            var properties = factory.Properties(4000);
+            
+            var properties = factory.Properties(3000);
+
+            var response = new NotificationTriggerResponse(
+                NotificationTriggerItem.StateTrigger(parentId: "3000"),
+                NotificationTriggerItem.SpeedTrigger(parentId: "3000")
+            );
+
+            var triggerClient = BaseTest.Initialize_Client(response);
+            var triggerFactory = new PrtgNodeFactory(triggerClient);
+
+            var triggers = triggerFactory.Triggers(3000);
         }
     }
 }

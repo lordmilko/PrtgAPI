@@ -106,6 +106,10 @@ namespace PrtgAPI.Tree.Converters.Tree
                 Token.ThrowIfCancellationRequested();
 
                 var triggers = ObjectManager.Trigger.Objects(Value.Id.Value);
+
+                if (triggers.Count == 0)
+                    return null;
+
                 var orphans = triggers.Select(t => ObjectManager.Trigger.Orphan(t, null)).Cast<TriggerOrphan>();
 
                 return PrtgOrphan.TriggerCollection(orphans);
@@ -123,6 +127,10 @@ namespace PrtgAPI.Tree.Converters.Tree
                 Token.ThrowIfCancellationRequested();
 
                 var triggers = await ObjectManager.Trigger.ObjectsAsync(Value.Id.Value, Token).ConfigureAwait(false);
+
+                if (triggers.Count == 0)
+                    return null;
+
                 var orphans = triggers.Select(t => ObjectManager.Trigger.Orphan(t, null)).Cast<TriggerOrphan>();
 
                 return PrtgOrphan.TriggerCollection(orphans);

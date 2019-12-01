@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 
 namespace PrtgAPI.Tree.Internal
@@ -14,6 +15,8 @@ namespace PrtgAPI.Tree.Internal
         /// <param name="trigger">The notification trigger to encapsulate in this orphan.</param>
         internal TriggerOrphan(NotificationTrigger trigger) : base(trigger, null, PrtgNodeType.Trigger)
         {
+            if (trigger.Inherited)
+                throw new InvalidOperationException($"Cannot encapsulate notification trigger '{trigger}': trigger is inherited.");
         }
 
         /// <summary>

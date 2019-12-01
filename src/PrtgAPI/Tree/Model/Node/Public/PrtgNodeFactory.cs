@@ -291,7 +291,7 @@ namespace PrtgAPI.Tree
 
         /// <summary>
         /// Creates a <see cref="TriggerNode"/> for a notification trigger with a specified OnNotificationAction name.<para/>
-        /// If the sensor does not exist or an ambiguous match is found, an <see cref="InvalidOperationException"/> is thrown.
+        /// If the trigger does not exist, an ambiguous match is found, or the resulting notification trigger is inherited, an <see cref="InvalidOperationException"/> is thrown.
         /// </summary>
         /// <param name="objectOrId">The object to retrieve notification triggers from.</param>
         /// <param name="name">The OnNotificationAction name to retrieve.</param>
@@ -299,7 +299,7 @@ namespace PrtgAPI.Tree
         /// <returns>A <see cref="TriggerNode"/> encapsulating the specified object.</returns>
         public TriggerNode Trigger(Either<IPrtgObject, int> objectOrId, string name)
         {
-            var triggers = client.GetNotificationTriggers(objectOrId);
+            var triggers = client.GetNotificationTriggers(objectOrId).Where(t => !t.Inherited);
 
             var trigger = triggers.Where(t => t.OnNotificationAction.Name == name).ToList().SingleObject(name, "name");
 
@@ -307,8 +307,8 @@ namespace PrtgAPI.Tree
         }
 
         /// <summary>
-        /// Creates <see cref="TriggerNode"/> objects for all notification triggers under a specified object.<para/>
-        /// If no notification triggers are found, an <see cref="InvalidOperationException"/> is thrown.
+        /// Creates <see cref="TriggerNode"/> objects for all non-inherited notification triggers under a specified object.<para/>
+        /// If no non-inherited notification triggers are found, an <see cref="InvalidOperationException"/> is thrown.
         /// </summary>
         /// <param name="objectOrId">The object to retrieve notification triggers from.</param>
         /// <exception cref="InvalidOperationException">No notification triggers were found.</exception>
@@ -318,7 +318,7 @@ namespace PrtgAPI.Tree
             return GetNodes(
                 PrtgAPI.Property.Id,
                 objectOrId,
-                (p, o) => client.GetNotificationTriggers((Either<IPrtgObject, int>) o),
+                (p, o) => client.GetNotificationTriggers((Either<IPrtgObject, int>) o).Where(t => !t.Inherited).ToList(),
                 (v, c) => PrtgNode.Trigger(v)
             );
         }

@@ -3,7 +3,8 @@
 Describe "New-TriggerNode" -Tag @("PowerShell", "UnitTest") {
     It "creates a new node from a Notification Trigger" {
 
-        SetMultiTypeResponse
+        $response = SetMultiTypeResponse
+        $response.ForceTriggerUninherited = "State"
 
         $trigger = Get-Device -Count 1 | Get-Trigger -Type State
         
@@ -14,7 +15,9 @@ Describe "New-TriggerNode" -Tag @("PowerShell", "UnitTest") {
     }
 
     It "pipes in an existing Notification Trigger" {
-        SetMultiTypeResponse
+        
+        $response = SetMultiTypeResponse
+        $response.ForceTriggerUninherited = "State"
 
         $trigger = Get-Device -Count 1 | Get-Trigger -Type State
         
@@ -26,7 +29,8 @@ Describe "New-TriggerNode" -Tag @("PowerShell", "UnitTest") {
 
     It "filters by OnNotificationAction" {
 
-        SetMultiTypeResponse
+        $response = SetMultiTypeResponse
+        $response.ForceTriggerUninherited = "State"
 
         $node = New-TriggerNode -ObjectId 4000 *email* -Type State
 
@@ -34,9 +38,11 @@ Describe "New-TriggerNode" -Tag @("PowerShell", "UnitTest") {
     }
 
     It "specifies a Sub ID" {
-        SetMultiTypeResponse
 
-        $node = New-TriggerNode -ObjectId 4000 -SubId 6
+        $response = SetMultiTypeResponse
+        $response.ForceTriggerUninherited = "Volume"
+
+        $node = New-TriggerNode -ObjectId 3000 -SubId 6
         $node.Value.Type | Should Be Volume
         $node.Value.SubId | Should Be 6
     }

@@ -89,7 +89,7 @@ namespace PrtgAPI.Tree
         #region Notification Trigger
 
         /// <summary>
-        /// Creates a new <see cref="TriggerNode"/> from a notification trigger.
+        /// Creates a new <see cref="TriggerNode"/> from a non-inherited notification trigger.
         /// </summary>
         /// <param name="trigger">The notification trigger this node represents.</param>
         /// <returns>A node containing the specified notification trigger.</returns>

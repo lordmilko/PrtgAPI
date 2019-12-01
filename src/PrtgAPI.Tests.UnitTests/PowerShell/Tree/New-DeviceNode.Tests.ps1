@@ -40,14 +40,15 @@ Describe "New-DeviceNode" -Tag @("PowerShell", "UnitTest") {
 
     It "creates a tree from a ScriptBlock with a value" {
 
-        SetMultiTypeResponse
+        $response = SetMultiTypeResponse
+        $response.ForceTriggerUninherited = "Change"
 
         $device = Get-Device -Count 1
         $sensor = Get-Sensor -Count 1
 
         $node = DeviceNode $device {
             SensorNode $sensor {
-                New-TriggerNode -ObjectId 4000 -Type State
+                New-TriggerNode -ObjectId 4000 -Type Change
             }
         }
 
@@ -83,15 +84,16 @@ Describe "New-DeviceNode" -Tag @("PowerShell", "UnitTest") {
 
     It "specifies a ScriptBlock that invokes multiple child cmdlets" {
 
-        SetMultiTypeResponse
+        $response = SetMultiTypeResponse
+        $response.ForceTriggerUninherited = "Change"
 
         $node = DeviceNode -Id 3000 {
             SensorNode -Id 4000 {
-                TriggerNode -ObjectId 4000
+                TriggerNode -ObjectId 4000 -Type Change
             }
 
             SensorNode -Id 4001 {
-                TriggerNode -ObjectId 4001
+                TriggerNode -ObjectId 4001 -Type Change
             }
         }
 
@@ -114,10 +116,11 @@ Describe "New-DeviceNode" -Tag @("PowerShell", "UnitTest") {
     }
 
     It "creates a tree from a ScriptBlock with a name" {
-        SetMultiTypeResponse
+        $response = SetMultiTypeResponse
+        $response.ForceTriggerUninherited = "Change"
 
         $node = SensorNode vol*0 {
-            TriggerNode -ObjectId 4000 -Type State
+            TriggerNode -ObjectId 4000 -Type Change
         }
 
         $node.Type | Should Be Sensor

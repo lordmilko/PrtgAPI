@@ -6,7 +6,6 @@ using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Xml.Linq;
-using PrtgAPI.Parameters;
 using PrtgAPI.Utilities;
 using PrtgAPI.Tests.UnitTests.Support.TestItems;
 
@@ -39,6 +38,8 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
         public int[] HasSchedule { get; set; }
 
         public int? FixedCountOverride { get; set; }
+
+        public TriggerType[] ForceTriggerUninherited { get; set; } = new TriggerType[0];
 
         public string GetResponseText(ref string address)
         {
@@ -225,11 +226,11 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
                     return Objects(address, function, components);
                 case Content.Triggers:
                     return new NotificationTriggerResponse(
-                        NotificationTriggerItem.StateTrigger(onNotificationAction: "300|Email to all members of group PRTG Users Group"),
-                        NotificationTriggerItem.ThresholdTrigger(onNotificationAction: "300|Email to all members of group PRTG Users Group", offNotificationAction: "300|Email to all members of group PRTG Users Group"),
-                        NotificationTriggerItem.SpeedTrigger(onNotificationAction: "300|Email to all members of group PRTG Users Group", offNotificationAction: "300|Email to all members of group PRTG Users Group"),
-                        NotificationTriggerItem.VolumeTrigger(onNotificationAction: "300|Email to all members of group PRTG Users Group"),
-                        NotificationTriggerItem.ChangeTrigger(onNotificationAction: "300|Email to all members of group PRTG Users Group")
+                        NotificationTriggerItem.StateTrigger(onNotificationAction: "300|Email to all members of group PRTG Users Group",                                                                                  parentId: ForceTriggerUninherited.Contains(TriggerType.State) ? components["id"] : "0"),
+                        NotificationTriggerItem.ThresholdTrigger(onNotificationAction: "300|Email to all members of group PRTG Users Group", offNotificationAction: "300|Email to all members of group PRTG Users Group", parentId: ForceTriggerUninherited.Contains(TriggerType.Threshold) ? components["id"] : "1"),
+                        NotificationTriggerItem.SpeedTrigger(onNotificationAction: "300|Email to all members of group PRTG Users Group", offNotificationAction: "300|Email to all members of group PRTG Users Group",     parentId: ForceTriggerUninherited.Contains(TriggerType.Speed) ? components["id"] : "1"),
+                        NotificationTriggerItem.VolumeTrigger(onNotificationAction: "300|Email to all members of group PRTG Users Group",                                                                                 parentId: ForceTriggerUninherited.Contains(TriggerType.Volume) ? components["id"] : "1"),
+                        NotificationTriggerItem.ChangeTrigger(onNotificationAction: "300|Email to all members of group PRTG Users Group",                                                                                 parentId: ForceTriggerUninherited.Contains(TriggerType.Change) ? components["id"] : "1")
                     );
                 case Content.SysInfo:
                     return new SystemInfoResponse(

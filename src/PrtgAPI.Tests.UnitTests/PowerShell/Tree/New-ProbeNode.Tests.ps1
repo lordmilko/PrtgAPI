@@ -40,12 +40,13 @@ Describe "New-ProbeNode" -Tag @("PowerShell", "UnitTest") {
 
     It "creates a tree from a ScriptBlock with a value" {
 
-        SetMultiTypeResponse
+        $response = SetMultiTypeResponse
+        $response.ForceTriggerUninherited = "Change"
 
         $device = Get-Probe -Count 1
 
         $node = ProbeNode $device {
-            New-TriggerNode -ObjectId 1000 -Type State
+            New-TriggerNode -ObjectId 1000 -Type Change
         }
 
         $node.Type | Should Be Probe
@@ -55,10 +56,11 @@ Describe "New-ProbeNode" -Tag @("PowerShell", "UnitTest") {
 
     It "creates a tree from a ScriptBlock with an ID" {
 
-        SetMultiTypeResponse
+        $response = SetMultiTypeResponse
+        $response.ForceTriggerUninherited = "Change"
 
         $node = ProbeNode -Id 1000 {
-            TriggerNode -ObjectId 1000 -Type State
+            TriggerNode -ObjectId 1000 -Type Change
         }
 
         $node.Type | Should Be Probe
@@ -67,10 +69,12 @@ Describe "New-ProbeNode" -Tag @("PowerShell", "UnitTest") {
     }
 
     It "creates a tree from a ScriptBlock with a name" {
-        SetMultiTypeResponse
+        
+        $response = SetMultiTypeResponse
+        $response.ForceTriggerUninherited = "Change"
 
         $node = ProbeNode 127*0 {
-            TriggerNode -ObjectId 1000 -Type State
+            TriggerNode -ObjectId 1000 -Type Change
         }
 
         $node.Type | Should Be Probe
@@ -89,7 +93,8 @@ Describe "New-ProbeNode" -Tag @("PowerShell", "UnitTest") {
 
     It "pipes in multiple child nodes with value" {
 
-        SetMultiTypeResponse
+        $response = SetMultiTypeResponse
+        $response.ForceTriggerUninherited = "State","Speed"
 
         $trigger1 = New-TriggerNode -ObjectId 1000 -Type State
         $trigger2 = New-TriggerNode -ObjectId 3000 -Type Speed
@@ -104,7 +109,9 @@ Describe "New-ProbeNode" -Tag @("PowerShell", "UnitTest") {
     }
 
     It "pipes in multiple child nodes with manual" {
-        SetMultiTypeResponse
+        
+        $response = SetMultiTypeResponse
+        $response.ForceTriggerUninherited = "State","Speed"
 
         $trigger1 = New-TriggerNode -ObjectId 1000 -Type State
         $trigger2 = New-TriggerNode -ObjectId 3000 -Type Speed
