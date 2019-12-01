@@ -45,5 +45,15 @@ namespace PrtgAPI.PowerShell.Tree
         {
             ProgressManager.TotalRecords = width;
         }
+
+        public void OnProcessType(PrtgNodeType type, int index, int total)
+        {
+            ProgressManager.TotalRecords = total;
+
+            ProgressManager.InitialDescription = $"Retrieving all {type.ToString().ToLower()}s";
+
+            ProgressManager.WriteProgress("PRTG Tree Search", ProgressManager.InitialDescription);
+            ProgressManager.UpdateRecordsProcessed(ProgressManager.CurrentRecord, null, true);
+        }
     }
 }

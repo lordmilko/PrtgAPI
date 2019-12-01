@@ -22,6 +22,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     ///     <para>Prints the PRTG Tree for the object with ID 1001.</para>
     /// </example>
     ///
+    /// <para type="link" uri="https://github.com/lordmilko/PrtgAPI/wiki/Tree-Manipulation#visualization-1">Online version:</para>
     /// <para type="link">Get-PrtgTree</para>
     /// </summary>
     [Cmdlet(VerbsCommon.Show, "PrtgTree", DefaultParameterSetName = ParameterSet.Default)]
@@ -38,6 +39,13 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// </summary>
         [Parameter(Mandatory = true, ValueFromPipeline = true, ParameterSetName = ParameterSet.Object)]
         public SensorOrDeviceOrGroupOrProbe Object { get; set; }
+
+        /// <summary>
+        /// <para type="description">Specifies the types of descendants to include when constructing a <see cref="PrtgNode"/> tree.<para/>
+        /// If no value is specified, <see cref="TreeParseOption.Common"/> will be used.</para>
+        /// </summary>
+        [Parameter(Mandatory = false)]
+        public TreeParseOption[] Options { get; }
 
         /// <summary>
         /// <para type="description">The ID of the object whose tree should be printed.</para>
@@ -77,7 +85,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
 
         private PrtgNode GetTree(PrtgAPI.Either<PrtgObject, int> objectOrId)
         {
-            return client.GetTree(objectOrId, new PowerShellTreeProgressCallback(this, true));
+            return client.GetTree(objectOrId, GetPrtgTree.GetOptions(Options), new PowerShellTreeProgressCallback(this, true));
         }
 
         private void ProcessTree(TreeNode tree)

@@ -23,7 +23,7 @@ namespace PrtgAPI.Tree.Converters.Tree
 
         private List<PrtgOrphan> GetDeviceChildren(Device device)
         {
-            if (device.TotalSensors > 0)
+            if (device.TotalSensors > 0 && Options.Contains(TreeParseOption.Sensors))
             {
                 Token.ThrowIfCancellationRequested();
 
@@ -37,7 +37,7 @@ namespace PrtgAPI.Tree.Converters.Tree
 
         private async Task<List<PrtgOrphan>> GetDeviceChildrenAsync(Device device)
         {
-            if (device.TotalSensors > 0)
+            if (device.TotalSensors > 0 && Options.Contains(TreeParseOption.Sensors))
             {
                 Token.ThrowIfCancellationRequested();
 
@@ -57,14 +57,14 @@ namespace PrtgAPI.Tree.Converters.Tree
         {
             List<ObjectFactory> factories = new List<ObjectFactory>();
 
-            if (parent.Id == WellKnownId.Root)
+            if (parent.Id == WellKnownId.Root && Options.Contains(TreeParseOption.Probes))
                 factories.Add(ObjectManager.Probe);
             else
             {
-                if (parent.TotalDevices > 0)
+                if (parent.TotalDevices > 0 && Options.Contains(TreeParseOption.Devices))
                     factories.Add(ObjectManager.Device);
 
-                if (parent.TotalGroups > 0)
+                if (parent.TotalGroups > 0 && Options.Contains(TreeParseOption.Groups))
                     factories.Add(ObjectManager.Group);
             }
 
@@ -77,14 +77,14 @@ namespace PrtgAPI.Tree.Converters.Tree
         {
             List<ObjectFactory> factories = new List<ObjectFactory>();
 
-            if (parent.Id == WellKnownId.Root)
+            if (parent.Id == WellKnownId.Root && Options.Contains(TreeParseOption.Probes))
                 factories.Add(ObjectManager.Probe);
             else
             {
-                if (parent.TotalDevices > 0)
+                if (parent.TotalDevices > 0 && Options.Contains(TreeParseOption.Devices))
                     factories.Add(ObjectManager.Device);
 
-                if (parent.TotalGroups > 0)
+                if (parent.TotalGroups > 0 && Options.Contains(TreeParseOption.Groups))
                     factories.Add(ObjectManager.Group);
             }
 
@@ -101,7 +101,7 @@ namespace PrtgAPI.Tree.Converters.Tree
         {
             var obj = Value as SensorOrDeviceOrGroupOrProbe;
 
-            if (obj != null && obj.NotificationTypes.TotalTriggers > 0)
+            if (obj != null && obj.NotificationTypes.TotalTriggers > 0 && Options.Contains(TreeParseOption.Triggers))
             {
                 Token.ThrowIfCancellationRequested();
 
@@ -118,7 +118,7 @@ namespace PrtgAPI.Tree.Converters.Tree
         {
             var obj = Value as SensorOrDeviceOrGroupOrProbe;
 
-            if (obj != null && obj.NotificationTypes.TotalTriggers > 0)
+            if (obj != null && obj.NotificationTypes.TotalTriggers > 0 && Options.Contains(TreeParseOption.Triggers))
             {
                 Token.ThrowIfCancellationRequested();
 
@@ -139,7 +139,7 @@ namespace PrtgAPI.Tree.Converters.Tree
         {
             var obj = Value as SensorOrDeviceOrGroupOrProbe;
 
-            if (obj != null)
+            if (obj != null && Options.Contains(TreeParseOption.Properties))
             {
                 Token.ThrowIfCancellationRequested();
 
@@ -156,7 +156,7 @@ namespace PrtgAPI.Tree.Converters.Tree
         {
             var obj = Value as SensorOrDeviceOrGroupOrProbe;
 
-            if (obj != null)
+            if (obj != null && Options.Contains(TreeParseOption.Properties))
             {
                 Token.ThrowIfCancellationRequested();
 

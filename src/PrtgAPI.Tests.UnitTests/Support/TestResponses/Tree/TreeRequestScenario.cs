@@ -24,6 +24,24 @@
 
         ObjectPipeToContainerWithChild,
 
-        ActionPipeToContainerWithChild
+        ActionPipeToContainerWithChild,
+
+        FastPath,
+
+        ObjectToFastPath,
+
+        SlowPathSensorsOnly,
+        SlowPathDevicesOnly,
+        SlowPathGroupsOnly,
+        SlowPathProbesOnly,
+        SlowPathTriggersOnly,
+        SlowPathPropertiesOnly,
+
+        FastPathSensorsOnly,
+        FastPathDevicesOnly,
+        FastPathGroupsOnly,
+        FastPathProbesOnly,
+        FastPathTriggersOnly,
+        FastPathPropertiesOnly
     }
 }

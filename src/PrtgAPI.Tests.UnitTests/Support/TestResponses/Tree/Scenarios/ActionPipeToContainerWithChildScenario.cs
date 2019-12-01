@@ -7,7 +7,7 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
     {
         private MultiTypeResponse standardResponse = new MultiTypeResponse();
 
-        protected override IWebResponse GetResponse(string address, Content content)
+        protected override IWebResponse GetResponse(string address)
         {
             switch (requestNum)
             {

@@ -20,12 +20,13 @@ namespace PrtgAPI.Tests.UnitTests.Tree
 
             var validator = new EventValidator(client, new[]
             {
-                UnitRequest.Groups("filter_objid=0")
+                UnitRequest.Objects("filter_objid=1001"),
+                UnitRequest.Probes("filter_objid=1001&filter_parentid=0")
             });
 
-            validator.MoveNext(1);
+            validator.MoveNext(2);
 
-            var tree = client.GetTreeLazy(WellKnownId.Root);
+            var tree = client.GetTreeLazy(1001);
         }
 
         [UnitTest]
@@ -43,32 +44,32 @@ namespace PrtgAPI.Tests.UnitTests.Tree
         [TestMethod]
         public void Tree_Lazy_Child_ResolvesOnlyOnce()
         {
-            var client = BaseTest.Initialize_Client(new TreeRequestResponse(TreeRequestScenario.ContainerWithGrandChild));
+            var client = BaseTest.Initialize_Client(new TreeRequestResponse(TreeRequestScenario.MultiLevelContainer));
 
             var validator = new EventValidator(client, new[]
             {
-                //Get Root
-                UnitRequest.Groups("filter_objid=0"),
+                //Get Object
+                UnitRequest.Objects("filter_objid=1001"),
+                
+                //Get Probe
+                UnitRequest.Probes("filter_objid=1001&filter_parentid=0"),
 
-                //Get probes, Root Properties
-                UnitRequest.Probes("filter_parentid=0"),
-                UnitRequest.RequestObjectData(0),
+                //Probe -> Devices/Groups
+                UnitRequest.Devices("filter_parentid=1001"),
+                UnitRequest.Groups("filter_parentid=1001"),
 
-                //Probe Children, Triggers
-                UnitRequest.Groups("filter_parentid=1"),
-                UnitRequest.Triggers(1),
-                UnitRequest.RequestObjectData(810),
-                UnitRequest.RequestObjectData(1)
+                //Probe -> Device -> Sensors
+                UnitRequest.Sensors("filter_parentid=3001")
             });
 
-            validator.MoveNext();
-            var tree = client.GetTreeLazy(WellKnownId.Root);
+            validator.MoveNext(2);
+            var tree = client.GetTreeLazy(1001);
 
             validator.MoveNext(2);
             var child = tree.Children[0];
             var childAgain = tree.Children[0];
 
-            validator.MoveNext(4);
+            validator.MoveNext();
             var grandChild = child.Children[0];
             var grandChildAgain = child.Children[0];
         }

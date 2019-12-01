@@ -48,7 +48,9 @@ Describe "Show-PrtgTree" -Tag @("PowerShell", "UnitTest") {
 
             SetResponseAndClientWithArguments "TreeRequestResponse" "ContainerWithGrandChild"
 
-            Get-Group -Id 0 | Show-PrtgTree
+            Get-Object -Id 1001 # Hack to match up with the TreeRequestResponse
+
+            Get-Probe -Id 1001 | Show-PrtgTree
         }
     }
 
@@ -56,7 +58,7 @@ Describe "Show-PrtgTree" -Tag @("PowerShell", "UnitTest") {
         It "constructs a tree from an ID" {
             SetResponseAndClientWithArguments "TreeRequestResponse" "ContainerWithGrandChild"
 
-            Show-PrtgTree -Id 0
+            Show-PrtgTree -Id 1001
         }
     }
 }

@@ -543,6 +543,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
                 case SyntaxKind.MemberBindingExpression:
                     return ((MemberBindingExpressionSyntax) expression).Name.Identifier;
                 case SyntaxKind.ParenthesizedExpression:
+                case SyntaxKind.ElementAccessExpression:
                     return default(SyntaxToken);
                 default:
                     throw new NotImplementedException($"Unknown expression kind {invocationNode.Expression.GetType()}");

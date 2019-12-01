@@ -761,13 +761,14 @@
                     <ReturnDescription>A &lt;see cref="PrtgNode"/&gt; encapsulating the specified &lt;paramref name="value"/&gt; and all its descendants.</ReturnDescription>
 
                     <Parameter name="value" type="PrtgObject" default="null" description="The object at the root of the tree."/>
+                    <Parameter name="options" type="FlagEnum&lt;TreeParseOption&gt;?" default="null" description="Specifies the types of descendants to include in the tree. If no value is specified, &lt;see cref=&quot;TreeParseOption.Common&quot; /&gt; will be used."/>
                     <Parameter name="progressCallback" type="ITreeProgressCallback" default="null" description="A callback used to receive progress notifications."/>
 
                     <Body expression="false">
                         if (value != null)
-                            return <Call name="GetTree" args="(Either&lt;PrtgObject, int&gt;) value, progressCallback"/>;
+                            return <Call name="GetTree" args="(Either&lt;PrtgObject, int&gt;) value, options, progressCallback"/>;
 
-                        return <Call name="GetTree" args="WellKnownId.Root, progressCallback"/>;
+                        return <Call name="GetTree" args="WellKnownId.Root, options, progressCallback"/>;
                     </Body>
                 </InlineMethodDef>
                 <InlineMethodDef name="GetTree" returns="PrtgNode" tokenMode="MandatoryDefault">
@@ -775,10 +776,11 @@
                     <ReturnDescription>A &lt;see cref="PrtgNode"/&gt; encapsulating the specified object and all its descendants.</ReturnDescription>
 
                     <Parameter name="objectOrId" type="Either&lt;PrtgObject, int&gt;" description="The object or ID of the object at the root of the tree."/>
+                    <Parameter name="options" type="FlagEnum&lt;TreeParseOption&gt;?" default="null" description="Specifies the types of descendants to include in the tree. If no value is specified, &lt;see cref=&quot;TreeParseOption.Common&quot; /&gt; will be used."/>
                     <Parameter name="progressCallback" type="ITreeProgressCallback" default="null" description="A callback used to receive progress notifications."/>
 
                     <Body expression="false">
-                        var builder = new TreeBuilder(this, progressCallback, TreeBuilderOptions.{Request}, token);
+                        var builder = new TreeBuilder(this, options, progressCallback, TreeRequestType.{Request}, token);
 
                         return <Call name="builder.GetTree" args="objectOrId" needsToken="false"/>.ToStandaloneNode&lt;PrtgNode&gt;();
                     </Body>
@@ -791,13 +793,14 @@
                     <ReturnDescription>A &lt;see cref="PrtgNode"/&gt; encapsulating the specified &lt;paramref name="value"/&gt; that lazily calculates its descendants.</ReturnDescription>
 
                     <Parameter name="value" type="PrtgObject" default="null" description="The object at the root of the tree."/>
+                    <Parameter name="options" type="FlagEnum&lt;TreeParseOption&gt;?" default="null" description="Specifies the types of descendants to include in the tree. If no value is specified, &lt;see cref=&quot;TreeParseOption.Common&quot; /&gt; will be used."/>
                     <Parameter name="progressCallback" type="ITreeProgressCallback" default="null" description="A callback used to retrieve progress notifications when children are lazily resolved."/>
 
                     <Body expression="false">
                         if (value != null)
-                            return <Call name="GetTreeLazy" args="(Either&lt;PrtgObject, int&gt;) value, progressCallback"/>;
+                            return <Call name="GetTreeLazy" args="(Either&lt;PrtgObject, int&gt;) value, options, progressCallback"/>;
 
-                        return <Call name="GetTreeLazy" args="WellKnownId.Root, progressCallback"/>;
+                        return <Call name="GetTreeLazy" args="WellKnownId.Root, options, progressCallback"/>;
                     </Body>
                 </InlineMethodDef>
                 <InlineMethodDef name="GetTreeLazy" returns="PrtgNode" tokenMode="MandatoryDefault" needsAsync="false">
@@ -808,10 +811,11 @@
                     <ReturnDescription>A &lt;see cref="PrtgNode"/&gt; encapsulating the specified object that lazily calculates its descendants.</ReturnDescription>
 
                     <Parameter name="objectOrId" type="Either&lt;PrtgObject, int&gt;" description="The object or ID of the object at the root of the tree."/>
+                    <Parameter name="options" type="FlagEnum&lt;TreeParseOption&gt;?" default="null" description="Specifies the types of descendants to include in the tree. If no value is specified, &lt;see cref=&quot;TreeParseOption.Common&quot; /&gt; will be used."/>
                     <Parameter name="progressCallback" type="ITreeProgressCallback" default="null" description="A callback used to retrieve progress notifications when children are lazily resolved."/>
 
                     <Body expression="false">
-                        var builder = new TreeBuilder(this, progressCallback, TreeBuilderOptions.{Request} | TreeBuilderOptions.Lazy, token);
+                        var builder = new TreeBuilder(this, options, progressCallback, TreeRequestType.{Request} | TreeRequestType.Lazy, token);
 
                         return <Call name="builder.GetTree" args="objectOrId" needsToken="false"/>.ToStandaloneNode&lt;PrtgNode&gt;();
                     </Body>

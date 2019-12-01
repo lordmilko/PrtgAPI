@@ -21,7 +21,8 @@ namespace PrtgAPI.Tree.Converters.Tree
         private TreeProgressManager ProgressManager => builder.ProgressManager;
         private ObjectManager ObjectManager => builder.ObjectManager;
         private CancellationToken Token => builder.Token;
-        private FlagEnum<TreeBuilderOptions> Options => builder.Options;
+        private FlagEnum<TreeRequestType> RequestType => builder.RequestType;
+        private FlagEnum<TreeParseOption> Options => builder.Options;
 
         /// <summary>
         /// Gets the value whose children are being processed at the current level.
@@ -58,7 +59,7 @@ namespace PrtgAPI.Tree.Converters.Tree
 
                 var children = GetChildren();
 
-                if (Options.Contains(TreeBuilderOptions.Lazy))
+                if (RequestType.Contains(TreeRequestType.Lazy))
                     children = children.ToCached();
 
                 return GetOrphan(Value, children);

@@ -3,7 +3,7 @@
 namespace PrtgAPI.Tree
 {
     [Flags]
-    internal enum TreeBuilderOptions
+    internal enum TreeRequestType
     {
         Synchronous = 1,
         Asynchronous = 2,

@@ -16,7 +16,7 @@ class TreeVisitor : PrtgAPI.Tree.PrtgNodeWalker
 
     Context "Object" {
         It "doesn't specify an object" {
-            SetResponseAndClientWithArguments "TreeRequestResponse" "ContainerWithGrandChild"
+            SetResponseAndClientWithArguments "TreeRequestResponse" "FastPath"
 
             $result = Get-PrtgTree
 
@@ -26,7 +26,9 @@ class TreeVisitor : PrtgAPI.Tree.PrtgNodeWalker
         It "pipes from an object" {
             SetResponseAndClientWithArguments "TreeRequestResponse" "ContainerWithGrandChild"
 
-            $result = Get-Group -Id 0 | Get-PrtgTree
+            Get-Object -Id 1001 # Hack to match up with the TreeRequestResponse
+
+            $result = Get-Probe -Id 1001 | Get-PrtgTree
 
             $result | Should Not BeNullOrEmpty
         }
@@ -36,7 +38,7 @@ class TreeVisitor : PrtgAPI.Tree.PrtgNodeWalker
         It "specifies an ID" {
             SetResponseAndClientWithArguments "TreeRequestResponse" "ContainerWithGrandChild"
 
-            $result = Get-PrtgTree -Id 0
+            $result = Get-PrtgTree -Id 1001
 
             $result | Should Not BeNullOrEmpty
         }

@@ -739,6 +739,21 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
                 return Initialize_Client(new NotificationTriggerResponse(NotificationTriggerItem.StateTrigger()));
             }
 
+            if (method.Name.StartsWith("GetTree"))
+            {
+                return Initialize_Client(new MultiTypeResponse
+                {
+                    ItemOverride = new Dictionary<Content, BaseItem[]>
+                    {
+                        [Content.Groups] = new[] {new GroupItem(objid: "0")}
+                    },
+                    CountOverride = new Dictionary<Content, int>
+                    {
+                        [Content.Probes] = 0
+                    }
+                });
+            }
+
             return defaultClient;
         }
 
@@ -961,6 +976,8 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
                 return new Dictionary<string, string>();
             if (parameter.Name == "versionSpecific")
                 return null;
+            if (t == typeof(FlagEnum<TreeParseOption>?))
+                return new FlagEnum<TreeParseOption>(TreeParseOption.Common);
 
             throw new NotImplementedException($"Don't know how to create instance for parameter {parameter}");
         }
@@ -1659,6 +1676,10 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
         }
 
         public void OnProcessValue(ITreeValue value)
+        {
+        }
+
+        public void OnProcessType(PrtgNodeType type, int index, int total)
         {
         }
     }

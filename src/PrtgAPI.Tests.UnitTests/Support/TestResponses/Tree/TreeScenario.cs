@@ -10,12 +10,11 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
         public IWebResponse GetResponse(string address, string function)
         {
             var components = UrlUtilities.CrackUrl(address);
-            Content content = components["content"].DescriptionToEnum<Content>();
             requestNum++;
-            return GetResponse(address, content);
+            return GetResponse(address);
         }
 
-        protected abstract IWebResponse GetResponse(string address, Content content);
+        protected abstract IWebResponse GetResponse(string address);
 
         protected Exception UnknownRequest(string address)
         {

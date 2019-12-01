@@ -45,5 +45,10 @@ namespace PrtgAPI.Tree.Progress
         {
             progressCallback?.OnLevelWidthKnown(parent, parentType, width);
         }
+
+        public void OnProcessType(PrtgNodeType type, int index, int total)
+        {
+            progressCallback?.OnProcessType(type, index, total);
+        }
     }
 }

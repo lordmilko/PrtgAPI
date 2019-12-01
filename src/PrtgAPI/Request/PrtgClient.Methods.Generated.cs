@@ -2614,42 +2614,45 @@ namespace PrtgAPI
         /// Retrieves a <see cref="PrtgNode"/> tree for a specified object. If no object is specified, the Root node will be used.
         /// </summary>
         /// <param name="value">The object at the root of the tree.</param>
+        /// <param name="options">Specifies the types of descendants to include in the tree. If no value is specified, <see cref="TreeParseOption.Common" /> will be used.</param>
         /// <param name="progressCallback">A callback used to receive progress notifications.</param>
         /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>A <see cref="PrtgNode"/> encapsulating the specified <paramref name="value"/> and all its descendants.</returns>
-        public PrtgNode GetTree(PrtgObject value = null, ITreeProgressCallback progressCallback = null, CancellationToken token = default(CancellationToken))
+        public PrtgNode GetTree(PrtgObject value = null, FlagEnum<TreeParseOption>? options = null, ITreeProgressCallback progressCallback = null, CancellationToken token = default(CancellationToken))
         {
             if (value != null)
-                return GetTree((Either<PrtgObject, int>) value, progressCallback, token);
+                return GetTree((Either<PrtgObject, int>) value, options, progressCallback, token);
 
-            return GetTree(WellKnownId.Root, progressCallback, token);
+            return GetTree(WellKnownId.Root, options, progressCallback, token);
         }
 
         /// <summary>
         /// Asynchronously retrieves a <see cref="PrtgNode"/> tree for a specified object. If no object is specified, the Root node will be used.
         /// </summary>
         /// <param name="value">The object at the root of the tree.</param>
+        /// <param name="options">Specifies the types of descendants to include in the tree. If no value is specified, <see cref="TreeParseOption.Common" /> will be used.</param>
         /// <param name="progressCallback">A callback used to receive progress notifications.</param>
         /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>A <see cref="PrtgNode"/> encapsulating the specified <paramref name="value"/> and all its descendants.</returns>
-        public async Task<PrtgNode> GetTreeAsync(PrtgObject value = null, ITreeProgressCallback progressCallback = null, CancellationToken token = default(CancellationToken))
+        public async Task<PrtgNode> GetTreeAsync(PrtgObject value = null, FlagEnum<TreeParseOption>? options = null, ITreeProgressCallback progressCallback = null, CancellationToken token = default(CancellationToken))
         {
             if (value != null)
-                return await GetTreeAsync((Either<PrtgObject, int>) value, progressCallback, token).ConfigureAwait(false);
+                return await GetTreeAsync((Either<PrtgObject, int>) value, options, progressCallback, token).ConfigureAwait(false);
 
-            return await GetTreeAsync(WellKnownId.Root, progressCallback, token).ConfigureAwait(false);
+            return await GetTreeAsync(WellKnownId.Root, options, progressCallback, token).ConfigureAwait(false);
         }
 
         /// <summary>
         /// Retrieves a <see cref="PrtgNode"/> tree for a specified object or ID.
         /// </summary>
         /// <param name="objectOrId">The object or ID of the object at the root of the tree.</param>
+        /// <param name="options">Specifies the types of descendants to include in the tree. If no value is specified, <see cref="TreeParseOption.Common" /> will be used.</param>
         /// <param name="progressCallback">A callback used to receive progress notifications.</param>
         /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>A <see cref="PrtgNode"/> encapsulating the specified object and all its descendants.</returns>
-        public PrtgNode GetTree(Either<PrtgObject, int> objectOrId, ITreeProgressCallback progressCallback = null, CancellationToken token = default(CancellationToken))
+        public PrtgNode GetTree(Either<PrtgObject, int> objectOrId, FlagEnum<TreeParseOption>? options = null, ITreeProgressCallback progressCallback = null, CancellationToken token = default(CancellationToken))
         {
-            var builder = new TreeBuilder(this, progressCallback, TreeBuilderOptions.Synchronous, token);
+            var builder = new TreeBuilder(this, options, progressCallback, TreeRequestType.Synchronous, token);
 
             return builder.GetTree(objectOrId).ToStandaloneNode<PrtgNode>();
         }
@@ -2658,12 +2661,13 @@ namespace PrtgAPI
         /// Asynchronously retrieves a <see cref="PrtgNode"/> tree for a specified object or ID.
         /// </summary>
         /// <param name="objectOrId">The object or ID of the object at the root of the tree.</param>
+        /// <param name="options">Specifies the types of descendants to include in the tree. If no value is specified, <see cref="TreeParseOption.Common" /> will be used.</param>
         /// <param name="progressCallback">A callback used to receive progress notifications.</param>
         /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>A <see cref="PrtgNode"/> encapsulating the specified object and all its descendants.</returns>
-        public async Task<PrtgNode> GetTreeAsync(Either<PrtgObject, int> objectOrId, ITreeProgressCallback progressCallback = null, CancellationToken token = default(CancellationToken))
+        public async Task<PrtgNode> GetTreeAsync(Either<PrtgObject, int> objectOrId, FlagEnum<TreeParseOption>? options = null, ITreeProgressCallback progressCallback = null, CancellationToken token = default(CancellationToken))
         {
-            var builder = new TreeBuilder(this, progressCallback, TreeBuilderOptions.Asynchronous, token);
+            var builder = new TreeBuilder(this, options, progressCallback, TreeRequestType.Asynchronous, token);
 
             return (await builder.GetTreeAsync(objectOrId).ConfigureAwait(false)).ToStandaloneNode<PrtgNode>();
         }
@@ -2673,15 +2677,16 @@ namespace PrtgAPI
         /// Children of the root object will be retrieved on demand upon being accessed.
         /// </summary>
         /// <param name="value">The object at the root of the tree.</param>
+        /// <param name="options">Specifies the types of descendants to include in the tree. If no value is specified, <see cref="TreeParseOption.Common" /> will be used.</param>
         /// <param name="progressCallback">A callback used to retrieve progress notifications when children are lazily resolved.</param>
         /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>A <see cref="PrtgNode"/> encapsulating the specified <paramref name="value"/> that lazily calculates its descendants.</returns>
-        public PrtgNode GetTreeLazy(PrtgObject value = null, ITreeProgressCallback progressCallback = null, CancellationToken token = default(CancellationToken))
+        public PrtgNode GetTreeLazy(PrtgObject value = null, FlagEnum<TreeParseOption>? options = null, ITreeProgressCallback progressCallback = null, CancellationToken token = default(CancellationToken))
         {
             if (value != null)
-                return GetTreeLazy((Either<PrtgObject, int>) value, progressCallback, token);
+                return GetTreeLazy((Either<PrtgObject, int>) value, options, progressCallback, token);
 
-            return GetTreeLazy(WellKnownId.Root, progressCallback, token);
+            return GetTreeLazy(WellKnownId.Root, options, progressCallback, token);
         }
 
         /// <summary>
@@ -2689,12 +2694,13 @@ namespace PrtgAPI
         /// Children of the root object will be retrieved on demand upon being accessed.
         /// </summary>
         /// <param name="objectOrId">The object or ID of the object at the root of the tree.</param>
+        /// <param name="options">Specifies the types of descendants to include in the tree. If no value is specified, <see cref="TreeParseOption.Common" /> will be used.</param>
         /// <param name="progressCallback">A callback used to retrieve progress notifications when children are lazily resolved.</param>
         /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>A <see cref="PrtgNode"/> encapsulating the specified object that lazily calculates its descendants.</returns>
-        public PrtgNode GetTreeLazy(Either<PrtgObject, int> objectOrId, ITreeProgressCallback progressCallback = null, CancellationToken token = default(CancellationToken))
+        public PrtgNode GetTreeLazy(Either<PrtgObject, int> objectOrId, FlagEnum<TreeParseOption>? options = null, ITreeProgressCallback progressCallback = null, CancellationToken token = default(CancellationToken))
         {
-            var builder = new TreeBuilder(this, progressCallback, TreeBuilderOptions.Synchronous | TreeBuilderOptions.Lazy, token);
+            var builder = new TreeBuilder(this, options, progressCallback, TreeRequestType.Synchronous | TreeRequestType.Lazy, token);
 
             return builder.GetTree(objectOrId).ToStandaloneNode<PrtgNode>();
         }

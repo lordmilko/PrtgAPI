@@ -29,6 +29,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
     ///     <para>Construct a PRTG Tree from the object with ID 1.</para>
     /// </example>
     ///
+    /// <para type="link" uri="https://github.com/lordmilko/PrtgAPI/wiki/Tree-Creation#powershell">Online version:</para>
     /// <para type="link">Show-PrtgTree</para>
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "PrtgTree", DefaultParameterSetName = ParameterSet.Default)]
@@ -39,6 +40,13 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// </summary>
         [Parameter(Mandatory = false, ValueFromPipeline = true, ParameterSetName = ParameterSet.Default)]
         public SensorOrDeviceOrGroupOrProbe Object { get; set; }
+
+        /// <summary>
+        /// <para type="description">Specifies the types of descendants to include when constructing a <see cref="PrtgNode"/> tree.<para/>
+        /// If no value is specified, <see cref="TreeParseOption.Common"/> will be used.</para>
+        /// </summary>
+        [Parameter(Mandatory = false)]
+        public TreeParseOption[] Options { get; }
 
         /// <summary>
         /// <para type="description">The ID of the object to construct a tree for.</para>
@@ -71,9 +79,9 @@ namespace PrtgAPI.PowerShell.Cmdlets
                 case ParameterSet.Default:
 
                     if (Object == null)
-                        Object = client.GetGroup(WellKnownId.Root);
-
-                    tree = GetTree(Object);
+                        tree = GetTree(WellKnownId.Root);
+                    else
+                        tree = GetTree(Object);
                     break;
 
                 case ParameterSet.Manual:
@@ -89,10 +97,20 @@ namespace PrtgAPI.PowerShell.Cmdlets
 
         private PrtgNode GetTree(PrtgAPI.Either<PrtgObject, int> objectOrId)
         {
-            if (Lazy)
-                return client.GetTreeLazy(objectOrId);
+            var options = GetOptions(Options);
 
-            return client.GetTree(objectOrId, new PowerShellTreeProgressCallback(this));
+            if (Lazy)
+                return client.GetTreeLazy(objectOrId, options);
+
+            return client.GetTree(objectOrId, options, new PowerShellTreeProgressCallback(this));
+        }
+
+        internal static FlagEnum<TreeParseOption> GetOptions(TreeParseOption[] options)
+        {
+            if (options?.Length > 0)
+                return new FlagEnum<TreeParseOption>(options);
+
+            return TreeParseOption.Common;
         }
     }
 }

@@ -32,5 +32,13 @@
         /// </summary>
         /// <param name="value">The value that will be processed.</param>
         void OnProcessValue(ITreeValue value);
+
+        /// <summary>
+        /// Called when all objects of a given type are retrieved in one go.
+        /// </summary>
+        /// <param name="type">The type of objects that will be retrieved.</param>
+        /// <param name="index">The 1 based index of the type that is being processed.</param>
+        /// <param name="total">The total number of types to process.</param>
+        void OnProcessType(PrtgNodeType type, int index, int total);
     }
 }

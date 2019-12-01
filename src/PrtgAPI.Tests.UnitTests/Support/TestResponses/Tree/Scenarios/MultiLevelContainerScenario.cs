@@ -12,17 +12,17 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
             this.async = async;
         }
 
-        protected override IWebResponse GetResponse(string address, Content content)
+        protected override IWebResponse GetResponse(string address)
         {
             switch (requestNum)
             {
-                case 1:
-                    Assert.AreEqual(UnitRequest.Groups("filter_objid=0"), address);
-                    return new GroupResponse(new GroupItem(name: "Root", objid: "0"));
+                case 1: //Resolve Object
+                    Assert.AreEqual(UnitRequest.Objects("filter_objid=1001"), address);
+                    return new ProbeResponse(new ProbeItem(objid: "1001", groupnum: "2", groupnumRaw: "2", devicenum: "3", devicenumRaw: "3"));
 
                 case 2: //Probes
-                    Assert.AreEqual(UnitRequest.Probes("filter_parentid=0"), address);
-                    return new ProbeResponse(new ProbeItem(objid: "1001", groupnum: "2", groupnumRaw: "2", devicenum: "3", devicenumRaw: "3"));
+                    Assert.AreEqual(UnitRequest.Probes("filter_objid=1001&filter_parentid=0"), address);
+                    return new ProbeResponse(new ProbeItem(objid: "1001", groupnum: "2", groupnumRaw: "2", devicenum: "3", devicenumRaw: "3", notifiesx: "Inherited 1 State"));
 
                 case 3: //Probe -> Device
                     Assert.AreEqual(UnitRequest.Devices("filter_parentid=1001"), address);
@@ -58,13 +58,31 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
 
                 case 11:
                     Assert.AreEqual(UnitRequest.Triggers(1001), address);
-                    return new NotificationTriggerResponse();
+                    return new NotificationTriggerResponse(NotificationTriggerItem.StateTrigger(parentId: "1001"));
 
                 case 12:
                     if (!async)
                         goto default;
-                    Assert.AreEqual(UnitRequest.Notifications(), address);
+                    Assert.AreEqual(UnitRequest.Notifications("filter_objid=301"), address);
                     return new NotificationActionResponse(new NotificationActionItem());
+
+                case 13:
+                    if (!async)
+                        goto default;
+                    Assert.AreEqual(UnitRequest.NotificationProperties(301), address);
+                    return new NotificationActionResponse(new NotificationActionItem());
+
+                case 14:
+                    if (!async)
+                        goto default;
+                    Assert.AreEqual(UnitRequest.Schedules(), address);
+                    return new ScheduleResponse(new ScheduleItem());
+
+                case 15:
+                    if (!async)
+                        goto default;
+                    Assert.AreEqual(UnitRequest.ScheduleProperties(623), address);
+                    return new ScheduleResponse(new ScheduleItem());
 
                 default:
                     throw UnknownRequest(address);

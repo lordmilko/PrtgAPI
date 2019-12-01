@@ -183,6 +183,11 @@
     <Compile Include="Tree\Converters\Text\PrtgNodePrettyTreeVisitor.cs" />
     <Compile Include="Tree\Converters\Text\Writers\PrettyColorWriter.cs" />
     <Compile Include="Tree\Converters\Text\Writers\PrettyWriter.cs" />
+    <Compile Include="Tree\Converters\Tree\CacheFactory\CachedDeviceFactory.cs" />
+    <Compile Include="Tree\Converters\Tree\CacheFactory\CachedGroupFactory.cs" />
+    <Compile Include="Tree\Converters\Tree\CacheFactory\CachedObjectManager.cs" />
+    <Compile Include="Tree\Converters\Tree\CacheFactory\CachedProbeFactory.cs" />
+    <Compile Include="Tree\Converters\Tree\CacheFactory\CachedSensorFactory.cs" />
     <Compile Include="Tree\Converters\Tree\Factory\DeviceFactory.cs" />
     <Compile Include="Tree\Converters\Tree\Factory\GroupFactory.cs" />
     <Compile Include="Tree\Converters\Tree\Factory\ObjectFactory.cs" />
@@ -198,8 +203,9 @@
       <DependentUpon>TreeBuilderLevel.Generated.tt</DependentUpon>
     </Compile>
     <Compile Include="Tree\Enums\ListEditType.cs" />
-    <Compile Include="Tree\Enums\TreeBuilderOptions.cs" />
+    <Compile Include="Tree\Enums\TreeRequestType.cs" />
     <Compile Include="Tree\Enums\TreeNodeDifference.cs" />
+    <Compile Include="Tree\Enums\TreeParseOption.cs" />
     <Compile Include="Tree\Model\Debug\CompareNodeCollectionDebugView.cs" />
     <Compile Include="Tree\Model\Debug\CompareNodeDebugView.cs" />
     <Compile Include="Tree\Model\Debug\CompareNodeGroupingDebugView.cs" />
