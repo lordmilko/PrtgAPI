@@ -243,24 +243,6 @@ function BuildStr($str)
     return $str
 }
 
-function SetPrtgClient($client)
-{
-    $assembly = (gcm Connect-PrtgServer).ImplementingType.Assembly
-
-    $sessionType = $assembly.GetType("PrtgAPI.PowerShell.PrtgSessionState")
-    $editionType = $assembly.GetType("PrtgAPI.PowerShell.PSEdition")
-
-    $edition = [enum]::GetValues($editionType) | where { $_ -eq $PSEdition }
-
-    $flags = [System.Reflection.BindingFlags]::Static -bor [System.Reflection.BindingFlags]::NonPublic
-
-    $clientProperty = $sessionType.GetProperty("Client", $flags)
-    $editionProperty = $sessionType.GetProperty("PSEdition", $flags)
-
-    $clientProperty.SetValue($null, $client)
-    $editionProperty.SetValue($null, $edition)
-}
-
 function SetVersion($versionStr)
 {
     $client = Get-PrtgClient

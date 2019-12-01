@@ -15,18 +15,16 @@ Describe "Update-GoPrtgCredential" -Tag @("PowerShell", "UnitTest") {
 
     AfterAll { GoPrtgAfterAll }
 
-    Mock -ModuleName PrtgAPI Connect-PrtgServer {
+    Mock "Connect-PrtgServer" {
+
         param($Server, $Credential, $Force)
 
         $username = $Credential.GetNetworkCredential().Username
         $password = $Credential.GetNetworkCredential().Password
 
-        $client = New-Object PrtgAPI.PrtgClient -ArgumentList($Server, $username, $password, ([PrtgAPI.AuthMode]::PassHash))
+        $newClient = New-Object PrtgAPI.PrtgClient -ArgumentList ("prtg.example.com", $username, "87654321", [PrtgAPI.AuthMode]::PassHash)
 
-        $type = (Get-PrtgClient).GetType().Assembly.GetType("PrtgAPI.PowerShell.PrtgSessionState")
-        $property = $type.GetProperty("Client", [System.Reflection.BindingFlags]::Static -bor [System.Reflection.BindingFlags]::NonPublic)
-
-        $property.SetValue($null, $client)
+        SetPrtgClient $newClient
     }
     
     It "updates the credential" {
@@ -38,7 +36,7 @@ Describe "Update-GoPrtgCredential" -Tag @("PowerShell", "UnitTest") {
 
         Update-GoPrtgCredential (New-Credential prtgadmin newpassword)
 
-        (Get-PrtgClient).PassHash | Should Be newpassword
+        (Get-PrtgClient).PassHash | Should Be 87654321
 
         $newContent = gc $Profile -Raw
 
@@ -52,7 +50,7 @@ Describe "Update-GoPrtgCredential" -Tag @("PowerShell", "UnitTest") {
 
         Update-GoPrtgCredential (New-Credential username newpassword)
 
-        (Get-PrtgClient).PassHash | Should Be newpassword
+        (Get-PrtgClient).PassHash | Should Be 87654321
 
         $newContent = gc $Profile -Raw
 
@@ -70,7 +68,7 @@ Describe "Update-GoPrtgCredential" -Tag @("PowerShell", "UnitTest") {
 
         $content | Should BeLike $newExpected
 
-        (Get-PrtgClient).PassHash | Should Be mypassword
+        (Get-PrtgClient).PassHash | Should Be 87654321
     }
 
     It "throws specifying an existing username for the current server" {
@@ -90,7 +88,9 @@ Describe "Update-GoPrtgCredential" -Tag @("PowerShell", "UnitTest") {
     It "throws updating a server that isn't registered with GoPrtg" {
         Install-GoPrtgServer
 
-        Connect-PrtgServer prtg.example2.com (New-Credential username 12345678) -PassHash -Force
+        $newClient = New-Object PrtgAPI.PrtgClient -ArgumentList ("prtg.example2.com", "username", "12345678", [PrtgAPI.AuthMode]::PassHash)
+
+        SetPrtgClient $newClient
 
         { Update-GoPrtgCredential } | Should Throw "Server 'prtg.example2.com' is not a valid GoPrtg server. To install this server, run Install-GoPrtgServer [<alias>]"
     }
