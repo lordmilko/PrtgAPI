@@ -12,7 +12,7 @@
 RootModule = 'PrtgAPI.PowerShell.dll'
 
 # Version number of this module.
-ModuleVersion = '0.9.9'
+ModuleVersion = '0.9.10'
 
 # Supported PSEditions
 CompatiblePSEditions = @('Desktop', 'Core')
@@ -107,7 +107,7 @@ PrivateData = @{
         # IconUri = ''
 
         # ReleaseNotes of this module
-        ReleaseNotes = 'Release Notes: https://github.com/lordmilko/PrtgAPI/releases/tag/v0.9.9
+        ReleaseNotes = 'Release Notes: https://github.com/lordmilko/PrtgAPI/releases/tag/v0.9.10
 
 ---
 
