@@ -12,9 +12,8 @@ Describe "Pause-Object_IT" -Tag @("PowerShell", "IntegrationTest") {
         LogTestDetail "Pausing object indefinitely"
         $sensor | Pause-Object -Forever -Message $message
 
-        $sensor | Refresh-Object
         LogTestDetail "Sleeping for 30 seconds while object refreshes"
-        Sleep 30
+        $pausedSensor = WaitForStatus $sensor PausedByUser 30 10
 
         LogTestDetail "Validating sensor status"
         $pausedSensor = Get-Sensor -Id (Settings UpSensor)
@@ -25,22 +24,14 @@ Describe "Pause-Object_IT" -Tag @("PowerShell", "IntegrationTest") {
         LogTestDetail "Resuming sensor"
         $pausedSensor | Resume-Object
         LogTestDetail "Object should be unpaused. Refreshing object."
-        $pausedSensor | Refresh-Object
-        Sleep 10
-        $pausedSensor | Refresh-Object
-        Sleep 10
-        $pausedSensor | Refresh-Object
-        Sleep 10
 
-        $finalSensor = Get-Sensor -Id (Settings UpSensor)
+        $finalSensor = WaitForStatus $pausedSensor Up 30
 
         if($finalSensor.Status -eq "PausedByUser" -or $finalSensor.Status -eq "Unknown")
         {
             LogTestDetail "Sensor is still paused. Waiting 120 seconds"
 
-            Sleep 120
-
-            $finalSensor = Get-Sensor -Id (Settings UpSensor)
+            $finalSensor = WaitForStatus $pausedSensor Up 120
         }
 
         $finalSensor.Status | Should Be Up
@@ -54,25 +45,16 @@ Describe "Pause-Object_IT" -Tag @("PowerShell", "IntegrationTest") {
         LogTestDetail "Pausing sensor for 1 minute"
         $sensor | Pause-Object -Duration 1
 
-        $Sensor | Refresh-Object
-        LogTestDetail "Sleeping for 30 seconds"
-        Sleep 30
+        $pausedSensor = WaitForStatus $sensor PausedUntil 30 10
 
         LogTestDetail "Confirming sensor is paused"
-        $pausedSensor = Get-Sensor -Id (Settings UpSensor)
         $pausedSensor.Status | Should Be PausedUntil
-        LogTestDetail "Sleeping for 90 seconds"
-        Sleep 90
+
+        $pausedSensor = WaitForStatus $pausedSensor Up 90
         
         LogTestDetail "Object should be unpaused. Refreshing object."
-        $pausedSensor | Refresh-Object
-        Sleep 10
-        $pausedSensor | Refresh-Object
-        Sleep 10
-        $pausedSensor | Refresh-Object
-        Sleep 10
-
-        $finalSensor = Get-Sensor -Id (Settings UpSensor)
+        $finalSensor = WaitForStatus $pausedSensor Up 30 10
+        
         $finalSensor.Status | Should Be Up
     }
 
@@ -86,25 +68,16 @@ Describe "Pause-Object_IT" -Tag @("PowerShell", "IntegrationTest") {
         LogTestDetail "Pausing object until $until"
         $sensor | Pause-Object -Until $until
         
-        $Sensor | Refresh-Object
-        LogTestDetail "Sleeping for 30 seconds"
-        Sleep 30
+        $pausedSensor = WaitForStatus $sensor PausedUntil 30 10
 
         LogTestDetail "Confirming sensor is paused"
-        $pausedSensor = Get-Sensor -Id (Settings UpSensor)
         $pausedSensor.Status | Should Be PausedUntil
         LogTestDetail "Sleeping for 90 seconds"
-        Sleep 90
+        $pausedSensor = WaitForStatus $pausedSensor Up 90
 
         LogTestDetail "Object should be unpaused. Refreshing object."
-        $pausedSensor | Refresh-Object
-        Sleep 10
-        $pausedSensor | Refresh-Object
-        Sleep 10
-        $pausedSensor | Refresh-Object
-        Sleep 10
+        $finalSensor = WaitForStatus $pausedSensor Up 30 10
 
-        $finalSensor = Get-Sensor -Id (Settings UpSensor)
         $finalSensor.Status | Should Be Up
     }
     
@@ -130,29 +103,15 @@ Describe "Pause-Object_IT" -Tag @("PowerShell", "IntegrationTest") {
         $sensors[0].Status | Should Be PausedUntil
         $sensors[1].Status | Should Be PausedUntil
         LogTestDetail "Sleeping for 90 seconds"
-        Sleep 90
+        $pausedSensors = WaitForStatus $sensors Up 90
 
         LogTestDetail "Object should be unpaused. Refreshing object."
-        $sensors | Refresh-Object
-        Sleep 10
-        $sensors | Refresh-Object
-        Sleep 10
-        $sensors | Refresh-Object
-        Sleep 10
-
-        $finalSensors = Get-Sensor -Id $ids
+        $finalSensors = WaitForStatus $pausedSensors Up 30 10
 
         if($finalSensors[0].Status -ne "Up")
         {
             LogTestDetail "Sleeping for 30 more seconds as object has not refreshed"
-            $sensors | Refresh-Object
-            Sleep 10
-            $sensors | Refresh-Object
-            Sleep 10
-            $sensors | Refresh-Object
-            Sleep 10
-
-            $finalSensors = Get-Sensor -Id $ids
+            $finalSensors = WaitForStatus $pausedSensors Up 30 10
         }
 
         $finalSensors[0].Status | Should Be Up

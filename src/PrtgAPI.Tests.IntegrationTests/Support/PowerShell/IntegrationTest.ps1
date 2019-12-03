@@ -43,3 +43,31 @@ function Unsafe($script)
         (ServerManager).WaitForObjects()
     }
 }
+
+function WaitForStatus($sensors, $status, $duration, $refreshInterval = 30)
+{
+    LogTestDetail "Sleeping for up to $duration seconds for status to turn '$status'"
+
+    $newSensors = $null
+
+    while($duration -gt 0)
+    {
+        $newSensors = Get-Sensor -Id $sensors.Id
+
+        # If every status matches, we're done
+        if(!($newSensors|where Status -ne $status))
+        {
+            break
+        }
+
+        if($duration % $refreshInterval -eq 0)
+        {
+            $sensors | Refresh-Object
+        }
+
+        $duration -= 5
+        Sleep 5
+    }
+
+    return $newSensors
+}

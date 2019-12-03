@@ -9,36 +9,25 @@ Describe "Simulate-ErrorStatus_IT" -Tag @("PowerShell", "IntegrationTest") {
         LogTestDetail "Simulating error status"
         $sensor | Simulate-ErrorStatus
 
-        $sensor | Refresh-Object
-        LogTestDetail "Sleeping for 30 seconds while object refreshes"
-        Sleep 30
-
-        $redSensor = Get-Sensor -Id (Settings UpSensor)
+        $redSensor = WaitForStatus $sensor Down 30
 
         if($redSensor.Status -eq "Up")
         {
             LogTestDetail "Status was still Up. Waiting 120 seconds"
-            Sleep 120
-            $redSensor = Get-Sensor -Id (Settings UpSensor)
+            $redSensor = WaitForStatus $sensor Down 120
         }
 
         $redSensor.Status | Should Be Down
 
         if(IsEnglish)
         {
-            $redSensor.Message | Should BeLike "Simulated error*"
+            $redSensor.Message | Should BeLike "*simulated error*"
         }
 
         LogTestDetail "Resuming object"
         $redSensor | Resume-Object
 
-        $sensor | Refresh-Object
-        LogTestDetail "Sleeping for 60 seconds while object refreshes"
-        Sleep 30
-        $sensor | Refresh-Object
-        Sleep 30
-
-        $finalSensor = Get-Sensor -Id (Settings UpSensor)
+        $finalSensor = WaitForStatus $redSensor Up 60
         $finalSensor.Status | Should Be Up
     }
 
@@ -52,21 +41,12 @@ Describe "Simulate-ErrorStatus_IT" -Tag @("PowerShell", "IntegrationTest") {
         LogTestDetail "Simulating error status on multiple sensors"
         $sensors | Simulate-ErrorStatus
 
-        $sensors | Refresh-Object
-        LogTestDetail "Sleeping for 30 seconds while objects refresh"
-        Sleep 30
-
-        $sensors | Refresh-Object
-        LogTestDetail "Sleeping for 30 seconds while objects refresh"
-        Sleep 30
-
-        $redSensors = Get-Sensor -Id $ids
+        $redSensors = WaitForStatus $sensors Down 60
 
         if($redSensors|where { $_.Status -EQ "Up" -or $_.Status -eq "Warning" })
         {
             LogTestDetail "At least one sensor is still up or transitioning. Waiting 120 seconds"
-            Sleep 120
-            $redSensors = Get-Sensor -Id $ids
+            $redSensors = WaitForStatus $sensors Down 120
         }
 
         $redSensors[0].Status | Should Be Down
@@ -74,20 +54,15 @@ Describe "Simulate-ErrorStatus_IT" -Tag @("PowerShell", "IntegrationTest") {
         
         if(IsEnglish)
         {
-            $redSensors[0].Message | Should BeLike "Simulated error*"
-            $redSensors[1].Message | Should BeLike "Simulated error*"
+            $redSensors[0].Message | Should BeLike "*simulated error*"
+            $redSensors[1].Message | Should BeLike "*simulated error*"
         }
 
         LogTestDetail "Resuming object"
         $redSensors | Resume-Object
 
-        $sensors | Refresh-Object
         LogTestDetail "Sleeping for 60 seconds while objects refresh"
-        Sleep 30
-        $sensors | Refresh-Object
-        Sleep 30
-
-        $finalSensors = Get-Sensor -Id $ids
+        $finalSensors = WaitForStatus $redSensors Up 60
 
         if($finalSensors[0].Status -ne "Up" -or $finalSensors[1].Status -ne "Up")
         {

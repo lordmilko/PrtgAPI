@@ -232,17 +232,20 @@ Describe "Set-ObjectProperty_IT" -Tag @("PowerShell", "IntegrationTest") {
         { $sensor | Set-ObjectProperty Name $null } | Should Throw (ForeignMessage $message)
     }
 
-    It "setting an invalid scanning interval sets the nearest valid interval" {
-        $sensor = Get-Sensor -Id (Settings UpSensor)
+    if((Get-PrtgClient).Version -lt [Version]"19.4.54")
+    {
+        It "setting an invalid scanning interval sets the nearest valid interval" {
+            $sensor = Get-Sensor -Id (Settings UpSensor)
 
-        $initialInterval = $($sensor | Get-ObjectProperty).Interval
-        $initialInterval | Should Not Be "00:00:55"
+            $initialInterval = $($sensor | Get-ObjectProperty).Interval
+            $initialInterval | Should Not Be "00:00:55"
 
-        $sensor | Set-ObjectProperty interval "00:00:55"
+            $sensor | Set-ObjectProperty interval "00:00:55"
 
-        $newInterval = $($sensor | Get-ObjectProperty).Interval
+            $newInterval = $($sensor | Get-ObjectProperty).Interval
 
-        $newInterval | Should Be "00:01:00"
+            $newInterval | Should Be "00:01:00"
+        }
     }
 
     It "sets a grandchild, and enables its parent and grandparent" {

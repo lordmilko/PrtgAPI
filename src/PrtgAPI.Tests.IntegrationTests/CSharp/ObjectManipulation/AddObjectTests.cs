@@ -411,7 +411,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
             {
                 sensor = client.AddSensor(Settings.Device, parameters).First();
 
-                AssertEx.AreEqual("enterprises test", sensor.Name, "Sensor name was not correct");
+                AssertEx.AreEqual("enterprises /", sensor.Name, "Sensor name was not correct");
             }
             finally
             {
@@ -466,7 +466,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
             {
                 sensor = (await client.AddSensorAsync(Settings.Device, parameters)).First();
 
-                AssertEx.AreEqual("enterprises test", sensor.Name, "Sensor name was not correct");
+                AssertEx.AreEqual("enterprises /", sensor.Name, "Sensor name was not correct");
             }
             finally
             {
