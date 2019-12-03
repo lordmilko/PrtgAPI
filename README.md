@@ -45,7 +45,7 @@ Install-Package PrtgAPI -Source PSGallery
 
 ### Manual
 
-1. Download the [latest build](https://ci.appveyor.com/api/projects/lordmilko/prtgapi/artifacts/PrtgAPI.PowerShell/bin/Release/PrtgAPI.zip)
+1. Download the [latest build](https://ci.appveyor.com/api/projects/lordmilko/prtgapi/artifacts/PrtgAPI.zip)
 2. Right click **PrtgAPI.zip** -> **Properties**
 3. On the *General* tab, under *Security* select **Unblock**
 4. Unzip the file
