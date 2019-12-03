@@ -46,7 +46,7 @@ function ImportModules
 
     $selectedCandidate = $validCandidates|Sort-Object LastWriteTime -Descending | select -First 1
 
-    Import-Module $selectedCandidate.PrtgAPIPath
+    Import-Module $selectedCandidate.PrtgAPIPath -Global
     Import-Module $selectedCandidate.TestProjectDll
 }
 

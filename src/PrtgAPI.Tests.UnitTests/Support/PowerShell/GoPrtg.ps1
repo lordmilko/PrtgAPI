@@ -161,7 +161,10 @@ function GoPrtgBeforeEach
         throw "Could not rename PowerShell Profile"
     }
 
-    Connect-PrtgServer prtg.example.com (New-Credential username passhash) -PassHash -Force
+    # Set the PrtgClient via reflection rather than Connect-PrtgServer to avoid potential conflicts with the mock in Update-GoPrtgCredential.Tests
+    $newClient = New-Object PrtgAPI.PrtgClient -ArgumentList ("prtg.example.com", "username", "passhash", [PrtgAPI.AuthMode]::PassHash)
+
+    SetPrtgClient $newClient
 }
 
 function GoPrtgAfterEach
