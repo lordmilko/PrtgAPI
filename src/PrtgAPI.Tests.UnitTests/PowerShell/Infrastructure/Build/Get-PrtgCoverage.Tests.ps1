@@ -81,7 +81,7 @@ function GetReportCommands
 
     $expected1 = @(
         "&"
-        "C:\ProgramData\chocolatey\bin\reportgenerator.exe"
+        "C:\ProgramData\chocolatey\<regex>.+</regex>\reportgenerator.exe"
         "-reports:$($temp)opencover.xml"
         "-reporttypes:Html"
         "-targetdir:$($temp)PrtgCoverage_<regex>\d\d\d\d-\d\d-\d\d_\d\d-\d\d-\d\d</regex>"
@@ -111,6 +111,11 @@ function MockCore
                 return [System.IO.FileInfo](Join-PathEx $Path $env:CONFIGURATION net461 PrtgAPI.Tests.UnitTests.dll)
             }
 
+            if($Filter -eq "net4*")
+            {
+                return [System.IO.FileInfo]"C:/ProgramData/chocolatey/lib/reportgenerator.portable/tools/net47"
+            }
+
             throw "path and filter were $Path and $Filter"
         } -ParameterFilter { $Filter -ne "*.Tests.ps1" }
 
@@ -136,6 +141,11 @@ function MockDesktop
             if($Filter -eq "PrtgAPI.Tests.UnitTests.dll")
             {
                 return [System.IO.FileInfo](Join-PathEx $Path $env:CONFIGURATION PrtgAPI.Tests.UnitTests.dll)
+            }
+
+            if($Filter -eq "net4*")
+            {
+                return [System.IO.FileInfo]"C:/ProgramData/chocolatey/lib/reportgenerator.portable/tools/net47"
             }
 
             throw "path and filter were $Path and $Filter"

@@ -374,10 +374,42 @@ function New-CoverageReport
         "-verbosity:off"
     )
 
-    $reportgenerator = Get-ChocolateyCommand "reportgenerator"
+    $reportgenerator = Get-ReportGeneratorCommand
 
     Write-LogInfo "`t`tExecuting '$reportgenerator $reportParams'"
     Invoke-Process { & $reportgenerator @reportParams }
+}
+
+function Get-ReportGeneratorCommand
+{
+    $reportgenerator = Get-ChocolateyCommand "reportgenerator" -AllowPath:$false
+
+    if(([Version](gi $reportgenerator).VersionInfo.FileVersion) -ge [Version]"4.3")
+    {
+        # The chocolatey shim probably points to the .NET Core 3.0 version. Fallback
+        # to the .NET Framework version
+
+        $bin = Split-Path $reportgenerator -Parent
+        $chocolatey = Split-Path $bin -Parent
+
+        $tools = "$chocolatey\lib\reportgenerator.portable\tools"
+
+        if(!(Test-Path $tools))
+        {
+            throw "Folder '$tools' does not exist. Unable to locate .NET Framework Report Generator"
+        }
+
+        $netfx = gci $tools net4*|select -First 1
+
+        if(!$netfx)
+        {
+            throw "Unable to find a .NET Framework version of Report Generator"
+        }
+
+        return ($tools + "\$($netfx.Name)\reportgenerator.exe") -replace "/","\"
+    }
+
+    return $reportgenerator
 }
 
 function Get-LineCoverage
