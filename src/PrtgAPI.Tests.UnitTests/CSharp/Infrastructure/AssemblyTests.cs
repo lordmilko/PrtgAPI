@@ -902,7 +902,10 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
                     typeof(TCategory),
                     typeof(TestMethodAttribute),
                     typeof(AsyncStateMachineAttribute),
-                    typeof(DebuggerStepThroughAttribute)
+                    typeof(DebuggerStepThroughAttribute),
+#if MSTEST2
+                    typeof(DoNotParallelizeAttribute)
+#endif
                 };
 
                 var illegalAttributes = method.GetCustomAttributes().Where(a => !allowedTypes.Contains(a.GetType())).ToList();

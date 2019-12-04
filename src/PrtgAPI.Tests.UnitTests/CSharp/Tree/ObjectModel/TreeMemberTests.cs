@@ -2992,7 +2992,7 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             };
 
             var src = TestHelpers.GetProjectRoot(true);
-            var ps1xml = Path.Combine(src, "PrtgAPI.PowerShell\\PowerShell\\Resources\\PrtgAPI.Types.ps1xml");
+            var ps1xml = Path.Combine(src, "PrtgAPI.PowerShell/PowerShell/Resources/PrtgAPI.Types.ps1xml");
 
             if (!File.Exists(ps1xml))
                 throw new InvalidOperationException($"File '{ps1xml}' does not exist.");

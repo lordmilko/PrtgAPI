@@ -252,6 +252,7 @@ Get-Probe
 Get-PrtgClient
 Get-PrtgSchedule
 Get-PrtgStatus
+Get-PrtgTree
 Get-Sensor
 Get-SensorFactorySource
 Get-SensorHistory
@@ -270,6 +271,12 @@ New-SensorFactoryDefinition
 New-SensorParameters
 New-DeviceParameters
 New-GroupParameters
+New-SensorNode
+New-DeviceNode
+New-GroupNode
+New-ProbeNode
+New-TriggerNode
+New-PropertyNode
 Open-PrtgObject
 Pause-Object
 Refresh-Object
@@ -287,6 +294,7 @@ Set-ObjectProperty
 Set-PrtgClient
 Set-NotificationTrigger
 Set-NotificationTriggerProperty
+Show-PrtgTree
 Simulate-ErrorStatus
 Sort-PrtgObject
 Start-AutoDiscovery
