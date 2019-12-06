@@ -134,7 +134,9 @@ namespace PrtgAPI.Linq.Expressions.Serialization
             if (mapping != null)
             {
                 var deserializer = new ValueDeserializer(mapping, null, rawValue);
-                var result = deserializer.Deserialize();
+                Expression initExpression = null;
+                List<ParameterExpression> variables = new List<ParameterExpression>();
+                var result = deserializer.Deserialize(ref initExpression, ref variables);
 
                 if (viaObject)
                 {
@@ -145,15 +147,35 @@ namespace PrtgAPI.Linq.Expressions.Serialization
                     var assignInternal = internalProp.Assign(result);
                     var externalProp = Expression.MakeMemberAccess(settingsObj, cache.Property);
 
+                    variables.Add(settingsObj);
+
+                    var body = new List<Expression>();
+
+                    if (initExpression != null)
+                        body.Add(initExpression);
+
+                    body.Add(assignObj);
+                    body.Add(assignInternal);
+                    body.Add(Expression.Convert(externalProp, typeof(object)));
+
                     return Expression.Block(
-                        new[] {settingsObj},
-                        assignObj,
-                        assignInternal,
-                        Expression.Convert(externalProp, typeof(object))
+                        variables,
+                        body
                     );
                 }
-
-                return result;
+                else
+                {
+                    if (initExpression != null)
+                    {
+                        return Expression.Block(
+                            variables,
+                            initExpression,
+                            Expression.Convert(result, typeof(object))
+                        );
+                    }
+                    else
+                        return result;
+                }
             }
 
             //Property is not deserializable

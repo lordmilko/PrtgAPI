@@ -120,7 +120,7 @@ namespace PrtgAPI.Linq.Expressions.Serialization
 
         #endregion
 
-        public Expression Deserialize()
+        public Expression Deserialize(ref Expression initExpression, ref List<ParameterExpression> variables)
         {
             if (PropertyType == typeof(string))
                 return ValueOrConverted(XmlExpressionConstants.ToNullableString(readStr));
@@ -139,7 +139,16 @@ namespace PrtgAPI.Linq.Expressions.Serialization
                 var attrib = mapping.PropertyCache.GetAttribute<SplittableStringAttribute>(true);
 
                 if (attrib != null)
-                    return ValueOrConverted(XmlExpressionConstants.ToSplittableStringArray(readStr, Expression.Constant(attrib.Characters)));
+                {
+                    var charsVariable = Expression.Variable(typeof(char[]), "splitChars");
+                    var arrayInit = Expression.NewArrayInit(typeof(char), attrib.Characters.Select(c => Expression.Constant(c)));
+
+                    initExpression = Expression.Assign(charsVariable, arrayInit);
+
+                    variables.Add(charsVariable);
+
+                    return ValueOrConverted(XmlExpressionConstants.ToSplittableStringArray(readStr, charsVariable));
+                }
                 else
                     throw new NotImplementedException($"Cannot deserialize property {mapping.PropertyCache.Property}; array properties must contain a {nameof(SplittableStringAttribute)}.");
             }

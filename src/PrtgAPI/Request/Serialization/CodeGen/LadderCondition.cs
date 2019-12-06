@@ -165,16 +165,27 @@ namespace PrtgAPI.Linq.Expressions.Serialization
         private BlockExpression GenerateNormalPropertyBlock(Expression flag)
         {
             var deserializer = new ValueDeserializer(mapping, generator);
-            var value = deserializer.Deserialize();
+            var variables = new List<ParameterExpression>();
+            Expression initExpression = null;
+            var value = deserializer.Deserialize(ref initExpression, ref variables);
 
             var memberAccess = Expression.MakeMemberAccess(Target, mapping.PropertyCache.Property); //obj.Name
             var memberAssignment = Expression.Assign(memberAccess, value);                          //obj.Name = "Ping"
             var setFlag = Expression.Assign(flag, Expression.Constant(true));                       //flagsArray[0] = true
 
-            var block = Expression.Block(                                                           // {
-                typeof(void),
-                memberAssignment,                                                                   //     obj.Name = "Ping";
-                setFlag                                                                             //     flagsArray[0] = true;
+            var body = new List<Expression>();
+
+            if (initExpression != null)
+                body.Add(initExpression);
+
+            body.Add(memberAssignment);
+            body.Add(setFlag);
+
+            //Now put the expressions above together
+            var block = Expression.Block(
+                typeof(void),                                                                       // {
+                variables,                                                                          //     obj.Name = "Ping";
+                body                                                                                //     flagsArray[0] = true;                                                           
             );                                                                                      // }
 
             return block;

@@ -89,6 +89,7 @@ namespace PrtgAPI.Linq.Expressions.Pretty
                 case ExpressionType.Parameter:
                 case ExpressionType.New:
                 case ExpressionType.NewArrayBounds:
+                case ExpressionType.NewArrayInit:
                 case ExpressionType.Not:
                 case ExpressionType.Switch:
                 case ExpressionType.Throw:
@@ -270,7 +271,7 @@ namespace PrtgAPI.Linq.Expressions.Pretty
         protected override Expression VisitNewArray(NewArrayExpression node)
         {
             if (node.NodeType == ExpressionType.NewArrayInit)
-                throw new NotImplementedException();
+                VisitNewArrayInit(node);
             else if (node.NodeType == ExpressionType.NewArrayBounds)
                 VisitNewArrayBounds(node);
 
@@ -477,7 +478,7 @@ namespace PrtgAPI.Linq.Expressions.Pretty
 
                     //Is the the character after the \\ equal to the original value?
                     //Doesn't need escaping!
-                    if (str[1] == (char)value)
+                    if (str.Length > 1 && str[1] == (char)value)
                         str = value.ToString();
 
                     return "'" + str + "'";
@@ -703,6 +704,16 @@ namespace PrtgAPI.Linq.Expressions.Pretty
             VisitType(node.Type.GetElementType());
 
             VisitBracketedList(node.Expressions, expression => Visit(expression));
+        }
+
+        void VisitNewArrayInit(NewArrayExpression node)
+        {
+            Write("new");
+            WriteSpace();
+            VisitType(node.Type);
+            WriteSpace();
+
+            VisitBracedList(node.Expressions, expression => Visit(expression));
         }
 
         #endregion
@@ -1019,6 +1030,11 @@ namespace PrtgAPI.Linq.Expressions.Pretty
         void VisitParenthesizedList<T>(IList<T> list, Action<T> writer)
         {
             VisitList(list, "(", writer, ")");
+        }
+
+        void VisitBracedList<T>(IList<T> list, Action<T> writer)
+        {
+            VisitList(list, "{", writer, "}");
         }
 
         void VisitArguments(IList<Expression> expressions)
