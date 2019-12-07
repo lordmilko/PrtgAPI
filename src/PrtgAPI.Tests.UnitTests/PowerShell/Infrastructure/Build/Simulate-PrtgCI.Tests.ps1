@@ -245,7 +245,7 @@ Describe "Simulate-PrtgCI" -Tag @("PowerShell", "Build") {
 
             $expected3 = @(
                 "&"
-                "C:\ProgramData\chocolatey\bin\reportgenerator.exe"
+                "C:\ProgramData\chocolatey\<regex>.+</regex>\reportgenerator.exe"
                 "-reports:$($temp)opencover.xml"
                 "-reporttypes:CsvSummary"
                 "-targetdir:$($temp)report"
@@ -275,6 +275,11 @@ Describe "Simulate-PrtgCI" -Tag @("PowerShell", "Build") {
                     if($Filter -eq "PrtgAPI.Tests.UnitTests.dll")
                     {
                         return [System.IO.FileInfo](Join-PathEx $env:APPVEYOR_BUILD_FOLDER PrtgAPI.Tests.UnitTests bin $env:CONFIGURATION net461 PrtgAPI.Tests.UnitTests.dll)
+                    }
+
+                    if($Filter -eq "net4*")
+                    {
+                        return [System.IO.FileInfo]"C:/ProgramData/chocolatey/lib/reportgenerator.portable/tools/net47"
                     }
 
                     throw "path and filter were $Path and $Filter"
