@@ -315,7 +315,7 @@ namespace PrtgAPI.PowerShell
                     valueStr = channel.DisplayValue.Substring(first, second - first);
                 }
 
-                value = ConvertUtilities.ToDouble(valueStr);
+                value = ConvertUtilities.ToDynamicDouble(valueStr, channel.Value);
             }
 
             return value;

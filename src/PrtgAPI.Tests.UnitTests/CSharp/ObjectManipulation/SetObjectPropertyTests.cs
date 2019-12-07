@@ -3350,7 +3350,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
 
         [UnitTest]
         [TestMethod]
-        public void SetChannelProperty_Ignores_ForeignNumberString_AmericanCulture()
+        public void SetChannelProperty_Ignores_ForeignNumberString_DecimalBelowZero_AmericanCulture()
         {
             TestCustomCulture(() =>
             {
@@ -3364,7 +3364,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
 
         [UnitTest]
         [TestMethod]
-        public void SetChannelProperty_Ignores_ForeignNumberString_EuropeanCulture()
+        public void SetChannelProperty_Ignores_ForeignNumberString_DecimalBelowZero_EuropeanCulture()
         {
             TestCustomCulture(() =>
             {
@@ -3373,7 +3373,165 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
 
                 //Foreign
                 TestFloatEncoding("0.1", "0.1");
-                
+            }, new CultureInfo("de-DE"));
+        }
+
+        [UnitTest]
+        [TestMethod]
+        public void SetChannelProperty_Ignores_ForeignNumberString_Thousand_AmericanCulture()
+        {
+            TestCustomCulture(() =>
+            {
+                //Normal
+                TestFloatEncoding(1000, "1000");
+
+                //Foreign
+                TestFloatEncoding("1.000", "1.000"); //Todo: but will PRTG even accept this?
+            }, new CultureInfo("en-US"));
+        }
+
+        [UnitTest]
+        [TestMethod]
+        public void SetChannelProperty_Ignores_ForeignNumberString_Thousand_EuropeanCulture()
+        {
+            TestCustomCulture(() =>
+            {
+                //Normal
+                TestFloatEncoding(1000, "1000");
+
+                //Foreign
+                TestFloatEncoding("1,000", "1%2C000"); //todo: will prtg even accept this?
+
+            }, new CultureInfo("de-DE"));
+        }
+
+        [UnitTest]
+        [TestMethod]
+        public void SetChannelProperty_Ignores_ForeignNumberString_Thousand_WithDecimal_AmericanCulture()
+        {
+            //Thousands separators are prohibited. As these numbers come from user input this should not be a problem
+
+            TestCustomCulture(() =>
+            {
+                //Normal
+                TestFloatEncoding(1000.2, "1000.2");
+
+                //Foreign
+                TestFloatEncoding("1000,2", "1000%2C2");
+
+                //Foreign Separator
+                AssertEx.Throws<InvalidTypeException>(
+                    () => TestFloatEncoding("1.000,2", null),
+                    "Expected type: 'System.Double'. Actual type: 'System.String'"
+                );
+            }, new CultureInfo("en-US"));
+        }
+
+        [UnitTest]
+        [TestMethod]
+        public void SetChannelProperty_Ignores_ForeignNumberString_Thousand_WithDecimal_EuropeanCulture()
+        {
+            //Thousands separators are prohibited. As these numbers come from user input this should not be a problem
+
+            TestCustomCulture(() =>
+            {
+                //Normal
+                TestFloatEncoding(1000.2, "1000%2C2");
+
+                //Foreign
+                TestFloatEncoding("1000.2", "1000.2");
+
+                //Foreign Separator
+                AssertEx.Throws<InvalidTypeException>(
+                    () => TestFloatEncoding("1,000.2", null),
+                    "Expected type: 'System.Double'. Actual type: 'System.String'"
+                );
+            }, new CultureInfo("de-DE"));
+        }
+
+        [UnitTest]
+        [TestMethod]
+        public void SetChannelProperty_Ignores_ForeignNumberString_Million_AmericanCulture()
+        {
+            //Thousands separators are prohibited. As these numbers come from user input this should not be a problem
+
+            TestCustomCulture(() =>
+            {
+                //Normal
+                TestFloatEncoding(1000000, "1000000");
+
+                //Foreign
+                TestFloatEncoding("1000000", "1000000");
+
+                //Foreign
+                AssertEx.Throws<InvalidTypeException>(
+                    () => TestFloatEncoding("1.000.000", null),
+                    "Expected type: 'System.Double'. Actual type: 'System.String'"
+                );
+            }, new CultureInfo("en-US"));
+        }
+
+        [UnitTest]
+        [TestMethod]
+        public void SetChannelProperty_Ignores_ForeignNumberString_Million_EuropeanCulture()
+        {
+            //Thousands separators are prohibited. As these numbers come from user input this should not be a problem
+
+            TestCustomCulture(() =>
+            {
+                //Normal
+                TestFloatEncoding(1000000, "1000000");
+
+                //Foreign
+                TestFloatEncoding("1000000", "1000000");
+
+                //Foreign Separator
+                AssertEx.Throws<InvalidTypeException>(
+                    () => TestFloatEncoding("1,000,000", null),
+                    "Expected type: 'System.Double'. Actual type: 'System.String'"
+                );
+            }, new CultureInfo("de-DE"));
+        }
+
+        [UnitTest]
+        [TestMethod]
+        public void SetChannelProperty_Ignores_ForeignNumberString_Million_WithDecimal_AmericanCulture()
+        {
+            //Thousands separators are prohibited. As these numbers come from user input this should not be a problem
+
+            TestCustomCulture(() =>
+            {
+                //Normal
+                TestFloatEncoding(1000000.2, "1000000.2");
+
+                //Foreign
+                TestFloatEncoding("1000000,2", "1000000%2C2");
+
+                //Foreign
+                AssertEx.Throws<InvalidTypeException>(
+                    () => TestFloatEncoding("1.000.000,2", null),
+                    "Expected type: 'System.Double'. Actual type: 'System.String'"
+                );
+            }, new CultureInfo("en-US"));
+        }
+
+        [UnitTest]
+        [TestMethod]
+        public void SetChannelProperty_Ignores_ForeignNumberString_Million_WithDecimal_EuropeanCulture()
+        {
+            TestCustomCulture(() =>
+            {
+                //Normal
+                TestFloatEncoding(1000000.2, "1000000%2C2");
+
+                //Foreign
+                TestFloatEncoding("1000000.1", "1000000.1");
+
+                //Foreign Separator
+                AssertEx.Throws<InvalidTypeException>(
+                    () => TestFloatEncoding("1,000,000.2", null),
+                    "Expected type: 'System.Double'. Actual type: 'System.String'"
+                );
             }, new CultureInfo("de-DE"));
         }
 

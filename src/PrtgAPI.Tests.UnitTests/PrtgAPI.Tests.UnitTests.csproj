@@ -74,6 +74,7 @@
   <ItemGroup>
     <Compile Include="CSharp\Infrastructure\CancellationTests.cs" />
     <Compile Include="CSharp\Infrastructure\CodeGeneratorTests.cs" />
+    <Compile Include="CSharp\Infrastructure\ConversionTests.cs" />
     <Compile Include="CSharp\ObjectData\FlagEnumTests.cs" />
     <Compile Include="CSharp\ObjectData\QueryableObjectTests.cs" />
     <Compile Include="CSharp\ObjectData\ScheduleTests.cs" />
