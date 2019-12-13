@@ -142,6 +142,46 @@ namespace PrtgAPI.Utilities
 
                 if (strLastMark == '.' && numRoundedStr == strClean)
                     return ToCommaDecimal(str);
+
+                //Maybe the display value is in bytes
+                var divided = raw.Value;
+                var strDecStr1 = str.Substring(strLastMarkIndex + 1);
+
+                while (divided > 1)
+                {
+                    divided = divided / 1024;
+
+                    if (strClean == ((int) divided).ToString())
+                    {
+                        //All we have is the thousands separator
+                        if (strLastMark == ',')
+                            return ToPeriodDecimal(str);
+                        else
+                            return ToCommaDecimal(str);
+                    }
+                    else
+                    {
+                        Func<string, double> func;
+
+                        if (strLastMark == ',')
+                            func = ToPeriodDecimal;
+                        else
+                            func = ToCommaDecimal;
+
+                        if (strClean == Math.Round(divided).ToString())
+                            return func(str);
+                    }
+                }
+
+                //Maybe it's incomprehensible. If the raw number is >= 1000 though, we know it must represent a thousand
+
+                if (raw >= 1000)
+                {
+                    if (strLastMark == ',')
+                        return ToPeriodDecimal(str);
+                    else
+                        return ToCommaDecimal(str);
+                }
             }
 
             throw new NotImplementedException($"Don't know how to convert double value '{str}' ({raw}).");

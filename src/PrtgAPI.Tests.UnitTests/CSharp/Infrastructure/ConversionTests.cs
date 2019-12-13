@@ -131,6 +131,46 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
         public void Convert_ToDouble_EU_RoundUp_RawHasMoreDecimalPlaces() =>
             TestDouble("1,6667", 1.666667, 1.6667);
 
+        [UnitTest]
+        [TestMethod]
+        public void Convert_ToDouble_US_Bytes_WholeNumber() =>
+            TestDouble("365,006", 382736842424.889, 365006);
+
+        [UnitTest]
+        [TestMethod]
+        public void Convert_ToDouble_EU_Bytes_WholeNumber() =>
+            TestDouble("365.006", 382736842424.889, 365006);
+
+        [UnitTest]
+        [TestMethod]
+        public void Convert_ToDouble_US_Bytes_Decimal() =>
+            TestDouble("365,006.297", 382736842424.889, 365006.297);
+
+        [UnitTest]
+        [TestMethod]
+        public void Convert_ToDouble_EU_Bytes_Decimal() =>
+            TestDouble("365.006,297", 382736842424.889, 365006.297);
+
+        [UnitTest]
+        [TestMethod]
+        public void Convert_ToDouble_US_Bytes_RawDecimal_RoundedUp() =>
+            TestDouble("1,042", 1066537.3092, 1042);
+
+        [UnitTest]
+        [TestMethod]
+        public void Convert_ToDouble_EU_Bytes_RawDecimal_RoundedUp() =>
+            TestDouble("1.042", 1066537.3092, 1042);
+
+        [UnitTest]
+        [TestMethod]
+        public void Convert_ToDouble_US_Incomprehensible_Over1000() =>
+            TestDouble("1,234", 772526.123, 1234);
+
+        [UnitTest]
+        [TestMethod]
+        public void Convert_ToDouble_EU_Incomprehensible_Over1000() =>
+            TestDouble("1.234", 772526.123, 1234);
+
         private void TestDouble(string s, double d, double expected)
         {
             var result = ConvertUtilities.ToDynamicDouble(s, d);
