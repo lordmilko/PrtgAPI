@@ -91,6 +91,25 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
 
         [UnitTest]
         [TestMethod]
+        public void SensorHistory_CanProcess_TrafficSensorsWithDuplicateChannelIds()
+        {
+            var channels = new[]
+            {
+                new SensorHistoryChannelItem("-1", "Total (Volume)", "1", "1024"),
+                new SensorHistoryChannelItem("-1", "Total (Speed)", "2", "2048")
+            };
+
+            var client = Initialize_Client(new SensorHistoryResponse(new SensorHistoryItem(channels: channels)));
+
+            var records = client.GetSensorHistory(1001);
+
+            Assert.AreEqual(2, records[0].ChannelRecords.Count);
+            Assert.AreEqual(1024, records[0].ChannelRecords[0].Value);
+            Assert.AreEqual(2048, records[0].ChannelRecords[1].Value);
+        }
+
+        [UnitTest]
+        [TestMethod]
         public void SensorHistory_NoData_AllLanguages()
         {
             AssertEx.AssertErrorResponseAllLanguages<PrtgRequestException>(

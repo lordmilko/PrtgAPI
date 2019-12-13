@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Net;
@@ -435,9 +436,19 @@ namespace PrtgAPI.Request
         {
             //PRTG does not return a raw record if the sensor did not return a value
             //(such as because it was in an error state)
-            var rawRecord = history.ChannelRecordsRaw.FirstOrDefault(r => r.ChannelId == record.ChannelId);
+            var rawRecords = history.ChannelRecordsRaw.Where(r => r.ChannelId == record.ChannelId).ToArray();
 
-            return rawRecord?.Value;
+            if (rawRecords.Length < 2)
+                return rawRecords.FirstOrDefault()?.Value;
+
+            //We have a history record that contains multiple records for a specified channel ID (e.g. a Traffic Sensor)
+            var displayRecords = history.ChannelRecords.Where(r => r.ChannelId == record.ChannelId).ToList();
+
+            Debug.Assert(rawRecords.Length == displayRecords.Count, "Had different number of display and raw records!");
+
+            var thisIndex = displayRecords.IndexOf(record);
+
+            return rawRecords[thisIndex].Value;
         }
 
         #endregion
