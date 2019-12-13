@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Management.Automation;
 using PrtgAPI.PowerShell.Progress;
+using PrtgAPI.Utilities;
 
 namespace PrtgAPI.PowerShell.Base
 {
@@ -88,7 +89,7 @@ namespace PrtgAPI.PowerShell.Base
             {
                 if (ProgressManager.PreviousContainsProgress)
                 {
-                    ProgressManager.SetPreviousOperation($"Retrieving all {TypeDescription.ToLower()}s");
+                    ProgressManager.SetPreviousOperation($"Retrieving all {TypeDescription.ToLower().ForcePlural()}");
                 }
             }
 

@@ -413,10 +413,7 @@ namespace PrtgAPI.PowerShell.Base
         {
             var str = OperationTypeDescription?.ToLower() ?? TypeDescription.ToLower();
 
-            if (str.EndsWith("ies"))
-                return str;
-
-            return $"{str}s";
+            return str.ForcePlural();
         }
 
         /// <summary>

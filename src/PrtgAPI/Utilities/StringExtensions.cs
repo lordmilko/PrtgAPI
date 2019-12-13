@@ -8,6 +8,17 @@ namespace PrtgAPI.Utilities
     [ExcludeFromCodeCoverage]
     internal static class StringExtensions
     {
+        public static string ForcePlural(this string str)
+        {
+            if (str.EndsWith("s")) //either "s" or "ies"
+                return str;
+
+            if (str.EndsWith("y"))
+                return str.Substring(0, str.Length - 1) + "ies";
+
+            return str + "s";
+        }
+
         public static string Plural(this string str, int count)
         {
             if (count > 1 || count == 0)
