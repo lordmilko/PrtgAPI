@@ -97,20 +97,21 @@ namespace PrtgAPI.Utilities
                     }
                     else
                     {
-                        //Maybe the number of decimal places was rounded up is a match (e.g. 1.67 vs 1.6667)
+                        //Maybe the number of decimal places was rounded up is a match (e.g. 1.67 vs 1.6667).
+                        //If the raw number is bigger than 1000, we'll catch it in the catch all at the end.
 
                         if (strLastMark == '.')
                         {
                             double val;
 
-                            if (TryRoundDecimal(str, raw.Value, ToPeriodDecimal, numDecStr, strDecStr, out val))
+                            if (raw < 1000 && TryRoundDecimal(str, raw.Value, ToPeriodDecimal, numDecStr, strDecStr, out val))
                                 return val;
                         }
                         else
                         {
                             double val;
 
-                            if (TryRoundDecimal(str, raw.Value, ToCommaDecimal, numDecStr, strDecStr, out val))
+                            if (raw < 1000 & TryRoundDecimal(str, raw.Value, ToCommaDecimal, numDecStr, strDecStr, out val))
                                 return val;
                         }
                     }

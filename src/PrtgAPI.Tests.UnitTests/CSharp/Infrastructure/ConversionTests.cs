@@ -133,6 +133,16 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
 
         [UnitTest]
         [TestMethod]
+        public void Convert_ToDouble_US_RoundUp_ThousandMatchesRoundedDecimal() =>
+            TestDouble("42,778", 44856456689.7778, 42778);
+
+        [UnitTest]
+        [TestMethod]
+        public void Convert_ToDouble_EU_RoundUp_ThousandMatchesRoundedDecimal() =>
+            TestDouble("42.778", 44856456689.7778, 42778);
+
+        [UnitTest]
+        [TestMethod]
         public void Convert_ToDouble_US_Bytes_WholeNumber() =>
             TestDouble("365,006", 382736842424.889, 365006);
 
