@@ -25,7 +25,7 @@ namespace PrtgAPI.Tree
                             ignoredChildren.Add(child);
                         else
                         {
-                            if (newChild.Difference != TreeNodeDifference.None)
+                            if (newChild.TreeDifference != TreeNodeDifference.None)
                                 newChildren.Add(newChild);
                         }
                     }

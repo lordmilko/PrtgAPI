@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using System.Linq;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PrtgAPI.Tests.UnitTests.Support.Tree;
 using PrtgAPI.Tree;
 
@@ -91,6 +92,42 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             var comparison = node.CompareTo(node).Reduce();
 
             Assert.IsNull(comparison);
+        }
+
+        [UnitTest]
+        [TestMethod]
+        public void Tree_Compare_Reduce_TreeDifference()
+        {
+            //We wanna make sure we're reducing on the TreeDifference, not the regular Difference.
+            //If we're reducing on the regular Difference, dc-1/2 gets reduced to have no children, but
+            //Servers doesn't have a difference so doesn't get replaced under Local Probe
+
+            var first = PrtgNode.Probe(Probe("Local Probe"),
+                PrtgNode.Group(Group("Servers"),
+                    PrtgNode.Device(Device("dc-1", 3001),
+                        PrtgNode.Sensor(Sensor("Sensor1", 4001),
+                            DefaultProperty
+                        ),
+                        PrtgNode.Sensor(Sensor("Sensor2", 4002))
+                    )
+                 )
+            );
+
+            var second = PrtgNode.Probe(Probe("Local Probe"),
+                PrtgNode.Group(Group("Servers"),
+                    PrtgNode.Device(Device("dc-2", 3001),
+                        PrtgNode.Sensor(Sensor("Sensor1", 4001),
+                            DefaultProperty
+                        ),
+                        PrtgNode.Sensor(Sensor("Sensor2", 4002))
+                    )
+                )
+            );
+
+            var comparison = first.CompareTo(second);
+            var reduced = comparison.Reduce();
+            var list = reduced.DescendantNodesAndSelf().ToList();
+            Assert.AreEqual(3, list.Count);
         }
 
         [UnitTest]
