@@ -344,7 +344,79 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             );
         }
 
-        protected void Validate(
+        [UnitTest]
+        [TestMethod]
+        public void Tree_Compare_PropertyValue_Same()
+        {
+            var first = PrtgNode.Device(Device(),
+                PrtgNode.Property(Property("First Property"))
+            );
+
+            var second = PrtgNode.Device(Device(),
+                PrtgNode.Property(Property("First Property"))
+            );
+
+            ValidatePretty(first, second, new[]
+            {
+                "dc-1",
+                "└──First Property"
+            }, new[]
+            {
+                "dc-1",
+                "└──First Property"
+            });
+        }
+
+        [UnitTest]
+        [TestMethod]
+        public void Tree_Compare_PropertyValue_Different()
+        {
+            var first = PrtgNode.Device(Device(),
+                PrtgNode.Property(Property("First Property"))
+            );
+
+            var second = PrtgNode.Device(Device(),
+                PrtgNode.Property(Property("First Property", null))
+            );
+
+            ValidatePretty(first, second, new[]
+            {
+                "dc-1",
+                "└──<Yellow>First Property ('dc-1' -> '')</Yellow>"
+            }, new[]
+            {
+                "dc-1",
+                "└──<Yellow>First Property ('' -> 'dc-1')</Yellow>"
+            });
+        }
+
+        [UnitTest]
+        [TestMethod]
+        public void Tree_Compare_TriggerValue_Different()
+        {
+            //Don't need a test for Same because having a different action on the same trigger
+            //is considered a rename, but a value change
+
+            var first = PrtgNode.Device(Device(),
+                PrtgNode.Trigger(Trigger("Original Action"))
+            );
+
+            var second = PrtgNode.Device(Device(),
+                PrtgNode.Trigger(Trigger("Renamed Trigger"))
+            );
+
+            ValidatePretty(first, second, new[]
+            {
+                "dc-1",
+                "└──<Yellow>Original Action (Renamed 'Renamed Trigger')</Yellow>"
+            }, new[]
+            {
+                "dc-1",
+                "└──<Yellow>Renamed Trigger (Renamed 'Original Action')</Yellow>"
+            });
+        }
+
+        internal static void Validate(
             PrtgNode first,
             PrtgNode second,
             Validation[] validateFirst,

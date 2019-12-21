@@ -5,7 +5,7 @@ using PrtgAPI.Tree;
 namespace PrtgAPI.Tests.UnitTests.Tree
 {
     [TestClass]
-    public class TreeCompareReduceTests : TreeCompareTests
+    public class TreeCompareReduceTests : BaseTreeTest
     {
         [UnitTest]
         [TestMethod]
@@ -208,7 +208,7 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             if (secondReduced == null)
                 secondReduced = firstReduced;
 
-            Validate(first, second, validateFirst, validateSecond, (c1, c2) =>
+            TreeCompareTests.Validate(first, second, validateFirst, validateSecond, (c1, c2) =>
             {
                 var r1 = c1.Reduce();
                 var r2 = c2.Reduce();

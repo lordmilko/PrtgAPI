@@ -29,23 +29,28 @@ namespace PrtgAPI.Tree
         Name = 4,
 
         /// <summary>
+        /// A fundamental part of the node's value is different.
+        /// </summary>
+        Value = 8,
+
+        /// <summary>
         /// One of the nodes has children while the other does not have any at all.
         /// </summary>
-        HasChildren = 8,
+        HasChildren = 16,
 
         /// <summary>
         /// Both nodes have children however the exact number if different.
         /// </summary>
-        NumberOfChildren = 16,
+        NumberOfChildren = 32,
 
         /// <summary>
         /// The node was added in the second tree.
         /// </summary>
-        Added = 32,
+        Added = 64,
 
         /// <summary>
         /// The node was removed from the first tree.
         /// </summary>
-        Removed = 64
+        Removed = 128
     }
 }

@@ -1086,6 +1086,40 @@
         <View>
             <Name>Default</Name>
             <ViewSelectedBy>
+                <TypeName>PrtgAPI.Tree.PropertyNode</TypeName>
+            </ViewSelectedBy>
+            <TableControl>
+                <TableHeaders>
+                    <TableColumnHeader/> <!-- Name -->
+                    <TableColumnHeader/> <!-- Type -->
+                    <TableColumnHeader/> <!-- Parent -->
+                    <TableColumnHeader> <!-- Value -->
+                        <Label>Value</Label>
+                    </TableColumnHeader>
+                </TableHeaders>
+                <TableRowEntries>
+                    <TableRowEntry>
+                        <TableColumnItems>
+                            <TableColumnItem>
+                                <PropertyName>Name</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>Type</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>Parent</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <ScriptBlock>$_.Value.Value</ScriptBlock>
+                            </TableColumnItem>
+                        </TableColumnItems>
+                    </TableRowEntry>
+                </TableRowEntries>
+            </TableControl>
+        </View>
+        <View>
+            <Name>Default</Name>
+            <ViewSelectedBy>
                 <TypeName>PrtgAPI.Tree.PrtgNodeGrouping</TypeName>
             </ViewSelectedBy>
             <TableControl>

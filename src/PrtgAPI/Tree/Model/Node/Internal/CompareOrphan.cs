@@ -145,6 +145,12 @@ namespace PrtgAPI.Tree.Internal
 
                 if (first.Value.Name != second.Value.Name)
                     differences.Add(TreeNodeDifference.Name);
+
+                if (first.Value is PropertyValuePair && second.Value is PropertyValuePair)
+                {
+                    if (!string.Equals(((PropertyValuePair) first.Value).Value?.ToString(), ((PropertyValuePair) second.Value).Value?.ToString()))
+                        differences.Add(TreeNodeDifference.Value);
+                }
             }
 
             if (first.Children.Count > 0 && second.Children.Count == 0 || second.Children.Count > 0 && first.Children.Count == 0)

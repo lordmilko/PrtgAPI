@@ -83,6 +83,9 @@ namespace PrtgAPI.Tree.Converters.Text
             if (node.Difference.Contains(TreeNodeDifference.Name))
                 return $"{node.First.Name} (Renamed '{node.Second.Name}')";
 
+            if (node.Difference.Contains(TreeNodeDifference.Value) && node.First.Value is PropertyValuePair && node.Second.Value is PropertyValuePair)
+                return $"{node.Name} ('{((PropertyValuePair) node.First.Value).Value}' -> '{((PropertyValuePair) node.Second.Value).Value}')";
+
             return node.Name;
         }
 
