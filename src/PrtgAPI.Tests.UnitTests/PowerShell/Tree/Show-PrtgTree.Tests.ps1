@@ -41,6 +41,40 @@ Describe "Show-PrtgTree" -Tag @("PowerShell", "UnitTest") {
 
             $comparison | Show-PrtgTree
         }
+
+        It "reduces a CompareNode" {
+            $first = DeviceNode -Id 3000 {
+                SensorNode -Id 4000
+            }
+
+            $second = DeviceNode -Id 3000 {
+                SensorNode -Id 4001
+            }
+
+            $comparison = $first.CompareTo($second)
+
+            $comparison.Reduce() | Should Not BeNullOrEmpty
+
+            $comparison | Show-PrtgTree -Reduce
+        }
+
+        It "reduces a CompareNode to nothing" {
+            $tree = DeviceNode -Id 3000 {
+                SensorNode -Id 4000
+            }
+
+            $comparison = $tree.CompareTo($tree)
+
+            $comparison.Reduce() | Should BeNullOrEmpty
+
+            $comparison | Show-PrtgTree -Reduce
+        }
+
+        It "throws attempting to reduce a PrtgNode" {
+            $tree = DeviceNode -Id 3000
+
+            { $tree | Show-PrtgTree -Reduce } | Should Throw "tree does not support reduction"
+        }
     }
 
     Context "Object" {
