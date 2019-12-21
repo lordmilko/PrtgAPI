@@ -76,7 +76,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
 
             var value = new FlagEnum<TreeNodeDifference>(new[] { both });
             Assert.IsTrue(both == value);
-            Assert.IsTrue(value.GetValues().Single() == both);
+            Assert.IsTrue(value.GetValues().Count() == 2);
         }
 
         [UnitTest]

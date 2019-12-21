@@ -139,7 +139,10 @@ namespace PrtgAPI.Tree.Converters.Tree
                 );
             }
 
-            ProgressManager = new TreeProgressManager(null);
+            //If we're just after the most common objects, skip showing progress as we already have everything.
+            //Otherwise, show progress as normal so we know that we're trying to retrieve properties and triggers
+            if(!(Options.Contains(TreeParseOption.Triggers) || Options.Contains(TreeParseOption.Properties)))
+                ProgressManager = new TreeProgressManager(null);
 
             var root = groups.First(g => g.Id == WellKnownId.Root);
 

@@ -46,7 +46,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// If no value is specified, <see cref="TreeParseOption.Common"/> will be used.</para>
         /// </summary>
         [Parameter(Mandatory = false)]
-        public TreeParseOption[] Options { get; }
+        public TreeParseOption[] Options { get; set; }
 
         /// <summary>
         /// <para type="description">The ID of the object to construct a tree for.</para>

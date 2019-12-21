@@ -67,4 +67,10 @@ class TreeVisitor : PrtgAPI.Tree.PrtgNodeWalker
 
         $tree = Get-PrtgTree -Lazy
     }
+
+    It "specifies options" {
+        SetResponseAndClientWithArguments "TreeRequestResponse" "AllObjectTypes"
+
+        $tree = Get-PrtgTree -Options All
+    }
 }

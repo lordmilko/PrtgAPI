@@ -114,8 +114,6 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// </summary>
         protected override void ProcessRecordEx()
         {
-            WriteObject(ParameterSetName);
-
             switch (ParameterSetName)
             {
                 case ParameterSet.Default:

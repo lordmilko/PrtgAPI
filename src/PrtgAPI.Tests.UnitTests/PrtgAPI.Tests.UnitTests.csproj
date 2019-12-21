@@ -172,6 +172,7 @@
     <Compile Include="Support\TestResponses\TakeIterator\SensorScenarios\Group\TakeUnfilteredSensorsFromGroupScenario.cs" />
     <Compile Include="Support\TestResponses\TakeIterator\SensorScenarios\Normal\TakeUnfilteredSensorsScenario.cs" />
     <Compile Include="Support\TestResponses\Tree\Scenarios\ActionPipeToContainerWithChildScenario.cs" />
+    <Compile Include="Support\TestResponses\Tree\Scenarios\AllObjectTypesScenario.cs" />
     <Compile Include="Support\TestResponses\Tree\Scenarios\ContainerWithChildScenario.cs" />
     <Compile Include="Support\TestResponses\Tree\Scenarios\ContainerWithGrandChildScenario.cs" />
     <Compile Include="Support\TestResponses\Tree\Scenarios\FastPathDevicesOnlyScenario.cs" />

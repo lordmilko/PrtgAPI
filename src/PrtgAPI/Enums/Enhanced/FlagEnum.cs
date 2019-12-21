@@ -38,7 +38,8 @@ namespace PrtgAPI
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="FlagEnum{T}"/> with the individual enum flags to to encapsulate.
+        /// Initializes a new instance of the <see cref="FlagEnum{T}"/> with the individual enum values to to encapsulate.<para/>
+        /// If any enum values contain underlying flag values, these values will automatically be expanded.
         /// </summary>
         /// <param name="values">The individual enum flags to encapsulate.</param>
         public FlagEnum(T[] values)
@@ -49,10 +50,23 @@ namespace PrtgAPI
             if (values == null || values.Length == 0)
                 values = new[] { default(T) };
 
-            var agg = values.Select(v => Convert.ToInt32(v)).Aggregate((current, next) => current | next);
+            var underlying = values.Select(v =>
+                {
+                    var u = ((Enum) (object) v).GetUnderlyingFlags().Cast<T>().ToArray();
+
+                    if (u.Length == 0)
+                        return new[] { v };
+                    else
+                        return u;
+                })
+                .SelectMany(v => v).Cast<T>().ToArray();
+
+            var agg = underlying
+                .Select(v => Convert.ToInt32(v))
+                .Aggregate((current, next) => current | next);
 
             this.value = (T) (object) agg;
-            this.values = values;
+            this.values = underlying;
         }
 
         #endregion
