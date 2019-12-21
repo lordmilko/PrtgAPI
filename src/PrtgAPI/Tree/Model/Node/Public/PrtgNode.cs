@@ -76,5 +76,12 @@ namespace PrtgAPI.Tree
             PrtgOrphan.IsTableNameEqual(name, comparison, node.Orphan);
 
         internal override PrtgNode CreateIndexerGrouping(TreeOrphan orphanGrouping) => new PrtgNodeGrouping((PrtgOrphanGrouping) orphanGrouping, this);
+
+        /// <summary>
+        /// Indicates whether the essence of this node's identity is equal to another node's identity.
+        /// </summary>
+        /// <param name="other">The node to compare with.</param>
+        /// <returns>True if the other node's identity is equal to this object. Otherwise, false.</returns>
+        internal bool EqualsIdentity(PrtgNode other) => Orphan.EqualsIdentity(other?.Orphan);
     }
 }

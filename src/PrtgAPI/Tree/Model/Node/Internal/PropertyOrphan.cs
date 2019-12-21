@@ -72,5 +72,36 @@ namespace PrtgAPI.Tree.Internal
             foreach (var child in children)
                 throw GetInvalidChildException(child);
         }
+
+        /// <summary>
+        /// Indicates whether the essence of this orphan's identity is equal to another orphan's identity.
+        /// </summary>
+        /// <param name="other">The orphan to compare with.</param>
+        /// <returns>True if the other orphan's identity is equal to this object. Otherwise, false.</returns>
+        internal override bool EqualsIdentity(PrtgOrphan other)
+        {
+            if (other == null)
+                return false;
+
+            if (GetType() != other.GetType())
+                return false;
+
+            var property = (PropertyValuePair) other.Value;
+
+            if (property.Property.IsLeft)
+            {
+                if (Value.Property.IsLeft)
+                    return property.Property.Left == Value.Property.Left;
+
+                return false;
+            }
+            else
+            {
+                if (Value.Property.IsLeft)
+                    return false;
+
+                return property.Property.Right == Value.Property.Right;
+            }
+        }
     }
 }

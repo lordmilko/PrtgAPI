@@ -53,5 +53,21 @@ namespace PrtgAPI.Tree.Internal
         /// <param name="value">The value to compare against.</param>
         /// <returns>If the value does not match this object's value, a new object containing the value. Otherwise, this object.</returns>
         internal PrtgOrphan<TValue> WithValue(TValue value) => Update(value, Children);
+
+        /// <summary>
+        /// Indicates whether the essence of this orphan's identity is equal to another orphan's identity.
+        /// </summary>
+        /// <param name="other">The orphan to compare with.</param>
+        /// <returns>True if the other orphan's identity is equal to this object. Otherwise, false.</returns>
+        internal override bool EqualsIdentity(PrtgOrphan other)
+        {
+            if (other == null)
+                return false;
+
+            if (GetType() != other.GetType())
+                return false;
+
+            return Value.Id == other.Value.Id;
+        }
     }
 }

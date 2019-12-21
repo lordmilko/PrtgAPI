@@ -346,6 +346,140 @@ namespace PrtgAPI.Tests.UnitTests.Tree
 
         [UnitTest]
         [TestMethod]
+        public void Tree_Compare_SecondLastNodeRemoved()
+        {
+            var first = PrtgNode.Device(Device(),
+                PrtgNode.Sensor(Sensor("First Sensor")),
+                PrtgNode.Sensor(Sensor("Second Sensor", 4002))
+            );
+
+            var second = PrtgNode.Device(Device(),
+                PrtgNode.Sensor(Sensor("Second Sensor", 4002))
+            );
+
+            ValidatePretty(first, second, new[]
+            {
+                "<Yellow>dc-1</Yellow>",
+                "├──<Red>First Sensor</Red>",
+                "└──Second Sensor"
+            }, new[]
+            {
+                "<Yellow>dc-1</Yellow>",
+                "├──Second Sensor",
+                "└──<Green>First Sensor</Green>"
+            });
+        }
+
+        [UnitTest]
+        [TestMethod]
+        public void Tree_Compare_SecondLastNodeRemoved_LastNodeTriggerCollection()
+        {
+            var first = PrtgNode.Device(Device(),
+                PrtgNode.Sensor(Sensor("First Sensor")),
+                PrtgNode.TriggerCollection(DefaultTrigger)
+            );
+
+            var second = PrtgNode.Device(Device(),
+                PrtgNode.TriggerCollection(DefaultTrigger)
+            );
+
+            ValidatePretty(first, second, new[]
+            {
+                "<Yellow>dc-1</Yellow>",
+                "├──<Red>First Sensor</Red>",
+                "└──Triggers",
+                "   └──Email to Admin"
+            }, new[]
+            {
+                "<Yellow>dc-1</Yellow>",
+                "├──Triggers",
+                "│  └──Email to Admin",
+                "└──<Green>First Sensor</Green>"
+            });
+        }
+
+        [UnitTest]
+        [TestMethod]
+        public void Tree_Compare_SecondLastNodeRemoved_LastNodePropertyCollection()
+        {
+            var first = PrtgNode.Device(Device(),
+                PrtgNode.Sensor(Sensor("First Sensor")),
+                PrtgNode.PropertyCollection(PrtgNode.Property(3001, "name_", "test"))
+            );
+
+            var second = PrtgNode.Device(Device(),
+                PrtgNode.PropertyCollection(PrtgNode.Property(3001, "name_", "test"))
+            );
+
+            ValidatePretty(first, second, new[]
+            {
+                "<Yellow>dc-1</Yellow>",
+                "├──<Red>First Sensor</Red>",
+                "└──Properties",
+                "   └──name_"
+            }, new[]
+            {
+                "<Yellow>dc-1</Yellow>",
+                "├──Properties",
+                "│  └──name_",
+                "└──<Green>First Sensor</Green>",
+            });
+        }
+
+        [UnitTest]
+        [TestMethod]
+        public void Tree_Compare_SecondLastNodeRemoved_LastNodeTrigger()
+        {
+            var first = PrtgNode.Device(Device(),
+                PrtgNode.Trigger(Trigger("First Trigger")),
+                PrtgNode.Trigger(Trigger("Second Trigger", 2))
+            );
+
+            var second = PrtgNode.Device(Device(),
+                PrtgNode.Trigger(Trigger("Second Trigger", 2))
+            );
+
+            ValidatePretty(first, second, new[]
+            {
+                "<Yellow>dc-1</Yellow>",
+                "├──<Red>First Trigger</Red>",
+                "└──Second Trigger"
+            }, new[]
+            {
+                "<Yellow>dc-1</Yellow>",
+                "├──Second Trigger",
+                "└──<Green>First Trigger</Green>"
+            });
+        }
+
+        [UnitTest]
+        [TestMethod]
+        public void Tree_Compare_SecondLastNodeRemoved_LastNodeProperty()
+        {
+            var first = PrtgNode.Device(Device(),
+                PrtgNode.Property(Property("First Property")),
+                PrtgNode.Property(Property("Second Property"))
+            );
+
+            var second = PrtgNode.Device(Device(),
+                PrtgNode.Property(Property("Second Property"))
+            );
+
+            ValidatePretty(first, second, new[]
+            {
+                "<Yellow>dc-1</Yellow>",
+                "├──<Red>First Property</Red>",
+                "└──Second Property"
+            }, new[]
+            {
+                "<Yellow>dc-1</Yellow>",
+                "├──Second Property",
+                "└──<Green>First Property</Green>"
+            });
+        }
+
+        [UnitTest]
+        [TestMethod]
         public void Tree_Compare_PropertyValue_Same()
         {
             var first = PrtgNode.Device(Device(),

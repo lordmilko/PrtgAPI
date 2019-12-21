@@ -2605,6 +2605,23 @@ namespace PrtgAPI.Tests.UnitTests.Tree
 
         [UnitTest]
         [TestMethod]
+        public void Tree_CompareNode_Difference_Child_Type()
+        {
+            var first = PrtgNode.Probe(Probe(),
+                PrtgNode.Group(Group())
+            );
+
+            var second = PrtgNode.Probe(Probe(),
+                PrtgNode.Device(Device("Servers", 2001, 2))
+            );
+
+            var comparison = first.CompareTo(second);
+
+            Assert.IsTrue(TreeNodeDifference.Type == comparison.TreeDifference);
+        }
+
+        [UnitTest]
+        [TestMethod]
         public void Tree_CompareNode_Difference_ParentId()
         {
             var first = PrtgNode.Probe(Probe());
