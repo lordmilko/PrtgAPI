@@ -1,8 +1,9 @@
-﻿using PrtgAPI.Utilities;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using PrtgAPI.Reflection;
+using PrtgAPI.Utilities;
 
 namespace PrtgAPI
 {
@@ -27,14 +28,22 @@ namespace PrtgAPI
             if (!(typeof(T).IsEnum))
                 throw new ArgumentException("Value must be an enum.", nameof(value));
 
-            this.value = value;
-
             var underlying = ((Enum) (object) value).GetUnderlyingFlags().Cast<T>().ToArray();
 
             if (underlying.Length > 0)
+            {
+                //We can't just assign the value directly, as if a negative enum was specified,
+                //the value is now every value _but_ that
+                this.value = MergeFlags(underlying);
+
                 values = underlying;
+            }
             else
-                values = new[] { value };
+            {
+                this.value = value;
+
+                values = new[] {value};
+            }
         }
 
         /// <summary>
@@ -42,7 +51,7 @@ namespace PrtgAPI
         /// If any enum values contain underlying flag values, these values will automatically be expanded.
         /// </summary>
         /// <param name="values">The individual enum flags to encapsulate.</param>
-        public FlagEnum(T[] values)
+        public FlagEnum(params T[] values)
         {
             if (!(typeof(T).IsEnum))
                 throw new ArgumentException("Value must be an enum.", nameof(values));
@@ -50,7 +59,27 @@ namespace PrtgAPI
             if (values == null || values.Length == 0)
                 values = new[] { default(T) };
 
-            var underlying = values.Select(v =>
+            var defined = values.Where(v => ((Enum) (object) v).GetEnumFieldCache() != null).ToArray();
+            var undefined = values.Except(defined).ToArray();
+
+            if (undefined.Length > 0)
+            {
+                var mergeUndefined = undefined.Select(u => Convert.ToInt32(u))
+                    .Aggregate((current, next) => current & next);
+
+                if (defined.Length > 0)
+                {
+                    var mergedDefined = Convert.ToInt32(MergeFlags(defined));
+
+                    var updatedValue = (T) (object) (mergedDefined & mergeUndefined);
+
+                    values = new[] {updatedValue};
+                }
+                else
+                    values = new[] { (T) (object) mergeUndefined };
+            }
+
+            var definedFlags = values.Select(v =>
                 {
                     var u = ((Enum) (object) v).GetUnderlyingFlags().Cast<T>().ToArray();
 
@@ -61,12 +90,16 @@ namespace PrtgAPI
                 })
                 .SelectMany(v => v).Cast<T>().ToArray();
 
-            var agg = underlying
-                .Select(v => Convert.ToInt32(v))
-                .Aggregate((current, next) => current | next);
+            var definedFlagsAggregated = MergeFlags(definedFlags);
 
-            this.value = (T) (object) agg;
-            this.values = underlying;
+            this.value = definedFlagsAggregated;
+            this.values = definedFlags;
+        }
+
+        private static T MergeFlags(T[] flags)
+        {
+            return (T) (object) flags.Select(v => Convert.ToInt32(v))
+                .Aggregate((current, next) => current | next);
         }
 
         #endregion
@@ -88,6 +121,15 @@ namespace PrtgAPI
         public static implicit operator FlagEnum<T>(T value)
         {
             return new FlagEnum<T>(value);
+        }
+
+        /// <summary>
+        /// Creates a new <see cref="FlagEnum{T}"/>from one or more specified enum values.
+        /// </summary>
+        /// <param name="values">The values to encapsulate.</param>
+        public static implicit operator FlagEnum<T>(T[] values)
+        {
+            return new FlagEnum<T>(values); //todo: needs a unit test
         }
 
         /// <summary>
@@ -120,6 +162,24 @@ namespace PrtgAPI
         {
             return (T) (object) ((int) (object) left.value | (int) (object) right.value);
         }
+
+        /// <summary>
+        /// Performs a bitwise complement on the enum value contained in a single <see cref="FlagEnum{T}"/>
+        /// and returns a new <see cref="FlagEnum{T}"/> containing every every enum that was not in the original value.
+        /// </summary>
+        /// <param name="value">The operand to process.</param>
+        /// <returns>The result of performing a bitwise complement of the specified operand.</returns>
+        public static FlagEnum<T> operator ~(FlagEnum<T> value)
+        {
+            var integer = ~Convert.ToInt32(value.value);
+
+            return (T) (object) integer;
+        }
+
+        /// <summary>
+        /// Retrieves the merged enum contained in this object.
+        /// </summary>
+        public T Value => value;
 
         /// <summary>
         /// Retrieves all of the flags contained in the enum.

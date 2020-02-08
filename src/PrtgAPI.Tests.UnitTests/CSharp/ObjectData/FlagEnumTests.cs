@@ -110,6 +110,74 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
 
         [UnitTest]
         [TestMethod]
+        public void FlagEnum_ArrayConstructor_NegateCombined_One()
+        {
+            var value = new FlagEnum<TreeParseOption>(TreeParseOption.Common, ~TreeParseOption.Probes);
+
+            Assert.AreEqual(3, value.GetValues().Count);
+            Assert.IsTrue(value == (TreeParseOption.Sensors | TreeParseOption.Devices | TreeParseOption.Groups));
+        }
+
+        [UnitTest]
+        [TestMethod]
+        public void FlagEnum_ArrayConstructor_NegateCombined_Two()
+        {
+            var value = new FlagEnum<TreeParseOption>(TreeParseOption.Common, ~TreeParseOption.Sensors, ~TreeParseOption.Probes);
+
+            Assert.AreEqual(2, value.GetValues().Count);
+            Assert.IsTrue(value == (TreeParseOption.Devices | TreeParseOption.Groups));
+        }
+
+        [UnitTest]
+        [TestMethod]
+        public void FlagEnum_ArrayConstructor_NegationOnly_One()
+        {
+            var value = new FlagEnum<TreeParseOption>(~TreeParseOption.Probes);
+
+            var expected = TreeParseOption.Sensors | TreeParseOption.Devices | TreeParseOption.Groups | TreeParseOption.Triggers | TreeParseOption.Properties;
+
+            Assert.IsTrue(expected == value);
+            Assert.AreEqual(5, value.GetValues().Count);
+        }
+
+        [UnitTest]
+        [TestMethod]
+        public void FlagEnum_ArrayConstructor_NegationOnly_Two()
+        {
+            var value = new FlagEnum<TreeParseOption>(~TreeParseOption.Probes & ~TreeParseOption.Sensors);
+
+            var expected = TreeParseOption.Devices | TreeParseOption.Groups | TreeParseOption.Triggers | TreeParseOption.Properties;
+
+            Assert.IsTrue(expected == value);
+            Assert.AreEqual(4, value.GetValues().Count);
+        }
+
+        [UnitTest]
+        [TestMethod]
+        public void FlagEnum_ArrayConstructor_NegationOnly_One_Array()
+        {
+            var value = new FlagEnum<TreeParseOption>(new[]{~TreeParseOption.Probes});
+
+            var expected = TreeParseOption.Sensors | TreeParseOption.Devices | TreeParseOption.Groups | TreeParseOption.Triggers | TreeParseOption.Properties;
+
+            Assert.IsTrue(expected == value);
+            Assert.AreEqual(5, value.GetValues().Count);
+        }
+
+        [UnitTest]
+        [TestMethod]
+        public void FlagEnum_ArrayConstructor_NegationOnly_Two_Array()
+        {
+            var value = new FlagEnum<TreeParseOption>(~TreeParseOption.Probes, ~TreeParseOption.Sensors);
+
+            var expected = TreeParseOption.Devices | TreeParseOption.Groups | TreeParseOption.Triggers | TreeParseOption.Properties;
+
+            Assert.IsTrue(expected == value);
+            Assert.AreEqual(4, value.GetValues().Count);
+        }
+
+        [UnitTest]
+        [TestMethod]
         public void FlagEnum_Implicit_ToFlagEnum()
         {
             FlagEnum<TreeNodeDifference> value = TreeNodeDifference.Name | TreeNodeDifference.NumberOfChildren;
@@ -156,6 +224,18 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             var value = first & TreeNodeDifference.Name;
 
             Assert.IsTrue(value == TreeNodeDifference.Name);
+        }
+
+        [UnitTest]
+        [TestMethod]
+        public void FlagEnum_Operators_BitwiseComplement()
+        {
+            var original = new FlagEnum<TreeParseOption>(TreeParseOption.Common);
+
+            var complement = ~original;
+
+            Assert.IsTrue((TreeParseOption.Triggers | TreeParseOption.Properties) == complement);
+            Assert.AreEqual(2, complement.GetValues().Count);
         }
 
         [UnitTest]
