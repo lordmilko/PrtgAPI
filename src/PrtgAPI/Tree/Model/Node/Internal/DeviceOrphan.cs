@@ -6,14 +6,14 @@ namespace PrtgAPI.Tree.Internal
     /// <summary>
     /// Represents a <see cref="Device"/> in the PRTG Object Tree that does not have a child -> parent relationship.
     /// </summary>
-    internal class DeviceOrphan : PrtgOrphan<Device>
+    internal class DeviceOrphan : PrtgOrphan<IDevice>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="DeviceOrphan"/> class with a specified device and children.
         /// </summary>
         /// <param name="device">The device to encapsulate in this orphan.</param>
         /// <param name="children">The children of this orphan.</param>
-        internal DeviceOrphan(Device device, IEnumerable<PrtgOrphan> children) : base(device, children, PrtgNodeType.Device)
+        internal DeviceOrphan(IDevice device, IEnumerable<PrtgOrphan> children) : base(device, children, PrtgNodeType.Device)
         {
         }
 
@@ -41,7 +41,7 @@ namespace PrtgAPI.Tree.Internal
         /// <param name="device">The device object to compare against.</param>
         /// <param name="children">The children to compare against.</param>
         /// <returns>If the value or children do not match those stored in this object, a new object containing those values. Otherwise, this object.</returns>
-        internal override PrtgOrphan<Device> Update(Device device, IEnumerable<PrtgOrphan> children)
+        internal override PrtgOrphan<IDevice> Update(IDevice device, IEnumerable<PrtgOrphan> children)
         {
             if (device != Value || children != Children)
                 return Device(device, children);

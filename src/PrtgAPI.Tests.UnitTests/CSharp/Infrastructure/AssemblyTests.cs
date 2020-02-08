@@ -886,6 +886,123 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
         [TestMethod]
         public void AllUnitTestMethods_HaveUnitTestAttribute() => ValidateTestMethodCategory<UnitTestAttribute>(GetType().Assembly);
 
+        [UnitTest]
+        [TestMethod]
+        public void AllPrtgObjectTypes_HaveInterfaceTypes()
+        {
+            var xmlDocExceptions = new[]
+            {
+                Tuple.Create("PrtgAPI.Device", "PrtgAPI.IDevice", "Group"),
+                Tuple.Create("PrtgAPI.Sensor", "PrtgAPI.ISensor", "Group"),
+                Tuple.Create("PrtgAPI.Device", "PrtgAPI.IDevice", "Probe"),
+                Tuple.Create("PrtgAPI.Group", "PrtgAPI.IGroup", "Probe"),
+                Tuple.Create("PrtgAPI.Sensor", "PrtgAPI.ISensor", "Probe"),
+                Tuple.Create("PrtgAPI.PrtgObject", "PrtgAPI.IPrtgObject", "Name")
+            };
+
+            var types = typeof(PrtgObject).Assembly.GetTypes().Where(t => typeof(PrtgObject).IsAssignableFrom(t)).Where(
+                t => t != typeof(NotificationAction) && t != typeof(Schedule) && t != typeof(Ticket) && t != typeof(UserAccount) && t != typeof(UserGroup)
+            ).ToList();
+
+            var classesAndInterfaces = new List<SyntaxNode>();
+
+            WithTree((file, tree, model) =>
+            {
+                var results = tree.GetRoot().DescendantNodesAndSelf()
+                    .Where(n => n.IsKind(SyntaxKind.ClassDeclaration) || n.IsKind(SyntaxKind.InterfaceDeclaration));
+
+                classesAndInterfaces.AddRange(results);
+            });
+
+            var classSyntaxes = classesAndInterfaces.OfType<ClassDeclarationSyntax>().ToArray();
+            var interfaceSyntaxes = classesAndInterfaces.OfType<InterfaceDeclarationSyntax>().ToArray();
+
+            //First, check every interface (like IDevice) implements all of the public properties that
+            //the class type implements (like Device) just in case we moved any around. Check that both
+            //the property exists and its type is the same
+            foreach (var type in types)
+            {
+                var interfaces = type.GetInterfaces();
+
+                var thisInterface = interfaces.FirstOrDefault(i => i.Name == "I" + type.Name);
+
+                if (thisInterface == null)
+                    Assert.Fail($"Type '{type}' does not implement interface 'I{type.Name}'.");
+
+                var interfaceChain = new Type[] {thisInterface}
+                    .Concat(thisInterface.GetInterfaces());
+
+                var typeProperties = type.GetProperties();
+                var interfaceProperties = interfaceChain
+                    .SelectMany(i => i.GetProperties())
+                    .ToArray();
+
+                foreach (var property in typeProperties)
+                {
+                    var interfaceProperty = interfaceProperties.FirstOrDefault(p => p.Name == property.Name);
+
+                    if (interfaceProperty == null)
+                        Assert.Fail($"Property '{property}' is missing from interface '{thisInterface}'");
+
+                    if (property.PropertyType != interfaceProperty.PropertyType)
+                        Assert.Fail($"Expected property '{interfaceProperty}' on interface '{thisInterface}' to be of type '{property.PropertyType}', but was of type '{interfaceProperty.PropertyType}' instead");
+                }
+
+                //Next, check that the XML Docs on both the interface property and the class property are in sync.
+                var classSyntax = classSyntaxes.First(c => c.Identifier.ValueText == type.Name);
+                var interfaceSyntax = interfaceSyntaxes.First(c => c.Identifier.ValueText == thisInterface.Name);
+
+                var classPropertySyntaxes = classSyntax.DescendantNodes()
+                    .OfType<PropertyDeclarationSyntax>()
+                    .Where(p => p.Modifiers.Any(m => m.ValueText == "public"))
+                    .ToArray();
+                var interfacePropertySyntaxes = interfaceSyntax.DescendantNodes().OfType<PropertyDeclarationSyntax>().ToArray();
+
+                Func<SyntaxNode, XmlElementSyntax> getXmlDoc = node =>
+                {
+                    var trivia = node.GetLeadingTrivia().Select(t => t.GetStructure())
+                        .OfType<DocumentationCommentTriviaSyntax>().FirstOrDefault();
+
+                    var summary = trivia?.ChildNodes().OfType<XmlElementSyntax>().FirstOrDefault();
+
+                    return summary;
+                };
+
+                foreach (var classPropertySyntax in classPropertySyntaxes)
+                {
+                    var interfacePropertySyntax = interfacePropertySyntaxes.FirstOrDefault(i => i.Identifier.ValueText == classPropertySyntax.Identifier.ValueText);
+
+                    if (interfacePropertySyntax == null)
+                    {
+                        var interfaceNames = interfaceChain.Select(i => i.Name).ToArray();
+
+                        var candidateSyntaxList = interfaceSyntaxes.Where(i => interfaceNames.Contains(i.Identifier.ValueText)).ToList();
+
+                        interfacePropertySyntax = candidateSyntaxList
+                            .SelectMany(c => c.DescendantNodes())
+                            .OfType<PropertyDeclarationSyntax>()
+                            .FirstOrDefault(p => p.Identifier.ValueText == classPropertySyntax.Identifier.ValueText);
+
+                        if (interfacePropertySyntax == null)
+                            Assert.Fail($"Don't know where property '{classPropertySyntax.Identifier.Value}' from class {classPropertySyntax.Identifier.Value} is.");
+                    }
+
+                    var classXml = getXmlDoc(classPropertySyntax)?.Content.ToString().Trim('\n', '\r', '/', ' ');
+                    var interfaceXml = getXmlDoc(interfacePropertySyntax)?.Content.ToString().Trim('\n', '\r', '/', ' ');
+
+                    if (classXml != interfaceXml)
+                    {
+                        var exception = xmlDocExceptions.FirstOrDefault(e =>
+                            e.Item1 == type.FullName && e.Item2 == thisInterface.FullName &&
+                            e.Item3 == classPropertySyntax.Identifier.ValueText);
+
+                        if (exception == null)
+                            Assert.Fail($"Class XML '{classXml}' did not match interface XML '{interfaceXml}'.\r\n\r\nClass: '{type}'\r\nInterface: '{thisInterface}'\r\nProperty: '{classPropertySyntax.Identifier.Value}'");
+                    }
+                }
+            }
+        }
+
         public static void ValidateTestMethodCategory<TCategory>(Assembly assembly) where TCategory : TestCategoryBaseAttribute
         {
             var methods = assembly.GetTypes().SelectMany(TestHelpers.GetTests).ToArray();

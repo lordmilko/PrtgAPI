@@ -39,7 +39,7 @@ namespace PrtgAPI.Tree.Converters.Tree
         /// <param name="children">The children of the sensor.</param>
         /// <returns>A <see cref="SensorOrphan"/> encapsulating the specified <see cref="Sensor"/> and children.</returns>
         public override PrtgOrphan Orphan(ITreeValue value, IEnumerable<PrtgOrphan> children) =>
-            PrtgOrphan.Sensor((Sensor) value, children);
+            PrtgOrphan.Sensor((ISensor) value, children);
 
         /// <summary>
         /// Initializes a new instance of the <see cref="SensorFactory"/> class.

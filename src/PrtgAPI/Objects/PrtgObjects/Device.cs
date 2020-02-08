@@ -6,7 +6,7 @@ namespace PrtgAPI
     /// <summary>
     /// <para type="description">A computer or piece of equipment containing one or more sensors monitored by PRTG.</para>
     /// </summary>
-    public class Device : DeviceOrGroupOrProbe, ISensorOrDevice
+    public class Device : DeviceOrGroupOrProbe, IDevice
     {
         /// <summary>
         /// Location of this object.

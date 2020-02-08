@@ -39,7 +39,7 @@ namespace PrtgAPI.Tree.Converters.Tree
         /// <param name="children">The children of the probe.</param>
         /// <returns>A <see cref="ProbeOrphan"/> encapsulating the specified <see cref="Probe"/> and children.</returns>
         public override PrtgOrphan Orphan(ITreeValue value, IEnumerable<PrtgOrphan> children) =>
-            PrtgOrphan.Probe((Probe) value, children);
+            PrtgOrphan.Probe((IProbe) value, children);
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ProbeFactory"/> class.

@@ -7,14 +7,14 @@ namespace PrtgAPI.Tree.Internal
     /// <summary>
     /// Represents a <see cref="Group"/> in the PRTG Object Tree that does not have a child -> parent relationship.
     /// </summary>
-    internal class GroupOrphan : PrtgOrphan<Group>
+    internal class GroupOrphan : PrtgOrphan<IGroup>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="GroupOrphan"/> class with a specified group and children.
         /// </summary>
         /// <param name="group">The group to encapsulate in this orphan.</param>
         /// <param name="children">The children of this orphan.</param>
-        internal GroupOrphan(Group group, IEnumerable<PrtgOrphan> children) : base(group, children, PrtgNodeType.Group)
+        internal GroupOrphan(IGroup group, IEnumerable<PrtgOrphan> children) : base(group, children, PrtgNodeType.Group)
         {
         }
 
@@ -42,7 +42,7 @@ namespace PrtgAPI.Tree.Internal
         /// <param name="group">The group object to compare against.</param>
         /// <param name="children">The children to compare against.</param>
         /// <returns>If the value or children do not match those stored in this object, a new object containing those values. Otherwise, this object.</returns>
-        internal override PrtgOrphan<Group> Update(Group group, IEnumerable<PrtgOrphan> children)
+        internal override PrtgOrphan<IGroup> Update(IGroup group, IEnumerable<PrtgOrphan> children)
         {
             if (group != Value || children != Children)
                 return Group(group, children);
@@ -65,15 +65,20 @@ namespace PrtgAPI.Tree.Internal
                 {
                     case PrtgNodeType.Device:
                     case PrtgNodeType.Group:
-                        if (Value.Id == WellKnownId.Root)
+                        //We don't allow public creation of proxy objects, and only create them
+                        //when the specified object does not yet exist. Therefore, we know that we are not the root
+                        if (!(Value is IPrtgObjectProxy) && Value.Id == WellKnownId.Root)
                             throw new InvalidOperationException($"Node '{child} (ID: {child.Value.Id})' of type '{child.Type}' cannot be a child of the PRTG Root Node. Only probes may directly descend from the root node.");
 
-                        if (child.Value.Id == WellKnownId.Root)
+                        //Similarly, we know that our child is not the root either
+                        if (!(child.Value is IPrtgObjectProxy) && child.Value.Id == WellKnownId.Root)
                             throw new InvalidOperationException("Cannot add the PRTG Root Node as the child of another group.");
 
                         break;
                     case PrtgNodeType.Probe:
-                        if (Value.Id != WellKnownId.Root)
+                        //Same situation as above. If we're the Root, we wouldn't have been turned
+                        //into a proxt in the first place
+                        if (!(Value is IPrtgObjectProxy) && Value.Id != WellKnownId.Root)
                             throw new InvalidOperationException($"Node '{child} (ID: {child.Value.Id})' of type '{child.Type}' cannot be a child of a group that is not the PRTG Root Node.");
 
                         break;

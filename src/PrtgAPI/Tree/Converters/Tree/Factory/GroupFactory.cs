@@ -39,7 +39,7 @@ namespace PrtgAPI.Tree.Converters.Tree
         /// <param name="children">The children of the group.</param>
         /// <returns>A <see cref="GroupOrphan"/> encapsulating the specified <see cref="Group"/> and children.</returns>
         public override PrtgOrphan Orphan(ITreeValue value, IEnumerable<PrtgOrphan> children) =>
-            PrtgOrphan.Group((Group) value, children);
+            PrtgOrphan.Group((IGroup) value, children);
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GroupFactory"/> class.

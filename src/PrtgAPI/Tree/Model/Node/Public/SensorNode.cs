@@ -7,7 +7,7 @@ namespace PrtgAPI.Tree
     /// <summary>
     /// Represents a <see cref="Sensor"/> in the PRTG Object Tree.
     /// </summary>
-    public class SensorNode : PrtgNode<Sensor>
+    public class SensorNode : PrtgNode<ISensor>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="SensorNode"/> class with the orphan this node encapsulates and the parent of this node.
@@ -42,7 +42,7 @@ namespace PrtgAPI.Tree
         /// <param name="sensor">The sensor object to compare against.</param>
         /// <param name="children">The children to compare against.</param>
         /// <returns>If the value or children do not match those stored in this object, a new object containing those values. Otherwise, this object.</returns>
-        public override PrtgNode<Sensor> Update(Sensor sensor, IEnumerable<PrtgNode> children)
+        public override PrtgNode<ISensor> Update(ISensor sensor, IEnumerable<PrtgNode> children)
         {
             if (sensor != Value || children != Children)
                 return Sensor(sensor, children);

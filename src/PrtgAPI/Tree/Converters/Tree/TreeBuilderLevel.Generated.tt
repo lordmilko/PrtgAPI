@@ -28,7 +28,7 @@ namespace PrtgAPI.Tree.Converters.Tree
 for(int i = 0; i < 2; i++)
 {
 #>
-        private <#= GetSignature("GetDeviceChildren", "List<PrtgOrphan>", i) #>(Device device)
+        private <#= GetSignature("GetDeviceChildren", "List<PrtgOrphan>", i) #>(IDevice device)
         {
             if (device.TotalSensors > 0 && Options.Contains(TreeParseOption.Sensors))
             {
@@ -53,7 +53,7 @@ for(int i = 0; i < 2; i++)
 for(int i = 0; i < 2; i++)
 {
 #>
-        private <#= GetSignature("GetContainerChildren", "List<PrtgOrphan>", i) #>(GroupOrProbe parent)
+        private <#= GetSignature("GetContainerChildren", "List<PrtgOrphan>", i) #>(IGroupOrProbe parent)
         {
             List<ObjectFactory> factories = new List<ObjectFactory>();
 

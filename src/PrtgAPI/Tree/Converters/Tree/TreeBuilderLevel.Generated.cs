@@ -21,7 +21,7 @@ namespace PrtgAPI.Tree.Converters.Tree
         // GetDeviceChildren
         //######################################
 
-        private List<PrtgOrphan> GetDeviceChildren(Device device)
+        private List<PrtgOrphan> GetDeviceChildren(IDevice device)
         {
             if (device.TotalSensors > 0 && Options.Contains(TreeParseOption.Sensors))
             {
@@ -35,7 +35,7 @@ namespace PrtgAPI.Tree.Converters.Tree
             return new List<PrtgOrphan>();
         }
 
-        private async Task<List<PrtgOrphan>> GetDeviceChildrenAsync(Device device)
+        private async Task<List<PrtgOrphan>> GetDeviceChildrenAsync(IDevice device)
         {
             if (device.TotalSensors > 0 && Options.Contains(TreeParseOption.Sensors))
             {
@@ -53,7 +53,7 @@ namespace PrtgAPI.Tree.Converters.Tree
         // GetContainerChildren
         //######################################
 
-        private List<PrtgOrphan> GetContainerChildren(GroupOrProbe parent)
+        private List<PrtgOrphan> GetContainerChildren(IGroupOrProbe parent)
         {
             List<ObjectFactory> factories = new List<ObjectFactory>();
 
@@ -73,7 +73,7 @@ namespace PrtgAPI.Tree.Converters.Tree
             return results;
         }
 
-        private async Task<List<PrtgOrphan>> GetContainerChildrenAsync(GroupOrProbe parent)
+        private async Task<List<PrtgOrphan>> GetContainerChildrenAsync(IGroupOrProbe parent)
         {
             List<ObjectFactory> factories = new List<ObjectFactory>();
 

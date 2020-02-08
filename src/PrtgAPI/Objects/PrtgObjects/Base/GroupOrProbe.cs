@@ -6,7 +6,7 @@ namespace PrtgAPI
     /// <summary>
     /// <para type="description">Base class for Groups and Probes, containing properties that apply to both object types.</para>
     /// </summary>
-    public class GroupOrProbe : DeviceOrGroupOrProbe
+    public class GroupOrProbe : DeviceOrGroupOrProbe, IGroupOrProbe
     {
         /// <summary>
         /// Whether the object is currently expanded or collapsed in the PRTG Interface.

@@ -8,31 +8,31 @@ namespace PrtgAPI.Tree.Internal
     {
         #region Sensor
 
-        internal static SensorOrphan Sensor(Sensor sensor, params PrtgOrphan[] children) => Sensor(sensor, (IEnumerable<PrtgOrphan>) children);
+        internal static SensorOrphan Sensor(ISensor sensor, params PrtgOrphan[] children) => Sensor(sensor, (IEnumerable<PrtgOrphan>) children);
 
-        internal static SensorOrphan Sensor(Sensor sensor, IEnumerable<PrtgOrphan> children) => new SensorOrphan(sensor, children);
+        internal static SensorOrphan Sensor(ISensor sensor, IEnumerable<PrtgOrphan> children) => new SensorOrphan(sensor, children);
 
         #endregion
         #region Device
 
-        internal static DeviceOrphan Device(Device device, params PrtgOrphan[] children) => Device(device, (IEnumerable<PrtgOrphan>) children);
+        internal static DeviceOrphan Device(IDevice device, params PrtgOrphan[] children) => Device(device, (IEnumerable<PrtgOrphan>) children);
 
-        internal static DeviceOrphan Device(Device device, IEnumerable<PrtgOrphan> children) => new DeviceOrphan(device, children);
+        internal static DeviceOrphan Device(IDevice device, IEnumerable<PrtgOrphan> children) => new DeviceOrphan(device, children);
 
         #endregion
         #region Group
 
-        internal static GroupOrphan Group(Group group, params PrtgOrphan[] children) => Group(group, (IEnumerable<PrtgOrphan>) children);
+        internal static GroupOrphan Group(IGroup group, params PrtgOrphan[] children) => Group(group, (IEnumerable<PrtgOrphan>) children);
 
-        internal static GroupOrphan Group(Group group, IEnumerable<PrtgOrphan> children) => new GroupOrphan(group, children);
+        internal static GroupOrphan Group(IGroup group, IEnumerable<PrtgOrphan> children) => new GroupOrphan(group, children);
 
         #endregion
         #region Probe
 
-        internal static ProbeOrphan Probe(Probe probe, params PrtgOrphan[] children) =>
+        internal static ProbeOrphan Probe(IProbe probe, params PrtgOrphan[] children) =>
             Probe(probe, (IEnumerable<PrtgOrphan>) children);
 
-        internal static ProbeOrphan Probe(Probe probe, IEnumerable<PrtgOrphan> children) =>
+        internal static ProbeOrphan Probe(IProbe probe, IEnumerable<PrtgOrphan> children) =>
             new ProbeOrphan(probe, children);
 
         #endregion
@@ -86,17 +86,17 @@ namespace PrtgAPI.Tree.Internal
         [ExcludeFromCodeCoverage]
         internal static PrtgOrphan Object(ITreeValue value, IEnumerable<PrtgOrphan> children)
         {
-            if (value is Probe)
-                return Probe((Probe) value, children);
+            if (value is IProbe)
+                return Probe((IProbe) value, children);
 
-            if (value is Group)
-                return Group((Group) value, children);
+            if (value is IGroup)
+                return Group((IGroup) value, children);
 
-            if (value is Device)
-                return Device((Device) value, children);
+            if (value is IDevice)
+                return Device((IDevice) value, children);
 
-            if (value is Sensor)
-                return Sensor((Sensor) value, children);
+            if (value is ISensor)
+                return Sensor((ISensor) value, children);
 
             if (value is NotificationTrigger)
                 return Trigger((NotificationTrigger) value);

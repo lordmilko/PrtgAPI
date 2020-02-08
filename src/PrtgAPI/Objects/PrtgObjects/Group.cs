@@ -6,7 +6,7 @@ namespace PrtgAPI
     /// <summary>
     /// <para type="description">A group used to organize one or more groups or devices.</para>
     /// </summary>
-    public class Group : GroupOrProbe, ISensorOrDeviceOrGroup
+    public class Group : GroupOrProbe, IGroup
     {
         // ################################## Sensors, Devices, Groups ##################################
         //Also in Device because device must be derived from DeviceOrGroupOrProbe

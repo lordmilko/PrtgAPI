@@ -7,7 +7,7 @@ namespace PrtgAPI.Tree
     /// <summary>
     /// Represents a <see cref="Probe"/> in the PRTG Object Tree.
     /// </summary>
-    public class ProbeNode : PrtgNode<Probe>
+    public class ProbeNode : PrtgNode<IProbe>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="ProbeNode"/> class with the orphan this node encapsulates and the parent of this node.
@@ -42,7 +42,7 @@ namespace PrtgAPI.Tree
         /// <param name="probe">The probe object to compare against.</param>
         /// <param name="children">The children to compare against.</param>
         /// <returns>If the value or children do not match those stored in this object, a new object containing those values. Otherwise, this object.</returns>
-        public override PrtgNode<Probe> Update(Probe probe, IEnumerable<PrtgNode> children)
+        public override PrtgNode<IProbe> Update(IProbe probe, IEnumerable<PrtgNode> children)
         {
             if (probe != Value || children != Children)
                 return Probe(probe, children);

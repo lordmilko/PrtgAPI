@@ -12,7 +12,7 @@ namespace PrtgAPI
     /// <para type="description">Represents a uniquely identifiable object within PRTG.</para>
     /// </summary>
     [AlternateDescription("Object")]
-    public class PrtgObject : IPrtgObject, ITableObject, ITreeValue, ISerializable
+    public class PrtgObject : IPrtgObject, ITableObject, ISerializable
     {
         // ################################## All Object Tables ##################################
 
@@ -111,7 +111,7 @@ namespace PrtgAPI
         private bool active;
 
         /// <summary>
-        /// Whether or not the object is currently active (in a monitoring state). If false, the object is paused.
+        /// Whether or not the object is currently active (such as in a monitoring state). If false, the object is paused.
         /// </summary>
         [XmlElement("active_raw")]
         [PropertyParameter(Property.Active)]

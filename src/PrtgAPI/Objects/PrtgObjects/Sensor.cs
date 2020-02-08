@@ -7,7 +7,7 @@ namespace PrtgAPI
     /// <summary>
     /// <para type="description">An object that monitors and collects information according to a defined scanning interval.</para>
     /// </summary>
-    public class Sensor : SensorOrDeviceOrGroupOrProbe, ISensorOrDevice
+    public class Sensor : SensorOrDeviceOrGroupOrProbe, ISensor
     {
         // ################################## Sensors, Devices, Groups ##################################
         //Also in Group because group must be derived from GroupOrProbe

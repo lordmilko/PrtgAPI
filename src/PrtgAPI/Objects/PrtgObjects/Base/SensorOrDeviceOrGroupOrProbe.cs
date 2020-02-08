@@ -7,7 +7,7 @@ namespace PrtgAPI
     /// <summary>
     /// <para type="description">Base class for Sensors, Devices, Groups and Probes, containing properties that apply to all four object types.</para>
     /// </summary>
-    public class SensorOrDeviceOrGroupOrProbe : SensorOrDeviceOrGroupOrProbeOrTicket
+    public class SensorOrDeviceOrGroupOrProbe : SensorOrDeviceOrGroupOrProbeOrTicket, ISensorOrDeviceOrGroupOrProbe
     {
         // ################################## Sensors, Devices, Groups, Probes, Reports ##################################
         // There is a copy in both SensorOrDeviceOrGroupOrProbe and Report

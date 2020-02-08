@@ -4,9 +4,9 @@ using PrtgAPI.Attributes;
 namespace PrtgAPI
 {
     /// <summary>
-    /// Base class for Sensors, Devices, Groups, Probes, Tickets, TicketData and History, containing properties that apply to all seven object types.
+    /// Base class for Sensors, Devices, Groups, Probes, Tickets and TicketData, containing properties that apply to all seven object types.
     /// </summary>
-    public class SensorOrDeviceOrGroupOrProbeOrTicketOrTicketData : PrtgObject
+    public class SensorOrDeviceOrGroupOrProbeOrTicketOrTicketData : PrtgObject, ISensorOrDeviceOrGroupOrProbeOrTicketOrTicketData
     {
         // ################################## Sensors, Devices, Groups, Probes, Tickets, TicketData ##################################
 

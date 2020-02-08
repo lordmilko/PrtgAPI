@@ -6,7 +6,7 @@ namespace PrtgAPI
     /// <summary>
     /// <para type="description">Base class for Devices, Groups and Probes, containing properties that apply to all three object types.</para>
     /// </summary>
-    public class DeviceOrGroupOrProbe : SensorOrDeviceOrGroupOrProbe
+    public class DeviceOrGroupOrProbe : SensorOrDeviceOrGroupOrProbe, IDeviceOrGroupOrProbe
     {
         /// <summary>
         /// Number of sensors in <see cref="Status.Up"/> state.

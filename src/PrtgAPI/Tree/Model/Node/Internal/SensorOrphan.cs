@@ -5,14 +5,14 @@ namespace PrtgAPI.Tree.Internal
     /// <summary>
     /// Represents a <see cref="Sensor"/> in the PRTG Object Tree that does not have a child -> parent relationship.
     /// </summary>
-    internal class SensorOrphan : PrtgOrphan<Sensor>
+    internal class SensorOrphan : PrtgOrphan<ISensor>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="SensorOrphan"/> class with a specified sensor and children.
         /// </summary>
         /// <param name="sensor">The sensor to encapsulate in this orphan.</param>
         /// <param name="children">The children of this orphan.</param>
-        internal SensorOrphan(Sensor sensor, IEnumerable<PrtgOrphan> children) : base(sensor, children, PrtgNodeType.Sensor)
+        internal SensorOrphan(ISensor sensor, IEnumerable<PrtgOrphan> children) : base(sensor, children, PrtgNodeType.Sensor)
         {
         }
 
@@ -38,7 +38,7 @@ namespace PrtgAPI.Tree.Internal
         /// <param name="sensor">The sensor object to compare against.</param>
         /// <param name="children">The children to compare against.</param>
         /// <returns>If the value or children do not match those stored in this object, a new object containing those values. Otherwise, this object.</returns>
-        internal override PrtgOrphan<Sensor> Update(Sensor sensor, IEnumerable<PrtgOrphan> children)
+        internal override PrtgOrphan<ISensor> Update(ISensor sensor, IEnumerable<PrtgOrphan> children)
         {
             if (sensor != Value || children != Children)
                 return Sensor(sensor, children);

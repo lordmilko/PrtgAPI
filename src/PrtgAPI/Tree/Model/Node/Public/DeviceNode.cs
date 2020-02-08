@@ -7,7 +7,7 @@ namespace PrtgAPI.Tree
     /// <summary>
     /// Represents a <see cref="Device"/> in the PRTG Object Tree.
     /// </summary>
-    public class DeviceNode : PrtgNode<Device>
+    public class DeviceNode : PrtgNode<IDevice>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="DeviceNode"/> class with the orphan this node encapsulates and the parent of this node.
@@ -42,7 +42,7 @@ namespace PrtgAPI.Tree
         /// <param name="device">The device object to compare against.</param>
         /// <param name="children">The children to compare against.</param>
         /// <returns>If the value or children do not match those stored in this object, a new object containing those values. Otherwise, this object.</returns>
-        public override PrtgNode<Device> Update(Device device, IEnumerable<PrtgNode> children)
+        public override PrtgNode<IDevice> Update(IDevice device, IEnumerable<PrtgNode> children)
         {
             if (device != Value || children != Children)
                 return Device(device, children);

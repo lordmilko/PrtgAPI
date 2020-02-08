@@ -7,7 +7,7 @@ namespace PrtgAPI.Tree
     /// <summary>
     /// Represents a <see cref="Group"/> in the PRTG Object Tree.
     /// </summary>
-    public class GroupNode : PrtgNode<Group>
+    public class GroupNode : PrtgNode<IGroup>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="GroupNode"/> class with the orphan this node encapsulates and the parent of this node.
@@ -42,7 +42,7 @@ namespace PrtgAPI.Tree
         /// <param name="group">The group object to compare against.</param>
         /// <param name="children">The children to compare against.</param>
         /// <returns>If the value or children do not match those stored in this object, a new object containing those values. Otherwise, this object.</returns>
-        public override PrtgNode<Group> Update(Group group, IEnumerable<PrtgNode> children)
+        public override PrtgNode<IGroup> Update(IGroup group, IEnumerable<PrtgNode> children)
         {
             if (group != Value || children != Children)
                 return Group(group, children);

@@ -39,7 +39,7 @@ namespace PrtgAPI.Tree.Converters.Tree
         /// <param name="children">The children of the device.</param>
         /// <returns>A <see cref="DeviceOrphan"/> encapsulating the specified <see cref="Device"/> and children.</returns>
         public override PrtgOrphan Orphan(ITreeValue value, IEnumerable<PrtgOrphan> children) =>
-            PrtgOrphan.Device((Device) value, children);
+            PrtgOrphan.Device((IDevice) value, children);
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DeviceFactory"/> class.

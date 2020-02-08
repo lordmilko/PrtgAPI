@@ -7,14 +7,14 @@ namespace PrtgAPI.Tree.Internal
     /// <summary>
     /// Represents a <see cref="Probe"/> in the PRTG Object Tree that does not have a child -> parent relationship.
     /// </summary>
-    internal class ProbeOrphan : PrtgOrphan<Probe>
+    internal class ProbeOrphan : PrtgOrphan<IProbe>
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="ProbeOrphan"/> class with a specified probe and children.
         /// </summary>
         /// <param name="probe">The probe to encapsulate in this orphan.</param>
         /// <param name="children">The children of this orphan.</param>
-        internal ProbeOrphan(Probe probe, IEnumerable<PrtgOrphan> children) : base(probe, children, PrtgNodeType.Probe)
+        internal ProbeOrphan(IProbe probe, IEnumerable<PrtgOrphan> children) : base(probe, children, PrtgNodeType.Probe)
         {
         }
 
@@ -42,7 +42,7 @@ namespace PrtgAPI.Tree.Internal
         /// <param name="probe">The probe object to compare against.</param>
         /// <param name="children">The children to compare against.</param>
         /// <returns>If the value or children do not match those stored in this object, a new object containing those values. Otherwise, this object.</returns>
-        internal override PrtgOrphan<Probe> Update(Probe probe, IEnumerable<PrtgOrphan> children)
+        internal override PrtgOrphan<IProbe> Update(IProbe probe, IEnumerable<PrtgOrphan> children)
         {
             if (probe != Value || children != Children)
                 return Probe(probe, children);

@@ -85,7 +85,7 @@ namespace PrtgAPI.Tree.Converters.Tree
             switch (ValueType)
             {
                 case PrtgNodeType.Device:
-                    foreach (var child in GetDeviceChildren((Device) Value))
+                    foreach (var child in GetDeviceChildren((IDevice) Value))
                         yield return child;
                     break;
 
@@ -107,7 +107,7 @@ namespace PrtgAPI.Tree.Converters.Tree
             switch (ValueType)
             {
                 case PrtgNodeType.Device:
-                    children.AddRange(await GetDeviceChildrenAsync((Device) Value).ConfigureAwait(false));
+                    children.AddRange(await GetDeviceChildrenAsync((IDevice) Value).ConfigureAwait(false));
                     break;
 
                 case PrtgNodeType.Group:
@@ -155,16 +155,16 @@ namespace PrtgAPI.Tree.Converters.Tree
         [ExcludeFromCodeCoverage]
         private static PrtgNodeType GetNodeType(ITreeValue value)
         {
-            if (value is Sensor)
+            if (value is ISensor)
                 return PrtgNodeType.Sensor;
 
-            if (value is Device)
+            if (value is IDevice)
                 return PrtgNodeType.Device;
 
-            if (value is Group)
+            if (value is IGroup)
                 return PrtgNodeType.Group;
 
-            if (value is Probe)
+            if (value is IProbe)
                 return PrtgNodeType.Probe;
 
             if (value is NotificationTrigger)

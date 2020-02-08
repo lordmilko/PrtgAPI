@@ -14,7 +14,7 @@ namespace PrtgAPI.Tree
         /// <param name="sensor">The sensor this node represents.</param>
         /// <param name="children">The children of this node.</param>
         /// <returns>A node containing the specified sensor and a copy of the children that point to this node as their parent.</returns>
-        public static SensorNode Sensor(Sensor sensor, params PrtgNode[] children) => Sensor(sensor, (IEnumerable<PrtgNode>) children);
+        public static SensorNode Sensor(ISensor sensor, params PrtgNode[] children) => Sensor(sensor, (IEnumerable<PrtgNode>) children);
 
         /// <summary>
         /// Creates a new <see cref="SensorNode"/> from a sensor and its children.
@@ -22,7 +22,7 @@ namespace PrtgAPI.Tree
         /// <param name="sensor">The sensor this node represents.</param>
         /// <param name="children">The children of this node.</param>
         /// <returns>A node containing the specified sensor and a copy of the children that point to this node as their parent.</returns>
-        public static SensorNode Sensor(Sensor sensor, IEnumerable<PrtgNode> children) =>
+        public static SensorNode Sensor(ISensor sensor, IEnumerable<PrtgNode> children) =>
             PrtgOrphan.Sensor(sensor, GetOrphans(children)).ToStandaloneNode<SensorNode>();
 
         #endregion
@@ -34,7 +34,7 @@ namespace PrtgAPI.Tree
         /// <param name="device">The device this node represents.</param>
         /// <param name="children">The children of this node.</param>
         /// <returns>A node containing the specified device and a copy of the children that point to this node as their parent.</returns>
-        public static DeviceNode Device(Device device, params PrtgNode[] children) => Device(device, (IEnumerable<PrtgNode>) children);
+        public static DeviceNode Device(IDevice device, params PrtgNode[] children) => Device(device, (IEnumerable<PrtgNode>) children);
 
         /// <summary>
         /// Creates a new <see cref="DeviceNode"/> from a device and its children.
@@ -42,7 +42,7 @@ namespace PrtgAPI.Tree
         /// <param name="device">The device this node represents.</param>
         /// <param name="children">The children of this node.</param>
         /// <returns>A node containing the specified device and a copy of the children that point to this node as their parent.</returns>
-        public static DeviceNode Device(Device device, IEnumerable<PrtgNode> children) =>
+        public static DeviceNode Device(IDevice device, IEnumerable<PrtgNode> children) =>
             PrtgOrphan.Device(device, GetOrphans(children)).ToStandaloneNode<DeviceNode>();
 
         #endregion
@@ -54,7 +54,7 @@ namespace PrtgAPI.Tree
         /// <param name="group">The group this node represents.</param>
         /// <param name="children">The children of this node.</param>
         /// <returns>A node containing the specified group and a copy of the children that point to this node as their parent.</returns>
-        public static GroupNode Group(Group group, params PrtgNode[] children) => Group(group, (IEnumerable<PrtgNode>) children);
+        public static GroupNode Group(IGroup group, params PrtgNode[] children) => Group(group, (IEnumerable<PrtgNode>) children);
 
         /// <summary>
         /// Creates a new <see cref="GroupNode"/> from a group and its children.
@@ -62,7 +62,7 @@ namespace PrtgAPI.Tree
         /// <param name="group">The group this node represents.</param>
         /// <param name="children">The children of this node.</param>
         /// <returns>A node containing the specified group and a copy of the children that point to this node as their parent.</returns>
-        public static GroupNode Group(Group group, IEnumerable<PrtgNode> children) =>
+        public static GroupNode Group(IGroup group, IEnumerable<PrtgNode> children) =>
             PrtgOrphan.Group(group, GetOrphans(children)).ToStandaloneNode<GroupNode>();
 
         #endregion
@@ -74,7 +74,7 @@ namespace PrtgAPI.Tree
         /// <param name="probe">The probe this node represents.</param>
         /// <param name="children">The children of this node.</param>
         /// <returns>A node containing the specified probe and a copy of the children that point to this node as their parent.</returns>
-        public static ProbeNode Probe(Probe probe, params PrtgNode[] children) => Probe(probe, (IEnumerable<PrtgNode>) children);
+        public static ProbeNode Probe(IProbe probe, params PrtgNode[] children) => Probe(probe, (IEnumerable<PrtgNode>) children);
 
         /// <summary>
         /// Creates a new <see cref="ProbeNode"/> from a probe and its children.
@@ -82,7 +82,7 @@ namespace PrtgAPI.Tree
         /// <param name="probe">The probe this node represents.</param>
         /// <param name="children">The children of this node.</param>
         /// <returns>A node containing the specified probe and a copy of the children that point to this node as their parent.</returns>
-        public static ProbeNode Probe(Probe probe, IEnumerable<PrtgNode> children) =>
+        public static ProbeNode Probe(IProbe probe, IEnumerable<PrtgNode> children) =>
             PrtgOrphan.Probe(probe, GetOrphans(children)).ToStandaloneNode<ProbeNode>();
 
         #endregion
