@@ -97,7 +97,8 @@ namespace PrtgAPI.Tree.Internal
         /// <param name="first">The node from the first tree this object should compare.</param>
         /// <param name="second">The node from the second tree this object should compare.</param>
         /// <param name="children">The children of this orphan.</param>
-        internal CompareOrphan(PrtgNode first, PrtgNode second, IEnumerable<CompareOrphan> children) : base(FlattenCollections(children), (int) TreeNodeType.Node)
+        /// <param name="interestedDifferences">The differences to consider. If no value is specified, all differences will be considered.</param>
+        internal CompareOrphan(PrtgNode first, PrtgNode second, IEnumerable<CompareOrphan> children, TreeNodeDifference[] interestedDifferences = null) : base(FlattenCollections(children), (int) TreeNodeType.Node)
         {
             if (first?.Type == PrtgNodeType.Grouping || second?.Type == PrtgNodeType.Grouping)
                 throw new ArgumentException($"Cannot create a comparison containing a node of type {nameof(PrtgNodeType.Grouping)}. Please perform a comparison using a specific grouped node.");
@@ -105,7 +106,7 @@ namespace PrtgAPI.Tree.Internal
             First = first;
             Second = second;
 
-            Difference = GetDifference(first, second);
+            Difference = GetDifference(first, second, interestedDifferences);
         }
 
         /// <summary>
@@ -119,7 +120,7 @@ namespace PrtgAPI.Tree.Internal
 
         #endregion
 
-        private FlagEnum<TreeNodeDifference> GetDifference(PrtgNode first, PrtgNode second)
+        private FlagEnum<TreeNodeDifference> GetDifference(PrtgNode first, PrtgNode second, TreeNodeDifference[] interestedDifferences)
         {
             var differences = new List<TreeNodeDifference>();
 
@@ -127,37 +128,72 @@ namespace PrtgAPI.Tree.Internal
                 return TreeNodeDifference.None;
 
             if (first != null && second == null)
-                return TreeNodeDifference.Removed;
+                differences.Add(TreeNodeDifference.Removed);
 
             if (first == null && second != null)
-                return TreeNodeDifference.Added;
+                differences.Add(TreeNodeDifference.Added);
 
-            if (first.GetType() != second.GetType())
-                differences.Add(TreeNodeDifference.Type);
-
-            //Collections don't have values, so there's no point checking value properties for them
-            if(first.Value != null && second.Value != null)
+            if (first != null && second != null)
             {
-                Debug.Assert(first.Value.Id == second.Value.Id, "If two nodes had different IDs one of them should have been replaced in the comparison visitor with null.");
+                if (first.GetType() != second.GetType())
+                    differences.Add(TreeNodeDifference.Type);
 
-                if (first.Value.ParentId != second.Value.ParentId)
-                    differences.Add(TreeNodeDifference.ParentId);
-
-                if (first.Value.Name != second.Value.Name)
-                    differences.Add(TreeNodeDifference.Name);
-
-                if (first.Value is PropertyValuePair && second.Value is PropertyValuePair)
+                //Collections don't have values, so there's no point checking value properties for them
+                if (first.Value != null && second.Value != null)
                 {
-                    if (!string.Equals(((PropertyValuePair) first.Value).Value?.ToString(), ((PropertyValuePair) second.Value).Value?.ToString()))
-                        differences.Add(TreeNodeDifference.Value);
+                    Debug.Assert(first.Value.Id == second.Value.Id, "If two nodes had different IDs one of them should have been replaced in the comparison visitor with null.");
+
+                    if (first.Value.ParentId != second.Value.ParentId)
+                        differences.Add(TreeNodeDifference.ParentId);
+
+                    if (first.Value.Name != second.Value.Name)
+                        differences.Add(TreeNodeDifference.Name);
+
+                    if (first.Value is ISensorOrDeviceOrGroupOrProbe && second.Value is ISensorOrDeviceOrGroupOrProbe)
+                    {
+                        if (((ISensorOrDeviceOrGroupOrProbe) first.Value).Position !=
+                            ((ISensorOrDeviceOrGroupOrProbe) second.Value).Position)
+                        {
+                            differences.Add(TreeNodeDifference.Position);
+                        }
+                    }
+
+                    if (first.Value is PropertyValuePair && second.Value is PropertyValuePair)
+                    {
+                        if (!string.Equals(((PropertyValuePair) first.Value).Value?.ToString(), ((PropertyValuePair) second.Value).Value?.ToString()))
+                            differences.Add(TreeNodeDifference.Value);
+                    }
                 }
+
+                if ((first.Children.Count > 0 && second.Children.Count == 0 || second.Children.Count > 0 && first.Children.Count == 0))
+                    differences.Add(TreeNodeDifference.HasChildren);
+
+                if (first.Children.Count != second.Children.Count)
+                    differences.Add(TreeNodeDifference.NumberOfChildren);
             }
 
-            if (first.Children.Count > 0 && second.Children.Count == 0 || second.Children.Count > 0 && first.Children.Count == 0)
-                differences.Add(TreeNodeDifference.HasChildren);
+            Debug.Assert(
+                (differences.Contains(TreeNodeDifference.Added) ||
+                 differences.Contains(TreeNodeDifference.Removed)) &&
+                 differences.Count > 1 ?
+                    false :
+                    true,
+                 "Cannot contain more than one difference when the difference is Added or Removed"
+            );
 
-            if (first.Children.Count != second.Children.Count)
-                differences.Add(TreeNodeDifference.NumberOfChildren);
+            if (interestedDifferences != null && interestedDifferences.Length > 0)
+            {
+                var interestedFlags = new FlagEnum<TreeNodeDifference>(interestedDifferences);
+
+                if (interestedFlags != TreeNodeDifference.None)
+                {
+                    var proposedDifferences = new FlagEnum<TreeNodeDifference>(differences.ToArray());
+
+                    var result = proposedDifferences & interestedFlags;
+
+                    return result;
+                }
+            }
 
             return new FlagEnum<TreeNodeDifference>(differences.ToArray());
         }

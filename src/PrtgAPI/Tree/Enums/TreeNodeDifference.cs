@@ -14,7 +14,7 @@ namespace PrtgAPI.Tree
         None = 0,
         
         /// <summary>
-        /// The type of the nodes are different.
+        /// The type of the node is different.
         /// </summary>
         Type = 1,
 
@@ -34,23 +34,28 @@ namespace PrtgAPI.Tree
         Value = 8,
 
         /// <summary>
+        /// The position of the node has changed.
+        /// </summary>
+        Position = 16,
+
+        /// <summary>
         /// One of the nodes has children while the other does not have any at all.
         /// </summary>
-        HasChildren = 16,
+        HasChildren = 32,
 
         /// <summary>
         /// Both nodes have children however the exact number if different.
         /// </summary>
-        NumberOfChildren = 32,
+        NumberOfChildren = 64,
 
         /// <summary>
         /// The node was added in the second tree.
         /// </summary>
-        Added = 64,
+        Added = 128,
 
         /// <summary>
         /// The node was removed from the first tree.
         /// </summary>
-        Removed = 128
+        Removed = 256
     }
 }

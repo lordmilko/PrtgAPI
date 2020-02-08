@@ -29,6 +29,52 @@ Describe "NodeExtension" -Tag @("PowerShell", "UnitTest") {
             $comparison.TreeDifference | Should Be "None"
         }
 
+        It "specifies the comparisons to perform using strings" {
+
+            $first = DeviceNode -Id 3000 {
+                SensorNode -Id 4000
+            }
+
+            $second = DeviceNode -Id 3000 {
+                SensorNode -Id 4001
+            }
+
+            $comparison = $first.CompareTo($second, "added")
+
+            $comparison.TreeDifference | Should Be "Added"
+            $comparison.Children.Count | Should Be 2
+        }
+
+        It "specifies the comparisons to include using enums" {
+            $first = DeviceNode -Id 3000 {
+                SensorNode -Id 4000
+            }
+
+            $second = DeviceNode -Id 3000 {
+                SensorNode -Id 4001
+            }
+
+            $comparison = $first.CompareTo($second, [PrtgAPI.Tree.TreeNodeDifference]::Added)
+
+            $comparison.TreeDifference | Should Be "Added"
+            $comparison.Children.Count | Should Be 2
+        }
+
+        It "specifies the comparisons to exclude using enums" {
+            $first = DeviceNode -Id 3000 {
+                SensorNode -Id 4000
+            }
+
+            $second = DeviceNode -Id 3000 {
+                SensorNode -Id 4001
+            }
+
+            $comparison = $first.CompareTo($second, (-bnot [PrtgAPI.Tree.TreeNodeDifference]::Added))
+
+            $comparison.TreeDifference | Should Be "Removed"
+            $comparison.Children.Count | Should Be 2
+        }
+
         It "reduces a tree" {
 
             SetMultiTypeResponse

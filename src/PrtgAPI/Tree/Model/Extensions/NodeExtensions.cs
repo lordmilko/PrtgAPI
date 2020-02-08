@@ -18,10 +18,12 @@ namespace PrtgAPI.Tree
         /// </summary>
         /// <param name="node">The root of the first tree to compare.</param>
         /// <param name="other">The root of the second tree to compare.</param>
+        /// <param name="differences">The differences to consider. If no value is specified, all differences will be considered.
+        /// To ignore certain differences specify the bitwise complement (~).</param>
         /// <returns>A tree that describes the comparison of both trees.</returns>
-        public static CompareNode CompareTo(this PrtgNode node, PrtgNode other)
+        public static CompareNode CompareTo(this PrtgNode node, PrtgNode other, params TreeNodeDifference[] differences)
         {
-            var comparer = new CompareTreeVisitor(node);
+            var comparer = new CompareTreeVisitor(node, differences);
 
             var result = comparer.Visit(other);
 

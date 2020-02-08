@@ -1,6 +1,6 @@
 ﻿using System;
+using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using PrtgAPI.Tests.UnitTests.Support.TestResponses;
 using PrtgAPI.Tests.UnitTests.Support.Tree;
 using PrtgAPI.Tree;
 
@@ -575,6 +575,394 @@ namespace PrtgAPI.Tests.UnitTests.Tree
                 "├──<Yellow>Sensor 2 (Position)</Yellow>",
                 "└──<Yellow>Sensor 1 (Position)</Yellow>"
             });
+        }
+
+        #region Include Values
+
+        [UnitTest]
+        [TestMethod]
+        public void Tree_Compare_Include_None()
+        {
+            var first = PrtgNode.Device(Device(),
+                PrtgNode.Sensor(Sensor("Sensor 1", 4001))
+            );
+
+            var second = PrtgNode.Device(Device(),
+                PrtgNode.Sensor(Sensor("Sensor 2", 4001))
+            );
+
+            CompareCompared(first, second,
+                new[] { TreeNodeDifference.None },
+                new[] { TreeNodeDifference.None, TreeNodeDifference.Name },
+                new[] { TreeNodeDifference.None, TreeNodeDifference.Name }
+            );
+        }
+
+        [UnitTest]
+        [TestMethod]
+        public void Tree_Compare_Include_Type()
+        {
+            var first = PrtgNode.Group(Group(),
+                PrtgNode.Device(Device("Device 1", 4001)),
+                PrtgNode.Device(Device("Device 3", 4003))
+            );
+
+            var second = PrtgNode.Group(Group(),
+                PrtgNode.Device(Device("Device 2", 4001)),
+                PrtgNode.Group(Group("Device 3", 4003, parentId: 3))
+            );
+
+            CompareCompared(first, second,
+                new[] { TreeNodeDifference.Type },
+                new[] { TreeNodeDifference.None, TreeNodeDifference.Name, TreeNodeDifference.Type },
+                new[] { TreeNodeDifference.None, TreeNodeDifference.None, TreeNodeDifference.Type }
+            );
+        }
+
+        [UnitTest]
+        [TestMethod]
+        public void Tree_Compare_Include_ParentId()
+        {
+            var first = PrtgNode.Group(Group(),
+                PrtgNode.Device(Device("Device 1", 4001)),
+                PrtgNode.Device(Device("Device 3", 4003))
+            );
+
+            var second = PrtgNode.Group(Group(),
+                PrtgNode.Device(Device("Device 2", 4001)),
+                PrtgNode.Device(Device("Device 3", 4003, parentId: 2))
+            );
+
+            CompareCompared(first, second,
+                new[] { TreeNodeDifference.ParentId },
+                new[] { TreeNodeDifference.None, TreeNodeDifference.Name, TreeNodeDifference.ParentId },
+                new[] { TreeNodeDifference.None, TreeNodeDifference.None, TreeNodeDifference.ParentId }
+            );
+        }
+
+        [UnitTest]
+        [TestMethod]
+        public void Tree_Compare_Include_Name()
+        {
+            var first = PrtgNode.Group(Group(),
+                PrtgNode.Device(Device("Device 1", 4001)),
+                PrtgNode.Device(Device("Device 3", 4003))
+            );
+
+            var second = PrtgNode.Group(Group(),
+                PrtgNode.Device(Device("Device 2", 4001)),
+                PrtgNode.Device(Device("Device 3", 4003, parentId: 2))
+            );
+
+            CompareCompared(first, second,
+                new[] { TreeNodeDifference.Name },
+                new[] { TreeNodeDifference.None, TreeNodeDifference.Name, TreeNodeDifference.ParentId },
+                new[] { TreeNodeDifference.None, TreeNodeDifference.Name, TreeNodeDifference.None }
+            );
+        }
+
+        [UnitTest]
+        [TestMethod]
+        public void Tree_Compare_Include_Value()
+        {
+            var first = PrtgNode.Group(Group(),
+                PrtgNode.Device(Device("Device 1", 4001)),
+                PrtgNode.Property(Property("host", "dc-1"))
+            );
+
+            var second = PrtgNode.Group(Group(),
+                PrtgNode.Device(Device("Device 2", 4001)),
+                PrtgNode.Property(Property("host", "dc-2"))
+            );
+
+            CompareCompared(first, second,
+                new[] { TreeNodeDifference.Value },
+                new[] { TreeNodeDifference.None, TreeNodeDifference.Name, TreeNodeDifference.Value },
+                new[] { TreeNodeDifference.None, TreeNodeDifference.None, TreeNodeDifference.Value }
+            );
+        }
+
+        [UnitTest]
+        [TestMethod]
+        public void Tree_Compare_Include_Position()
+        {
+            var first = PrtgNode.Group(Group(),
+                PrtgNode.Device(Device("Device 1", 4001)),
+                PrtgNode.Device(Device("Device 3", 4003, position: 1))
+            );
+
+            var second = PrtgNode.Group(Group(),
+                PrtgNode.Device(Device("Device 2", 4001)),
+                PrtgNode.Device(Device("Device 3", 4003, position: 2))
+            );
+
+            CompareCompared(first, second,
+                new[] { TreeNodeDifference.Position },
+                new[] { TreeNodeDifference.None, TreeNodeDifference.Name, TreeNodeDifference.Position },
+                new[] { TreeNodeDifference.None, TreeNodeDifference.None, TreeNodeDifference.Position }
+            );
+        }
+
+        [UnitTest]
+        [TestMethod]
+        public void Tree_Compare_Include_HasChildren()
+        {
+            var first = PrtgNode.Group(Group(),
+                PrtgNode.Device(Device("Device 1", 4001),
+                    PrtgNode.Sensor(Sensor())
+                ),
+                PrtgNode.Device(Device("Device 3", 4003, position: 1))
+            );
+
+            var second = PrtgNode.Group(Group(),
+                PrtgNode.Device(Device("Device 1", 4001)),
+                PrtgNode.Device(Device("Device 3", 4003, position: 2))
+            );
+
+            CompareCompared(first, second,
+                new[] { TreeNodeDifference.HasChildren },
+                new[] { TreeNodeDifference.None, TreeNodeDifference.HasChildren | TreeNodeDifference.NumberOfChildren, TreeNodeDifference.Removed, TreeNodeDifference.Position },
+                new[] { TreeNodeDifference.None, TreeNodeDifference.HasChildren, TreeNodeDifference.None, TreeNodeDifference.None }
+            );
+        }
+
+        [UnitTest]
+        [TestMethod]
+        public void Tree_Compare_Include_NumberOfChildren()
+        {
+            var first = PrtgNode.Group(Group(),
+                PrtgNode.Device(Device("Device 1", 4001),
+                    PrtgNode.Sensor(Sensor())
+                ),
+                PrtgNode.Device(Device("Device 3", 4003, position: 1))
+            );
+
+            var second = PrtgNode.Group(Group(),
+                PrtgNode.Device(Device("Device 1", 4001),
+                    PrtgNode.Sensor(Sensor()),
+                    PrtgNode.Sensor(Sensor(id: 4002))
+                ),
+                PrtgNode.Device(Device("Device 3", 4003, position: 2))
+            );
+
+            CompareCompared(first, second,
+                new[] { TreeNodeDifference.NumberOfChildren },
+                new[] { TreeNodeDifference.None, TreeNodeDifference.NumberOfChildren, TreeNodeDifference.None, TreeNodeDifference.Added, TreeNodeDifference.Position },
+                new[] { TreeNodeDifference.None, TreeNodeDifference.NumberOfChildren, TreeNodeDifference.None, TreeNodeDifference.None, TreeNodeDifference.None }
+            );
+        }
+
+        [UnitTest]
+        [TestMethod]
+        public void Tree_Compare_Include_Added()
+        {
+            var first = PrtgNode.Group(Group(),
+                PrtgNode.Device(Device("Device 1", 4001),
+                    PrtgNode.Sensor(Sensor())
+                ),
+                PrtgNode.Device(Device("Device 3", 4003, position: 1))
+            );
+
+            var second = PrtgNode.Group(Group(),
+                PrtgNode.Device(Device("Device 1", 4001),
+                    PrtgNode.Sensor(Sensor()),
+                    PrtgNode.Sensor(Sensor(id: 4002))
+                ),
+                PrtgNode.Device(Device("Device 3", 4003, position: 2))
+            );
+
+            CompareCompared(first, second,
+                new[] { TreeNodeDifference.Added },
+                new[] { TreeNodeDifference.None, TreeNodeDifference.NumberOfChildren, TreeNodeDifference.None, TreeNodeDifference.Added, TreeNodeDifference.Position },
+                new[] { TreeNodeDifference.None, TreeNodeDifference.None, TreeNodeDifference.None, TreeNodeDifference.Added, TreeNodeDifference.None }
+            );
+        }
+
+        [UnitTest]
+        [TestMethod]
+        public void Tree_Compare_Include_Removed()
+        {
+            var first = PrtgNode.Group(Group(),
+                PrtgNode.Device(Device("Device 1", 4001),
+                    PrtgNode.Sensor(Sensor()),
+                    PrtgNode.Sensor(Sensor(id: 4002))
+                ),
+                PrtgNode.Device(Device("Device 3", 4003, position: 1))
+            );
+
+            var second = PrtgNode.Group(Group(),
+                PrtgNode.Device(Device("Device 1", 4001),
+                    PrtgNode.Sensor(Sensor())
+                ),
+                PrtgNode.Device(Device("Device 3", 4003, position: 2))
+            );
+
+            CompareCompared(first, second,
+                new[] { TreeNodeDifference.Removed },
+                new[] { TreeNodeDifference.None, TreeNodeDifference.NumberOfChildren, TreeNodeDifference.None, TreeNodeDifference.Removed, TreeNodeDifference.Position },
+                new[] { TreeNodeDifference.None, TreeNodeDifference.None, TreeNodeDifference.None, TreeNodeDifference.Removed, TreeNodeDifference.None }
+            );
+        }
+
+        #endregion
+
+        [UnitTest]
+        [TestMethod]
+        public void Tree_Compare_Include_Single()
+        {
+            var first = PrtgNode.Group(Group(),
+                PrtgNode.Device(Device("Device 1", 4001)),
+                PrtgNode.Device(Device("Device 3", 4003))
+            );
+
+            var second = PrtgNode.Group(Group(),
+                PrtgNode.Device(Device("Device 2", 4001)),
+                PrtgNode.Device(Device("Device 3", 4003, parentId: 2))
+            );
+
+            CompareCompared(first, second,
+                new[] { TreeNodeDifference.Name },
+                new[] { TreeNodeDifference.None, TreeNodeDifference.Name, TreeNodeDifference.ParentId },
+                new[] { TreeNodeDifference.None, TreeNodeDifference.Name, TreeNodeDifference.None }
+            );
+        }
+
+        [UnitTest]
+        [TestMethod]
+        public void Tree_Compare_Include_Multiple()
+        {
+            var first = PrtgNode.Group(Group(),
+                PrtgNode.Device(Device("Device 1", 4001, parentId: 2)),
+                PrtgNode.Device(Device("Device 2", 4002)),
+                PrtgNode.Device(Device("Device 3", 4003))
+            );
+
+            var second = PrtgNode.Group(Group(),
+                PrtgNode.Device(Device("Device 1", 4001)),
+                PrtgNode.Group(Group("Device 2", 4002, parentId: 3)),
+                PrtgNode.Device(Device("Device 4", 4003))
+            );
+
+            CompareCompared(first, second,
+                new[] { TreeNodeDifference.ParentId, TreeNodeDifference.Type },
+                new[] { TreeNodeDifference.None, TreeNodeDifference.ParentId, TreeNodeDifference.Type, TreeNodeDifference.Name },
+                new[] { TreeNodeDifference.None, TreeNodeDifference.ParentId, TreeNodeDifference.Type, TreeNodeDifference.None }
+            );
+        }
+
+        [UnitTest]
+        [TestMethod]
+        public void Tree_Compare_Exclude_Single()
+        {
+            var first = PrtgNode.Group(Group(),
+                PrtgNode.Device(Device("Device 1", 4001)),
+                PrtgNode.Device(Device("Device 3", 4003))
+            );
+
+            var second = PrtgNode.Group(Group(),
+                PrtgNode.Device(Device("Device 2", 4001)),
+                PrtgNode.Device(Device("Device 3", 4003, parentId: 2))
+            );
+
+            CompareCompared(first, second,
+                new[] { ~TreeNodeDifference.Name },
+                new[] { TreeNodeDifference.None, TreeNodeDifference.Name, TreeNodeDifference.ParentId },
+                new[] { TreeNodeDifference.None, TreeNodeDifference.None, TreeNodeDifference.ParentId }
+            );
+        }
+
+        [UnitTest]
+        [TestMethod]
+        public void Tree_Compare_Exclude_Multiple()
+        {
+            var first = PrtgNode.Group(Group(),
+                PrtgNode.Device(Device("Device 1", 4001, parentId: 2)),
+                PrtgNode.Device(Device("Device 2", 4002)),
+                PrtgNode.Device(Device("Device 3", 4003))
+            );
+
+            var second = PrtgNode.Group(Group(),
+                PrtgNode.Device(Device("Device 1", 4001)),
+                PrtgNode.Group(Group("Device 2", 4002, parentId: 3)),
+                PrtgNode.Device(Device("Device 4", 4003))
+            );
+
+            CompareCompared(first, second,
+                new[] { ~TreeNodeDifference.ParentId, ~TreeNodeDifference.Type },
+                new[] { TreeNodeDifference.None, TreeNodeDifference.ParentId, TreeNodeDifference.Type, TreeNodeDifference.Name },
+                new[] { TreeNodeDifference.None, TreeNodeDifference.None, TreeNodeDifference.None, TreeNodeDifference.Name }
+            );
+        }
+
+        [UnitTest]
+        [TestMethod]
+        public void Tree_Compare_IncludeExclude()
+        {
+            var first = PrtgNode.Group(Group(),
+                PrtgNode.Device(Device("Device 1", 4001, parentId: 2)),
+                PrtgNode.Device(Device("Device 2", 4002)),
+                PrtgNode.Device(Device("Device 3", 4003))
+            );
+
+            var second = PrtgNode.Group(Group(),
+                PrtgNode.Device(Device("Device 1", 4001)),
+                PrtgNode.Group(Group("Device 2", 4002, parentId: 3)),
+                PrtgNode.Device(Device("Device 4", 4003))
+            );
+
+            CompareCompared(first, second,
+                new[] { TreeNodeDifference.Name, ~TreeNodeDifference.Type },
+                new[] { TreeNodeDifference.None, TreeNodeDifference.ParentId, TreeNodeDifference.Type, TreeNodeDifference.Name },
+                new[] { TreeNodeDifference.None, TreeNodeDifference.None, TreeNodeDifference.None, TreeNodeDifference.Name }
+            );
+        }
+
+        [UnitTest]
+        [TestMethod]
+        public void Tree_Compare_IncludeExclude_Conflicting()
+        {
+            var first = PrtgNode.Group(Group(),
+                PrtgNode.Device(Device("Device 1", 4001, parentId: 2)),
+                PrtgNode.Device(Device("Device 2", 4002)),
+                PrtgNode.Device(Device("Device 3", 4003))
+            );
+
+            var second = PrtgNode.Group(Group(),
+                PrtgNode.Device(Device("Device 1", 4001)),
+                PrtgNode.Group(Group("Device 2", 4002, parentId: 3)),
+                PrtgNode.Device(Device("Device 4", 4003))
+            );
+
+            CompareCompared(first, second,
+                new[] { TreeNodeDifference.Name, ~TreeNodeDifference.Name },
+                new[] { TreeNodeDifference.None, TreeNodeDifference.ParentId, TreeNodeDifference.Type, TreeNodeDifference.Name },
+                new[] { TreeNodeDifference.None, TreeNodeDifference.ParentId, TreeNodeDifference.Type, TreeNodeDifference.Name }
+            );
+        }
+
+        private void CompareCompared(
+            PrtgNode first,
+            PrtgNode second,
+            TreeNodeDifference[] filters,
+            TreeNodeDifference[] normal,
+            TreeNodeDifference[] filtered
+        )
+        {
+            Assert.AreEqual(normal.Length, filtered.Length, "Differences to check against results should be the same for both normal and filtered.");
+
+            var normalComparison = first.CompareTo(second);
+            var normalNodes = normalComparison.DescendantNodesAndSelf().ToArray();
+            Assert.AreEqual(normal.Length, normalNodes.Length, "Normal differences did not match number of normal nodes.");
+
+            for (var i = 0; i < normalNodes.Length; i++)
+                Assert.AreEqual(normal[i], normalNodes[i].Difference.Value, $"Difference on normal node {normalNodes[i]} did not match.");
+
+            var filteredComparison = first.CompareTo(second, filters);
+            var filteredNodes = filteredComparison.DescendantNodesAndSelf().ToArray();
+            Assert.AreEqual(filtered.Length, filteredNodes.Length, "Filtered differences did not match number of filtered nodes.");
+
+            for (var i = 0; i < filteredNodes.Length; i++)
+                Assert.AreEqual(filtered[i], filteredNodes[i].Difference.Value, $"Difference on filtered node {filteredNodes[i]} did not match.");
         }
 
         internal static void Validate(

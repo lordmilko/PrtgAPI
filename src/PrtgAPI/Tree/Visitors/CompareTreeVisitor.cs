@@ -10,10 +10,12 @@ namespace PrtgAPI.Tree
     internal class CompareTreeVisitor : PrtgNodeDefaultVisitor<CompareOrphan>
     {
         private PrtgNode first;
+        private TreeNodeDifference[] interestedDifferences;
 
-        internal CompareTreeVisitor(PrtgNode first)
+        internal CompareTreeVisitor(PrtgNode first, TreeNodeDifference[] interestedDifferences)
         {
             this.first = first;
+            this.interestedDifferences = interestedDifferences;
         }
 
         public override CompareOrphan Visit(PrtgNode second)
@@ -41,12 +43,12 @@ namespace PrtgAPI.Tree
             if (first != null && second != null && first?.Value?.Id != second?.Value?.Id)
             {
                 var firstBranchChildren = VisitChildren(first, null);
-                var firstBranchOrphan = new CompareOrphan(first, null, firstBranchChildren);
+                var firstBranchOrphan = new CompareOrphan(first, null, firstBranchChildren, interestedDifferences);
 
                 yield return firstBranchOrphan;
 
                 var secondBranchChildren = VisitChildren(null, second);
-                var secondBranchOrphan = new CompareOrphan(null, second, secondBranchChildren);
+                var secondBranchOrphan = new CompareOrphan(null, second, secondBranchChildren, interestedDifferences);
 
                 yield return secondBranchOrphan;
             }
@@ -54,7 +56,7 @@ namespace PrtgAPI.Tree
             {
                 var children = VisitChildren(first, second);
 
-                var compareOrphan = new CompareOrphan(first, second, children);
+                var compareOrphan = new CompareOrphan(first, second, children, interestedDifferences);
 
                 yield return compareOrphan;
             }
