@@ -53,7 +53,12 @@ namespace PrtgAPI.Request
                 handler.DefaultProxyCredentials = CredentialCache.DefaultNetworkCredentials;
 #endif
             }
-            
+
+            //.NET Framework 4.6.1 does not include TLS 1.2 by default, and future
+            //versions may eventually decide to deprecate it. To ensure backwards
+            //compatibility with all versions of PRTG, do not remove items from this list
+            ServicePointManager.SecurityProtocol |= SecurityProtocolType.Tls12;
+
             asyncClient = new HttpClient(handler);
         }
 
