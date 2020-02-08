@@ -549,6 +549,33 @@ namespace PrtgAPI.Tests.UnitTests.Tree
                 "└──<Yellow>Renamed Trigger (Renamed 'Original Action')</Yellow>"
             });
         }
+        
+        [UnitTest]
+        [TestMethod]
+        public void Tree_Compare_Position_Different()
+        {
+            var first = PrtgNode.Device(Device(),
+                PrtgNode.Sensor(Sensor("Sensor 1", 4001, position: 1)),
+                PrtgNode.Sensor(Sensor("Sensor 2", 4002, position: 2))
+            );
+
+            var second = PrtgNode.Device(Device(),
+                PrtgNode.Sensor(Sensor("Sensor 2", 4002, position: 1)),
+                PrtgNode.Sensor(Sensor("Sensor 1", 4001, position: 2))
+            );
+
+            ValidatePretty(first, second, new[]
+            {
+                "dc-1",
+                "├──<Yellow>Sensor 1 (Position)</Yellow>",
+                "└──<Yellow>Sensor 2 (Position)</Yellow>"
+            }, new[]
+            {
+                "dc-1",
+                "├──<Yellow>Sensor 2 (Position)</Yellow>",
+                "└──<Yellow>Sensor 1 (Position)</Yellow>"
+            });
+        }
 
         internal static void Validate(
             PrtgNode first,

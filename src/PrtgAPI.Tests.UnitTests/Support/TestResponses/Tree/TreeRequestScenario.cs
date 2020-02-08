@@ -44,6 +44,7 @@
         FastPathTriggersOnly,
         FastPathPropertiesOnly,
 
-        AllObjectTypes
+        AllObjectTypes,
+        LazyReorderChildren
     }
 }

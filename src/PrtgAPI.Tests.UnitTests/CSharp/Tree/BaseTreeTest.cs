@@ -12,45 +12,49 @@ namespace PrtgAPI.Tests.UnitTests.Tree
         protected TriggerNode DefaultTrigger => PrtgNode.Trigger(Trigger());
         protected PropertyNode DefaultProperty => PrtgNode.Property(Property());
 
-        protected Probe Probe(string name = "Local Probe", int id = 1001, int parentId = 1)
+        protected Probe Probe(string name = "Local Probe", int id = 1001, int parentId = 1, int position = 1)
         {
             return new Probe
             {
                 Name = name,
                 Id = id,
                 ParentId = parentId,
+                Position = position
             };
         }
 
-        protected Group Group(string name = "Servers", int id = 2001, int parentId = 2)
+        protected Group Group(string name = "Servers", int id = 2001, int parentId = 2, int position = 1)
         {
             return new Group
             {
                 Name = name,
                 Id = id,
-                ParentId = parentId
+                ParentId = parentId,
+                Position = position
             };
         }
 
-        protected Device Device(string name = "dc-1", int id = 3001, int parentId = 3, string host = "dc-1")
+        protected Device Device(string name = "dc-1", int id = 3001, int parentId = 3, string host = "dc-1", int position = 1)
         {
             return new Device
             {
                 Name = name,
                 Id = id,
                 ParentId = parentId,
-                Host = host
+                Host = host,
+                Position = position
             };
         }
 
-        protected Sensor Sensor(string name = "VMware Datastore", int id = 4001, int parentId = 4, string type = "vmwaredatastoreextern")
+        protected Sensor Sensor(string name = "VMware Datastore", int id = 4001, int parentId = 4, string type = "vmwaredatastoreextern", int position = 1)
         {
             return new Sensor
             {
                 Name = name,
                 Id = id,
                 ParentId = parentId,
-                Type = type
+                Type = type,
+                Position = position
             };
         }
 

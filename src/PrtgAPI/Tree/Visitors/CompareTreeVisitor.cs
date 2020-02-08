@@ -121,28 +121,12 @@ namespace PrtgAPI.Tree
                 if (firstChild == null && secondChild == null)
                     continue;
 
-                if (mostChildren == leastChildren||
-                    i < leastChildren - 1 ||
-                    firstChild?.EqualsIdentity(secondChild) == true)
-                {
-                    firstChildren[i] = null;
-                    secondChildren[i] = null;
+                AddMatchOrNew(firstChild, null, i, ref firstChildren, ref secondChildren, pairs);
 
-                    //Whatever; we don't currently support reordering, so as far as we're concerned its been removed and re-added
-                    pairs.Add(Tuple.Create(firstChild, secondChild));
-                }
-                else
-                {
-                    //Either first or second has a different number of children. If the position we're at is beyond
-                    //the length of the smaller list, do a search to see whether our node has been added, removed,
-                    //pushed back or pulled forward due to another node being added or removed
-
-                    //e.g. 1,2,3 -> 1,3. If we are at index 2, we now need to go looking for moved nodes
-                    //If we were at index 0, i < leastChildren - 1 we do the normal path above.
-                    //For index 1 and 2 we grab a node and see whether have a match
-                    AddMatchOrNew(firstChild, null, i, ref firstChildren, ref secondChildren, pairs);
+                //If firstChild matched with secondChild, it would have been nulled out in secondChildren,
+                //so we don't need to "add it again"
+                if (secondChildren.Contains(secondChild))
                     AddMatchOrNew(null, secondChild, i, ref secondChildren, ref firstChildren, pairs);
-                }
             }
 
             return pairs;

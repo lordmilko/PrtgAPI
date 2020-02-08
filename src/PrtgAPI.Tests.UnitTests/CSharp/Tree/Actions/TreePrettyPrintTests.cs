@@ -352,7 +352,7 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             Validate(grouping, expected);
         }
 
-        private void Validate(PrtgNode node, string[] expected)
+        internal static void Validate(PrtgNode node, string[] expected)
         {
             node.PrettyPrint(new PrtgPrettyValidator(expected));
         }

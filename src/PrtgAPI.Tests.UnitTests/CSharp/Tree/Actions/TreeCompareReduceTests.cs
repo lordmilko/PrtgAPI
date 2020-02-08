@@ -166,14 +166,14 @@ namespace PrtgAPI.Tests.UnitTests.Tree
         {
             var first = PrtgNode.Probe(Probe("GrandParent"),
                 PrtgNode.Group(Group("Parent"),
-                    PrtgNode.Device(Device("Child1")),
-                    PrtgNode.Device(Device("Child2"))
+                    PrtgNode.Device(Device("Child1", 3001)),
+                    PrtgNode.Device(Device("Child2", 3002))
                 )
             );
 
             var second = PrtgNode.Probe(Probe("GrandParent"),
                 PrtgNode.Group(Group("Parent"),
-                    PrtgNode.Device(Device("Child1"))
+                    PrtgNode.Device(Device("Child1", 3001))
                 )
             );
 

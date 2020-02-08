@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace PrtgAPI.Linq
 {
@@ -13,9 +14,11 @@ namespace PrtgAPI.Linq
         private Exception ex;
         private bool stopped;
 
+        private IEnumerable<T> source;
+
         internal CachedEnumerableIterator(IEnumerable<T> source)
         {
-            enumerator = source.GetEnumerator();
+            this.source = source;
         }
 
         /// <summary>
@@ -24,6 +27,9 @@ namespace PrtgAPI.Linq
         /// <returns>A compiler generated enumerator.</returns>
         public IEnumerator<T> GetEnumerator()
         {
+            if (enumerator == null)
+                enumerator = source.GetEnumerator();
+
             //Each time GetEnumerator() is called we reset i to 0. This single method is basically transformed
             //into a state machine by the compiler.
             var i = 0;
@@ -80,5 +86,14 @@ namespace PrtgAPI.Linq
         }
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+        internal CachedEnumerableIterator<T> Apply(Func<IEnumerable<T>, IEnumerable<T>> func)
+        {
+            Debug.Assert(enumerator == null, "Cannot Apply a func when the enumerator has already been initialized");
+
+            source = func(source);
+
+            return this;
+        }
     }
 }

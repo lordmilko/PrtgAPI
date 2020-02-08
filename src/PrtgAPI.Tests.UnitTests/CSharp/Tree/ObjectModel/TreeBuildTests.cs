@@ -463,6 +463,61 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             }
         }
 
+        [UnitTest]
+        [TestMethod]
+        public void Tree_Builds_OrdersChildPositions()
+        {
+            var tree = PrtgNode.Probe(Probe(),
+                PrtgNode.TriggerCollection(
+                    PrtgNode.Trigger(Trigger("Trigger1")),
+                    PrtgNode.Trigger(Trigger("Trigger2"))
+                ),
+                PrtgNode.Group(Group("Servers", position: 3)),
+                PrtgNode.Device(Device("dc-1", position: 1),
+                    PrtgNode.Sensor(Sensor("Sensor2", position: 2)),
+                    PrtgNode.Sensor(Sensor("Sensor1", position: 1))
+                ),
+                PrtgNode.Trigger(Trigger("Trigger3")),
+                PrtgNode.Device(Device("dc-2", position: 2))
+            );
+
+            TreePrettyPrintTests.Validate(tree, new[]
+            {
+                "Local Probe",
+                "├──dc-1",
+                "│  ├──Sensor1",
+                "│  └──Sensor2",
+                "├──dc-2",
+                "├──Servers",
+                "├──Trigger1",
+                "├──Trigger2",
+                "└──Trigger3"
+            });
+        }
+
+        [UnitTest]
+        [TestMethod]
+        public void Tree_Builds_OrdersChildPositions_Lazy()
+        {
+            var response = new TreeRequestResponse(TreeRequestScenario.LazyReorderChildren);
+            var client = BaseTest.Initialize_Client(response);
+
+            var tree = client.GetTreeLazy(1001, TreeParseOption.Common | TreeParseOption.Triggers);
+
+            TreePrettyPrintTests.Validate(tree, new[]
+            {
+                "Local Probe",
+                "├──dc-1",
+                "│  ├──Sensor1",
+                "│  └──Sensor2",
+                "├──dc-2",
+                "├──Servers",
+                "├──Trigger1",
+                "├──Trigger2",
+                "└──Trigger3"
+            });
+        }
+
         #endregion
     }
 }

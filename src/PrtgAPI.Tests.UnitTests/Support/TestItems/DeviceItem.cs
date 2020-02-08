@@ -85,7 +85,7 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestItems
             string favoriteRaw = "1", string status = "Up ", string statusRaw = "3", string priority = "5", string message = "<div class=\"status\">OK<div class=\"moreicon\"></div></div>",
             string messageRaw = "OK", string type = "Device", string typeRaw = "device", string active = "True", string activeRaw = "-1", string objid = "40", string name = "Probe Device",
             string comments = "System Analysis: Windows Other names: dc1.contoso.com System Info: Manufacturer: VMware, Inc. Model: VMware Virtual Platform System: x64-based PC",
-            string host = "127.0.0.1", string tags = "C_OS_WIN", string position = "80", string positionRaw = "0000000080"
+            string host = "127.0.0.1", string tags = "C_OS_WIN", string position = "10", string positionRaw = "0000000010"
         )
         {
             Group = group;

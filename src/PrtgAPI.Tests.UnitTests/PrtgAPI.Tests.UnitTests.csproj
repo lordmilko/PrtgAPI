@@ -181,6 +181,7 @@
     <Compile Include="Support\TestResponses\Tree\Scenarios\FastPathPropertiesOnlyScenario.cs" />
     <Compile Include="Support\TestResponses\Tree\Scenarios\FastPathSensorsOnlyScenario.cs" />
     <Compile Include="Support\TestResponses\Tree\Scenarios\FastPathTriggersOnlyScenario.cs" />
+    <Compile Include="Support\TestResponses\Tree\Scenarios\LazyReorderChildrenScenario.cs" />
     <Compile Include="Support\TestResponses\Tree\Scenarios\MultiLevelContainerScenario.cs" />
     <Compile Include="Support\TestResponses\Tree\Scenarios\ObjectPipeToContainerWithChildScenario.cs" />
     <Compile Include="Support\TestResponses\Tree\Scenarios\ObjectToFastPathScenario.cs" />

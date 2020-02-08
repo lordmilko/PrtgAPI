@@ -50,9 +50,9 @@ namespace PrtgAPI.Tree.Internal
         {
             //If we have a CachedEnumerableIterator we implicitly are a safe collection that doesn't need reducing
             if (children is CachedEnumerableIterator<PrtgOrphan>)
-                return children;
+                return ((CachedEnumerableIterator<PrtgOrphan>) children).Apply(OrderChildren);
 
-            return ReduceChildrenInternal(children);
+            return OrderChildren(ReduceChildrenInternal(children));
         }
 
         private static IEnumerable<PrtgOrphan> ReduceChildrenInternal(IEnumerable<PrtgOrphan> children)
@@ -72,6 +72,20 @@ namespace PrtgAPI.Tree.Internal
                         yield return g;
                 }
             }
+        }
+
+        private static IEnumerable<PrtgOrphan> OrderChildren(IEnumerable<PrtgOrphan> children)
+        {
+            //Sort by position, then sort so that positional objects are first
+            return children.OrderBy(c =>
+            {
+                var positional = c?.Value as ISensorOrDeviceOrGroupOrProbe;
+
+                if (positional != null)
+                    return positional.Position;
+                else
+                    return 0;
+            }).OrderBy(c => !(c?.Value is ISensorOrDeviceOrGroupOrProbe));
         }
 
         #endregion
