@@ -463,6 +463,7 @@
     <None Include="PowerShell\ObjectManipulation\Simulate-ErrorStatus.Tests.ps1" />
     <None Include="PowerShell\ObjectManipulation\Sort-PrtgObject.Tests.ps1" />
     <None Include="PowerShell\ObjectManipulation\Start-AutoDiscovery.Tests.ps1" />
+    <None Include="PowerShell\Tree\Compare-PrtgTree.Tests.ps1" />
     <None Include="PowerShell\Tree\Get-PrtgTree.Tests.ps1" />
     <None Include="PowerShell\Tree\New-DeviceNode.Tests.ps1" />
     <None Include="PowerShell\Tree\New-GroupNode.Tests.ps1" />

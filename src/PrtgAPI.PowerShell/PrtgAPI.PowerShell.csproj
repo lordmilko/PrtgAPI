@@ -54,6 +54,7 @@
     <Compile Include="PowerShell\Base\PrtgTimedStateCmdlet.cs" />
     <Compile Include="PowerShell\Cmdlets\ObjectManipulation\SetNotificationTrigger.cs" />
     <Compile Include="PowerShell\Cmdlets\ObjectManipulation\SetNotificationTriggerProperty.cs" />
+    <Compile Include="PowerShell\Cmdlets\Tree\ComparePrtgTree.cs" />
     <Compile Include="PowerShell\Cmdlets\Tree\NewDeviceNode.cs" />
     <Compile Include="PowerShell\Cmdlets\Tree\NewGroupNode.cs" />
     <Compile Include="PowerShell\Cmdlets\Tree\NewProbeNode.cs" />
