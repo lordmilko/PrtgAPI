@@ -21,24 +21,6 @@ namespace PrtgAPI.Tree.Converters.Text
             innerVisitor = new InternalPrtgNodePrettyTreeVisitor(this);
         }
 
-        [ExcludeFromCodeCoverage]
-        protected internal override void VisitProperty(PropertyNode node)
-        {
-            //We don't want to include property values
-        }
-
-        /// <summary>
-        /// Dispatches the children of a collection to their respective visit methods for eventual dispatchment to the <see cref="innerVisitor"/>.
-        /// </summary>
-        /// <param name="node">The node whose children should be visited.</param>
-        protected internal override void VisitCollection(PrtgNodeCollection node)
-        {
-            //In order to exclude VisitProperty, we need to dispatch to the node's respective visit method, rather than calling
-            //upon innerVisitor directly.
-            foreach (var child in node.Children)
-                child.Accept(this);
-        }
-
         /// <summary>
         /// Visits a node via the <see cref="innerVisitor"/>.
         /// </summary>
@@ -66,7 +48,7 @@ namespace PrtgAPI.Tree.Converters.Text
         }
 
         protected override PrettyLine GetLineObject(PrtgNode node, string text) =>
-            new PrettyColorLine(GetColor(node), text);
+            new PrettyColorLine(node, GetColor(node), text);
 
         [ExcludeFromCodeCoverage]
         private ConsoleColor? GetColor(PrtgNode node)
@@ -75,8 +57,22 @@ namespace PrtgAPI.Tree.Converters.Text
             {
                 case PrtgNodeType.Sensor:
                     return GetSensorColor((SensorNode) node);
+                case PrtgNodeType.Property:
+                    return ConsoleColor.Yellow;
                 default:
                     return null;
+            }
+        }
+
+        protected override string GetName(PrtgNode node)
+        {
+            switch (node.Type)
+            {
+                case PrtgNodeType.Property:
+                    return $"{node.Name} ('{((PropertyValuePair) node.Value).Value}')";
+
+                default:
+                    return node.Name;
             }
         }
 
@@ -106,11 +102,6 @@ namespace PrtgAPI.Tree.Converters.Text
                 default:
                     return null;
             }
-        }
-
-        protected override bool IncludeChild(PrtgNode node)
-        {
-            return node.Type != PrtgNodeType.Property;
         }
 
         /// <summary>

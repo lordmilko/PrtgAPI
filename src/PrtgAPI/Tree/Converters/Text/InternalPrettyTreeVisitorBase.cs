@@ -23,14 +23,22 @@ namespace PrtgAPI.Tree.Converters.Text
 
         internal void Visit(TNode node)
         {
-            currentLevel++;
+            if (node.Type == TreeNodeType.Collection)
+            {
+                foreach (var child in node.Children)
+                    OuterVisit(child);
+            }
+            else
+            {
+                currentLevel++;
 
-            AddLine(node);
+                AddLine(node);
 
-            foreach (var child in node.Children)
-                OuterVisit(child);
+                foreach (var child in node.Children)
+                    OuterVisit(child);
 
-            currentLevel--;
+                currentLevel--;
+            }
         }
 
         private void AddLine(TNode node)
@@ -46,7 +54,7 @@ namespace PrtgAPI.Tree.Converters.Text
         {
             var lineBuilder = new StringBuilder();
 
-            var flattenedChildren = FlattenChildren(node.Parent).Where(IncludeChild).ToList();
+            var flattenedChildren = FlattenChildren(node.Parent).ToList();
 
             var currentChild = flattenedChildren.IndexOf(node);
 
@@ -84,8 +92,11 @@ namespace PrtgAPI.Tree.Converters.Text
 
         protected abstract PrettyLine GetLineObject(TNode node, string text);
 
-        private List<TNode> FlattenChildren(TNode parent)
+        private List<TNode> FlattenChildren(TNode parent, bool collectionChildrenAsSiblings = true)
         {
+            if (collectionChildrenAsSiblings && parent?.Type == TreeNodeType.Collection && parent.Parent != null)
+                parent = parent.Parent;
+
             if (parent == null || parent.Children.Count == 0)
                 return new List<TNode>();
 
@@ -95,23 +106,12 @@ namespace PrtgAPI.Tree.Converters.Text
             {
                 //A child can never be a Grouping, so we can ignore that scenario
                 if (child.Type == TreeNodeType.Collection)
-                    nodes.AddRange(FlattenChildren(child));
+                    nodes.AddRange(FlattenChildren(child, false));
                 else
                     nodes.Add(child);
             }
 
             return nodes;
-        }
-
-        /// <summary>
-        /// Specifies whether a child should be included as part of the tree. By default all children are included.<para/>
-        /// Note: if a child is excluded as part of this method, the child's visitor should also be modified as to not call <see cref="Visit(TNode)"/>.
-        /// </summary>
-        /// <param name="node">The node to analyze.</param>
-        /// <returns>True if the node should be considered as part of the tree. Otherwise, false.</returns>
-        protected virtual bool IncludeChild(TNode node)
-        {
-            return true;
         }
 
         private bool IsLastChild(TNode node, int level)
@@ -133,7 +133,7 @@ namespace PrtgAPI.Tree.Converters.Text
 
             Debug.Assert(node.Type == TreeNodeType.Node, $"Should have skipped over a {node.Type}");
 
-            var flattenedChildren = FlattenChildren(parent).Where(IncludeChild).ToList();
+            var flattenedChildren = FlattenChildren(parent).ToList();
 
             var index = flattenedChildren.IndexOf(node);
 

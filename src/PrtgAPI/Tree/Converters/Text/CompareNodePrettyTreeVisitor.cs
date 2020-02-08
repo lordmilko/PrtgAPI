@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace PrtgAPI.Tree.Converters.Text
 {
-    internal class CompareNodePrettyTreeVisitor : CompareNodeVisitor
+    internal class CompareNodePrettyTreeVisitor : CompareNodeDefaultVisitor
     {
         /// <summary>
         /// As we cannot derive from both our node's visitor type and the base class for
@@ -29,17 +30,7 @@ namespace PrtgAPI.Tree.Converters.Text
         /// Visits a node via the <see cref="innerVisitor"/>.
         /// </summary>
         /// <param name="node">The node to visit.</param>
-        protected internal override void VisitNode(CompareNode node) => innerVisitor.Visit(node);
-
-        /// <summary>
-        /// Dispatches the children of a collection to their respective visit methods for eventual dispatchment to the <see cref="innerVisitor"/>.
-        /// </summary>
-        /// <param name="node">The node whose children should be visited.</param>
-        protected internal override void VisitCollection(CompareNodeCollection node)
-        {
-            foreach (var child in node.Children)
-                child.Accept(this);
-        }
+        protected override void DefaultVisit(CompareNode node) => innerVisitor.Visit(node);
     }
 
     /// <summary>
@@ -62,7 +53,7 @@ namespace PrtgAPI.Tree.Converters.Text
         }
 
         protected override PrettyLine GetLineObject(CompareNode node, string text) =>
-            new PrettyColorLine(GetColor(node), text);
+            new PrettyColorLine(node, GetColor(node), text);
 
         private ConsoleColor? GetColor(CompareNode node)
         {
@@ -85,6 +76,19 @@ namespace PrtgAPI.Tree.Converters.Text
 
             if (node.Difference.Contains(TreeNodeDifference.Value) && node.First.Value is PropertyValuePair && node.Second.Value is PropertyValuePair)
                 return $"{node.Name} ('{((PropertyValuePair) node.First.Value).Value}' -> '{((PropertyValuePair) node.Second.Value).Value}')";
+
+            if (node.Difference != TreeNodeDifference.None)
+            {
+                var interestingDifferences = node.Difference.GetValues().Where(
+                    v => v != TreeNodeDifference.HasChildren &&
+                         v != TreeNodeDifference.NumberOfChildren &&
+                         v != TreeNodeDifference.Added &&
+                         v != TreeNodeDifference.Removed
+                ).ToArray();
+
+                if (interestingDifferences.Length > 0)
+                    return $"{node.Name} ({string.Join(", ", interestingDifferences)})";
+            }
 
             return node.Name;
         }

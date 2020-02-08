@@ -26,9 +26,10 @@ namespace PrtgAPI.Tree.Converters.Text
         /// <summary>
         /// Initializes a new instance of the <see cref="PrettyColorLine"/> class.
         /// </summary>
+        /// <param name="node">The node this line represents.</param>
         /// <param name="valueColor">The color to use for the line's inner value.</param>
         /// <param name="text">The text of the line.</param>
-        internal PrettyColorLine(ConsoleColor? valueColor, string text) : base(text)
+        internal PrettyColorLine(TreeNode node, ConsoleColor? valueColor, string text) : base(node, text)
         {
             var i = text.LastIndexOf(PrettyPrintConstants.ConnectChild);
 
