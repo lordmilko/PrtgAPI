@@ -3,7 +3,7 @@
 namespace PrtgAPI.Tree.Internal
 {
     /// <summary>
-    /// Represents a visitor capable of recursively accessing the orphans of a <see cref="CompareOrphan"/> in depth-first order.
+    /// Represents a visitor capable of recursively accessing the orphans of a <see cref="CompareOrphan"/> tree in depth-first order.
     /// </summary>
     [ExcludeFromCodeCoverage]
     internal abstract class CompareOrphanWalker : CompareOrphanVisitor

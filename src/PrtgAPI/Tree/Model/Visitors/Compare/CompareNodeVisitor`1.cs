@@ -3,7 +3,7 @@
 namespace PrtgAPI.Tree
 {
     /// <summary>
-    /// Represents a fully abstract visitor capable of accessing the nodes of a <see cref="CompareNode"/>
+    /// Represents a fully abstract visitor capable of accessing the nodes of a <see cref="CompareNode"/> tree
     /// and produces a value of the type specified by the <typeparamref name="TResult"/> parameter.<para/>
     /// By default this class will only visit the single <see cref="CompareNode"/> passed into its Visit method.<para/>
     /// To utilize a visitor with a default recursive implementation on <see cref="CompareNode"/> objects please see <see cref="CompareNodeRewriter"/>.

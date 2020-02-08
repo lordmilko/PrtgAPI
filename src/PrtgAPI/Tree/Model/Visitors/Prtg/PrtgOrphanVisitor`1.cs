@@ -3,7 +3,7 @@
 namespace PrtgAPI.Tree.Internal
 {
     /// <summary>
-    /// Represents a fully abstract visitor capable of accessing the orphans of a <see cref="PrtgOrphan"/>
+    /// Represents a fully abstract visitor capable of accessing the orphans of a <see cref="PrtgOrphan"/> tree
     /// and produces a value of the type specified by the <typeparamref name="TResult"/> parameter.<para/>
     /// By default this class will only visit the single <see cref="PrtgOrphan"/> passed into its Visit method.<para/>
     /// To utilize a visitor with a default recursive implementation on <see cref="PrtgOrphan"/> objects please see <see cref="PrtgOrphanRewriter"/>.

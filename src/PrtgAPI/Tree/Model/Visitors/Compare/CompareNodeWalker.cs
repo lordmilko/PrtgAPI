@@ -3,7 +3,7 @@
 namespace PrtgAPI.Tree
 {
     /// <summary>
-    /// Represents a visitor capable of recursively accessing the nodes of a <see cref="CompareNode"/> in depth-first order.
+    /// Represents a visitor capable of recursively accessing the nodes of a <see cref="CompareNode"/> tree in depth-first order.
     /// </summary>
     [ExcludeFromCodeCoverage]
     public class CompareNodeWalker : CompareNodeVisitor

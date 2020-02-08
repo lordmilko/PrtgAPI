@@ -3,7 +3,7 @@
 namespace PrtgAPI.Tree.Internal
 {
     /// <summary>
-    /// Represents an abstract visitor capable of accessing the orphans of a <see cref="PrtgOrphan"/> that
+    /// Represents an abstract visitor capable of accessing the orphans of a <see cref="PrtgOrphan"/> tree that
     /// performs a common action for all orphans by default.
     /// </summary>
     [ExcludeFromCodeCoverage]

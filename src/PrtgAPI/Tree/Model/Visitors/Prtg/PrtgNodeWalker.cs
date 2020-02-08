@@ -3,7 +3,7 @@
 namespace PrtgAPI.Tree
 {
     /// <summary>
-    /// Represents a visitor capable of recursively accessing the nodes of a <see cref="PrtgNode"/> in depth-first order.
+    /// Represents a visitor capable of recursively accessing the nodes of a <see cref="PrtgNode"/> tree in depth-first order.
     /// </summary>
     [ExcludeFromCodeCoverage]
     public abstract class PrtgNodeWalker : PrtgNodeVisitor

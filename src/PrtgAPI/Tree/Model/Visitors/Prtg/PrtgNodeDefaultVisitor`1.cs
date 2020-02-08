@@ -3,7 +3,7 @@
 namespace PrtgAPI.Tree
 {
     /// <summary>
-    /// Represents an abstract visitor capable of accessing the nodes of a <see cref="PrtgNode"/> that
+    /// Represents an abstract visitor capable of accessing the nodes of a <see cref="PrtgNode"/> tree that
     /// performs a common action for all nodes by default and and produces a value of the type
     /// specified by the <typeparamref name="TResult"/> parameter.
     /// </summary>

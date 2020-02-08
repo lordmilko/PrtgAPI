@@ -1,7 +1,7 @@
 ﻿namespace PrtgAPI.Tree.Internal
 {
     /// <summary>
-    /// Represents an abstract visitor capable of accessing the orphans of a <see cref="CompareOrphan"/> that
+    /// Represents an abstract visitor capable of accessing the orphans of a <see cref="CompareOrphan"/> tree that
     /// performs a common action for all nodes by default.
     /// </summary>
     internal abstract class CompareOrphanDefaultVisitor<TResult> : CompareOrphanVisitor<TResult>

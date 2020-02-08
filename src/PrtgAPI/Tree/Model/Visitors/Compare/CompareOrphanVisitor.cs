@@ -3,7 +3,7 @@
 namespace PrtgAPI.Tree.Internal
 {
     /// <summary>
-    /// Represents a fully abstract visitor capable of accessing the orphans of a <see cref="CompareOrphan"/>.<para/>
+    /// Represents a fully abstract visitor capable of accessing the orphans of a <see cref="CompareOrphan"/> tree.<para/>
     /// By default this class will only visit the single <see cref="CompareOrphan"/> passed into its Visit method.<para/>
     /// To utilize a visitor with a default recursive implementation please see <see cref="CompareOrphanWalker"/>.
     /// </summary>
