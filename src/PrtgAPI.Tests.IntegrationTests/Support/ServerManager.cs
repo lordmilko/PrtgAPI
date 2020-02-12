@@ -125,16 +125,15 @@ namespace PrtgAPI.Tests.IntegrationTests
 
         private void WaitForSensors()
         {
-            WaitForSensors(Status.Unknown, Status.None);
-
             try
             {
+                WaitForSensors(Status.Unknown, Status.None);
                 WaitForSensors(Status.Down);
                 WaitForSensor(Settings.WarningSensor, Status.Warning);
             }
             catch
             {
-                RepairConfig();
+                RepairConfig(false);
                 WaitForObjects();
             }
         }
@@ -166,11 +165,11 @@ namespace PrtgAPI.Tests.IntegrationTests
             AssertEx.Fail($"Sensor ID {id} failed to return to status '{desiredStatus}'");
         }
 
-        internal void WaitForSensors(params Status[] status)
+        internal void WaitForSensors(params Status[] status) => WaitForSensors(status, 7);
+
+        internal void WaitForSensors(Status[] status, int attempts)
         {
             List<Sensor> sensors;
-
-            var attempts = 15;
 
             var downSensor = Client.GetSensor(Settings.DownSensor);
 
@@ -201,6 +200,8 @@ namespace PrtgAPI.Tests.IntegrationTests
                     {
                         throw new Exception("Sensors did not initialize");
                     }
+                    else
+                        Client.RefreshObject(sensors.Select(s => s.Id).ToArray());
 
                     Thread.Sleep(30000);
                 }
@@ -296,7 +297,7 @@ namespace PrtgAPI.Tests.IntegrationTests
             }
         }
 
-        private void RemoteCleanup(bool deleteConfig)
+        private void RemoteCleanup(bool deleteConfig, bool restoreConfig = true)
         {
             RepairState();
 
@@ -309,17 +310,23 @@ namespace PrtgAPI.Tests.IntegrationTests
             coreService.Stop();
             WaitForStop(coreService);
 
-            Logger.Log($"Restoring config. Delete config backup: {deleteConfig}");
+            if (restoreConfig)
+            {
+                Logger.Log($"Restoring config. Delete config backup: {deleteConfig}");
 
-            try
-            {
-                RestorePrtgConfig(deleteConfig);
+                try
+                {
+                    RestorePrtgConfig(deleteConfig);
+                }
+                catch (Exception ex)
+                {
+                    Logger.Log(ex.Message, true);
+                    throw;
+                }
             }
-            catch (Exception ex)
-            {
-                Logger.Log(ex.Message, true);
-                throw;
-            }
+            else
+                Logger.Log($"Not restoring config as {nameof(restoreConfig)} = false");
+            
 
             Logger.Log("Starting service");
 
@@ -564,11 +571,11 @@ namespace PrtgAPI.Tests.IntegrationTests
             }
         }
 
-        public void RepairConfig()
+        public void RepairConfig(bool restoreConfig = true)
         {
             Logger.Log("Repairing config");
 
-            Impersonator.ExecuteAction(() => RemoteCleanup(false));
+            Impersonator.ExecuteAction(() => RemoteCleanup(false, restoreConfig));
 
             Logger.Log("Sleeping for 60 seconds while service starts up");
             Thread.Sleep(60 * 1000);

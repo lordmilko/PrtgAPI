@@ -844,7 +844,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
                 propertyExclusions = new string[] { };
 
             var types = typeof(PrtgObject).Assembly.GetTypes().Where(t => typeof(PrtgObject).IsAssignableFrom(t)).Where(
-                t => t != typeof(NotificationAction) && t != typeof(Channel) && t != typeof(Schedule) && t != typeof(Ticket)
+                t => t != typeof(NotificationAction) && t != typeof(Schedule) && t != typeof(Ticket)
             ).ToList();
 
             if (typeExclusions != null)

@@ -2600,7 +2600,7 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             var second = PrtgNode.Device(Device("Local Probe", 1001, 1));
             var comparison = first.CompareTo(second);
 
-            Assert.IsTrue(TreeNodeDifference.Type == comparison.Difference);
+            Assert.IsTrue(TreeNodeDifference.Type == comparison.Difference, $"Difference was actually '{comparison.Difference}'");
         }
 
         [UnitTest]
