@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Xml.Serialization;
+using PrtgAPI.Attributes;
 
 namespace PrtgAPI
 {
@@ -50,24 +51,28 @@ namespace PrtgAPI
         /// Kilobytes
         /// </summary>
         [XmlEnum("7")]
+        [XmlEnumAlternateName("KB")]
         KByte,
 
         /// <summary>
         /// Megabytes
         /// </summary>
         [XmlEnum("8")]
+        [XmlEnumAlternateName("MB")]
         MByte,
 
         /// <summary>
         /// Gigabytes
         /// </summary>
         [XmlEnum("9")]
+        [XmlEnumAlternateName("GB")]
         GByte,
 
         /// <summary>
         /// Terabytes
         /// </summary>
         [XmlEnum("10")]
+        [XmlEnumAlternateName("TB")]
         TByte
     }
 }
