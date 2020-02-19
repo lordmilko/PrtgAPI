@@ -61,8 +61,13 @@ function IncrementBuild($version)
 
 function IsPreview($assemblyVersion, $lastRelease)
 {
+    if([string]::IsNullOrEmpty($lastRelease))
+    {
+        return $false
+    }
+
     # If this DLL has the same version as the last RELEASE, this should be a preview release
-    return $assemblyVersion -eq $lastRelease
+    return $assemblyVersion -eq (CleanVersion $lastRelease)
 }
 
 function IsFirstPreview($lastBuild)

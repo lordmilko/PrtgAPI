@@ -349,6 +349,17 @@ Describe "Appveyor" {
             Simulate-Build @buildArgs
         }
 
+        It "Release 0.1 (u1) -> Commit (p1) = 0.1.1-preview.1" {
+            $buildArgs = @{
+                Assembly = "0.1.0"
+                LastBuild = "0.1.0-build.1"
+                LastRelease = "0.1.0-build.1"
+                Expected = "0.1.1-preview.1"
+            }
+
+            Simulate-Build @buildArgs
+        }
+
         It "First Build" {
             $buildArgs = @{
                 Assembly = "0.1.0"
