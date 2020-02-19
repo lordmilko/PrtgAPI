@@ -33,7 +33,7 @@ namespace PrtgAPI.NotificationActions
         /// Trap code to use to identify the purpose of the trap.
         /// </summary>
         [XmlElement("injected_snmptrapspec")]
-        public int TrapCode { get; set; }
+        public int? TrapCode { get; set; }
 
         /// <summary>
         /// Message ID used to identify the origin of the trap. PRTG will send Message ID to trap server on OID 1.3.6.1.4.1.32446.1.1.1

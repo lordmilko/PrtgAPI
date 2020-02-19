@@ -49,7 +49,7 @@ namespace PrtgAPI.NotificationActions
         }
 
         /// <summary>
-        /// Email address to send notification to. Can be used in cojunction with <see cref="UserAccount"/> and <see cref="UserGroup"/>.
+        /// Phone number to send notification to. Can be used in cojunction with <see cref="UserAccount"/> and <see cref="UserGroup"/>.
         /// </summary>
         [XmlElement("injected_address")]
         public string Address { get; set; }
