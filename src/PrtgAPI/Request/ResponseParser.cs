@@ -122,6 +122,31 @@ namespace PrtgAPI.Request
                 Id = Convert.ToInt32(x.Element("objid").Value)
             }).ToList();
 
+            for (var i = 0; i < xmlResponseContent.Count; i++)
+            {
+                var str = xmlResponseContent[i].Content;
+
+                var m = Regex.Match(str, "\\\"objectlink\\\":\\\".+?>(.+?)<");
+
+                if (m.Success)
+                {
+                    var parentName = m.Groups[1].Value;
+
+                    var cleaned = WebUtility.HtmlEncode(parentName);
+
+                    if (cleaned != parentName)
+                    {
+                        var newStr = str.Substring(0, m.Groups[1].Index) + cleaned + str.Substring(m.Groups[1].Index + m.Groups[1].Length);
+
+                        xmlResponseContent[i] = new
+                        {
+                            Content = newStr,
+                            Id = xmlResponseContent[i].Id
+                        };
+                    }
+                }
+            }
+
             var triggers = JsonDeserializer<NotificationTrigger>.DeserializeList(xmlResponseContent, e => e.Content,
                 (e, o) =>
                 {

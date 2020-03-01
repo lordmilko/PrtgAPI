@@ -34,7 +34,7 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestItems
         public static NotificationTriggerItem StateTrigger(string latency = "60", string escLatency = "300", string repeatival = "0",
             string offNotificationAction = "-1|None", string escNotificationAction = "-1|None", string nodest = "Down",
             string onNotificationAction = "301|Email to all members of group PRTG Users Group", string parentId = "0", string subId = "1",
-            string typeName = "State Trigger")
+            string typeName = "State Trigger", string sensorName = "Root")
         {
             ArgumentNullThrower(latency, nameof(latency));
             ArgumentNullThrower(escLatency, nameof(escLatency));
@@ -49,7 +49,7 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestItems
             var builder = new StringBuilder();
             builder.Append($"{{\"type\":\"state\",\"latency\":\"{latency}\",\"esclatency\":\"{escLatency}\",\"repeatival\":\"{repeatival}\", \"offnotificationid\":\"{offNotificationAction}\", ");
             builder.Append($"\"escnotificationid\":\"{escNotificationAction}\",\"nodest\":\"{nodest}\", \"typename\":\"{typeName}\", \"onnotificationid\":\"{onNotificationAction}\", ");
-            builder.Append($"\"objectlink\":\"<a dependency=\\\"-1000\\\" thisid=\\\"{parentId}\\\" class=\\\"rootgroupmenu isnotpaused isnotfavorite fixed\\\" id=\\\"{parentId}\\\" href=\\\"group.htm?id={parentId}\\\">Root </a>\"}}");
+            builder.Append($"\"objectlink\":\"<a dependency=\\\"-1000\\\" thisid=\\\"{parentId}\\\" class=\\\"rootgroupmenu isnotpaused isnotfavorite fixed\\\" id=\\\"{parentId}\\\" href=\\\"group.htm?id={parentId}\\\">{sensorName} </a>\"}}");
 
             var item = new NotificationTriggerItem
             {

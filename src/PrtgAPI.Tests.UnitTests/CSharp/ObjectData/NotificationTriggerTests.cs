@@ -429,6 +429,15 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             }
         }
 
+        [UnitTest]
+        [TestMethod]
+        public void NotificationTrigger_DoubleEscapeQuotes()
+        {
+            var client = Initialize_Client(new NotificationTriggerResponse(NotificationTriggerItem.StateTrigger(sensorName: "Test \"Name\"")));
+
+            var triggers = client.GetNotificationTriggers(1001);
+        }
+
         private void ChangeTrigger_AllFields_HaveValues(string propertyName, object val)
         {
             switch (propertyName)
