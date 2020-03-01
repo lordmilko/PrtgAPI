@@ -557,12 +557,12 @@ Describe "Appveyor" {
                 "'package\*'"
                 "'PrtgAPI.dll'"
                 "'PrtgAPI.Format.ps1xml'"
-                "'PrtgAPI.Types.ps1xml'"
                 "'PrtgAPI.nuspec'"
                 "'PrtgAPI.PowerShell.dll'"
                 "'PrtgAPI.PowerShell.dll-Help.xml'"
                 "'PrtgAPI.psd1'"
                 "'PrtgAPI.psm1'"
+                "'PrtgAPI.Types.ps1xml'"
             )
 
             { TestPackageContents $false @() -Type PowerShell } | Should Throw "Package is missing required items:`n$($missing -join "`n")"

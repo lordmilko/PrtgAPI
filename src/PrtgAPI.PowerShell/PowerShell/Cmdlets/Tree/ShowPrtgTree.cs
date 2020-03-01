@@ -35,7 +35,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         public TreeNode Tree { get; set; }
 
         /// <summary>
-        /// <para type="descripton">Reduces the specified <see cref="Tree"/> before printing. If the specified
+        /// <para type="description">Reduces the specified <see cref="Tree"/> before printing. If the specified
         /// tree does not support reducing, a <see cref="ParameterBindingException"/> will be thrown.</para> 
         /// </summary>
         [Parameter(Mandatory = false, ParameterSetName = ParameterSet.Default)]
@@ -106,9 +106,9 @@ namespace PrtgAPI.PowerShell.Cmdlets
 
         private void ProcessTree(TreeNode tree)
         {
-            if(tree is PrtgNode)
+            if (tree is PrtgNode)
                 ((PrtgNode) tree).PrettyPrint(new PowerShellPrettyColorWriter(this));
-            else if(tree is CompareNode)
+            else if (tree is CompareNode)
                 ((CompareNode) tree).PrettyPrint(new PowerShellPrettyColorWriter(this));
             else
             {
