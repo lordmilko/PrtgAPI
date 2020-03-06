@@ -151,6 +151,12 @@ Describe "Get-SensorTarget" -Tag @("PowerShell", "UnitTest") {
 
             $nothing | Should BeNullOrEmpty
         }
+
+        It "specifies -rt" {
+            $item = @($device | Get-SensorTarget -rt exexml *test*)
+
+            $item.Count | Should Be 1
+        }
     }
 
     Context "Query Target" {

@@ -249,6 +249,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// <summary>
         /// <para type="description">The raw name of the sensor type to create.</para> 
         /// </summary>
+        [Alias("rt")]
         [Parameter(Mandatory = true, ParameterSetName = ParameterSet.Dynamic)]
         public string RawType { get; set; }
 

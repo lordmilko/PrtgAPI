@@ -380,6 +380,14 @@ Describe "New-SensorParameters" -Tag @("PowerShell", "UnitTest") {
             $params.exefile.GetType().Name | Should Be "GenericSensorTarget"
         }
 
+        It "specifies -rt" {
+            $params = WithResponse "MultiTypeResponse" {
+                $device | New-SensorParameters -rt exexml
+            }
+
+            $params.SensorType | Should Be "exexml"
+        }
+
         #endregion
         #region Set
 

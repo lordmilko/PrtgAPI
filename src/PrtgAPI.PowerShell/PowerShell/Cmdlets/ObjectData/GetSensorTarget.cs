@@ -144,6 +144,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// <summary>
         /// <para type="description">The raw type of sensor target to query for. Types that require additional information before querying (such as Oracle Tablespace) cannot be queried.</para>
         /// </summary>
+        [Alias("rt")]
         [Parameter(Mandatory = true, ParameterSetName = ParameterSet.Raw)]
         public string RawType { get; set; }
 
