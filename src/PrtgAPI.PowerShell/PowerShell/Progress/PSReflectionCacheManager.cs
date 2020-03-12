@@ -458,17 +458,18 @@ namespace PrtgAPI.PowerShell.Progress
             else //Piping from a variable
             {
                 var declaringType = enumerator.GetType().DeclaringType;
+                var enumeratorType = enumerator.GetType();
 
                 IEnumerable<object> list;
 
-                if (declaringType == typeof(Array)) //It's a SZArrayEnumerator (piping straight from a variable)
+                if (declaringType == typeof(Array) || enumeratorType.Name == "SZArrayEnumerator") //It's a SZArrayEnumerator (piping straight from a variable). In .NET Core 3.1 SZArrayEnumerator is no longer nested
                     list = ((object[]) enumerator.GetInternalField("_array"));
                 else if (declaringType == typeof(List<>)) //It's a List<T>.Enumerator (piping from $groups[0].Group)
                     list = enumerator.PSGetInternalField("_list", "list").ToIEnumerable();
                 else if (declaringType == typeof(ListBase<>))
                     list = enumerator.GetInternalField("list").ToIEnumerable();
                 else
-                    throw new NotImplementedException($"Don't know how to extract the pipeline input from a '{enumerator.GetType()}' enumerator from type '{declaringType}'.");
+                    throw new NotImplementedException($"Don't know how to extract the pipeline input from a '{enumeratorType}' enumerator from type '{declaringType}'.");
 
                 list = list.Select(o =>
                 {
