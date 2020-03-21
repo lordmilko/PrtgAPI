@@ -48,10 +48,11 @@ namespace PrtgAPI.Linq
             Func<LogParameters, CancellationToken, IEnumerable<Log>> getLogs,
             int? objectId, LogStatus[] status,
             int interval,
+            DateTime? startDate,
             Func<int, bool> progressCallback,
             CancellationToken token,
             Func<IEnumerable<Log>, IEnumerable<Log>> postProcessor = null
-        ) : this(getLogs, new LogParameters(objectId, null, DateTime.Now, null, status), interval, progressCallback, token, postProcessor)
+        ) : this(getLogs, new LogParameters(objectId, null, startDate ?? DateTime.Now, null, status), interval, progressCallback, token, postProcessor)
         {
         }
 

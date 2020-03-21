@@ -115,6 +115,16 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
 
         [UnitTest]
         [TestMethod]
+        public void Log_Watch_SpecifiesAStartDate()
+        {
+            Execute(
+                c => c.WatchLogs(startDate: new DateTime(2000, 10, 2, 12, 10, 5, DateTimeKind.Utc)).Take(1).ToList(),
+                UnitRequest.Logs("start=1&filter_dstart=2000-10-02-12-10-05")
+            );
+        }
+
+        [UnitTest]
+        [TestMethod]
         public void Log_Watch_StopsWhenCallbackReturnsFalse()
         {
             var client = Initialize_Client(new InfiniteLogResponse());
