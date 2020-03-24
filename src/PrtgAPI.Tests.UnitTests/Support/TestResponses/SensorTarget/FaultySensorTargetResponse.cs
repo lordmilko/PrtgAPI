@@ -9,7 +9,8 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
         public enum Scenario
         {
             Credentials,
-            Other
+            Other,
+            EnhancedError
         }
 
         public FaultySensorTargetResponse(Scenario scenario)
@@ -32,6 +33,12 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
                 case nameof(JsonFunction.SensorTypes):
                     return new SensorTypeResponse();
 
+                case nameof(HtmlFunction.AddSensorFailed):
+                    if (scenario == Scenario.EnhancedError)
+                        return new BasicResponse("<span><div class=\"errormessage\">Enhanced error</div></span>");
+                    else
+                        return new BasicResponse(string.Empty);
+
                 default:
                     throw GetUnknownFunctionException(function);
             }
@@ -49,7 +56,8 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
                 case Scenario.Other:
                     str = "Other%20error";
                     break;
-
+                case Scenario.EnhancedError:
+                    return $"addsensorfailed.htm?id=2808&sensorkind=WMI%20Service&manuallink=%2Fhelp%2Fwmi_service_sensor.htm";
                 default:
                     throw new NotImplementedException($"Unknown scenario '{scenario}' passed to {typeof(FaultySensorTargetResponse).Name}");
             }

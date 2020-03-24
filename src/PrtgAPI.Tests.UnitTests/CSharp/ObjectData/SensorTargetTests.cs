@@ -107,6 +107,15 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
 
         [UnitTest]
         [TestMethod]
+        public void SensorTarget_FailedRequest_EnhancedError()
+        {
+            var faultyClient = Initialize_Client(new FaultySensorTargetResponse(FaultySensorTargetResponse.Scenario.EnhancedError));
+
+            AssertEx.Throws<PrtgRequestException>(() => faultyClient.Targets.GetExeXmlFiles(1001), "Enhanced error");
+        }
+
+        [UnitTest]
+        [TestMethod]
         public void SensorTarget_ReadOnly()
         {
             var client = Initialize_ReadOnlyClient(new MultiTypeResponse());

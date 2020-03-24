@@ -30,6 +30,10 @@ namespace PrtgAPI
 
         [Undocumented]
         [Description("controls/editnotification.htm")]
-        EditNotification
+        EditNotification,
+
+        [Undocumented]
+        [Description("addsensorfailed.htm")]
+        AddSensorFailed
     }
 }

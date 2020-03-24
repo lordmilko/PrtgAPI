@@ -658,12 +658,38 @@ for(int i = 0; i < 2; i++)
             if (!continueQuery)
                 return null;
 
-            ResponseParser.ValidateAddSensorProgressResult(p, false);
+            <#= CallFunction("ValidateAddSensorProgressResult", "deviceOrId, p, false, token", i) #>;
 
             //Scrape addsensor4.htm
             var page = (<#= CallFunction("RequestEngine.ExecuteRequest", "new EndAddSensorQueryParameters(deviceOrId, tmpId), token: token", i) #>).StringValue;
 
             return page;
+        }
+
+<#
+}
+#>
+        //######################################
+        // ValidateAddSensorProgressResult
+        //######################################
+
+<#
+for(int i = 0; i < 2; i++)
+{
+#>
+        internal <#= GetSignature("ValidateAddSensorProgressResult", "void", i) #>(Either<Device, int> deviceOrId, AddSensorProgress progress, bool addFull, CancellationToken token)
+        {
+            if (progress.TargetUrl.StartsWith("addsensorfailed"))
+            {
+                var parts = UrlUtilities.CrackUrl(progress.TargetUrl);
+
+                var enhancedErrorHtml = (<#= CallFunction("RequestEngine.ExecuteRequest", "new AddSensorFailedParameters(deviceOrId, parts[\"sensorkind\"]), token: token", i) #>).StringValue;
+
+                ResponseParser.ProcessAddSensorProgressFailed(parts, enhancedErrorHtml, addFull);
+            }
+
+            if (addFull && progress.Percent == -1)
+                throw new PrtgRequestException($"PRTG was unable to complete the request. The server responded with the following error: '{progress.Error.Replace("<br/><ul><li>", " ").Replace("</li></ul><br/>", " ")}'.");
         }
 
 <#

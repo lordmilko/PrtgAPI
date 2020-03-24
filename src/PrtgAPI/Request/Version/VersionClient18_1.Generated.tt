@@ -48,7 +48,7 @@ for(int i = 0; i < 2; i++)
                 var progressParameters = new AddSensorProgressParameters(deviceId, tmpId.Value, true);
                 var progress = <#= CallGenericFunction("client.ObjectEngine.GetObject", "AddSensorProgress", "progressParameters, token: token", i) #>;
 
-                ResponseParser.ValidateAddSensorProgressResult(progress, true);
+                <#= CallFunction("client.ValidateAddSensorProgressResult", "deviceId, progress, true, token", i) #>;
             }         
         }
 <#

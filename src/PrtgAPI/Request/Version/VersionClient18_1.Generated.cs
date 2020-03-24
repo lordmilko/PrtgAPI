@@ -41,7 +41,7 @@ namespace PrtgAPI.Request
                 var progressParameters = new AddSensorProgressParameters(deviceId, tmpId.Value, true);
                 var progress = client.ObjectEngine.GetObject<AddSensorProgress>(progressParameters, token: token);
 
-                ResponseParser.ValidateAddSensorProgressResult(progress, true);
+                client.ValidateAddSensorProgressResult(deviceId, progress, true, token);
             }         
         }
 
@@ -69,7 +69,7 @@ namespace PrtgAPI.Request
                 var progressParameters = new AddSensorProgressParameters(deviceId, tmpId.Value, true);
                 var progress = await client.ObjectEngine.GetObjectAsync<AddSensorProgress>(progressParameters, token: token).ConfigureAwait(false);
 
-                ResponseParser.ValidateAddSensorProgressResult(progress, true);
+                await client.ValidateAddSensorProgressResultAsync(deviceId, progress, true, token).ConfigureAwait(false);
             }         
         }
     }

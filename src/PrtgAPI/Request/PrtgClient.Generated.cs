@@ -1004,7 +1004,7 @@ namespace PrtgAPI
             if (!continueQuery)
                 return null;
 
-            ResponseParser.ValidateAddSensorProgressResult(p, false);
+            ValidateAddSensorProgressResult(deviceOrId, p, false, token);
 
             //Scrape addsensor4.htm
             var page = (RequestEngine.ExecuteRequest(new EndAddSensorQueryParameters(deviceOrId, tmpId), token: token)).StringValue;
@@ -1049,12 +1049,46 @@ namespace PrtgAPI
             if (!continueQuery)
                 return null;
 
-            ResponseParser.ValidateAddSensorProgressResult(p, false);
+            await ValidateAddSensorProgressResultAsync(deviceOrId, p, false, token).ConfigureAwait(false);
 
             //Scrape addsensor4.htm
             var page = (await RequestEngine.ExecuteRequestAsync(new EndAddSensorQueryParameters(deviceOrId, tmpId), token: token).ConfigureAwait(false)).StringValue;
 
             return page;
+        }
+
+        //######################################
+        // ValidateAddSensorProgressResult
+        //######################################
+
+        internal void ValidateAddSensorProgressResult(Either<Device, int> deviceOrId, AddSensorProgress progress, bool addFull, CancellationToken token)
+        {
+            if (progress.TargetUrl.StartsWith("addsensorfailed"))
+            {
+                var parts = UrlUtilities.CrackUrl(progress.TargetUrl);
+
+                var enhancedErrorHtml = (RequestEngine.ExecuteRequest(new AddSensorFailedParameters(deviceOrId, parts["sensorkind"]), token: token)).StringValue;
+
+                ResponseParser.ProcessAddSensorProgressFailed(parts, enhancedErrorHtml, addFull);
+            }
+
+            if (addFull && progress.Percent == -1)
+                throw new PrtgRequestException($"PRTG was unable to complete the request. The server responded with the following error: '{progress.Error.Replace("<br/><ul><li>", " ").Replace("</li></ul><br/>", " ")}'.");
+        }
+
+        internal async Task ValidateAddSensorProgressResultAsync(Either<Device, int> deviceOrId, AddSensorProgress progress, bool addFull, CancellationToken token)
+        {
+            if (progress.TargetUrl.StartsWith("addsensorfailed"))
+            {
+                var parts = UrlUtilities.CrackUrl(progress.TargetUrl);
+
+                var enhancedErrorHtml = (await RequestEngine.ExecuteRequestAsync(new AddSensorFailedParameters(deviceOrId, parts["sensorkind"]), token: token).ConfigureAwait(false)).StringValue;
+
+                ResponseParser.ProcessAddSensorProgressFailed(parts, enhancedErrorHtml, addFull);
+            }
+
+            if (addFull && progress.Percent == -1)
+                throw new PrtgRequestException($"PRTG was unable to complete the request. The server responded with the following error: '{progress.Error.Replace("<br/><ul><li>", " ").Replace("</li></ul><br/>", " ")}'.");
         }
 
         //######################################
