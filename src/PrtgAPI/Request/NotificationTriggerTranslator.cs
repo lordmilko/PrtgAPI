@@ -190,7 +190,10 @@ namespace PrtgAPI.Request
                     if (TranslationMap.TryGetValue(underlyingType, out translation))
                     {
                         if (translation.Type == typeof(NotificationAction))
-                            typedValue = typedValue.Split('|')[1];
+                        {
+                            var split = typedValue.Split('|');
+                            typedValue = $"{split[0]}|{split[1]}";
+                        }
 
                         var enumData = translation.Translations.SingleOrDefault(t => t.ForeignName.Contains(typedValue));
 
@@ -268,7 +271,10 @@ namespace PrtgAPI.Request
                     return null;
 
                 if (translation.Type == typeof(NotificationAction))
-                    typedValue = typedValue.Split('|')[1];
+                {
+                    var split = typedValue.Split('|');
+                    typedValue = $"{split[0]}|{split[1]}";
+                }
 
                 //In the case of NotificationActions, we only add a translation when it's the "None" action,
                 //so we aren't guaranteed to have a translation
@@ -333,7 +339,7 @@ namespace PrtgAPI.Request
             if (html != null)
             {
                 values.AddRange(HtmlParser.Default.GetDropDownList(html).SelectMany(
-                    d => d.Options.Select(o => new ForeignEnumValue(o.InnerHtml, o.Value, o.Selected, GetEnglishValue(entry.Property, type, o.Value)))
+                    d => d.Options.Select(o => new ForeignEnumValue(o.InnerHtml, o.Value, o.Selected, GetEnglishValue(entry.Property, type, o.Value), type))
                 ).DistinctBy(v => v.Value));
             }
 
@@ -341,7 +347,7 @@ namespace PrtgAPI.Request
             //needs translating, so we set its English value to null.
             if (type == typeof(TriggerCondition))
             {
-                values.Add(new ForeignEnumValue("change", "change", false, null));
+                values.Add(new ForeignEnumValue("change", "change", false, null, type));
             }
 
             translation = new EnumTranslation(type, values);
@@ -359,7 +365,7 @@ namespace PrtgAPI.Request
                 return;
 
             var values = HtmlParser.Default.GetDropDownList(html).SelectMany(
-                d => d.Options.Select(o => new ForeignEnumValue(o.InnerHtml, o.Value, o.Selected, GetEnglishValue(entry.Property, type, o.Value)))
+                d => d.Options.Select(o => new ForeignEnumValue(o.InnerHtml, o.Value, o.Selected, GetEnglishValue(entry.Property, type, o.Value), type))
             ).ToList();
 
             foreach (var value in values)

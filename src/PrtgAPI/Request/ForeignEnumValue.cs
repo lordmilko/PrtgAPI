@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -19,8 +20,11 @@ namespace PrtgAPI.Request
 
         public string EnglishValue { get; }
 
-        public ForeignEnumValue(string name, string value, bool selected, string englishValue)
+        public ForeignEnumValue(string name, string value, bool selected, string englishValue, Type type)
         {
+            if(type == typeof(NotificationAction))
+               name = value.Split('|')[0] + $"|{name}";
+
             ForeignName = new List<string>
             {
                 name
