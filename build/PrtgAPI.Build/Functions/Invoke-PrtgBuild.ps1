@@ -85,7 +85,7 @@ function Invoke-PrtgBuild
 
     # On Linux you need to have libcurl and some other stuff for libgit2 to work properly;
     # users don't care about that, and don't need to include SourceLink anyway so just skip it
-    if(Test-IsWindows -and !$PSBoundParameters.ContainsKey("SourceLink"))
+    if((Test-IsWindows) -and ($SourceLink -or !$PSBoundParameters.ContainsKey("SourceLink")))
     {
         $SourceLink = $true
     }
