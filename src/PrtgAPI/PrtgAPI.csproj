@@ -131,6 +131,7 @@
     <Compile Include="Enums\RequestVersion.cs" />
     <Compile Include="Enums\SystemInfoType.cs" />
     <Compile Include="Linq\CachedEnumerableIterator.cs" />
+    <Compile Include="Linq\ReadOnlyListEnumerator.cs" />
     <Compile Include="Objects\Interfaces\IDevice.cs" />
     <Compile Include="Objects\Interfaces\IDeviceOrGroup.cs" />
     <Compile Include="Objects\Interfaces\IDeviceOrGroupOrProbe.cs" />

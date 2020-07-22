@@ -5,9 +5,9 @@ using System.Linq;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
 using Microsoft.PowerShell.Commands;
+using PrtgAPI.Linq;
 using PrtgAPI.PowerShell.Base;
 using PrtgAPI.Reflection;
-using PrtgAPI.Tree;
 using PrtgAPI.Utilities;
 
 namespace PrtgAPI.PowerShell.Progress
@@ -466,7 +466,7 @@ namespace PrtgAPI.PowerShell.Progress
                     list = ((object[]) enumerator.GetInternalField("_array"));
                 else if (declaringType == typeof(List<>)) //It's a List<T>.Enumerator (piping from $groups[0].Group)
                     list = enumerator.PSGetInternalField("_list", "list").ToIEnumerable();
-                else if (declaringType == typeof(ListBase<>))
+                else if (enumeratorType.IsGenericType && enumeratorType.GetGenericTypeDefinition() == typeof(ReadOnlyListEnumerator<>))
                     list = enumerator.GetInternalField("list").ToIEnumerable();
                 else
                     throw new NotImplementedException($"Don't know how to extract the pipeline input from a '{enumeratorType}' enumerator from type '{declaringType}'.");
