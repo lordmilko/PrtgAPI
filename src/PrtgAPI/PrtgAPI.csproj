@@ -111,6 +111,7 @@
     <Compile Include="Enums\Deserialization\WmiServiceStatus.cs" />
     <Compile Include="Enums\DeviceInfoType.cs" />
     <Compile Include="Enums\Enhanced\FlagEnum.cs" />
+    <Compile Include="Enums\Enhanced\FlagEnum`1.cs" />
     <Compile Include="Enums\Enhanced\IEnumEx.cs" />
     <Compile Include="Enums\ExeType.cs" />
     <Compile Include="Enums\FilterMode.cs" />

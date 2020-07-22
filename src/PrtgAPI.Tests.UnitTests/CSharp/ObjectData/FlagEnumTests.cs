@@ -1,13 +1,123 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using PrtgAPI.Tree;
-using System;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using PrtgAPI.Tree;
 
 namespace PrtgAPI.Tests.UnitTests.ObjectData
 {
     [TestClass]
     public class FlagEnumTests
     {
+        #region Create
+
+        [UnitTest]
+        [TestMethod]
+        public void FlagEnum_Create_SingleValue()
+        {
+            var value = FlagEnum.Create(TreeNodeDifference.ParentId);
+
+            Assert.AreEqual(TreeNodeDifference.ParentId, value.Value);
+        }
+
+        [UnitTest]
+        [TestMethod]
+        public void FlagEnum_Create_Array_Params()
+        {
+            var value = FlagEnum.Create(TreeNodeDifference.ParentId, TreeNodeDifference.Position);
+
+            Assert.AreEqual(TreeNodeDifference.ParentId | TreeNodeDifference.Position, value.Value);
+        }
+
+        [UnitTest]
+        [TestMethod]
+        public void FlagEnum_Create_List()
+        {
+            List<TreeNodeDifference> list = new List<TreeNodeDifference>
+            {
+                TreeNodeDifference.ParentId,
+                TreeNodeDifference.Position
+            };
+
+            var value = FlagEnum.Create(list);
+
+            Assert.AreEqual(TreeNodeDifference.ParentId | TreeNodeDifference.Position, value.Value);
+        }
+
+        [UnitTest]
+        [TestMethod]
+        public void FlagEnum_Create_IEnumerable()
+        {
+            IEnumerable<TreeNodeDifference> enumerable = new[] {TreeNodeDifference.ParentId, TreeNodeDifference.Position};
+
+            var value = FlagEnum.Create(enumerable);
+
+            Assert.AreEqual(TreeNodeDifference.ParentId | TreeNodeDifference.Position, value.Value);
+        }
+
+        [UnitTest]
+        [TestMethod]
+        public void FlagEnum_Create_ReadOnlyCollection()
+        {
+            ReadOnlyCollection<TreeNodeDifference> list = new List<TreeNodeDifference>
+            {
+                TreeNodeDifference.ParentId,
+                TreeNodeDifference.Position
+            }.AsReadOnly();
+
+            var value = FlagEnum.Create(list);
+
+            Assert.AreEqual(TreeNodeDifference.ParentId | TreeNodeDifference.Position, value.Value);
+        }
+
+        [UnitTest]
+        [TestMethod]
+        public void FlagEnum_Create_IList()
+        {
+            IList<TreeNodeDifference> list = new List<TreeNodeDifference>
+            {
+                TreeNodeDifference.ParentId,
+                TreeNodeDifference.Position
+            };
+
+            var value = FlagEnum.Create(list);
+
+            Assert.AreEqual(TreeNodeDifference.ParentId | TreeNodeDifference.Position, value.Value);
+        }
+
+        [UnitTest]
+        [TestMethod]
+        public void FlagEnum_Create_IReadOnlyCollection()
+        {
+            IReadOnlyCollection<TreeNodeDifference> list = new List<TreeNodeDifference>
+            {
+                TreeNodeDifference.ParentId,
+                TreeNodeDifference.Position
+            }.AsReadOnly();
+
+            var value = FlagEnum.Create(list);
+
+            Assert.AreEqual(TreeNodeDifference.ParentId | TreeNodeDifference.Position, value.Value);
+        }
+
+        [UnitTest]
+        [TestMethod]
+        public void FlagEnum_Create_IReadOnlyList()
+        {
+            IReadOnlyList<TreeNodeDifference> list = new List<TreeNodeDifference>
+            {
+                TreeNodeDifference.ParentId,
+                TreeNodeDifference.Position
+            }.AsReadOnly();
+
+            var value = FlagEnum.Create(list);
+
+            Assert.AreEqual(TreeNodeDifference.ParentId | TreeNodeDifference.Position, value.Value);
+        }
+
+        #endregion
+
         [UnitTest]
         [TestMethod]
         public void FlagEnum_DefaultConstructor_ShouldBeDefaultValue()
