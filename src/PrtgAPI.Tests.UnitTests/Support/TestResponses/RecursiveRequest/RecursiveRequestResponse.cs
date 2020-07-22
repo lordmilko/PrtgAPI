@@ -23,8 +23,11 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
                 case RecursiveRequestScenario.SensorDuplicateChildGroup:
                     this.scenario = new SensorDuplicateChildGroupScenario();
                     break;
-                case RecursiveRequestScenario.SensorNoRecurse:
-                    this.scenario = new SensorNoRecurseScenario();
+                case RecursiveRequestScenario.SensorNoRecurseUniqueGroup:
+                    this.scenario = new SensorNoRecurseUniqueGroupScenario();
+                    break;
+                case RecursiveRequestScenario.SensorNoRecurseDuplicateGroup:
+                    this.scenario = new SensorNoRecurseDuplicateGroupScenario();
                     break;
                 case RecursiveRequestScenario.SensorDeepNesting:
                     this.scenario = new SensorDeepNestingScenario();

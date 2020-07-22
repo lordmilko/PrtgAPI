@@ -96,12 +96,20 @@ Describe "Get-Sensor" -Tag @("PowerShell", "UnitTest") {
             $sensors.Count | Should Be 8
         }
 
-        It "retrieves sensors from all groups with a duplicated name with -Recurse:`$false" {
-            SetResponseAndClientWithArguments "RecursiveRequestResponse" "SensorNoRecurse"
+        It "retrieves sensors from all groups with a unique name with -Recurse:`$false" {
+            SetResponseAndClientWithArguments "RecursiveRequestResponse" "SensorNoRecurseUniqueGroup"
 
             $sensors = Get-Group Servers | Get-Sensor * -Recurse:$false
 
-            $sensors.Count | Should Be 5
+            $sensors.Count | Should Be 4
+        }
+
+        It "retrieves sensors from all groups with a duplicated name with -Recurse:`$false" {
+            SetResponseAndClientWithArguments "RecursiveRequestResponse" "SensorNoRecurseDuplicateGroup"
+
+            $sensors = Get-Group Servers | Get-Sensor * -Recurse:$false
+
+            $sensors.Count | Should Be 4
         }
 
         It "retrieves sensors from a group hierarchy with no devices in the parent group" {
@@ -286,7 +294,14 @@ Describe "Get-Sensor" -Tag @("PowerShell", "UnitTest") {
 
     It "filters by groups using contains" {
             
-        SetAddressValidatorResponse "filter_name=@sub(ping)&filter_group=Windows+Infrastructure"
+        $response = SetAddressValidatorResponse @(
+            [Request]::Groups("filter_name=Windows+Infrastructure", [Request]::DefaultObjectFlags)
+            [Request]::Sensors("filter_name=@sub(ping)&filter_group=Windows+Infrastructure", [Request]::DefaultObjectFlags)
+        )
+
+        $response.CountOverride = GetCustomCountDictionary @{
+            Groups = 1
+        }
 
         $group = Run Group { Get-Group }
 
@@ -300,10 +315,17 @@ Describe "Get-Sensor" -Tag @("PowerShell", "UnitTest") {
         $groups = Get-Group
         $groups.Count | Should Be 2
 
-        SetAddressValidatorResponse @(
+        $response = SetAddressValidatorResponse @(
+            [Request]::Groups("filter_name=Windows+Infrastructure0", [Request]::DefaultObjectFlags)
             [Request]::Sensors("filter_name=ping&filter_group=Windows+Infrastructure0", [Request]::DefaultObjectFlags)
+
+            [Request]::Groups("filter_name=Windows+Infrastructure1", [Request]::DefaultObjectFlags)
             [Request]::Sensors("filter_name=ping&filter_group=Windows+Infrastructure1", [Request]::DefaultObjectFlags)
         )
+
+        $response.CountOverride = GetCustomCountDictionary @{
+            Groups = 1
+        }
 
         $groups | Get-Sensor -Filter (flt name eq ping) -Recurse:$false
     }

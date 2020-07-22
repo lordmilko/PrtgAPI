@@ -141,7 +141,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
 
         internal override List<Sensor> GetObjectsInternal(SensorParameters parameters)
         {
-            if (Group != null && Group.IsObject && Recurse)
+            if (Group != null && Group.IsObject)
             {
                 var groups = client.GetGroups(Property.Name, Group.Object.Name);
 
@@ -160,10 +160,12 @@ namespace PrtgAPI.PowerShell.Cmdlets
                 }
             }
 
-            //If we aren't piping from a group, aren't recursing, or only have 1 group with the specified name,
+            //If we aren't piping from a group or only have 1 group with the specified name,
             //we can use the default implementation, as referring to the group by name will be unambiguous. If
             //we are recursing, we're retrieving the parent group's records; our children's records will be
-            //retrieved in GetAdditionalRecords
+            //retrieved in GetAdditionalRecords. If we're not recursing, if our group name was ambiguous we
+            //retrieved our sensors via devices in GetSensorsFroupGroupNameFilter. GetAdditionalRecords won't return
+            //anything when it sees that Recurse == false
             var sensors = base.GetObjectsInternal(parameters);
 
             if (Group != null && Recurse)

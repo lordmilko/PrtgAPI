@@ -138,6 +138,7 @@
     <Compile Include="Support\TestResponses\NotificationTriggerTranslationResponse.cs" />
     <Compile Include="Support\TestResponses\ProgressOwnershipResponse.cs" />
     <Compile Include="Support\TestResponses\ReadOnlyResponse.cs" />
+    <Compile Include="Support\TestResponses\RecursiveRequest\Sensor\SensorNoRecurseDuplicateGroupScenario.cs" />
     <Compile Include="Support\TestResponses\SensorQueryTargetParametersResponse.cs" />
     <Compile Include="Support\TestResponses\SensorQueryTargetParametersValidatorResponse.cs" />
     <Compile Include="Support\TestResponses\SensorQueryTargetValidatorResponse.cs" />
@@ -333,7 +334,7 @@
     <Compile Include="Support\TestResponses\RecursiveRequest\GroupScenario.cs" />
     <Compile Include="Support\TestResponses\RecursiveRequest\RecursiveRequestResponse.cs" />
     <Compile Include="Support\TestResponses\RecursiveRequest\RecursiveRequestScenario.cs" />
-    <Compile Include="Support\TestResponses\RecursiveRequest\Sensor\SensorNoRecurseScenario.cs" />
+    <Compile Include="Support\TestResponses\RecursiveRequest\Sensor\SensorNoRecurseUniqueGroupScenario.cs" />
     <Compile Include="Support\TestResponses\RecursiveRequest\Sensor\SensorUniqueChildGroupScenario.cs" />
     <Compile Include="Support\TestResponses\RecursiveRequest\Sensor\SensorUniqueGroupScenario.cs" />
     <Compile Include="Support\TestResponses\RestartProbeResponse.cs" />
