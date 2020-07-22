@@ -39,6 +39,34 @@
     <RemoveDir Directories="$(ProjectDir)TestResults" />
     <RemoveDir Directories="$(SolutionDir)TestResults" />
   </Target>
+  
+  <!-- Package Versions -->
+
+  <PropertyGroup>
+    <!-- Design Time -->
+    <SourceLinkVersion>1.0.0</SourceLinkVersion>                                         <!-- PrtgAPI, PrtgAPI.PowerShell -->
+    
+    <!-- Framework -->
+    <MicrosoftCSharpVersion>4.5.0</MicrosoftCSharpVersion>                               <!-- PrtgAPI.PowerShell -->
+    <SystemManagementVersion>4.5.0</SystemManagementVersion>                             <!-- PrtgAPI.Tests.UnitTests, PrtgAPI.Tests.IntegrationTests -->
+    <SystemNetHttpVersion>4.3.4</SystemNetHttpVersion>                                   <!-- PrtgAPI.Tests.UnitTests, PrtgAPI.Tests.IntegrationTests -->
+    <SystemSecurityPrincipalWindowsVersion>4.5.1</SystemSecurityPrincipalWindowsVersion> <!-- PrtgAPI.Tests.IntegrationTests -->
+    <SystemServiceServiceControllerVersion>4.5.0</SystemServiceServiceControllerVersion> <!-- PrtgAPI.Tests.IntegrationTests -->
+    
+    <!-- PowerShell -->
+    <PowerShellReferenceAssembliesVersion>1.1.0</PowerShellReferenceAssembliesVersion>   <!-- PrtgAPI.PowerShell, PrtgAPI.Tests.UnitTests -->
+    <PowerShellStandardLibraryVersion>5.1.0</PowerShellStandardLibraryVersion>           <!-- PrtgAPI.PowerShell -->
+    <SystemManagementAutomationVersion>6.1.6</SystemManagementAutomationVersion>         <!-- PrtgAPI.Tests.UnitTests -->
+    <XmlDoc2CmdletDocVersion>0.2.13</XmlDoc2CmdletDocVersion>                            <!-- PrtgAPI.PowerShell -->
+    
+    <!-- Test -->
+    <TestAdapterVersion>1.4.0</TestAdapterVersion>                                       <!-- PrtgAPI.Tests.UnitTests, PrtgAPI.Tests.IntegrationTests -->
+    <TestFrameworkVersion>1.4.0</TestFrameworkVersion>                                   <!-- PrtgAPI.Tests.UnitTests, PrtgAPI.Tests.IntegrationTests -->
+    <TestSdkVersion>15.9.0</TestSdkVersion>                                              <!-- PrtgAPI.Tests.UnitTests, PrtgAPI.Tests.IntegrationTests -->
+    
+    <!-- Miscellaneous -->
+    <RoslynVersion>2.10.0</RoslynVersion>                                                <!-- PrtgAPI.Tests.UnitTests -->    
+  </PropertyGroup>
 
   <!-- Contents -->
 

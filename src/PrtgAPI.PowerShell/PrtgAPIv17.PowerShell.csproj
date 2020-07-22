@@ -30,26 +30,26 @@
   </PropertyGroup>
 
   <!-- References -->
+  <!-- For PackageReference versions please see build\Common.props -->
 
   <ItemGroup>
     <ProjectReference Include="..\PrtgAPI\PrtgAPIv17.csproj" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(EnableSourceLink)' == 'true'">
-    <!-- Note: do not use 1.0.0-beta2-18618-05 - it does not work -->
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0-beta-63127-02" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="$(SourceLinkVersion)" PrivateAssets="all" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(FrameworkType)' == 'Full'">
     <Reference Include="Microsoft.CSharp" />
-    <PackageReference Include="Microsoft.PowerShell.5.ReferenceAssemblies" Version="1.1.0" />
-    <PackageReference Include="XmlDoc2CmdletDoc" Version="0.2.13" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.PowerShell.5.ReferenceAssemblies" Version="$(PowerShellReferenceAssembliesVersion)" />
+    <PackageReference Include="XmlDoc2CmdletDoc" Version="$(XmlDoc2CmdletDocVersion)" PrivateAssets="all" />
     <Reference Include="System.Net.Http" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(FrameworkType)' == 'Core' OR '$(FrameworkType)' == 'Standard'">
-    <PackageReference Include="PowerShellStandard.Library" Version="5.1.0" PrivateAssets="all" />
-    <PackageReference Include="Microsoft.CSharp" Version="4.5.0" />
+    <PackageReference Include="PowerShellStandard.Library" Version="$(PowerShellStandardLibraryVersion)" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.CSharp" Version="$(MicrosoftCSharpVersion)" />
   </ItemGroup>
 
   <Target Name="ClearReferenceCopyLocalPaths" AfterTargets="ResolveReferences">

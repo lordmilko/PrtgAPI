@@ -31,9 +31,10 @@
   <Import Project="..\..\build\Common.props" />
 
   <!-- References -->
+  <!-- For PackageReference versions please see build\Common.props -->
   
   <ItemGroup Condition="'$(EnableSourceLink)' == 'true'">
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0-beta-63127-02" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="$(SourceLinkVersion)" PrivateAssets="all" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(FrameworkType)' == 'Full'">
