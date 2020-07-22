@@ -25,6 +25,23 @@ Describe "Connect-PrtgServer" -Tag @("PowerShell", "UnitTest") {
         Connect-PrtgServer prtg.example.com (New-Credential prtgadmin 12345678) -PassHash
     }
 
+    It "doesn't require a password" {
+        Disconnect-PrtgServer
+
+        try
+        {
+            Connect-PrtgServer http://127.0.0.1 (New-Credential username)
+            throw "Connection should not have succeeded"
+        }
+        catch
+        {
+            if($_.exception.message -notlike "*Not Found*" -and $_.exception.message -notlike "*Connection refused*" -and $_.exception.message -notlike "*Server rejected HTTP connection*")
+            {
+                throw
+            }
+        }
+    }
+
     It "throws connecting to another server without -Force" {
         Disconnect-PrtgServer
 

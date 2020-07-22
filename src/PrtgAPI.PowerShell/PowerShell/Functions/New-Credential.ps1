@@ -13,7 +13,15 @@
         [string]
         $Password
     )
-    
-    $secureString = ConvertTo-SecureString $Password -AsPlainText -Force
+
+    if(![string]::IsNullOrEmpty($Password))
+    {
+        $secureString = ConvertTo-SecureString $Password -AsPlainText -Force
+    }
+    else
+    {
+        $secureString = New-Object SecureString
+    }
+
     New-Object System.Management.Automation.PSCredential -ArgumentList $UserName, $secureString
 }
