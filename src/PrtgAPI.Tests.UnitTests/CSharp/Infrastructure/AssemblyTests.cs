@@ -128,7 +128,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
                     });
 
                 foreach (var property in properties)
-                    Assert.IsTrue(property.SetMethod.IsAssembly, $"Property '{property.Name}' is not marked Internal");
+                    Assert.IsTrue(property.SetMethod.IsAssembly, $"Property '{property.Name}' is not marked Private or Internal");
             }
         }
 
