@@ -31,6 +31,7 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
                 new XElement("tags", item.Tags),
                 new XElement("active", item.Active),
                 new XElement("active_raw", item.ActiveRaw),
+                new XElement("clusternode", item.ClusterNode),
                 new XElement("objid", item.ObjId),
                 new XElement("name", item.Name)
             );

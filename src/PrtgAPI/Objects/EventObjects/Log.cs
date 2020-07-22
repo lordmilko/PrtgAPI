@@ -159,6 +159,12 @@ namespace PrtgAPI
         public bool Active { get; set; }
 
         /// <summary>
+        /// Cluster node this event occurred on.
+        /// </summary>
+        [XmlElement("clusternode")] //Exclude PropertyParameter as clusternode is always included if available, and manually specifying would cause duplicate XML element
+        public string ClusterNode { get; set; }
+
+        /// <summary>
         /// Returns a string that represents the current object.
         /// </summary>
         /// <returns>A string that represents the current object.</returns>

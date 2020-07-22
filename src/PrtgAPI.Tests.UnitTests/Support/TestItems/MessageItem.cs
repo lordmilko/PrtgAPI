@@ -20,12 +20,14 @@
         public string Tags { get; set; }
         public string Active { get; set; }
         public string ActiveRaw { get; set; }
+        public string ClusterNode { get; set; }
 
         internal MessageItem(string name = "WMI Remote Ping", string datetime = "03.11.2017 05:10:31 PM", string datetimeRaw = "43042.2573037732", string parent = "Probe Device",
             string status = "Paused", string statusRaw = "604", string sensor = "WMI Remote Ping", string device = "Probe Device", string group = "Local Probe",
             string probe = "Local Probe", string priority = "1", string message = "<div class=\"logmessage\">Paused by user<div class=\"moreicon\"></div></div>",
             string messageRaw = "Paused by user", string objid = "2304", string type = "WMI Remote Ping",
-            string typeRaw = "wmiremoteping", string tags = "pingsensor wmisensor wmipingsensor remotepingsensor", string active = "True", string activeRaw = "-1")
+            string typeRaw = "wmiremoteping", string tags = "pingsensor wmisensor wmipingsensor remotepingsensor", string active = "True", string activeRaw = "-1",
+            string clusterNode = "Master")
         {
             Name = name;
             DateTime = datetime;
@@ -46,6 +48,7 @@
             Tags = tags;
             Active = active;
             ActiveRaw = activeRaw;
+            ClusterNode = clusterNode;
         }
     }
 }
