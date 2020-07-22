@@ -1,7 +1,7 @@
 ﻿using System.Management.Automation;
 using PrtgAPI.PowerShell.Base;
 
-namespace PrtgAPI.PowerShell.Cmdlets.ObjectManipulation
+namespace PrtgAPI.PowerShell.Cmdlets
 {
     /// <summary>
     /// <para type="synopsis">Refreshes system information for a PRTG Device.</para>

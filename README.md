@@ -110,7 +110,7 @@ var childSensors = await client.GetSensorsAsync(Property.ParentId, 2000);
 You can even use `IQueryable`!
 
 ```c#
-//Get all Ping sensors for devices whose name contains "dc" on the Perth Office probe.
+//Get the first three Ping sensors for devices whose name contains "dc" on the Perth Office probe.
 
 var perthDCPingSensors = client.QuerySensors(
     s => s.Type == "ping" && s.Device.Contains("dc") && s.Probe == "perth Office"

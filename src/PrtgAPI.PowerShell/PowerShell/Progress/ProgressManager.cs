@@ -364,7 +364,6 @@ namespace PrtgAPI.PowerShell.Progress
                     {
                         if (!PipeFromVariableWithProgress)
                             return progressPipelines.RecordsInCurrentPipeline == 1;
-
                     }
 
                     return true;

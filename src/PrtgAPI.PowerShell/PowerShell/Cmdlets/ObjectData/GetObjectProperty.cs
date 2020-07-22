@@ -235,7 +235,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
             }
             else
             {
-                throw new NotSupportedException($"Typed property handler not implemented for object type {Object.DisplayType}.");
+                throw new NotSupportedException($"Typed property handler not supported for object type {Object.DisplayType ?? Object.Type}. Consider specifying -{nameof(Raw)} instead.");
             }
         }
 

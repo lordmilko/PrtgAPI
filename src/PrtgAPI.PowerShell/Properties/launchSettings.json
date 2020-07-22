@@ -7,7 +7,7 @@
     },
     "PrtgAPI (PowerShell Core)": {
         "commandName": "Executable",
-        "executablePath": "C:\\Program Files\\PowerShell\\6\\pwsh.exe",
+        "executablePath": "C:\\Program Files\\PowerShell\\7\\pwsh.exe",
         "commandLineArgs": "-noexit -command \"&{ import-module ..\\PrtgAPI -verbose; goprtg ci; cd \\; }\""
     },
     "Build Environment (Core)": {
