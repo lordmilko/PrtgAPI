@@ -872,22 +872,6 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             }, new CultureInfo("de-DE"));
         }
 
-        private void TestCustomCulture(Action action, CultureInfo newCulture)
-        {
-            var originalCulture = Thread.CurrentThread.CurrentCulture;
-
-            try
-            {
-                Thread.CurrentThread.CurrentCulture = newCulture;
-
-                action();
-            }
-            finally
-            {
-                Thread.CurrentThread.CurrentCulture = originalCulture;
-            }
-        }
-
         #endregion
         #region Multiple
 

@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Globalization;
+using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PrtgAPI.Tests.UnitTests.Support.TestItems;
 using PrtgAPI.Tests.UnitTests.Support.TestResponses;
@@ -121,6 +123,121 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             var result = (await client.GetStatusAsync());
 
             AssertEx.AllPropertiesRetrieveValues(result);
+        }
+
+        [UnitTest]
+        [TestMethod]
+        public void ServerStatus_DateTime_ServerUS_ClientUK()
+        {
+            //There's a legal mismatch, so we get the dates backwards
+            TestClockSmallDate(
+                "MM/d/yyyy",
+                "en-GB",
+                expectedClientMonth: 12,
+                expectedClientDay: 1
+            );
+
+            //There's an illegal mismatch, so we reparse the DateTime using US heuristics
+            TestClockLargeDate(
+                "MM/d/yyyy",
+                "en-GB",
+                expectedClientMonth: 1,
+                expectedClientDay: 13
+            );
+        }
+
+        [UnitTest]
+        [TestMethod]
+        public void ServerStatus_DateTime_ServerUS_ClientUS()
+        {
+            TestClockSmallDate(
+                "MM/d/yyyy",
+                "en-US",
+                expectedClientMonth: 1,
+                expectedClientDay: 12
+            );
+
+            TestClockLargeDate(
+                "MM/d/yyyy",
+                "en-US",
+                expectedClientMonth: 1,
+                expectedClientDay: 13
+            );
+        }
+
+        [UnitTest]
+        [TestMethod]
+        public void ServerStatus_DateTime_ServerUK_ClientUS()
+        {
+            //There's a legal mismatch, so we get the dates backwards
+            TestClockSmallDate(
+                "dd/MM/yyyy",
+                "en-US",
+                expectedClientMonth: 12,
+                expectedClientDay: 1
+            );
+
+            //There's an illegal mismatch, so we reparse the DateTime using US heuristics
+            TestClockLargeDate(
+                "dd/MM/yyyy",
+                "en-US",
+                expectedClientMonth: 1,
+                expectedClientDay: 13
+            );
+        }
+
+        [UnitTest]
+        [TestMethod]
+        public void ServerStatus_DateTime_ServerUK_ClientUK()
+        {
+            TestClockSmallDate(
+                "dd/MM/yyyy",
+                "en-GB",
+                expectedClientMonth: 1,
+                expectedClientDay: 12
+            );
+
+            TestClockLargeDate(
+                "dd/MM/yyyy",
+                "en-GB",
+                expectedClientMonth: 1,
+                expectedClientDay: 13
+            );
+        }
+
+        private void TestClockSmallDate(
+            string serverDateFormat,
+            string clientCulture,
+            int expectedClientMonth,
+            int expectedClientDay)
+        {
+            var serverTime = new DateTime(2020, 1, 12, 4, 10, 20, DateTimeKind.Utc).ToLocalTime().ToString($"{serverDateFormat} h:mm:ss tt");
+
+            TestClock(serverTime, clientCulture, new DateTime(2020, expectedClientMonth, expectedClientDay, 4, 10, 20, DateTimeKind.Utc));
+        }
+
+        private void TestClockLargeDate(
+            string serverDateFormat,
+            string clientCulture,
+            int expectedClientMonth,
+            int expectedClientDay)
+        {
+            var serverTime = new DateTime(2020, 1, 13, 4, 10, 20, DateTimeKind.Utc).ToLocalTime().ToString($"{serverDateFormat} h:mm:ss tt");
+
+            TestClock(serverTime, clientCulture, new DateTime(2020, expectedClientMonth, expectedClientDay, 4, 10, 20, DateTimeKind.Utc));
+        }
+
+        private void TestClock(string serverTime, string clientCulture, DateTime expectedInvariantUtc)
+        {
+            var client = Initialize_Client(new ServerStatusResponse(new ServerStatusItem(clock: serverTime)));
+
+            TestCustomCulture(() =>
+            {
+                var now = DateTime.Now.ToString();
+
+                var status = client.GetStatus();
+                Assert.AreEqual(expectedInvariantUtc, status.DateTime.ToUniversalTime());
+            }, CultureInfo.GetCultureInfo(clientCulture));
         }
 
         public ServerStatusItem GetItem() => new ServerStatusItem();

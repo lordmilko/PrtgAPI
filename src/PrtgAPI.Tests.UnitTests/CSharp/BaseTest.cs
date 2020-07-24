@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using PrtgAPI.Reflection;
 using PrtgAPI.Tests.UnitTests.Support.TestItems;
@@ -107,6 +109,22 @@ namespace PrtgAPI.Tests.UnitTests
             var client = Initialize_Client(new MultiTypeResponse());
 
             return action(client);
+        }
+
+        protected void TestCustomCulture(Action action, CultureInfo newCulture)
+        {
+            var originalCulture = Thread.CurrentThread.CurrentCulture;
+
+            try
+            {
+                Thread.CurrentThread.CurrentCulture = newCulture;
+
+                action();
+            }
+            finally
+            {
+                Thread.CurrentThread.CurrentCulture = originalCulture;
+            }
         }
 
         private AddressValidatorResponse GetValidator(object urls, Dictionary<Content, int> countOverride, Dictionary<Content, BaseItem[]> itemOverride)

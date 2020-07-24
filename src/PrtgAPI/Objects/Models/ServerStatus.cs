@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.Runtime.Serialization;
 using PrtgAPI.Request.Serialization;
 using PrtgAPI.Utilities;
@@ -18,14 +19,32 @@ namespace PrtgAPI
         private DateTime? clock;
 
         /// <summary>
-        /// Current system time on the PRTG Core Server.
+        /// Current system time on the PRTG Core Server.<para/>
+        /// Note that if the DateTime format of the PRTG Server's language region does not match the DateTime format of the
+        /// system running PrtgAPI,<para/>
+        /// the DateTime format of the value parsed by this property may have months and dates back to front.
         /// </summary>
         public DateTime DateTime
         {
             get
             {
                 if (clock == null)
-                    clock = DateTime.Parse(clockStr);
+                {
+                    //Try and parse the remote DateTime based on the DateTime of the local system. If that fails, we have no idea whether the remote
+                    //system was dd/MM/yyyy or MM/dd/yyyy so just try both. We might not be right if we're on the 1st-12th of the month,
+                    //but it's the best we can do with an ambiguous date format.
+                    DateTime temp;
+
+                    var ukCulture = CultureInfo.GetCultureInfo("en-GB").DateTimeFormat;
+                    var usCulture = CultureInfo.GetCultureInfo("en-US").DateTimeFormat;
+
+                    if (DateTime.TryParse(clockStr, out temp))
+                        clock = temp;
+                    else if (DateTime.TryParse(clockStr, ukCulture, DateTimeStyles.None, out temp))
+                        clock = temp;
+                    else
+                        clock = DateTime.Parse(clockStr, usCulture);
+                }
 
                 return clock.Value;
             }
@@ -154,7 +173,7 @@ namespace PrtgAPI
         private string userTimeZone;
 
         /// <summary>
-        /// UTC offset of your PRTG Server's timezone.
+        /// UTC offset or name of your PRTG Server's timezone.
         /// </summary>
         [DataMember(Name = "UserTimeZone")]
         public string UserTimeZone
