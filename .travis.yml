@@ -15,7 +15,7 @@ matrix:
   include:
     - os: linux
     - os: osx
-      osx_image: xcode10.2
+      osx_image: xcode11
 
 install:
   - pwsh -c "ipmo ./build/CI/Travis.psm1 -DisableNameChecking; Invoke-TravisInstall"

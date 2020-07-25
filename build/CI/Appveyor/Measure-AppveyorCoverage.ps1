@@ -28,7 +28,7 @@ function Measure-AppveyorCoverage
         if($env:APPVEYOR)
         {
             Write-LogInfo "`tUploading coverage to codecov"
-            Invoke-Process { codecov -f "$env:temp\opencover.xml" } -WriteHost
+            Invoke-Process { cmd /c "codecov -f `"$env:temp\opencover.xml`" 2> nul" } -WriteHost
         }
     }
 }
