@@ -43,6 +43,12 @@ If you have both the nuget.org and PowerShell Gallery package sources installed 
 Install-Package PrtgAPI -Source PSGallery
 ```
 
+If you are using Windows PowerShell, due to the PowerShell Gallery now requiring TLS 1.2 you may need to manually specify to use TLS 1.2 in order to install or update PrtgAPI
+
+```powershell
+[Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12
+```
+
 ### Manual
 
 1. Download the [latest build](https://ci.appveyor.com/api/projects/lordmilko/prtgapi/artifacts/PrtgAPI.zip)
