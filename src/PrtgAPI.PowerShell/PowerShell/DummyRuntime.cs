@@ -11,7 +11,7 @@ namespace PrtgAPI.PowerShell
     [ExcludeFromCodeCoverage]
     class DummyRuntime : ICommandRuntime
     {
-        internal static long _lastUsedSourceId => (long) typeof(PSCmdlet).Assembly.GetType("System.Management.Automation.MshCommandRuntime").PSGetInternalStaticField("s_lastUsedSourceId", "_lastUsedSourceId");
+        internal static long _lastUsedSourceId => (long) typeof(PSCmdlet).Assembly.GetType("System.Management.Automation.MshCommandRuntime").PSGetInternalStaticField("s_lastUsedSourceId", "_lastUsedSourceId", null);
 
         public List<object> Output { get; } = new List<object>();
 
@@ -21,9 +21,9 @@ namespace PrtgAPI.PowerShell
 
         internal object OutputPipe => Owner.CommandRuntime.GetInternalProperty("OutputPipe");
 
-        internal PrtgCmdlet Owner { get; }
+        internal PSCmdlet Owner { get; }
 
-        public DummyRuntime(PrtgCmdlet Owner)
+        public DummyRuntime(PSCmdlet Owner)
         {
             this.Owner = Owner;
         }

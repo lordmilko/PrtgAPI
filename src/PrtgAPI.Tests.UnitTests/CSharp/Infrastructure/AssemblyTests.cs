@@ -755,7 +755,8 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
                                     "ex",
                                     "(Exception) null",
                                     "Object",
-                                    "Parameters"
+                                    "Parameters",
+                                    "exception"
                                 };
 
                                 if (str[0] == "paramName" && str.Count == 2)

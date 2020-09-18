@@ -552,6 +552,106 @@ Describe "New-Sensor" -Tag @("PowerShell", "UnitTest") {
         }
     }
 
+    Context "Factory: HashTable" {
+
+        $sensors = GetSensors
+
+        It "specifies Default" {
+
+            $channelDefinition = @(
+                "%231%3Adc1%0A"
+                "channel(4000%2C0)%0A"
+                "%232%3Adc2%0A"
+                "channel(4001%2C0)%0A"
+                "%233%3Adc3%0A"
+                "channel(4002%2C0)"
+            ) -join ""
+
+            SetAddressValidatorResponse @(
+                [Request]::Status()
+                [Request]::BeginAddSensorQuery(1001, "aggregation")
+                [Request]::AddSensor("name_=CPU+Overview&priority_=3&inherittriggers_=1&intervalgroup=1&interval_=60%7C60+seconds&errorintervalsdown_=1&tags_=factorysensor&aggregationchannel_=$channelDefinition&warnonerror_=0&aggregationstatus_=&missingdata_=0&sensortype=aggregation&id=1001")
+            )
+
+            $sensors | New-Sensor -Factory "CPU Overview" @{name={$_.Device}} -DestinationId 1001 -Resolve:$false
+        }
+
+        It "specifies Manual" {
+            
+            $channelDefinition = @(
+                "%231%3ALine+at+40.2%0A"
+                "40.2"
+            ) -join ""
+
+            SetAddressValidatorResponse @(
+                [Request]::Status()
+                [Request]::BeginAddSensorQuery(1001, "aggregation")
+                [Request]::AddSensor("name_=CPU+Overview&priority_=3&inherittriggers_=1&intervalgroup=1&interval_=60%7C60+seconds&errorintervalsdown_=1&tags_=factorysensor&aggregationchannel_=$channelDefinition&warnonerror_=0&aggregationstatus_=&missingdata_=0&sensortype=aggregation&id=1001")
+            )
+
+            $sensors | New-Sensor -Factory "CPU Overview" @{name="Line at 40.2"; value=40.2} -DestinationId 1001 -Resolve:$false
+        }
+
+        It "specifies Aggregate" {
+            $channelDefinition = @(
+                "%231%3AAggregate+Channel%0A"
+                "channel(4000%2C0)+%2B+channel(4001%2C0)+%2B+channel(4002%2C0)"
+            ) -join ""
+
+            SetAddressValidatorResponse @(
+                [Request]::Status()
+                [Request]::BeginAddSensorQuery(1001, "aggregation")
+                [Request]::AddSensor("name_=CPU+Overview&priority_=3&inherittriggers_=1&intervalgroup=1&interval_=60%7C60+seconds&errorintervalsdown_=1&tags_=factorysensor&aggregationchannel_=$channelDefinition&warnonerror_=0&aggregationstatus_=&missingdata_=0&sensortype=aggregation&id=1001")
+            )
+
+            $sensors | New-Sensor -Factory "CPU Overview" @{name="Aggregate Channel"; aggregator="Sum"} -DestinationId 1001 -Resolve:$false
+        }
+
+        It "specifies Summary" {
+            $channelDefinition = @(
+                "%231%3AAverage+CPU+Usage%0A"
+                "(channel(4000%2C0)+%2B+channel(4001%2C0)+%2B+channel(4002%2C0))+%2F+3%0A"
+                "%232%3Adc1%0A"
+                "channel(4000%2C0)%0A"
+                "%233%3Adc2%0A"
+                "channel(4001%2C0)%0A"
+                "%234%3Adc3%0A"
+                "channel(4002%2C0)"
+            ) -join ""
+
+            SetAddressValidatorResponse @(
+                [Request]::Status()
+                [Request]::BeginAddSensorQuery(1001, "aggregation")
+                [Request]::AddSensor("name_=CPU+Overview&priority_=3&inherittriggers_=1&intervalgroup=1&interval_=60%7C60+seconds&errorintervalsdown_=1&tags_=factorysensor&aggregationchannel_=$channelDefinition&warnonerror_=0&aggregationstatus_=&missingdata_=0&sensortype=aggregation&id=1001")
+            )
+
+            $sensors | New-Sensor -Factory "CPU Overview" @{
+                name={ $_.Device }
+                sn="Average CPU Usage"
+                se="Average"
+            } -DestinationId 1001 -Resolve:$false
+        }
+
+        It "specifies nested Hashtable" {
+            $channelDefinition = @(
+                "%231%3Adc1%0A"
+                "channel(4000%2C0)%0A"
+                "%232%3Adc2%0A"
+                "channel(4001%2C0)%0A"
+                "%233%3Adc3%0A"
+                "channel(4002%2C0)"
+            ) -join ""
+
+            SetAddressValidatorResponse @(
+                [Request]::Status()
+                [Request]::BeginAddSensorQuery(1001, "aggregation")
+                [Request]::AddSensor("name_=CPU+Overview&priority_=3&inherittriggers_=1&intervalgroup=1&interval_=60%7C60+seconds&errorintervalsdown_=1&tags_=factorysensor&aggregationchannel_=$channelDefinition&warnonerror_=0&aggregationstatus_=&missingdata_=0&sensortype=aggregation&id=1001")
+            )
+
+            $sensors | New-Sensor -Factory "CPU Overview" @{hashtable=@{name={$_.Device}}} -DestinationId 1001 -Resolve:$false
+        }
+    }
+
     Context "Factory: ChannelDefinition" {
 
         It "specifies a -ChannelDefinition" {
@@ -597,7 +697,7 @@ Describe "New-Sensor" -Tag @("PowerShell", "UnitTest") {
         It "cannot be used positionally" {
             SetMultiTypeResponse
 
-            { New-Sensor -Factory "CPU Overview" "#1:dc1","channel(4000,0)" -DestinationId 1001 -Resolve:$false } | Should Throw "Cannot convert 'System.Object[]' to the type 'PrtgAPI.PowerShell.NameOrScriptBlock'"
+            { New-Sensor -Factory "CPU Overview" "#1:dc1","channel(4000,0)" -DestinationId 1001 -Resolve:$false } | Should Throw "Cannot bind parameter 'HashTable'. Cannot convert the `"#1:dc1`" value of type `"System.String`" to type `"System.Collections.Hashtable`""
         }
 
         It "displays -WhatIf message" {

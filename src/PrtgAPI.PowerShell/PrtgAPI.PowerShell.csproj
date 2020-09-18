@@ -202,6 +202,8 @@
     <Compile Include="PowerShell\Tree\PowerShellProgressDepthManager.cs" />
     <Compile Include="PowerShell\Tree\PowerShellTreeProgressCallback.cs" />
     <Compile Include="PowerShell\TriggerParameterParser.cs" />
+    <Compile Include="Utilities\AstFactory.cs" />
+    <Compile Include="Utilities\EmptyScriptExtent.cs" />
     <Compile Include="Utilities\PSCmdletInvoker.cs" />
     <Compile Include="Utilities\PSObjectUtilities.cs" />
     <Compile Include="PowerShell\PSRawSensorParameters.cs" />

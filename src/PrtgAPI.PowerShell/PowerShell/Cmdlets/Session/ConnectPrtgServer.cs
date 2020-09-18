@@ -223,7 +223,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
             }
         }
 
-        private PSEdition GetPSEdition(PSCmdlet cmdlet)
+        internal static PSEdition GetPSEdition(PSCmdlet cmdlet)
         {
             var variable = cmdlet.GetVariableValue("global:PSEdition")?.ToString();
 

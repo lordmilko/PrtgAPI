@@ -165,7 +165,7 @@ namespace PrtgAPI.PowerShell.Progress
             }
 
             if (cmdlet.CommandRuntime is DummyRuntime)
-                return ((DummyRuntime) cmdlet.CommandRuntime).Owner;
+                return (PrtgCmdlet) ((DummyRuntime) cmdlet.CommandRuntime).Owner;
 
             return null;
         }
@@ -414,7 +414,7 @@ namespace PrtgAPI.PowerShell.Progress
         {
             var command = (PSCmdlet)GetUpstreamCmdletNotOfType<WhereObjectCommand>();
 
-            var queue = (Queue<PSObject>) command.PSGetInternalField("_selectObjectQueue", "selectObjectQueue");
+            var queue = (Queue<PSObject>) command.PSGetInternalField("_selectObjectQueue", "selectObjectQueue", command);
 
             var cmdletPipeline = GetCmdletPipelineInput();
 
@@ -465,7 +465,7 @@ namespace PrtgAPI.PowerShell.Progress
                 if (declaringType == typeof(Array) || enumeratorType.Name == "SZArrayEnumerator") //It's a SZArrayEnumerator (piping straight from a variable). In .NET Core 3.1 SZArrayEnumerator is no longer nested
                     list = ((object[]) enumerator.GetInternalField("_array"));
                 else if (declaringType == typeof(List<>)) //It's a List<T>.Enumerator (piping from $groups[0].Group)
-                    list = enumerator.PSGetInternalField("_list", "list").ToIEnumerable();
+                    list = enumerator.PSGetInternalField("_list", "list", null).ToIEnumerable();
                 else if (enumeratorType.IsGenericType && enumeratorType.GetGenericTypeDefinition() == typeof(ReadOnlyListEnumerator<>))
                     list = enumerator.GetInternalField("list").ToIEnumerable();
                 else

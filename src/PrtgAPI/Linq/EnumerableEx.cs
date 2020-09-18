@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
@@ -104,6 +105,16 @@ namespace PrtgAPI.Linq
                 return new ReadOnlyCollection<T>(list);
 
             return new ReadOnlyCollection<T>(source.ToList());
+        }
+
+        internal static Dictionary<object, object> ToDictionary(this Hashtable table)
+        {
+            return table.ToDictionary<object, object>();
+        }
+
+        internal static Dictionary<TKey, TValue> ToDictionary<TKey, TValue>(this Hashtable table)
+        {
+            return table.Cast<DictionaryEntry>().ToDictionary(e => (TKey) e.Key, e => (TValue) e.Value);
         }
     }
 }

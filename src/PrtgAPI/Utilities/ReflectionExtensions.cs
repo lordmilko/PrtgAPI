@@ -77,6 +77,16 @@ namespace PrtgAPI.Reflection
             return prop;
         }
 
+        public static object GetPublicProperty(this object obj, string name)
+        {
+            var info = obj.GetPublicPropertyInfo(name);
+
+            if (info == null)
+                throw new MissingMemberException(obj.GetType().Name, name);
+
+            return info.GetValue(obj);
+        }
+
         /// <summary>
         /// Retrieve the property info metadata of an internal property.
         /// </summary>

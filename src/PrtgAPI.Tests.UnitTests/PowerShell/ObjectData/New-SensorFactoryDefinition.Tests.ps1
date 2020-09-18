@@ -5,8 +5,10 @@ Describe "New-SensorFactoryDefinition" -Tag @("PowerShell", "UnitTest") {
     $sensors = Run "Sensor" {
 
         $item1 = GetItem
+        $item1.Device = "dc1"
         $item1.ObjId = 1001
         $item2 = GetItem
+        $item2.Device = "dc2"
         $item2.ObjId = 1002
 
         WithItems($item1, $item2) {
@@ -34,28 +36,28 @@ Describe "New-SensorFactoryDefinition" -Tag @("PowerShell", "UnitTest") {
                                           "channel(1001,0) + channel(1002,0)"
                                           "#2:dc1"
                                           "channel(1001,0)"
-                                          "#3:dc1"
+                                          "#3:dc2"
                                           "channel(1002,0)") -join "`n"
         }
         @{ Name = "Max";     Expected = @("#1:Summary"
                                           "max(channel(1001,0), channel(1002,0))"
                                           "#2:dc1"
                                           "channel(1001,0)"
-                                          "#3:dc1"
+                                          "#3:dc2"
                                           "channel(1002,0)") -join "`n"
         }
         @{ Name = "Min";     Expected = @("#1:Summary"
                                           "min(channel(1001,0), channel(1002,0))"
                                           "#2:dc1"
                                           "channel(1001,0)"
-                                          "#3:dc1"
+                                          "#3:dc2"
                                           "channel(1002,0)") -join "`n"
         }
         @{ Name = "Average"; Expected = @("#1:Summary"
                                           "(channel(1001,0) + channel(1002,0)) / 2"
                                           "#2:dc1"
                                           "channel(1001,0)"
-                                          "#3:dc1"
+                                          "#3:dc2"
                                           "channel(1002,0)") -join "`n"
         }
     )
@@ -64,7 +66,7 @@ Describe "New-SensorFactoryDefinition" -Tag @("PowerShell", "UnitTest") {
 
         $expected = "#1:dc1`n" +
                     "channel(1001,1)`n" +
-                    "#2:dc1`n" +
+                    "#2:dc2`n" +
                     "channel(1002,1)"
 
         (
@@ -77,7 +79,7 @@ Describe "New-SensorFactoryDefinition" -Tag @("PowerShell", "UnitTest") {
 
         $expected = "#1:dc1`n" +
                     "channel(1001,0)`n" +
-                    "#2:dc1`n" +
+                    "#2:dc2`n" +
                     "channel(1002,0)"
 
         (
@@ -90,7 +92,7 @@ Describe "New-SensorFactoryDefinition" -Tag @("PowerShell", "UnitTest") {
 
         $expected = "#1:dc1 [bananas]`n" +
                     "channel(1001,0)`n" +
-                    "#2:dc1 [bananas]`n" +
+                    "#2:dc2 [bananas]`n" +
                     "channel(1002,0)"
 
         (
@@ -103,7 +105,7 @@ Describe "New-SensorFactoryDefinition" -Tag @("PowerShell", "UnitTest") {
 
         $expected = "#2:dc1`n" +
                     "channel(1001,2)`n" +
-                    "#3:dc1`n" +
+                    "#3:dc2`n" +
                     "channel(1002,2)"
 
         (
@@ -148,7 +150,7 @@ Describe "New-SensorFactoryDefinition" -Tag @("PowerShell", "UnitTest") {
 
         $expected = "#1:dc1`n" +
                     "channel(1001,0)`n" +
-                    "#2:dc1`n" +
+                    "#2:dc2`n" +
                     "channel(1002,0)"
 
         (
@@ -163,7 +165,7 @@ Describe "New-SensorFactoryDefinition" -Tag @("PowerShell", "UnitTest") {
 
             $expected = "#1:dc1`n" +
                         "100 - channel(1001,2)`n" +
-                        "#2:dc1`n" +
+                        "#2:dc2`n" +
                         "100 - channel(1002,2)"
 
             (
@@ -176,7 +178,7 @@ Describe "New-SensorFactoryDefinition" -Tag @("PowerShell", "UnitTest") {
 
             $expected = "#1:dc1`n" +
                         "channel(1001,100)`n" +
-                        "#2:dc1`n" +
+                        "#2:dc2`n" +
                         "channel(1002,100)"
         
             (
@@ -380,7 +382,7 @@ Describe "New-SensorFactoryDefinition" -Tag @("PowerShell", "UnitTest") {
                         "(channel(1001,0) + channel(1002,0))/2`n" +
                         "#2:dc1`n" +
                         "channel(1001,0)`n" +
-                        "#3:dc1`n" +
+                        "#3:dc2`n" +
                         "channel(1002,0)"
 
             (
@@ -393,7 +395,7 @@ Describe "New-SensorFactoryDefinition" -Tag @("PowerShell", "UnitTest") {
                         "channel(1001,0) + channel(1002,0)`n" +
                         "#2:dc1`n" +
                         "channel(1001,0)`n" +
-                        "#3:dc1`n" +
+                        "#3:dc2`n" +
                         "channel(1002,0)"
 
             (
@@ -406,7 +408,7 @@ Describe "New-SensorFactoryDefinition" -Tag @("PowerShell", "UnitTest") {
                         "(channel(1001,0) + channel(1002,0))/2`n" +
                         "#2:dc1`n" +
                         "channel(1001,0)`n" +
-                        "#3:dc1`n" +
+                        "#3:dc2`n" +
                         "channel(1002,0)"
 
             (
@@ -432,6 +434,225 @@ Describe "New-SensorFactoryDefinition" -Tag @("PowerShell", "UnitTest") {
 
         It "specifies an empty summary finalizer" {
             { $sensors | fdef { $_.Device } -SummaryName "Summary" -SummaryExpression { "$acc + $expr" } -SummaryFinalizer { } } | Should Throw "'' is not a valid channel expression"
+        }
+    }
+    
+    Context "Hashtable" {
+
+        function Validate($expected, $table)
+        {
+            ($sensors | New-SensorFactoryDefinition $table) -Join "`n" | Should Be $expected
+        }
+
+        It "specifies Default" {
+
+            $expected = "#1:dc1`n" +
+                        "channel(1001,0)`n" +
+                        "#2:dc2`n" +
+                        "channel(1002,0)"
+
+            $table = @{
+                Name = { $_.Device }
+            }
+
+            Validate $expected $table
+        }
+
+        It "specifies Aggregate" {
+            $expected = "#1:Sum`n" +
+                        "channel(1001,0) + channel(1002,0)"
+
+            $table = @{
+                Name = "Sum"
+                Agg = {"$acc + $expr"}
+            }
+
+            Validate $expected $table
+        }
+
+        It "specifies Summary" {
+            $expected = "#1:Sum`n" +
+                        "channel(1001,0) + channel(1002,0)`n" +
+                        "#2:dc1`n" +
+                        "channel(1001,0)`n" +
+                        "#3:dc2`n" +
+                        "channel(1002,0)"
+
+            $table = @{
+                Name = {$_.Device}
+                sn = "Sum"
+                se = "Sum"
+            }
+
+            Validate $expected $table
+        }
+
+        It "specifies Manual" {
+            $expected = "#1:Line at 40.2`n" +
+                        "40.2"
+
+            $table = @{
+                Name = "Line at 40.2"
+                Value = 40.2
+            }
+
+            Validate $expected $table
+        }
+
+        It "specifies a parameter set that requires piped sensors and one that doesn't" {
+            
+            $expected = "#1:dc1`n" +
+                        "channel(1001,0)`n" +
+                        "#2:dc2`n" +
+                        "channel(1002,0)`n" +
+                        "#3:Line at 40.2`n" +
+                        "40.2"
+
+            $table1 = @{
+                Name = { $_.Device }
+            }
+            
+            $table2 = @{
+                Name = "Line at 40.2"
+                Value = 40.2
+            }
+
+            Validate $expected $table1,$table2
+        }
+
+        It "specifies nested Hashtable" {
+            $expected = "#1:dc1`n" +
+                        "channel(1001,0)`n" +
+                        "#2:dc2`n" +
+                        "channel(1002,0)`n" +
+                        "#3:Line at 40.2`n" +
+                        "40.2"
+
+            $table1 = @{
+                Hashtable = @{
+                    Name = {$_.Device}
+                }
+            }
+
+            $table2 = @{
+                Name = "Line at 40.2"
+                Value = 40.2
+            }
+
+            Validate $expected $table1,$table2
+        }
+
+        It "specifies multiple Hashtables" {
+            $expected = "#1:Total`n" +
+                        "channel(1001,0) + channel(1002,0)`n" +
+                        "#2:dc1 Total`n" +
+                        "channel(1001,0)`n" +
+                        "#3:dc2 total`n" +
+                        "channel(1002,0)`n" +
+                        "#4:Inactive`n" +
+                        "channel(1001,1) + channel(1002,1)`n" +
+                        "#5:dc1 Inactive`n" +
+                        "channel(1001,1)`n" +
+                        "#6:dc2 Inactive`n" +
+                        "channel(1002,1)"
+
+            $table1 = @{
+                name = {$_.Device + " Total"}
+                sn = "Total"
+                se = "Sum"
+            }
+
+            $table2 = @{
+                name = {$_.Device + " Inactive"}
+                sn = "Inactive"
+                se = "Sum"
+                channelid = 1
+            }
+
+            Validate $expected $table1,$table2
+        }
+
+        It "specifies a custom start ID to the cmdlet" {
+            $expected = "#2:dc1`n" +
+                        "channel(1001,0)`n" +
+                        "#3:dc2`n" +
+                        "channel(1002,0)"
+
+            $table = @{
+                Name = { $_.Device }
+            }
+
+            ($sensors | New-SensorFactoryDefinition $table -StartId 2) -Join "`n" | Should Be $expected
+        }
+
+        It "specifies a custom start ID to the cmdlet and the first hashtable" {
+            $expected = "#3:dc1`n" +
+                        "channel(1001,0)`n" +
+                        "#4:dc2`n" +
+                        "channel(1002,0)"
+
+            $table = @{
+                Name = { $_.Device }
+                start = 3
+            }
+
+            ($sensors | New-SensorFactoryDefinition $table -StartId 2) -Join "`n" | Should Be $expected
+        }
+
+        It "specifies a custom start ID to the cmdlet and the second hashtable" {
+            $expected = "#2:dc1 First`n" +
+                        "channel(1001,0)`n" +
+                        "#3:dc2 First`n" +
+                        "channel(1002,0)`n" +
+                        "#6:dc1 Second`n" +
+                        "channel(1001,1)`n" +
+                        "#7:dc2 Second`n" +
+                        "channel(1002,1)"
+
+            $table1 = @{name={$_.Device + " First"}}
+            $table2 = @{name={$_.Device + " Second"}; start = 6; channelid = 1}
+
+            ($sensors | New-SensorFactoryDefinition $table1,$table2 -StartId 2) -Join "`n" | Should Be $expected
+        }
+
+        It "returns the same results when splatting a hashtable" {
+            
+            $expected = "#1:Sum`n" +
+                        "channel(1001,0) + channel(1002,0)`n" +
+                        "#2:dc1`n" +
+                        "channel(1001,0)`n" +
+                        "#3:dc2`n" +
+                        "channel(1002,0)"
+
+            $table = @{
+                Name = {$_.Device}
+                sn = "Sum"
+                se = "Sum"
+            }
+
+            ($sensors | New-SensorFactoryDefinition $table) -Join "`n" | Should Be $expected
+            ($sensors | New-SensorFactoryDefinition @table) -Join "`n" | Should Be $expected
+
+        }
+
+        It "throws when sensors aren't piped to a parameter set that requires them" {
+
+            { New-SensorFactoryDefinition @{name={$_.Device}} } | Should Throw "Cannot process hashtable '@{name={`$_.Device}}' on parameter set 'DefaultSet': parameter 'Sensor' is mandatory."
+        }
+
+        It "throws when an ambiguous parameter set is specified" {
+
+            { New-SensorFactoryDefinition @{name={$_.Device}; Agg={"$acc + $expr"}; sn = "Sum"} } | Should Throw "Parameter set cannot be resolved using the specified named parameters."
+        }
+
+        It "throws when an unknown parameter is specified" {
+            
+            { New-SensorFactoryDefinition @{name={$_.Device}; potato=1} } | Should Throw "A parameter cannot be found that matches parameter name 'potato'."
+        }
+
+        It "throws when a mandatory parameter is unspecified" {
+
+            { $sensors | New-SensorFactoryDefinition @{name={$_.Device}; sn="Sum"} } | Should Throw "on parameter set 'SummarySet': parameter 'SummaryExpression' is mandatory."
         }
     }
 }
