@@ -215,6 +215,11 @@ namespace PrtgAPI.PowerShell.Cmdlets
                 else
                     PrtgSessionState.EnableProgress = true;
 
+                if (PrtgSessionState.Client.Server != Server && (PrtgSessionState.Client.LogLevel & PrtgAPI.LogLevel.Trace) == PrtgAPI.LogLevel.Trace)
+                {
+                    WriteVerbose($"{MyInvocation.MyCommand}: Server redirected HTTP to HTTPS. Changing server URL from '{Server}' to '{PrtgSessionState.Client.Server}'");
+                }
+
                 WritePassThru();
             }
             else

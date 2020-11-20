@@ -131,6 +131,7 @@
     <Compile Include="Support\Infrastructure\Progress\ProgressHierarchy.cs" />
     <Compile Include="Support\TestItems\SystemInfoItem.cs" />
     <Compile Include="Support\TestResponses\GeoLocatorResponse.cs" />
+    <Compile Include="Support\TestResponses\HttpToHttpsResponse.cs" />
     <Compile Include="Support\TestResponses\InfiniteLogPostProcessValidatorResponse.cs" />
     <Compile Include="Support\TestResponses\InfiniteLogResponse.cs" />
     <Compile Include="Support\TestResponses\InfiniteLogValidatorResponse.cs" />

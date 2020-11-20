@@ -2,6 +2,8 @@
 
 if(!(Get-Module -ListAvailable Assert))
 {
+    [Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12
+
     Install-Package Assert -ProviderName PowerShellGet -RequiredVersion 0.8.1 -ForceBootstrap -Force | Out-Null
 }
 

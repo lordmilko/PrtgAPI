@@ -339,6 +339,9 @@ function global:Join-PathEx
     }
 }
 
+# PowerShell Gallery requires TLS 1.2
+[Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12
+
 $exports = @(
     "HasType"
     "New-PackageManager"

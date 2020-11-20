@@ -264,7 +264,7 @@ namespace PrtgAPI.Request
                     if (responseContent.Type == PrtgResponseType.String)
                         prtgClient.Log(responseContent.StringValue, LogLevel.Response);
 
-                    ValidateHttpResponse(responseMessage, responseContent);
+                    ValidateHttpResponse(prtgClient, request, responseMessage, responseContent);
 
                     return responseContent;
                 }
@@ -321,7 +321,7 @@ namespace PrtgAPI.Request
                     if (responseContent.Type == PrtgResponseType.String)
                         prtgClient.Log(responseContent.StringValue, LogLevel.Response);
 
-                    ValidateHttpResponse(responseMessage, responseContent);
+                    ValidateHttpResponse(prtgClient, request, responseMessage, responseContent);
 
                     return responseContent;
                 }
@@ -429,7 +429,36 @@ namespace PrtgAPI.Request
             return true;
         }
 
-        internal static void ValidateHttpResponse(HttpResponseMessage responseMessage, PrtgResponse response)
+        private void ValidateHttpResponse(PrtgClient client, PrtgRequestMessage request,
+            HttpResponseMessage responseMessage, PrtgResponse response)
+        {
+            /* If the user specified http:// when their server is in fact https://, modify
+             * the server URL while being overley cautious not to mess with it too much;
+             * we want to assume that user knows what they're doing. Failing to adjust the URL
+             * will cause cookies tagged as Secure from the HTTPS server to be omitted
+             * from the insecure HTTP requests made by the HttpClient */
+            if (request != null && responseMessage.RequestMessage.RequestUri.Scheme == "https" && request.Uri.Scheme == "http" &&
+                client.ConnectionDetails.Server.StartsWith("http://", StringComparison.OrdinalIgnoreCase))
+            {
+                var ch = "s";
+
+                if (client.ConnectionDetails.Server.StartsWith("HTTP"))
+                    ch = "S";
+
+                var str = client.ConnectionDetails.Server.Insert(4, ch);
+
+                if (str.StartsWith("https", StringComparison.OrdinalIgnoreCase))
+                {
+                    client.Log($"Server redirected HTTP to HTTPS. Changing server URL from '{client.ConnectionDetails.Server}' to '{str}'", LogLevel.Trace);
+
+                    client.ConnectionDetails.Server = str;
+                }
+            }
+
+            ValidateHttpResponse(responseMessage, response);
+        }
+
+        internal void ValidateHttpResponse(HttpResponseMessage responseMessage, PrtgResponse response)
         {
             if (responseMessage.StatusCode == HttpStatusCode.BadRequest)
             {

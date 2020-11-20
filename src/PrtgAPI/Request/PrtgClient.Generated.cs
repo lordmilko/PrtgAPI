@@ -21,7 +21,7 @@ using PrtgAPI.Request;
 using PrtgAPI.Utilities;
 
 //Methods with complex logic surrounding sync/async function calls.
-//For each method, two variants a generated. A synchronous method with the
+//For each method, two variants are generated. A synchronous method with the
 //expected return type, and an async method that implicitly wraps the result
 //in a Task
 

@@ -16,7 +16,6 @@ namespace PrtgAPI.Request
         private HttpClient asyncClient = new HttpClient();
 
         private HttpClientHandler handler = new HttpClientHandler();
-        private CookieContainer cookies = new CookieContainer();
 
         private string server;
 
@@ -108,7 +107,7 @@ namespace PrtgAPI.Request
             //needs to be refactored to have the deserialization happen in a callback to ExecuteRequest
             //so that there is no problem wrapping the HttpResponseMessage up in a using for both
             //sync/async
-            return asyncClient.GetAsync(request.Url, token);
+            return asyncClient.GetAsync(request.Uri, token);
         }
     }
 }

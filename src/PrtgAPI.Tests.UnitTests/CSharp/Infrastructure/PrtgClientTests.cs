@@ -463,6 +463,37 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
 
         [UnitTest]
         [TestMethod]
+        public void PrtgClient_RedirectsHttpUrlToHttps()
+        {
+            var httpServer = "http://prtg.example.com";
+            var httpsServer = "https://prtg.example.com";
+
+            var client = new PrtgClient(httpServer, "username", "password", AuthMode.PassHash, new MockWebClient(new HttpToHttpsResponse()));
+
+            Assert.AreEqual(httpServer, client.Server);
+
+            client.GetSensors();
+
+            Assert.AreEqual(httpsServer, client.Server);
+        }
+
+        [UnitTest]
+        [TestMethod]
+        public void PrtgClient_DoesntModifyHttpsToHttps()
+        {
+            var httpsServer = "https://prtg.example.com";
+
+            var client = new PrtgClient(httpsServer, "username", "password", AuthMode.PassHash, new MockWebClient(new HttpToHttpsResponse()));
+
+            Assert.AreEqual(httpsServer, client.Server);
+
+            client.GetSensors();
+
+            Assert.AreEqual(httpsServer, client.Server);
+        }
+
+        [UnitTest]
+        [TestMethod]
         public void PrtgClient_SplitsRequests_BatchingOver1500Items()
         {
             var range = Enumerable.Range(1, 2000).ToArray();
