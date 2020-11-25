@@ -8,6 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PrtgAPI.Parameters;
+using PrtgAPI.Tests.IntegrationTests.Support;
 using PrtgAPI.Tests.UnitTests.Support;
 
 namespace PrtgAPI.Tests.IntegrationTests.Infrastructure
@@ -223,18 +224,18 @@ namespace PrtgAPI.Tests.IntegrationTests.Infrastructure
                 var localClient = new PrtgClient(Settings.ServerWithProto, Settings.UserName, Settings.Password);
                 localClient.RetryRequest += (sender, args) =>
                 {
-                    Logger.LogTestDetail($"Handling retry {retriesMade + 1}");
+                    retriesMade++;
+
+                    Logger.LogTestDetail($"Handling retry {retriesMade}");
 
                     if (!isAsync)
                         AssertEx.AreEqual(initialThread, Thread.CurrentThread.ManagedThreadId, "Event was not handled on initial thread");
-                    retriesMade++;
                 };
                 localClient.RetryCount = retriesToMake;
 
                 Logger.LogTestDetail("Stopping PRTG Service");
 
-                coreService.Stop();
-                coreService.WaitForStatus(ServiceControllerStatus.Stopped);
+                coreService.StopAndWaitForStatus(ServiceControllerStatus.Stopped);
 
                 try
                 {
@@ -251,11 +252,31 @@ namespace PrtgAPI.Tests.IntegrationTests.Infrastructure
                 finally
                 {
                     Logger.LogTestDetail("Starting PRTG Service");
-                    coreService.Start();
-                    coreService.WaitForStatus(ServiceControllerStatus.Running);
+                    coreService.StartAndWaitForStatus(ServiceControllerStatus.Running);
 
-                    Logger.LogTestDetail("Sleeping for 30 seconds");
-                    Thread.Sleep(30000);
+                    var time = 90;
+
+                    while (true)
+                    {
+                        try
+                        {
+                            var probe = client.GetProbes();
+
+                            break;
+                        }
+                        catch (HttpRequestException)
+                        {
+                            var duration = 5;
+
+                            time -= duration;
+
+                            if (time < 0)
+                                throw;
+
+                            Logger.LogTestDetail($"Sleeping for {duration} seconds as service is not up");
+                            Thread.Sleep(duration * 1000);
+                        }
+                    }
 
                     Logger.LogTestDetail("Refreshing and sleeping for 20 seconds");
                     localClient.RefreshObject(Settings.Device);

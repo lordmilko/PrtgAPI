@@ -167,7 +167,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
 
             AssertEx.Throws<PrtgRequestException>(
                 () => client.AddSensor(objectId, parameters),
-                "The desired object cannot be created here"
+                "object cannot be created here"
             );
         }
 

@@ -126,7 +126,7 @@ Describe "Get-SensorTarget_IT" -Tag @("PowerShell", "IntegrationTest") {
 
     It "throws retrieving targets for a sensor type unsupported by a device" {
 
-        { $device | Get-SensorTarget -RawType exchangepsbackup } | Should Throw "An unspecified error occurred while trying to resolve sensor targets. Specified sensor type may not be valid on this device"
+        { $device | Get-SensorTarget -RawType exchangepsbackup } | Should Throw "Specified sensor type may not be valid on this device"
     }
 
     It "throws attempting to resolve sensor targets as a read-only user" {

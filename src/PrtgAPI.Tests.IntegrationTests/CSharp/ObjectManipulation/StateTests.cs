@@ -11,7 +11,12 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         [IntegrationTest]
         public void Action_State_AcknowledgeAndResume()
         {
-            AssertEx.AreEqual(Status.Down, GetSensor(Settings.DownSensor).Status, $"Initial sensor status was not {Status.Down}");
+            var initial = GetSensor(Settings.DownSensor);
+
+            if (initial.Status != Status.Down)
+                ServerManager.RepairConfig();
+
+            AssertEx.AreEqual(Status.Down, initial.Status, "Initial status was not down");
 
             var message = "Unit Testing FTW!";
 
@@ -34,6 +39,16 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         [IntegrationTest]
         public void Action_State_PauseAndResume()
         {
+            var initial = GetSensor(Settings.UpSensor);
+
+            if (initial.Status != Status.Up)
+            {
+                client.ResumeObject(initial.Id);
+                ServerManager.RepairConfig();
+            }
+
+            AssertEx.AreEqual(Status.Up, initial.Status, "Initial status was not up");
+
             Logger.LogTestDetail("Pausing object");
             client.PauseObject(Settings.UpSensor);
             CheckAndSleep(Settings.UpSensor);
@@ -67,6 +82,12 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         public void Action_State_PauseForDuration()
         {
             var initial = GetSensor(Settings.UpSensor);
+
+            if (initial.Status != Status.Up)
+            {
+                client.ResumeObject(initial.Id);
+                ServerManager.RepairConfig();
+            }
 
             AssertEx.AreEqual(Status.Up, initial.Status, "Initial status was not up");
 
@@ -111,7 +132,12 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
         [IntegrationTest]
         public void Action_State_SimulateErrorAndResume()
         {
-            AssertEx.AreEqual(Status.Up, GetSensor(Settings.UpSensor).Status, $"Initial sensor state was not {Status.Up}");
+            var initial = GetSensor(Settings.UpSensor);
+
+            if (initial.Status != Status.Up)
+                ServerManager.RepairConfig();
+
+            AssertEx.AreEqual(Status.Up, initial.Status, "Initial status was not up");
 
             Logger.LogTestDetail("Simulating error status");
             client.SimulateError(Settings.UpSensor);

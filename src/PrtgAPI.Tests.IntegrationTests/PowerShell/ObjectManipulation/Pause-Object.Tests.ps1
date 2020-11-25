@@ -53,7 +53,7 @@ Describe "Pause-Object_IT" -Tag @("PowerShell", "IntegrationTest") {
         $pausedSensor = WaitForStatus $pausedSensor Up 90
         
         LogTestDetail "Object should be unpaused. Refreshing object."
-        $finalSensor = WaitForStatus $pausedSensor Up 30 10
+        $finalSensor = WaitForStatus $pausedSensor Up 60 5
         
         $finalSensor.Status | Should Be Up
     }
@@ -76,7 +76,7 @@ Describe "Pause-Object_IT" -Tag @("PowerShell", "IntegrationTest") {
         $pausedSensor = WaitForStatus $pausedSensor Up 90
 
         LogTestDetail "Object should be unpaused. Refreshing object."
-        $finalSensor = WaitForStatus $pausedSensor Up 30 10
+        $finalSensor = WaitForStatus $pausedSensor Up 60 5
 
         $finalSensor.Status | Should Be Up
     }

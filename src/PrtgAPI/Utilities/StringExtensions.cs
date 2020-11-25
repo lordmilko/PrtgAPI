@@ -53,7 +53,7 @@ namespace PrtgAPI.Utilities
             if (str == null)
                 return ".";
 
-            if (str.EndsWith("."))
+            if (str.EndsWith(".") || str.EndsWith("?") || str.EndsWith("!"))
                 return str;
 
             return $"{str}.";

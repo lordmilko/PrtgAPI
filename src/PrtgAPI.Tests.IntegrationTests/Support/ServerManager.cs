@@ -6,6 +6,7 @@ using System.Management;
 using System.Net.NetworkInformation;
 using System.ServiceProcess;
 using System.Threading;
+using PrtgAPI.Tests.IntegrationTests.Support;
 
 namespace PrtgAPI.Tests.IntegrationTests
 {
@@ -253,16 +254,14 @@ namespace PrtgAPI.Tests.IntegrationTests
                 {
                     Logger.Log("Restoring PRTG Config leftover from previous aborted test");
                     Logger.LogTest("Stopping PRTGCoreService");
-                    coreService.Stop();
-                    coreService.WaitForStatus(ServiceControllerStatus.Stopped);
+                    coreService.StopAndWaitForStatus(ServiceControllerStatus.Stopped);
 
                     Logger.LogTest("Copying PRTG Config");
                     File.Copy(PrtgConfigBackup, PrtgConfig, true);
                     File.Delete(PrtgConfigBackup);
 
                     Logger.LogTest("Starting PRTGCoreService");
-                    coreService.Start();
-                    coreService.WaitForStatus(ServiceControllerStatus.Running);
+                    coreService.StartAndWaitForStatus(ServiceControllerStatus.Running);
 
                     Logger.LogTest("Sleeping for 30 seconds while PRTG starts up");
                     Thread.Sleep(30 * 1000);
@@ -330,8 +329,7 @@ namespace PrtgAPI.Tests.IntegrationTests
 
             Logger.Log("Starting service");
 
-            coreService.Start();
-            coreService.WaitForStatus(ServiceControllerStatus.Running);
+            coreService.StartAndWaitForStatus(ServiceControllerStatus.Running);
 
             if (probeNameNeedsRepairing)
             {
@@ -351,8 +349,7 @@ namespace PrtgAPI.Tests.IntegrationTests
                 if (probeService.Status != ServiceControllerStatus.Stopped)
                     Thread.Sleep(5000);
 
-                probeService.Start();
-                probeService.WaitForStatus(ServiceControllerStatus.Running);
+                probeService.StartAndWaitForStatus(ServiceControllerStatus.Running);
             }
 
             Logger.Log("Finished");
@@ -471,8 +468,7 @@ namespace PrtgAPI.Tests.IntegrationTests
             if (service.Status == ServiceControllerStatus.Stopped)
             {
                 Logger.LogTest($"{service.ServiceName} is not running. Starting service");
-                service.Start();
-                service.WaitForStatus(ServiceControllerStatus.Running);
+                service.StartAndWaitForStatus(ServiceControllerStatus.Running);
 
                 Logger.LogTest("Sleeping for 30 seconds while PRTG service starts");
                 Thread.Sleep(30 * 1000);

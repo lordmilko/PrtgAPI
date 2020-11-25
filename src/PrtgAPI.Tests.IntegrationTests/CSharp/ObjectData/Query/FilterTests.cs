@@ -1145,11 +1145,13 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
 
         [TestMethod]
         [IntegrationTest]
-        public void Data_QueryFilter_SensorProperties_Downtime_GreaterThan()
+        public void Data_QueryFilter_SensorProperties_Downtime_GreaterThan_bad()
         {
             var downSensor = client.GetSensor(Settings.DownSensor);
 
-            ExecuteSensor(s => s.Downtime > downSensor.Downtime, Property.Downtime, downSensor.Downtime, FilterOperator.GreaterThan);
+            var expectedDowntime = downSensor.Downtime - 10;
+
+            ExecuteSensor(s => s.Downtime > expectedDowntime, Property.Downtime, expectedDowntime, FilterOperator.GreaterThan);
         }
 
         [TestMethod]
@@ -1534,7 +1536,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         {
             var monitorTime = client.GetSensor(Settings.UpSensor).TotalMonitorTime;
 
-            Assert.IsNotNull(monitorTime);
+            Assert.IsTrue(monitorTime.TotalSeconds >= 0, "Cannot test TotalMonitorTime if TotalSeconds value is 0");
 
             ExecuteSensor(s => s.TotalMonitorTime == monitorTime, Property.TotalMonitorTime, monitorTime);
         }
@@ -1545,7 +1547,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         {
             var monitorTime = client.GetSensor(Settings.UpSensor).TotalMonitorTime;
 
-            Assert.IsNotNull(monitorTime);
+            Assert.IsTrue(monitorTime.TotalSeconds >= 0, "Cannot test TotalMonitorTime if TotalSeconds value is 0");
 
             ExecuteSensor(s => s.TotalMonitorTime != monitorTime, Property.TotalMonitorTime, monitorTime, FilterOperator.NotEquals);
         }
@@ -1554,9 +1556,9 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         [IntegrationTest]
         public void Data_QueryFilter_SensorProperties_TotalMonitorTime_GreaterThan()
         {
-            var monitorTime = client.GetSensor(Settings.UpSensor).TotalMonitorTime;
+            var monitorTime = client.GetSensor(Settings.UpSensor).TotalMonitorTime.Subtract(TimeSpan.FromSeconds(10));
 
-            Assert.IsNotNull(monitorTime);
+            Assert.IsTrue(monitorTime.TotalSeconds >= 0, "Cannot test TotalMonitorTime if TotalSeconds value is 0");
 
             ExecuteSensor(s => s.TotalMonitorTime > monitorTime, Property.TotalMonitorTime, monitorTime, FilterOperator.GreaterThan);
         }
@@ -1565,9 +1567,9 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         [IntegrationTest]
         public void Data_QueryFilter_SensorProperties_TotalMonitorTime_LessThan()
         {
-            var monitorTime = client.GetSensor(Settings.UpSensor).TotalMonitorTime;
+            var monitorTime = client.GetSensor(Settings.UpSensor).TotalMonitorTime.Add(TimeSpan.FromSeconds(10));
 
-            Assert.IsNotNull(monitorTime);
+            Assert.IsTrue(monitorTime.TotalSeconds >= 10, "Cannot test TotalMonitorTime if TotalSeconds value is 0");
 
             ExecuteSensor(s => s.TotalMonitorTime < monitorTime, Property.TotalMonitorTime, monitorTime, FilterOperator.LessThan);
         }
@@ -1578,7 +1580,7 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         {
             var monitorTime = client.GetSensor(Settings.UpSensor).TotalMonitorTime;
 
-            Assert.IsNotNull(monitorTime);
+            Assert.IsTrue(monitorTime.TotalSeconds >= 0, "Cannot test TotalMonitorTime if TotalSeconds value is 0");
 
             ExecuteSensor(s => s.TotalMonitorTime.ToString().Contains(monitorTime.ToString()), Property.TotalMonitorTime, monitorTime);
         }
@@ -1776,9 +1778,12 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         [IntegrationTest]
         public void Data_QueryFilter_DeviceProperties_Condition_Equals()
         {
-            PrepareCondition(device =>
+            Retry(retry =>
             {
-                ExecuteDevice(d => d.Condition == device.Condition, Property.Condition, device.Condition);
+                PrepareCondition(device =>
+                {
+                    ExecuteDevice(d => d.Condition == device.Condition, Property.Condition, device.Condition);
+                });
             });
         }
 
@@ -1816,9 +1821,12 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
         [IntegrationTest]
         public void Data_QueryFilter_DeviceProperties_Condition_Contains()
         {
-            PrepareCondition(device =>
+            Retry(retry =>
             {
-                ExecuteDevice(d => d.Condition.Contains(device.Condition), Property.Condition, device.Condition, FilterOperator.Contains);
+                PrepareCondition(device =>
+                {
+                    ExecuteDevice(d => d.Condition.Contains(device.Condition), Property.Condition, device.Condition, FilterOperator.Contains);
+                });
             });
         }
 
@@ -2536,13 +2544,13 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectData.Query
             {
                 if (retry)
                 {
-                    Assert.IsTrue(linqObjects.Count > 0);
                     Assert.IsTrue(filterObjects.Count > 0);
+                    Assert.IsTrue(linqObjects.Count > 0);
                     Assert.IsTrue(queryObjects.Count > 0);
                 }
 
+                AssertEx.IsTrue(filterObjects.Count > 0, "Filter objects did not return any results. Are there even any results that match the specified search criteria?");
                 AssertEx.IsTrue(linqObjects.Count > 0, "LINQ objects did not return any results");
-                AssertEx.IsTrue(filterObjects.Count > 0, "Filter objects did not return any results");
                 AssertEx.IsTrue(queryObjects.Count > 0, "Query objects did not return any results");
             }
 

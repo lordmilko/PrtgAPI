@@ -107,6 +107,7 @@
     <Compile Include="CSharp\ObjectManipulation\StateTests.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="Settings.Local.cs" Condition="Exists('Settings.Local.cs')" />
+    <Compile Include="Support\ServiceControllerExtensions.cs" />
     <Compile Include="Support\TestCategory\IntegrationTestAttribute.cs" />
   </ItemGroup>
   <ItemGroup>

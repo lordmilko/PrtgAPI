@@ -569,19 +569,19 @@ namespace PrtgAPI.Request
             {
                 message = message.Trim('\r', '\n');
 
-                //todo: does this work in other languages? Not sure how to replicate it
+                //todo: does this work in other languages? Not sure how to replicate it. when we test with every single sensor type we get this in an _enhanced_ exception message below
                 if (message.StartsWith("Incomplete connection settings"))
                     throw new PrtgRequestException("Failed to retrieve data from device; required credentials for sensor type may be missing. See PRTG UI for further details.");
 
                 throw new PrtgRequestException($"An exception occurred while trying to {action}: {message.EnsurePeriod()}");
             }
 
+            var invalidStr = "Specified sensor type may not be valid on this device, or sensor query target parameters may be incorrect. Check the Device 'Host' is still valid or try adding sensor with the PRTG UI.";
+
             if (enhancedErrorMessage != null)
-                throw new PrtgRequestException($"An exception occurred while trying to {action}: {enhancedErrorMessage.EnsurePeriod()}");
+                throw new PrtgRequestException($"An exception occurred while trying to {action}: {enhancedErrorMessage.EnsurePeriod()} {invalidStr.EnsurePeriod()}");
             else
-            {
-                throw new PrtgRequestException($"An unspecified error occurred while trying to {action}. Specified sensor type may not be valid on this device, or sensor query target parameters may be incorrect. Check the Device 'Host' is still valid or try adding sensor with the PRTG UI.");
-            }
+                throw new PrtgRequestException($"An unspecified error occurred while trying to {action}. {invalidStr.EnsurePeriod()}");
         }
 
         #endregion

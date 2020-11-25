@@ -170,7 +170,7 @@ Describe "Uninstall-GoPrtgServer" -Tag @("PowerShell", "UnitTest") {
 
         Uninstall-GoPrtgServer
 
-        { __goPrtgGetServers } | Should Throw "The term '__goPrtgGetServers' is not recognized as the name of a cmdlet"
+        { __goPrtgGetServers } | Should Throw "The term '__goPrtgGetServers' is not recognized"
     }
 
     It "removes the global function" {
@@ -178,7 +178,7 @@ Describe "Uninstall-GoPrtgServer" -Tag @("PowerShell", "UnitTest") {
         
         Uninstall-GoPrtgServer
 
-        { __goPrtgGetServers } | Should Throw "The term '__goPrtgGetServers' is not recognized as the name of a cmdlet"
+        { __goPrtgGetServers } | Should Throw "The term '__goPrtgGetServers' is not recognized"
     }
 
     It "updates the global function" {
