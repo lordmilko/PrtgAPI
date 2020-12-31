@@ -44,6 +44,7 @@ Executes all PowerShell tests only.
 C:\> Invoke-PrtgTest -Configuration Release
 Executes tests on the Release build of PrtgAPI.
 
+.EXAMPLE
 C:\> Invoke-PrtgTest -Integration
 Invoke all integration tests on the last PrtgAPI build.
 

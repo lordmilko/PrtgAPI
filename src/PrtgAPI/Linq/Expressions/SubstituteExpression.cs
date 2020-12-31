@@ -17,7 +17,7 @@ namespace PrtgAPI.Linq.Expressions
         /// <summary>
         /// Returns the original body of the <see cref="LambdaExpression"/>.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>The original body of the <see cref="LambdaExpression"/>.</returns>
         public override Expression Reduce() => Original;
 
         public Expression Original { get; }

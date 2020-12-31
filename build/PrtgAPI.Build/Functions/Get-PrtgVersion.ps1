@@ -14,7 +14,7 @@ The Get-PrtgVersion cmdlet retrieves version details found in various locations 
     | ModuleTag   | PrtgAPI.PowerShell\PowerShell\Resources\PrtgAPI.psd1 | PrtgAPI PowerShell Module Release Tag      |
     | PreviousTag | Git                                                  | Version of previous GitHub Release         |
 
-Note that if PrtgAPI detects that the .git folder is missing from the repo or that the "git" command is not installed on your system, the PreviousTag property will be emitted from results.
+Note that if PrtgAPI detects that the .git folder is missing from the repo or that the "git" command is not installed on your system, the PreviousTag property will be omitted from results.
 
 .PARAMETER Legacy
 Specifies whether to retrieve the versions used when compiling PrtgAPI using the .NET Core SDK or the legacy .NET Framework tooling.

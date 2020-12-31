@@ -38,7 +38,7 @@ namespace PrtgAPI.Reflection
         /// Returns the underlying type of this type is <see cref="Nullable"/>; otherwise, returns this type.
         /// </summary>
         /// <param name="type"></param>
-        /// <returns></returns>
+        /// <returns>If the specified type is <see cref="Nullable"/>, the underlying type. Otherwise, the original type.</returns>
         public static Type GetUnderlyingType(this Type type)
         {
             var cache = type.GetCacheValue();
@@ -197,7 +197,7 @@ namespace PrtgAPI.Reflection
         /// Retrieve all properties from a type, excluding those that are not writable or are internal properties used by indexers
         /// </summary>
         /// <param name="type">The type to retrieve properties for.</param>
-        /// <returns></returns>
+        /// <returns>All normal properties present on the type.</returns>
         public static IEnumerable<PropertyCache> GetNormalProperties(this Type type)
         {
             return type.GetTypeCache().Properties.Where(p => !p.Property.GetIndexParameters().Any() && p.Property.CanWrite);

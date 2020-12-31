@@ -25,6 +25,7 @@ Report on all violations across all PowerShell files whose name contains the wor
 C:\> Invoke-PrtgAnalyzer -Fix -WhatIf
 View corrections that will be performed on rule violations.
 
+.EXAMPLE
 C:\> Invoke-PrtgAnalyzer -Fix
 Automatically fix all rule violations where possible.
 #>

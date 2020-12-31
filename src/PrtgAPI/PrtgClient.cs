@@ -835,10 +835,10 @@ namespace PrtgAPI
         #region Set Object Properties
 
         internal void SetObjectProperty<T>(BaseSetObjectPropertyParameters<T> parameters, int numObjectIds, CancellationToken token) =>
-            RequestEngine.ExecuteRequest(parameters, m => ResponseParser.ParseSetObjectPropertyUrl(numObjectIds, m), token);
+            RequestEngine.ExecuteRequest(parameters, m => ResponseParser.ParseSetObjectPropertyUrl(parameters, numObjectIds, m), token);
 
         internal async Task SetObjectPropertyAsync<T>(BaseSetObjectPropertyParameters<T> parameters, int numObjectIds, CancellationToken token) =>
-            await RequestEngine.ExecuteRequestAsync(parameters, m => Task.FromResult<PrtgResponse>(ResponseParser.ParseSetObjectPropertyUrl(numObjectIds, m)), token).ConfigureAwait(false);
+            await RequestEngine.ExecuteRequestAsync(parameters, m => Task.FromResult<PrtgResponse>(ResponseParser.ParseSetObjectPropertyUrl(parameters, numObjectIds, m)), token).ConfigureAwait(false);
 
         #endregion
         #region System Administration
@@ -922,7 +922,7 @@ namespace PrtgAPI
         /// </summary>
         /// <param name="address">The address to resolve.</param>
         /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns></returns>
+        /// <returns>The resolved coordinates of the specified address.</returns>
         internal Location ResolveAddress(string address, CancellationToken token)
         {
             if (string.IsNullOrWhiteSpace(address))
@@ -966,7 +966,7 @@ namespace PrtgAPI
         /// </summary>
         /// <param name="address">The address to resolve.</param>
         /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns></returns>
+        /// <returns>The resolved coordinates of the specified address.</returns>
         internal async Task<Location> ResolveAddressAsync(string address, CancellationToken token)
         {
             if (address == null)

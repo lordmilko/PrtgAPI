@@ -178,7 +178,7 @@ Describe "Set-ChannelProperty_IT" -Tag @("PowerShell", "IntegrationTest") {
     It "Table Rendering" {
         $channel = DefaultChannel
 
-        #SetValue "ShowInTable" $false
+        SetValue "ShowInTable" $false
     }
 
     It "Line Color" {

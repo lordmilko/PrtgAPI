@@ -1,5 +1,3 @@
-$vstest = "C:\Program Files (x86)\Microsoft Visual Studio 14.0\Common7\IDE\CommonExtensions\Microsoft\TestWindow\vstest.console.exe"
-
 function Invoke-AppveyorTest
 {
     param(
@@ -104,18 +102,15 @@ function Invoke-AppveyorCSharpTest($IsCore)
     }
     else
     {
-        Write-LogInfo "`tExecuting C# tests"
-
-        $vstestArgs = @(
+        $additionalArgs = @(
             "/TestCaseFilter:TestCategory!=SkipCI"
-            Join-Path $env:APPVEYOR_BUILD_FOLDER "src\PrtgAPI.Tests.UnitTests\bin\$env:CONFIGURATION\PrtgAPI.Tests.UnitTests.dll"
         )
 
         if($env:APPVEYOR)
         {
-            $vstestArgs += "/logger:Appveyor"
+            $additionalArgs += "/logger:Appveyor"
         }
 
-        Invoke-Process { & $vstest @vstestArgs } -WriteHost
+        Invoke-CICSharpTest $env:APPVEYOR_BUILD_FOLDER $additionalArgs -IsCore:$IsCore
     }
 }

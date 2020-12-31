@@ -56,6 +56,8 @@ function New-CSharpPackage
             "$OutputFolder"
             "-NoPackageAnalysis"
             "-symbols"
+            "-SymbolPackageFormat"
+            "snupkg"
             "-version"
             $Version
             "-properties"
@@ -69,10 +71,5 @@ function New-CSharpPackage
 
     Write-Verbose "Executing command '$nuget $nugetArgs'"
 
-    $result = Invoke-Process { & $nuget @nugetArgs }
-
-    if($result)
-    {
-        Write-LogInfo $result
-    }
+    Invoke-Process { & $nuget @nugetArgs }
 }

@@ -293,6 +293,14 @@ namespace PrtgAPI
         [Undocumented]
         [ParameterType(ParameterType.SingleValue)]
         [Description("tmpid")]
-        TmpId
+        TmpId,
+
+        /// <summary>
+        /// Whether to include hidden items in results.
+        /// </summary>
+        [Undocumented]
+        [ParameterType(ParameterType.SingleValue)]
+        [Description("showhide")]
+        ShowHide
     }
 }

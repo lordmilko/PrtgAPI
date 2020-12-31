@@ -39,9 +39,11 @@ View all test results whose name contains the word "dynamic"
 C:\> Get-PrtgTestResult -Outcome Failed
 View all tests that failed in the last invocation of Invoke-PrtgTest
 
+.EXAMPLE
 C:\> Get-PrtgTestResult -ListAvailable
 List all unit test results that are available
 
+.EXAMPLE
 C:\> Get-PrtgTestResult *2019* -ListAvailable | Get-PrtgTestResult *dynamic* -Type C#
 Get all C# test results from 2019 whose test name contains the word "dynamic"
 

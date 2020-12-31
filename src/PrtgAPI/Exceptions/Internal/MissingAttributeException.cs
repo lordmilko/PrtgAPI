@@ -5,7 +5,7 @@ using System.Runtime.Serialization;
 namespace PrtgAPI.Exceptions.Internal
 {
     /// <summary>
-    /// The exception that is thrown when a type or property property is missing a required attribute.
+    /// The exception that is thrown when a type or property is missing a required attribute.
     /// </summary>
     [Serializable]
     [ExcludeFromCodeCoverage]

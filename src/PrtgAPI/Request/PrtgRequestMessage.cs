@@ -149,7 +149,7 @@ namespace PrtgAPI.Request
         /// Serialize one or more <see cref="CustomParameter"/> objects.
         /// </summary>
         /// <param name="value">The value to serialize</param>
-        /// <returns></returns>
+        /// <returns>The serialized form of the specified value.</returns>
         private string ProcessCustomParameter(object value)
         {
             if (value == null)
@@ -205,7 +205,7 @@ namespace PrtgAPI.Request
         /// <param name="name">The name to use for the parameter</param>
         /// <param name="val">The value to assign to the parameter</param>
         /// <param name="isEnum">Whether the specified value is an <see cref="Enum"/></param>
-        /// <returns></returns>
+        /// <returns>The serialized form of the specified parameter.</returns>
         private string FormatSingleParameterWithValEncode(string name, object val, bool isEnum = false)
         {
             return FormatSingleParameterInternal(name, val, true, isEnum);
@@ -217,7 +217,7 @@ namespace PrtgAPI.Request
         /// <param name="name">The name to use for the parameter</param>
         /// <param name="val">The value to assign to the parameter</param>
         /// <param name="isEnum">Whether the specified value is an <see cref="Enum"/> </param>
-        /// <returns></returns>
+        /// <returns>The serialized form of the specified parameter.</returns>
         private string FormatSingleParameterWithoutValEncode(string name, object val, bool isEnum = false)
         {
             return FormatSingleParameterInternal(name, val, false, isEnum);
@@ -270,7 +270,7 @@ namespace PrtgAPI.Request
         /// Retrieves the value of a <see cref="ParameterType.MultiValue"/> parameter. Result is in the form val1,val2,val3
         /// </summary>
         /// <param name="enumerable">The values to assign to the parameter</param>
-        /// <returns></returns>
+        /// <returns>The serialized list of values.</returns>
         private string GetMultiValueStr(IEnumerable enumerable)
         {
             var builder = new StringBuilder();
@@ -308,7 +308,7 @@ namespace PrtgAPI.Request
         /// </summary>
         /// <param name="enumerable">The values to assign to the parameter</param>
         /// <param name="description">The serialized name of the parameter</param>
-        /// <returns></returns>
+        /// <returns>The serialized list of values.</returns>
         private string FormatMultiParameter(IEnumerable enumerable, string description)
         {
             var builder = new StringBuilder();

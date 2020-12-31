@@ -18,7 +18,7 @@ namespace PrtgAPI.Request
         /// </summary>
         /// <param name="channels">The list of channels to group.</param>
         /// <param name="parameters">The parameters to add.</param>
-        /// <returns></returns>
+        /// <returns>A collection of channels grouped according to which channels should be processed together.</returns>
         private List<ChannelLimitAnalysis> GetGroupedLimitChannels(ICollection<Channel> channels, ChannelParameter[] parameters)
         {
             Debug.Assert(channels.Select(c => c.Id).Distinct().Count() == 1, $"Channels containing more than ID were passed to {nameof(GetGroupedLimitChannels)}");

@@ -67,7 +67,7 @@ namespace PrtgAPI.Request.Serialization
         /// Convert a PRTG TimeSpan to a <see cref="TimeSpan"/> object.
         /// </summary>
         /// <param name="timeSpan">PRTG TimeSpan representing the number of seconds since an event occurred. If this value is null, this method will return null.</param>
-        /// <returns></returns>
+        /// <returns>The deserialized <see cref="TimeSpan"/>.</returns>
         internal static TimeSpan ConvertFromPrtgTimeSpan(double timeSpan)
         {
             return TimeSpan.FromSeconds(timeSpan);

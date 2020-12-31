@@ -22,7 +22,7 @@ namespace PrtgAPI.Tree
         /// <summary>
         /// Returns an enumerator that iterates through the <see cref="ListBase{T}"/>.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>An enumerator that iterates through the <see cref="ListBase{T}"/>.</returns>
         [DebuggerStepThrough]
         public IEnumerator<T> GetEnumerator() => new ReadOnlyListEnumerator<T>(this);
 

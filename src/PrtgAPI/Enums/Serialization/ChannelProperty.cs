@@ -66,7 +66,10 @@ namespace PrtgAPI
         /// </summary>
         ShowInGraph,
 
-        //ShowInTable,
+        /// <summary>
+        /// Whether this channel should be shown in tables.
+        /// </summary>
+        ShowInTable,
 
         /// <summary>
         /// Whether the line color of this channel in graphs should be automatically chosen or defined manually.

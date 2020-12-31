@@ -72,6 +72,8 @@ Describe "New-PrtgPackage" -Tag @("PowerShell", "Build") {
             $tempRepository
             "-NoPackageAnalysis"
             "-symbols"
+            "-SymbolPackageFormat"
+            "snupkg"
             "-version 1.2.3"
             "-properties"
             "Configuration=$name"

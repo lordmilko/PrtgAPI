@@ -645,6 +645,49 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             });
         }
 
+
+        [TestMethod]
+        [UnitTest(TestCategory.SkipCoverage)]
+        public void AllXmlDocComments_ThatIncludeReturns_AreFilledInProperly()
+        {
+            var failures = new List<string>();
+
+            WithTree((file, tree, model) =>
+            {
+                foreach (var method in tree.GetRoot().DescendantNodes().OfType<MethodDeclarationSyntax>())
+                {
+                    var trivia = method.GetLeadingTrivia().Select(t => t.GetStructure()).OfType<DocumentationCommentTriviaSyntax>().FirstOrDefault();
+
+                    if (trivia == null)
+                        continue;
+
+                    var returnXml = trivia.ChildNodes().OfType<XmlElementSyntax>().SingleOrDefault(e => e.StartTag.Name.ToString() == "returns");
+
+                    if (returnXml != null)
+                    {
+                        var message = returnXml.Content.ToString();
+
+                        if (message == string.Empty)
+                        {
+                            var type = method.FirstAncestorOrSelf<TypeDeclarationSyntax>(t => true);
+
+                            failures.Add($"{type.Identifier.Text}.{method.Identifier.Text}");
+                        }
+                    }
+                }
+            }, solution: true);
+
+            if (failures.Count > 0)
+            {
+                var str = string.Join(Environment.NewLine, failures);
+
+                if (failures.Count == 1)
+                    Assert.Fail($"1 method is missing a <returns></returns> XML comment: {str}");
+                else
+                    Assert.Fail($"{failures.Count} methods are missing a <returns></returns> XML comment:{Environment.NewLine}{Environment.NewLine}{str}");
+            }
+        }
+
         [TestMethod]
         [UnitTest(TestCategory.SkipCoverage)]
         public void AllPowerShellExamples_Have_ProperSpacingBetweenEachOne()
@@ -1047,9 +1090,9 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             return false;
         }
 
-        private void WithTree(Action<string, SyntaxTree, Lazy<SemanticModel>> action, bool powerShell = false)
+        private void WithTree(Action<string, SyntaxTree, Lazy<SemanticModel>> action, bool powerShell = false, bool solution = false)
         {
-            var path = TestHelpers.GetProjectRoot();
+            var path = TestHelpers.GetProjectRoot(solution);
 
             if (powerShell)
                 path += ".PowerShell";

@@ -444,7 +444,7 @@ namespace PrtgAPI.Linq.Expressions.Visitors
         /// <param name="expr">The condition of the expression whose <see cref="ExpressionType"/> should be flipped.</param>
         /// <param name="otherExpr">The part of the expression that is is causing the flippage.</param>
         /// <param name="type">The new type to use for the expression.</param>
-        /// <returns></returns>
+        /// <returns>The simplified <see cref="BinaryExpression"/>.</returns>
         [ExcludeFromCodeCoverage]
         private BinaryExpression FlipExpr(Expression expr, Expression otherExpr, ExpressionType type)
         {

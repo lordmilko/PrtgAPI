@@ -228,7 +228,7 @@ namespace PrtgAPI.CodeGenerator
         /// <summary>
         /// Resolves a <see cref="MethodDef"/> defined in one <see cref="Template"/> or template <see cref="RegionDef"/> to a <see cref="MethodDef"/> defined somewhere in the hierarchy of another template.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>The <see cref="MethodDef"/> items pointed to by the specified template pointers.</returns>
         private ReadOnlyCollection<MethodDef> ResolveTemplatedMethods(ReadOnlyCollection<MethodDef> pointerDefs)
         {
             var list = new List<MethodDef>();

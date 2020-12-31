@@ -128,7 +128,7 @@ namespace PrtgAPI.PowerShell.Base
         /// </summary>
         /// <param name="records">The collection of records to count.Should be a <see cref="List{T}"/></param>
         /// <param name="count">The count of records to be returned from this method.</param>
-        /// <returns></returns>
+        /// <returns>The number of elements returned from the request.</returns>
         protected virtual IEnumerable<T> GetCount(IEnumerable<T> records, ref int count)
         {
             var list = records as List<T> ?? records.ToList();

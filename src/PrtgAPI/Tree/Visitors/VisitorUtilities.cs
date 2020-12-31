@@ -17,7 +17,7 @@ namespace PrtgAPI.Tree
         /// <typeparam name="T">The type of element the list contains.</typeparam>
         /// <param name="list">The list of elements to visit.</param>
         /// <param name="elementVisitor">A function that visits each element.</param>
-        /// <returns></returns>
+        /// <returns>If any elements were modified, a new list containing the modified elements. Otherwise, the original list.</returns>
         internal static IReadOnlyList<T> VisitList<T>(INodeList<T> list, Func<T, T> elementVisitor)
         {
             var newItems = new List<T>(list.Count);

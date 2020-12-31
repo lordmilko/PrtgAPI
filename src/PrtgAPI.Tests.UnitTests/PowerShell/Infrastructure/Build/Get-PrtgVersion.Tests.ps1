@@ -76,7 +76,7 @@ Describe "Get-PrtgVersion" -Tag @("PowerShell", "Build") {
         $info.PreviousTag | Should Be "v1.2.2"
     }
 
-    It "retrieves version information got Desktop" {
+    It "retrieves version information for Desktop" {
         Mock-GetContent
 
         InModuleScope CI {

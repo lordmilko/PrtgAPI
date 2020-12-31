@@ -128,6 +128,7 @@ namespace PrtgAPI.Request
             //At this point, regardless of whether or not all factor properties are null or not (if we even need factors at all) we're going to be executing a single request
             var list = new List<SetChannelPropertyGrouping>();
 
+            //The C# compiler automatically overrides Equals and GetHashCode for anonymous types, so doing Distinct/DistinctBy is a coherent operation
             foreach (var task in GetSetChannelPropertyTasks(channelGroup.DistinctBy(c => new {  c.Id, c.SensorId }).ToList(), channelParameters))
             {
                 var parameters = new SetChannelPropertyParameters(new[] { sensorsChannels.Key }, channelGroup.Key, task.Parameters);
@@ -341,7 +342,11 @@ namespace PrtgAPI.Request
                 //Get the factor property that also needs to be included (e.g. UpperErrorLimitFactor)
                 var cache = outerParameters.GetPropertyCache(prop);
 
-                Debug.Assert(factor.All(g => (double?)cache.Property.GetValue(g) == factor.Key), "Generic and specific Factor were not equal for at least one channel");
+                /* If you set a channel like "Available Memory" on a WMI Memory sensor to be a PercentValue
+                 * (which doesn't really make sense) then the Factor won't really match. This is kind of an issue
+                 * when it comes to deciding how to split our our factor requests (we assume that everyone in a given request has the same factor for all properties)
+                 * however this is really a super rare issue so we are not handling it for now */
+                //Debug.Assert(factor.All(g => (double?)cache.Property.GetValue(g) == factor.Key), "Generic and specific Factor were not equal for at least one channel");
 
                 //Generate the factor's property name
                 var name = outerParameters.GetFactorParameterName(prop, cache);

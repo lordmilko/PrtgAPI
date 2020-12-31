@@ -96,7 +96,7 @@ namespace PrtgAPI.PowerShell.Base
                     //Get all child objects of this group, e.g. if we're asking for groups, we just got groups 2012 and 2016
                     var objectsFromChildGroup = GetObjectsFromChildGroup(childGroup, parameters);
 
-                    var processedChildren = ProcessChilrenAndMaybeRecurseGroupRecords(childGroup, objsOfTypeInGroup, parameters, objectsFromChildGroup);
+                    var processedChildren = ProcessChildrenAndMaybeRecurseGroupRecords(childGroup, objsOfTypeInGroup, parameters, objectsFromChildGroup);
 
                     foreach (var obj in processedChildren)
                         yield return obj;
@@ -165,7 +165,7 @@ namespace PrtgAPI.PowerShell.Base
             return objectsFromChildGroup;
         }
 
-        private IEnumerable<TObject> ProcessChilrenAndMaybeRecurseGroupRecords(Group childGroup, Func<Group, int> objsOfTypeInGroup, TParam parameters, IEnumerable<TObject> objectsFromChildGroup)
+        private IEnumerable<TObject> ProcessChildrenAndMaybeRecurseGroupRecords(Group childGroup, Func<Group, int> objsOfTypeInGroup, TParam parameters, IEnumerable<TObject> objectsFromChildGroup)
         {
             foreach (var childObj in objectsFromChildGroup)
             {
@@ -225,7 +225,7 @@ namespace PrtgAPI.PowerShell.Base
 
         private List<TObject> GetSensorsFromSingleGroupNameFilter(Group group, TParam parameters)
         {
-            //Get the group filter that was used to filter by the paren group's name
+            //Get the group filter that was used to filter by the parent group's name
             var groupFilter = parameters.SearchFilters.First(f => f.Property == Property.Group);
 
             //Save the original filter value

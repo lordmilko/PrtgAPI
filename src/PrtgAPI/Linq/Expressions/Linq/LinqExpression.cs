@@ -39,7 +39,7 @@ namespace PrtgAPI.Linq.Expressions
         /// Reduces the expression to its <see cref="MethodCallExpression"/>. If no sub-expressions have changed,
         /// returns the original <see cref="MethodCallExpression"/>.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>The <see cref="MethodCallExpression"/> this node encapsulates.</returns>
         public override Expression Reduce()
         {
             if (IsOriginal())

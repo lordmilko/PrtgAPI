@@ -7,6 +7,7 @@ namespace PrtgAPI.Parameters
     {
         public ChannelParameters(Either<Sensor, int> sensorOrId) : base(Content.Channels)
         {
+            this[Parameter.ShowHide] = true;
             this[Parameter.Id] = sensorOrId.GetId();
         }
     }

@@ -56,7 +56,7 @@ Describe "Get-PrtgLog" -Tag @("PowerShell", "Build") {
         It "clears build logs" {
             MockCommands
 
-            Get-PrtgLog -Build -CLear
+            Get-PrtgLog -Build -Clear
         }
     }
 

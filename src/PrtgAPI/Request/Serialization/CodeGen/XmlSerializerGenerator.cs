@@ -203,7 +203,7 @@ namespace PrtgAPI.Linq.Expressions.Serialization
         /// <param name="delegateType">The type of object that will be returned by the delegate.</param>
         /// <param name="trueType">The type of object the delegate will actually manipulate. If this object is null, <paramref name="delegateType"/> is used.</param>
         /// <param name="update">Whether this delegate will be used for constructing a new object or updating an existing one.</param>
-        /// <returns></returns>
+        /// <returns>A lambda expression that deserializes a value of the specified type.</returns>
         internal static LambdaExpression MakeLambda(Type delegateType, Type trueType, bool update = false)
         {
             if (trueType == null)
@@ -353,7 +353,7 @@ namespace PrtgAPI.Linq.Expressions.Serialization
         /// </summary>
         /// <param name="first">Whether this is the outer object being deserialized.</param>
         /// <param name="parentProperty">The property on our parent object this object will be deserialized to.</param>
-        /// <returns></returns>
+        /// <returns>A lambda that reads the members of an object to completion.</returns>
         internal Expression MakeReadElement(bool first = false, PropertyCache parentProperty = null)
         {
             Expression moveToContent = null;

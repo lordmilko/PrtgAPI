@@ -372,7 +372,7 @@ function Test-Psd1RootModule($config, $psd1Path)
 
         if(!$contents.Contains($expected))
         {
-            throw "'$psd1Path' dod not contain correect RootModule for Release build"
+            throw "'$psd1Path' did not contain correect RootModule for Release build"
         }
     }
 }

@@ -125,7 +125,7 @@ namespace PrtgAPI.Parameters
         /// Retrieves the value of a filter for a property.
         /// </summary>
         /// <param name="property">The property to retrieve the value of.</param>
-        /// <returns></returns>
+        /// <returns>The value of the specified filter property, or null if no such filter exists.</returns>
         protected object GetFilterValue(Property property)
         {
             var filters = (IEnumerable<SearchFilter>)this[Parameter.FilterXyz];
@@ -166,7 +166,7 @@ namespace PrtgAPI.Parameters
         /// </summary>
         /// <typeparam name="TArray">The type of array that was previously stored.</typeparam>
         /// <param name="property">The property to retrieve the value of.</param>
-        /// <returns></returns>
+        /// <returns>The values of the specified filter property, or null if no such filter exists.</returns>
         protected TArray[] GetMultiParameterFilterValue<TArray>(Property property) where TArray : struct
         {
             var filters = (IEnumerable<SearchFilter>)this[Parameter.FilterXyz];

@@ -43,7 +43,7 @@ namespace PrtgAPI.Request
         /// <typeparam name="T">The type of object returned by the response.</typeparam>
         /// <param name="obj">The object to amend.</param>
         /// <param name="action">A modification function to apply to the object.</param>
-        /// <returns></returns>
+        /// <returns>A collection of modified objects.</returns>
         [ExcludeFromCodeCoverage]
         internal static T Amend<T>(T obj, Action<T> action)
         {
@@ -59,7 +59,7 @@ namespace PrtgAPI.Request
         /// <typeparam name="TRet">The type of object to return.</typeparam>
         /// <param name="obj">The object to transform.</param>
         /// <param name="action">A modification function that transforms the response from one type to another.</param>
-        /// <returns></returns>
+        /// <returns>A collection of modified objects.</returns>
         internal static TRet Amend<TSource, TRet>(TSource obj, Func<TSource, TRet> action)
         {
             var val = action(obj);
@@ -333,10 +333,19 @@ namespace PrtgAPI.Request
         #endregion
         #region Set Object Properties
 
-        internal static string ParseSetObjectPropertyUrl(int numObjectIds, HttpResponseMessage response)
+        internal static string ParseSetObjectPropertyUrl<T>(BaseSetObjectPropertyParameters<T> parameters, int numObjectIds, HttpResponseMessage response)
         {
-            if (numObjectIds > 1)
+            if (numObjectIds > 1 || parameters is SetChannelPropertyParameters)
             {
+                /* When object properties across multiple objects are specified, PRTG doesn't know which one to redirect to
+                 * after the properties have been set. As such, we need to replace the response URI from the error page to
+                 * the true page that PRTG otherwise would have redirected to (e.g. /sensor.htm?id=1001).
+                 * In PRTG 20.4.64 however, for some object properties (e.g. setting the Percent Value of a sensor) PRTG
+                 * will freak out if the ID of the object is not POST'd (which is an issue because we always GET). As such,
+                 * now we simply totally ignore instances where we hit /error.htm for channels only. This is kind of an issue, however theoretically
+                 * we should be catching failed property manipulations in our integration tests.
+                 */
+
                 if (response.RequestMessage?.RequestUri?.AbsolutePath == "/error.htm")
                     RequestEngine.SetErrorUrlAsRequestUri(response);
             }

@@ -25,7 +25,7 @@ Specifies whether to build the .NET Core version of PrtgAPI or the legacy .NET F
 .PARAMETER SourceLink
 Specifies whether to build the .NET Core version of PrtgAPI with SourceLink debug info. If this value is not specified, on Windows it will be true by default.
 
-.PARAMETER $ViewLog
+.PARAMETER ViewLog
 Specifies whether to open the debug log upon finishing the build when -DebugBuild is specified.
 
 .EXAMPLE

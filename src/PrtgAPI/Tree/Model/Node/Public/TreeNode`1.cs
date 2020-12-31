@@ -44,9 +44,9 @@ namespace PrtgAPI.Tree
 
             var list = new NodeList<TTreeNode>(nodeList);
 
-#pragma warning disable 618
+#pragma warning disable 618 //Obsolete
             SetChildren(list);
-#pragma warning restore 618
+#pragma warning restore 618 //Obsolete
         }
 
         #region Index
@@ -106,7 +106,7 @@ namespace PrtgAPI.Tree
         /// Creates a grouping of multiple matches that should be returned from this node's indexer.
         /// </summary>
         /// <param name="orphanGrouping">The orphan grouping that should be encapsulated in a node.</param>
-        /// <returns></returns>
+        /// <returns>A grouping of the matches that should be returned from the node's indexer.</returns>
         internal abstract TTreeNode CreateIndexerGrouping(TreeOrphan orphanGrouping);
 
         #endregion

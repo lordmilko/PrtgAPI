@@ -148,7 +148,7 @@ namespace PrtgAPI.PowerShell.Base
         /// Retrieves all records of a specified type from a PRTG Server using the types default parameters.
         /// This method should never be executed.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>The records retrieved from the PRTG Server.</returns>
         [ExcludeFromCodeCoverage]
         protected override IEnumerable<TObject> GetRecords()
         {
@@ -403,7 +403,7 @@ namespace PrtgAPI.PowerShell.Base
         /// </summary>
         /// <param name="records">The records to count. This collection will only be enumerated if results were not retrieved via streaming (indicating the collection is not yet complete)</param>
         /// <param name="count">If results were streamed, the total number of objects initially reported by the server. Otherwise, will be-1.</param>
-        /// <returns></returns>
+        /// <returns>The number of elements returned or to be returned from the request.</returns>
         protected override IEnumerable<TObject> GetCount(IEnumerable<TObject> records, ref int count)
         {
             if (StreamProvider.StreamResults)

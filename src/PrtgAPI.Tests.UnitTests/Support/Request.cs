@@ -39,7 +39,7 @@ namespace PrtgAPI.Tests.UnitTests.Support
             RequestObject(url, flags, "messages", DefaultLogProperties);
 
         public static string Channels(int sensorId) =>
-            RequestObject($"id={sensorId}", DefaultObjectFlags, "channels", DefaultChannelProperties);
+            RequestObject($"showhide=1&id={sensorId}", DefaultObjectFlags, "channels", DefaultChannelProperties);
         public static string ChannelProperties(int sensorId, int channelId) =>
             Get($"controls/channeledit.htm?id={sensorId}&channel={channelId}");
 

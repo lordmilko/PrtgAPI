@@ -466,7 +466,7 @@ namespace PrtgAPI.Parameters
         /// Determines whether this object contains an override for a specified property.
         /// </summary>
         /// <param name="property">The property to check for the existence of.</param>
-        /// <returns></returns>
+        /// <returns>True if these parameters contain an override for the specified object property. Otherwise, false.</returns>
         public bool ContainsNameOverride(ObjectProperty property) => nameOverrideMap.ContainsKey(property);
 
         /// <summary>
