@@ -7,6 +7,7 @@ using System.Linq;
 using System.Management.Automation;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -852,6 +853,335 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             }
 
             return true;
+        }
+
+        [TestMethod]
+        [UnitTest(TestCategory.SkipCoverage)]
+        public void UpdatePublicAPI()
+        {
+            var sln = TestHelpers.GetProjectRoot(true);
+            
+            ProcessPublicAPI(Path.Combine(sln, "PrtgAPI"), typeof(PrtgClient));
+        }
+
+        private void ProcessPublicAPI(string root, Type typeFromAssembly)
+        {
+            var apiFile = Path.Combine(root, "PublicAPI.txt");
+
+            string[] knownAPIs = new string[0];
+
+            if (File.Exists(apiFile))
+                knownAPIs = File.ReadAllLines(apiFile);
+
+            var types = typeFromAssembly.Assembly.GetTypes();
+
+            var actualAPIs = new List<string>();
+
+            foreach (var type in types)
+            {
+                if (type.IsPublic)
+                {
+                    var typeName = GetTypeName(type, true);
+
+                    var typeType = GetTypeType(type);
+
+                    actualAPIs.Add($"{typeName} => {typeType}");
+
+                    if (type.IsEnum)
+                        ProcessEnum(type, typeName, actualAPIs);
+                    else
+                    {
+                        ProcessProperties(type, typeName, actualAPIs);
+                        ProcessFields(type, typeName, actualAPIs);
+                        ProcessMethods(type, typeName, actualAPIs);
+                        ProcessEvents(type, typeName, actualAPIs);
+                    }
+                }
+            }
+
+            var sorted = actualAPIs.OrderBy(a => a).ToArray();
+
+            if (knownAPIs.Length == sorted.Length)
+            {
+                var different = false;
+
+                for (var i = 0; i < knownAPIs.Length; i++)
+                {
+                    if (knownAPIs[i] != sorted[i])
+                    {
+                        different = true;
+                        break;
+                    }
+                }
+
+                if (!different)
+                    return;
+            }
+
+            File.WriteAllLines(apiFile, sorted);
+        }
+
+        private void ProcessEnum(Type type, string typeName, List<string> actualAPIs)
+        {
+            var names = Enum.GetNames(type);
+
+            foreach (var name in names)
+            {
+                var str = $"{typeName}.{name} -> Value";
+
+                actualAPIs.Add(str);
+            }
+        }
+
+        private void ProcessProperties(Type type, string typeName, List<string> actualAPIs)
+        {
+            var properties = type.GetProperties();
+
+            foreach (var property in properties)
+            {
+                var builder = new StringBuilder();
+
+                var propertyTypeName = GetTypeName(property.PropertyType);
+
+                builder.Append(typeName).Append(" ").Append(property.Name).Append(" ").Append("{");
+
+                if (property.GetGetMethod(false) != null)
+                    builder.Append(" get;");
+
+                if (property.GetSetMethod(false) != null)
+                    builder.Append(" set;");
+
+                builder.Append(" }").Append(" -> ").Append(propertyTypeName);
+
+                actualAPIs.Add(builder.ToString());
+            }
+        }
+
+        private void ProcessFields(Type type, string typeName, List<string> actualAPIs)
+        {
+            var fields = type.GetFields();
+
+            foreach (var field in fields)
+            {
+                var fieldTypeName = GetTypeName(field.FieldType);
+
+                var str = $"{typeName} {field.Name} -> {fieldTypeName}";
+
+                actualAPIs.Add(str);
+            }
+        }
+
+        private void ProcessMethods(Type type, string typeName, List<string> actualAPIs)
+        {
+            var methods = type.GetMethods(BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
+
+            foreach (var method in methods)
+            {
+                var ignorePrefix = new[]
+                {
+                    "get_",
+                    "set_",
+                    "add_",
+                    "remove_"
+                };
+
+                if (ignorePrefix.Any(i => method.Name.StartsWith(i)))
+                    continue;
+
+                var ignoreName = new[]
+                {
+                    nameof(MemberwiseClone),
+                    "Finalize"
+                };
+
+                if (ignoreName.Any(n => method.Name == n))
+                    continue;
+
+                if (!(method.IsPublic || method.IsFamily || method.IsFamilyOrAssembly))
+                    continue;
+
+                var builder = new StringBuilder();
+
+                var methodReturnType = GetTypeName(method.ReturnType);
+                var parameters = method.GetParameters();
+
+                builder.Append(typeName).Append(" ").Append(method.Name);
+
+                if (method.IsGenericMethod)
+                {
+                    var genericTypeParameters = method.GetGenericArguments();
+
+                    builder.Append("<");
+
+                    for (int i = 0; i < genericTypeParameters.Length; i++)
+                    {
+                        builder.Append(GetTypeName(genericTypeParameters[i]));
+
+                        if (i < genericTypeParameters.Length - 1)
+                            builder.Append(",");
+                    }
+
+                    builder.Append(">");
+                }
+
+                builder.Append("(");
+
+                for (var i = 0; i < parameters.Length; i++)
+                {
+                    var parameterTypeName = GetTypeName(parameters[i].ParameterType);
+
+                    builder.Append($"{parameterTypeName} {parameters[i].Name}");
+
+                    if (i < parameters.Length - 1)
+                        builder.Append(", ");
+                }
+
+                builder.Append(")");
+
+                builder.Append(" -> ").Append(methodReturnType);
+
+                actualAPIs.Add(builder.ToString());
+            }
+        }
+
+        private void ProcessEvents(Type type, string typeName, List<string> actualAPIs)
+        {
+            var events = type.GetEvents();
+
+            foreach (var @event in events)
+            {
+                var builder = new StringBuilder();
+
+                builder.Append(typeName).Append(" ");
+
+                var eventTypeName = GetTypeName(@event.EventHandlerType);
+
+                builder.Append(@event.Name);
+
+                builder.Append(" -> ").Append(eventTypeName);
+
+                actualAPIs.Add(builder.ToString());
+            }
+        }
+
+        private string GetTypeName(Type type, bool fullName = false)
+        {
+            if (type.IsGenericType)
+            {
+                var underlying = Nullable.GetUnderlyingType(type);
+
+                if (underlying != null)
+                    return GetTypeName(underlying) + "?";
+
+                var builder = new StringBuilder();
+
+                builder.Append(
+                    Regex.Replace(
+                        (fullName
+                            ? (type.FullName ?? $"{type.Namespace}.{type.Name}")
+                            : type.Name)
+                        , "(.+)`\\d+(.*)", "$1$2"
+                    )
+                ).Append("<");
+                
+                var args = type.GetGenericArguments();
+
+                for (int i = 0; i < args.Length; i++)
+                {
+                    builder.Append(GetTypeName(args[i]));
+
+                    if(i < args.Length - 1)
+                        builder.Append(",");
+                }
+
+                builder.Append(">");
+
+                return builder.ToString();
+            }
+            else
+            {
+                if (type.IsArray)
+                {
+                    var rank = type.GetArrayRank();
+
+                    var elementType = GetTypeName(type.GetElementType());
+
+                    var builder = new StringBuilder();
+                    builder.Append(elementType);
+
+                    for (var i = 0; i < rank; i++)
+                        builder.Append("[]");
+
+                    return builder.ToString();
+                }
+
+                var simple = GetSimpleTypeName(type);
+
+                //Type T on generic type parameters does not have a FullName
+                if (simple != type.Name || type.FullName == null || !fullName)
+                    return simple;
+
+                return type.FullName;
+            }
+        }
+
+        private string GetSimpleTypeName(Type type)
+        {
+            if (type == typeof(void))
+                return "void";
+            if (type == typeof(object))
+                return "object";
+
+            if (type.IsEnum)
+                return type.Name;
+
+            switch (Type.GetTypeCode(type))
+            {
+                case TypeCode.Boolean:
+                    return "bool";
+                case TypeCode.Byte:
+                    return "byte";
+                case TypeCode.Char:
+                    return "char";
+                case TypeCode.Decimal:
+                    return "decimal";
+                case TypeCode.Double:
+                    return "double";
+                case TypeCode.Int16:
+                    return "short";
+                case TypeCode.Int32:
+                    return "int";
+                case TypeCode.Int64:
+                    return "long";
+                case TypeCode.SByte:
+                    return "sbyte";
+                case TypeCode.Single:
+                    return "float";
+                case TypeCode.String:
+                    return "string";
+                case TypeCode.UInt16:
+                    return "ushort";
+                case TypeCode.UInt32:
+                    return "uint";
+                case TypeCode.UInt64:
+                    return "ulong";
+                default:
+                    return type.Name;
+            }
+        }
+
+        private string GetTypeType(Type type)
+        {
+            if (type.IsEnum)
+                return "Enum";
+
+            if (type.IsInterface)
+                return "Interface";
+
+            if (type.IsClass)
+                return "Class";
+
+            return "Struct";
         }
 
         [TestMethod]

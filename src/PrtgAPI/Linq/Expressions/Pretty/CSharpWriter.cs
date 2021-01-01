@@ -858,7 +858,7 @@ namespace PrtgAPI.Linq.Expressions.Pretty
             Write(GetSimpleTypeName(type));
         }
 
-        static string GetSimpleTypeName(Type type)
+        internal static string GetSimpleTypeName(Type type)
         {
             if (type == typeof(void))
                 return "void";

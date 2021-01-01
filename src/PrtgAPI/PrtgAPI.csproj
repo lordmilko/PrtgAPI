@@ -740,6 +740,7 @@
     <None Include="PrtgAPI.nuspec" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="PublicAPI.txt" />
     <Content Include="Request\PrtgClient.Generated.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>PrtgClient.Generated.cs</LastGenOutput>
