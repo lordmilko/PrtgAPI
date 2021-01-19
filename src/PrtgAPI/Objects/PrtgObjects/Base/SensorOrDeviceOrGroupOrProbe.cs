@@ -57,20 +57,54 @@ namespace PrtgAPI
         [XmlElement("notifiesx")]
         internal string notificationTypes { get; set; }
 
+        #region Interval
+
+        private string displayInterval;
+        private TimeSpan? inheritedOrSetInterval;
+
+        [XmlElement("intervalx_raw")]
+        internal TimeSpan ObjectInterval { get; set; }
+
         /// <summary>
         /// Scanning interval for this sensor or default scanning interval for sensors under this object.
         /// </summary>
-        [XmlElement("intervalx_raw")]
         [PropertyParameter(Property.Interval)]
-        public TimeSpan Interval { get; set; }
+        public TimeSpan Interval
+        {
+            get { return inheritedOrSetInterval ?? ObjectInterval; }
+            set { inheritedOrSetInterval = value; }
+        }
+
+        [XmlElement("intervalx")]
+        internal string inheritInterval
+        {
+            get { return displayInterval; }
+            set
+            {
+                displayInterval = value;
+
+                if (value != null)
+                {
+                    var start = value.IndexOf("(");
+
+                    if (start != -1)
+                    {
+                        var end = value.IndexOf(")");
+
+                        var str = value.Substring(start + 1, end - start - 1);
+
+                        inheritedOrSetInterval = TimeSpan.FromSeconds(Convert.ToInt32(str));
+                    }
+                }
+            }
+        }
 
         /// <summary>
         /// Whether this object's Interval is inherited from its parent object.
         /// </summary>
         public bool InheritInterval => inheritInterval?.Contains("(") ?? false;
 
-        [XmlElement("intervalx")]
-        internal string inheritInterval { get; set; }
+        #endregion
 
         /// <summary>
         /// An <see cref="Access"/> value specifying the access rights of the API Request User on the specified object.

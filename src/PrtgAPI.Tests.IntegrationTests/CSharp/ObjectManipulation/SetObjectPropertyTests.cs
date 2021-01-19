@@ -39,5 +39,43 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
 
             await client.SetObjectPropertyAsync(Settings.Device, ObjectProperty.Location, null);
         }
+
+        [TestMethod]
+        [IntegrationTest]
+        public void Action_SetObjectProperty_RetrievesInheritedInterval()
+        {
+            var device = client.GetDevice(Settings.Device);
+            var interval = client.GetObjectProperty<ScanningInterval>(device, ObjectProperty.Interval);
+
+            Assert.AreEqual(true, device.InheritInterval);
+            Assert.AreEqual(60, interval.TimeSpan.TotalSeconds);
+
+            var sensor = client.GetSensor(Settings.PausedSensor);
+            var sensorInterval = client.GetObjectProperty<ScanningInterval>(sensor, ObjectProperty.Interval);
+
+            Assert.AreEqual(600, sensor.Interval.TotalSeconds);
+            Assert.AreEqual(600, sensorInterval.TimeSpan.TotalSeconds);
+            Assert.AreEqual(false, sensor.InheritInterval);
+
+            try
+            {
+                client.SetObjectProperty(sensor, ObjectProperty.InheritInterval, true);
+
+                var newSensor = client.GetSensor(Settings.PausedSensor);
+
+                Assert.AreEqual(true, newSensor.InheritInterval);
+                Assert.AreEqual(60, newSensor.Interval.TotalSeconds);
+
+                var newInterval = client.GetObjectProperty<ScanningInterval>(sensor, ObjectProperty.Interval);
+                Assert.AreEqual(600, newInterval.TimeSpan.TotalSeconds);
+            }
+            finally
+            {
+                var finalSensor = client.GetSensor(Settings.PausedSensor);
+
+                if (finalSensor.InheritInterval)
+                    client.SetObjectProperty(sensor, ObjectProperty.InheritInterval, false);
+            }
+        }
     }
 }
