@@ -1028,9 +1028,63 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
 
                 for (var i = 0; i < parameters.Length; i++)
                 {
+                    if (parameters[i].GetCustomAttribute<ParamArrayAttribute>() != null)
+                        builder.Append("params ");
+
                     var parameterTypeName = GetTypeName(parameters[i].ParameterType);
 
                     builder.Append($"{parameterTypeName} {parameters[i].Name}");
+
+                    if (parameters[i].HasDefaultValue)
+                    {
+                        var value = parameters[i].DefaultValue;
+
+                        if (value != null)
+                        {
+                            var valueType = value.GetType();
+
+                            if (valueType.IsEnum)
+                                value = valueType.Name + "." + value.ToString();
+                            else if (valueType == typeof(int))
+                                value = value.ToString();
+                            else if (valueType == typeof(bool))
+                                value = value.ToString().ToLower();
+                            else
+                                Assert.Fail($"Don't know how to handle default value of type '{valueType.Name}'");
+                        }
+                        else
+                        {
+                            var parameterType = parameters[i].ParameterType;
+
+                            var nullable = new[]
+                            {
+                                typeof(string),
+                                typeof(PrtgObject)
+                            };
+
+                            var nullableGeneric = new[]
+                            {
+                                typeof(Func<,>),
+                                typeof(Nullable<>)
+                            };
+
+                            var defaultType = new[]
+                            {
+                                typeof(CancellationToken)
+                            };
+
+                            if (nullable.Any(t => parameterType == t) || parameterType.IsArray || parameterType.IsInterface)
+                                value = "null";
+                            else if (parameterType.IsGenericType && nullableGeneric.Any(t => parameterType.GetGenericTypeDefinition() == t))
+                                value = "null";
+                            else if (defaultType.Any(t => t == parameterType))
+                                value = $"default({parameterType.Name})";
+                            else
+                                Assert.Fail($"Don't know how to handle parameter value of type '{parameterType.Name}'");
+                        }
+
+                        builder.Append($" = {value}");
+                    }
 
                     if (i < parameters.Length - 1)
                         builder.Append(", ");

@@ -747,9 +747,9 @@ PrtgAPI.FlagEnum Create<T>(IList<T> value) -> FlagEnum<T>
 PrtgAPI.FlagEnum Create<T>(IReadOnlyCollection<T> value) -> FlagEnum<T>
 PrtgAPI.FlagEnum Create<T>(IReadOnlyList<T> value) -> FlagEnum<T>
 PrtgAPI.FlagEnum Create<T>(List<T> value) -> FlagEnum<T>
+PrtgAPI.FlagEnum Create<T>(params T[] value) -> FlagEnum<T>
 PrtgAPI.FlagEnum Create<T>(ReadOnlyCollection<T> value) -> FlagEnum<T>
 PrtgAPI.FlagEnum Create<T>(T value) -> FlagEnum<T>
-PrtgAPI.FlagEnum Create<T>(T[] value) -> FlagEnum<T>
 PrtgAPI.FlagEnum Equals(object obj) -> bool
 PrtgAPI.FlagEnum GetHashCode() -> int
 PrtgAPI.FlagEnum GetType() -> Type
@@ -1667,7 +1667,7 @@ PrtgAPI.Parameters.ChangeTriggerParameters SetNotificationAction(TriggerProperty
 PrtgAPI.Parameters.ChangeTriggerParameters SubId { get; } -> int?
 PrtgAPI.Parameters.ChangeTriggerParameters ToString() -> string
 PrtgAPI.Parameters.ChangeTriggerParameters Type { get; } -> TriggerType
-PrtgAPI.Parameters.ChangeTriggerParameters UpdateCustomParameter(TriggerProperty property, object value, bool requireValue) -> void
+PrtgAPI.Parameters.ChangeTriggerParameters UpdateCustomParameter(TriggerProperty property, object value, bool requireValue = false) -> void
 PrtgAPI.Parameters.ChannelParameter => Class
 PrtgAPI.Parameters.ChannelParameter Equals(object obj) -> bool
 PrtgAPI.Parameters.ChannelParameter GetHashCode() -> int
@@ -1739,7 +1739,7 @@ PrtgAPI.Parameters.CustomParameter ParameterType { get; set; } -> ParameterType
 PrtgAPI.Parameters.CustomParameter ToString() -> string
 PrtgAPI.Parameters.CustomParameter Value { get; set; } -> object
 PrtgAPI.Parameters.DeviceParameters => Class
-PrtgAPI.Parameters.DeviceParameters AddFilters(SearchFilter[] filters) -> void
+PrtgAPI.Parameters.DeviceParameters AddFilters(params SearchFilter[] filters) -> void
 PrtgAPI.Parameters.DeviceParameters Content { get; } -> Content
 PrtgAPI.Parameters.DeviceParameters Count { get; set; } -> int?
 PrtgAPI.Parameters.DeviceParameters Equals(object obj) -> bool
@@ -1752,7 +1752,7 @@ PrtgAPI.Parameters.DeviceParameters Item { get; set; } -> object
 PrtgAPI.Parameters.DeviceParameters Page { get; set; } -> int
 PrtgAPI.Parameters.DeviceParameters PageSize { get; set; } -> int
 PrtgAPI.Parameters.DeviceParameters Properties { get; } -> Property[]
-PrtgAPI.Parameters.DeviceParameters RemoveFilters(SearchFilter[] filters) -> bool
+PrtgAPI.Parameters.DeviceParameters RemoveFilters(params SearchFilter[] filters) -> bool
 PrtgAPI.Parameters.DeviceParameters SearchFilters { get; set; } -> List<SearchFilter>
 PrtgAPI.Parameters.DeviceParameters SetFilterValue(Property property, object value) -> void
 PrtgAPI.Parameters.DeviceParameters SetMultiParameterFilterValue<TArray>(Property property, TArray[] value) -> void
@@ -1763,7 +1763,7 @@ PrtgAPI.Parameters.DeviceParameters StartOffset { get; } -> int
 PrtgAPI.Parameters.DeviceParameters ToString() -> string
 PrtgAPI.Parameters.DynamicSensorParameters => Class
 PrtgAPI.Parameters.DynamicSensorParameters AddNameOverride(ObjectProperty property, string newName) -> void
-PrtgAPI.Parameters.DynamicSensorParameters Contains(string name, bool ignoreUnderscore) -> bool
+PrtgAPI.Parameters.DynamicSensorParameters Contains(string name, bool ignoreUnderscore = true) -> bool
 PrtgAPI.Parameters.DynamicSensorParameters ContainsNameOverride(ObjectProperty property) -> bool
 PrtgAPI.Parameters.DynamicSensorParameters DynamicType { get; set; } -> bool
 PrtgAPI.Parameters.DynamicSensorParameters Equals(object obj) -> bool
@@ -1790,7 +1790,7 @@ PrtgAPI.Parameters.DynamicSensorParameters Item { get; set; } -> object
 PrtgAPI.Parameters.DynamicSensorParameters Lock() -> void
 PrtgAPI.Parameters.DynamicSensorParameters Name { get; set; } -> string
 PrtgAPI.Parameters.DynamicSensorParameters Priority { get; set; } -> Priority?
-PrtgAPI.Parameters.DynamicSensorParameters Remove(string name, bool ignoreUnderscore) -> bool
+PrtgAPI.Parameters.DynamicSensorParameters Remove(string name, bool ignoreUnderscore = true) -> bool
 PrtgAPI.Parameters.DynamicSensorParameters RemoveCustomParameter(ObjectProperty property) -> bool
 PrtgAPI.Parameters.DynamicSensorParameters RemoveCustomParameterInternal(string name) -> bool
 PrtgAPI.Parameters.DynamicSensorParameters RemoveNameOverride(ObjectProperty property) -> bool
@@ -1898,7 +1898,7 @@ PrtgAPI.Parameters.FactorySensorParameters Source { get; } -> Device
 PrtgAPI.Parameters.FactorySensorParameters Tags { get; set; } -> string[]
 PrtgAPI.Parameters.FactorySensorParameters ToString() -> string
 PrtgAPI.Parameters.GroupParameters => Class
-PrtgAPI.Parameters.GroupParameters AddFilters(SearchFilter[] filters) -> void
+PrtgAPI.Parameters.GroupParameters AddFilters(params SearchFilter[] filters) -> void
 PrtgAPI.Parameters.GroupParameters Content { get; } -> Content
 PrtgAPI.Parameters.GroupParameters Count { get; set; } -> int?
 PrtgAPI.Parameters.GroupParameters Equals(object obj) -> bool
@@ -1911,7 +1911,7 @@ PrtgAPI.Parameters.GroupParameters Item { get; set; } -> object
 PrtgAPI.Parameters.GroupParameters Page { get; set; } -> int
 PrtgAPI.Parameters.GroupParameters PageSize { get; set; } -> int
 PrtgAPI.Parameters.GroupParameters Properties { get; } -> Property[]
-PrtgAPI.Parameters.GroupParameters RemoveFilters(SearchFilter[] filters) -> bool
+PrtgAPI.Parameters.GroupParameters RemoveFilters(params SearchFilter[] filters) -> bool
 PrtgAPI.Parameters.GroupParameters SearchFilters { get; set; } -> List<SearchFilter>
 PrtgAPI.Parameters.GroupParameters SetFilterValue(Property property, object value) -> void
 PrtgAPI.Parameters.GroupParameters SetMultiParameterFilterValue<TArray>(Property property, TArray[] value) -> void
@@ -1973,7 +1973,7 @@ PrtgAPI.Parameters.IParameters Item { get; set; } -> object
 PrtgAPI.Parameters.ISensorQueryTargetParameters => Interface
 PrtgAPI.Parameters.ISensorQueryTargetParameters ToMultiQueryParameters() -> SensorMultiQueryTargetParameters
 PrtgAPI.Parameters.LogParameters => Class
-PrtgAPI.Parameters.LogParameters AddFilters(SearchFilter[] filters) -> void
+PrtgAPI.Parameters.LogParameters AddFilters(params SearchFilter[] filters) -> void
 PrtgAPI.Parameters.LogParameters Content { get; } -> Content
 PrtgAPI.Parameters.LogParameters Count { get; set; } -> int?
 PrtgAPI.Parameters.LogParameters EndDate { get; set; } -> DateTime?
@@ -1989,7 +1989,7 @@ PrtgAPI.Parameters.LogParameters Page { get; set; } -> int
 PrtgAPI.Parameters.LogParameters PageSize { get; set; } -> int
 PrtgAPI.Parameters.LogParameters Properties { get; } -> Property[]
 PrtgAPI.Parameters.LogParameters RecordAge { get; set; } -> RecordAge?
-PrtgAPI.Parameters.LogParameters RemoveFilters(SearchFilter[] filters) -> bool
+PrtgAPI.Parameters.LogParameters RemoveFilters(params SearchFilter[] filters) -> bool
 PrtgAPI.Parameters.LogParameters SearchFilters { get; set; } -> List<SearchFilter>
 PrtgAPI.Parameters.LogParameters SetFilterValue(Property property, object value) -> void
 PrtgAPI.Parameters.LogParameters SetMultiParameterFilterValue<TArray>(Property property, TArray[] value) -> void
@@ -2136,7 +2136,7 @@ PrtgAPI.Parameters.NewSensorParameters SetCustomParameterInternal(string name, o
 PrtgAPI.Parameters.NewSensorParameters Tags { get; set; } -> string[]
 PrtgAPI.Parameters.NewSensorParameters ToString() -> string
 PrtgAPI.Parameters.NotificationActionParameters => Class
-PrtgAPI.Parameters.NotificationActionParameters AddFilters(SearchFilter[] filters) -> void
+PrtgAPI.Parameters.NotificationActionParameters AddFilters(params SearchFilter[] filters) -> void
 PrtgAPI.Parameters.NotificationActionParameters Content { get; } -> Content
 PrtgAPI.Parameters.NotificationActionParameters Count { get; set; } -> int?
 PrtgAPI.Parameters.NotificationActionParameters Equals(object obj) -> bool
@@ -2149,7 +2149,7 @@ PrtgAPI.Parameters.NotificationActionParameters Item { get; set; } -> object
 PrtgAPI.Parameters.NotificationActionParameters Page { get; set; } -> int
 PrtgAPI.Parameters.NotificationActionParameters PageSize { get; set; } -> int
 PrtgAPI.Parameters.NotificationActionParameters Properties { get; } -> Property[]
-PrtgAPI.Parameters.NotificationActionParameters RemoveFilters(SearchFilter[] filters) -> bool
+PrtgAPI.Parameters.NotificationActionParameters RemoveFilters(params SearchFilter[] filters) -> bool
 PrtgAPI.Parameters.NotificationActionParameters SearchFilters { get; set; } -> List<SearchFilter>
 PrtgAPI.Parameters.NotificationActionParameters SetFilterValue(Property property, object value) -> void
 PrtgAPI.Parameters.NotificationActionParameters SetMultiParameterFilterValue<TArray>(Property property, TArray[] value) -> void
@@ -2174,7 +2174,7 @@ PrtgAPI.Parameters.PageableParameters Start { get; set; } -> int?
 PrtgAPI.Parameters.PageableParameters StartOffset { get; } -> int
 PrtgAPI.Parameters.PageableParameters ToString() -> string
 PrtgAPI.Parameters.ProbeParameters => Class
-PrtgAPI.Parameters.ProbeParameters AddFilters(SearchFilter[] filters) -> void
+PrtgAPI.Parameters.ProbeParameters AddFilters(params SearchFilter[] filters) -> void
 PrtgAPI.Parameters.ProbeParameters Content { get; } -> Content
 PrtgAPI.Parameters.ProbeParameters Count { get; set; } -> int?
 PrtgAPI.Parameters.ProbeParameters Equals(object obj) -> bool
@@ -2187,7 +2187,7 @@ PrtgAPI.Parameters.ProbeParameters Item { get; set; } -> object
 PrtgAPI.Parameters.ProbeParameters Page { get; set; } -> int
 PrtgAPI.Parameters.ProbeParameters PageSize { get; set; } -> int
 PrtgAPI.Parameters.ProbeParameters Properties { get; } -> Property[]
-PrtgAPI.Parameters.ProbeParameters RemoveFilters(SearchFilter[] filters) -> bool
+PrtgAPI.Parameters.ProbeParameters RemoveFilters(params SearchFilter[] filters) -> bool
 PrtgAPI.Parameters.ProbeParameters SearchFilters { get; set; } -> List<SearchFilter>
 PrtgAPI.Parameters.ProbeParameters SetFilterValue(Property property, object value) -> void
 PrtgAPI.Parameters.ProbeParameters SetMultiParameterFilterValue<TArray>(Property property, TArray[] value) -> void
@@ -2211,7 +2211,7 @@ PrtgAPI.Parameters.PropertyParameter<T> Property { get; set; } -> T
 PrtgAPI.Parameters.PropertyParameter<T> ToString() -> string
 PrtgAPI.Parameters.PropertyParameter<T> Value { get; set; } -> object
 PrtgAPI.Parameters.PrtgObjectParameters => Class
-PrtgAPI.Parameters.PrtgObjectParameters AddFilters(SearchFilter[] filters) -> void
+PrtgAPI.Parameters.PrtgObjectParameters AddFilters(params SearchFilter[] filters) -> void
 PrtgAPI.Parameters.PrtgObjectParameters Content { get; } -> Content
 PrtgAPI.Parameters.PrtgObjectParameters Count { get; set; } -> int?
 PrtgAPI.Parameters.PrtgObjectParameters Equals(object obj) -> bool
@@ -2224,7 +2224,7 @@ PrtgAPI.Parameters.PrtgObjectParameters Item { get; set; } -> object
 PrtgAPI.Parameters.PrtgObjectParameters Page { get; set; } -> int
 PrtgAPI.Parameters.PrtgObjectParameters PageSize { get; set; } -> int
 PrtgAPI.Parameters.PrtgObjectParameters Properties { get; } -> Property[]
-PrtgAPI.Parameters.PrtgObjectParameters RemoveFilters(SearchFilter[] filters) -> bool
+PrtgAPI.Parameters.PrtgObjectParameters RemoveFilters(params SearchFilter[] filters) -> bool
 PrtgAPI.Parameters.PrtgObjectParameters SearchFilters { get; set; } -> List<SearchFilter>
 PrtgAPI.Parameters.PrtgObjectParameters SetFilterValue(Property property, object value) -> void
 PrtgAPI.Parameters.PrtgObjectParameters SetMultiParameterFilterValue<TArray>(Property property, TArray[] value) -> void
@@ -2276,7 +2276,7 @@ PrtgAPI.Parameters.RawSensorParameters SetCustomParameterInternal(string name, o
 PrtgAPI.Parameters.RawSensorParameters Tags { get; set; } -> string[]
 PrtgAPI.Parameters.RawSensorParameters ToString() -> string
 PrtgAPI.Parameters.ScheduleParameters => Class
-PrtgAPI.Parameters.ScheduleParameters AddFilters(SearchFilter[] filters) -> void
+PrtgAPI.Parameters.ScheduleParameters AddFilters(params SearchFilter[] filters) -> void
 PrtgAPI.Parameters.ScheduleParameters Content { get; } -> Content
 PrtgAPI.Parameters.ScheduleParameters Count { get; set; } -> int?
 PrtgAPI.Parameters.ScheduleParameters Equals(object obj) -> bool
@@ -2289,7 +2289,7 @@ PrtgAPI.Parameters.ScheduleParameters Item { get; set; } -> object
 PrtgAPI.Parameters.ScheduleParameters Page { get; set; } -> int
 PrtgAPI.Parameters.ScheduleParameters PageSize { get; set; } -> int
 PrtgAPI.Parameters.ScheduleParameters Properties { get; } -> Property[]
-PrtgAPI.Parameters.ScheduleParameters RemoveFilters(SearchFilter[] filters) -> bool
+PrtgAPI.Parameters.ScheduleParameters RemoveFilters(params SearchFilter[] filters) -> bool
 PrtgAPI.Parameters.ScheduleParameters SearchFilters { get; set; } -> List<SearchFilter>
 PrtgAPI.Parameters.ScheduleParameters SetFilterValue(Property property, object value) -> void
 PrtgAPI.Parameters.ScheduleParameters SetMultiParameterFilterValue<TArray>(Property property, TArray[] value) -> void
@@ -2306,7 +2306,7 @@ PrtgAPI.Parameters.SensorMultiQueryTargetParameters Parameters { get; set; } -> 
 PrtgAPI.Parameters.SensorMultiQueryTargetParameters QueryTarget { get; set; } -> SensorQueryTarget
 PrtgAPI.Parameters.SensorMultiQueryTargetParameters ToString() -> string
 PrtgAPI.Parameters.SensorParameters => Class
-PrtgAPI.Parameters.SensorParameters AddFilters(SearchFilter[] filters) -> void
+PrtgAPI.Parameters.SensorParameters AddFilters(params SearchFilter[] filters) -> void
 PrtgAPI.Parameters.SensorParameters Content { get; } -> Content
 PrtgAPI.Parameters.SensorParameters Count { get; set; } -> int?
 PrtgAPI.Parameters.SensorParameters Equals(object obj) -> bool
@@ -2319,7 +2319,7 @@ PrtgAPI.Parameters.SensorParameters Item { get; set; } -> object
 PrtgAPI.Parameters.SensorParameters Page { get; set; } -> int
 PrtgAPI.Parameters.SensorParameters PageSize { get; set; } -> int
 PrtgAPI.Parameters.SensorParameters Properties { get; } -> Property[]
-PrtgAPI.Parameters.SensorParameters RemoveFilters(SearchFilter[] filters) -> bool
+PrtgAPI.Parameters.SensorParameters RemoveFilters(params SearchFilter[] filters) -> bool
 PrtgAPI.Parameters.SensorParameters SearchFilters { get; set; } -> List<SearchFilter>
 PrtgAPI.Parameters.SensorParameters SetFilterValue(Property property, object value) -> void
 PrtgAPI.Parameters.SensorParameters SetMultiParameterFilterValue<TArray>(Property property, TArray[] value) -> void
@@ -2411,7 +2411,7 @@ PrtgAPI.Parameters.SpeedTriggerParameters ToString() -> string
 PrtgAPI.Parameters.SpeedTriggerParameters Type { get; } -> TriggerType
 PrtgAPI.Parameters.SpeedTriggerParameters UnitSize { get; set; } -> DataUnit?
 PrtgAPI.Parameters.SpeedTriggerParameters UnitTime { get; set; } -> TimeUnit?
-PrtgAPI.Parameters.SpeedTriggerParameters UpdateCustomParameter(TriggerProperty property, object value, bool requireValue) -> void
+PrtgAPI.Parameters.SpeedTriggerParameters UpdateCustomParameter(TriggerProperty property, object value, bool requireValue = false) -> void
 PrtgAPI.Parameters.StateTriggerParameters => Class
 PrtgAPI.Parameters.StateTriggerParameters Action { get; } -> ModifyAction
 PrtgAPI.Parameters.StateTriggerParameters Equals(object obj) -> bool
@@ -2435,9 +2435,9 @@ PrtgAPI.Parameters.StateTriggerParameters State { get; set; } -> TriggerSensorSt
 PrtgAPI.Parameters.StateTriggerParameters SubId { get; } -> int?
 PrtgAPI.Parameters.StateTriggerParameters ToString() -> string
 PrtgAPI.Parameters.StateTriggerParameters Type { get; } -> TriggerType
-PrtgAPI.Parameters.StateTriggerParameters UpdateCustomParameter(TriggerProperty property, object value, bool requireValue) -> void
+PrtgAPI.Parameters.StateTriggerParameters UpdateCustomParameter(TriggerProperty property, object value, bool requireValue = false) -> void
 PrtgAPI.Parameters.TableParameters<T> => Class
-PrtgAPI.Parameters.TableParameters<T> AddFilters(SearchFilter[] filters) -> void
+PrtgAPI.Parameters.TableParameters<T> AddFilters(params SearchFilter[] filters) -> void
 PrtgAPI.Parameters.TableParameters<T> Content { get; } -> Content
 PrtgAPI.Parameters.TableParameters<T> Count { get; set; } -> int?
 PrtgAPI.Parameters.TableParameters<T> Equals(object obj) -> bool
@@ -2450,7 +2450,7 @@ PrtgAPI.Parameters.TableParameters<T> Item { get; set; } -> object
 PrtgAPI.Parameters.TableParameters<T> Page { get; set; } -> int
 PrtgAPI.Parameters.TableParameters<T> PageSize { get; set; } -> int
 PrtgAPI.Parameters.TableParameters<T> Properties { get; } -> Property[]
-PrtgAPI.Parameters.TableParameters<T> RemoveFilters(SearchFilter[] filters) -> bool
+PrtgAPI.Parameters.TableParameters<T> RemoveFilters(params SearchFilter[] filters) -> bool
 PrtgAPI.Parameters.TableParameters<T> SearchFilters { get; set; } -> List<SearchFilter>
 PrtgAPI.Parameters.TableParameters<T> SetFilterValue(Property property, object value) -> void
 PrtgAPI.Parameters.TableParameters<T> SetMultiParameterFilterValue<TArray>(Property property, TArray[] value) -> void
@@ -2481,7 +2481,7 @@ PrtgAPI.Parameters.ThresholdTriggerParameters SubId { get; } -> int?
 PrtgAPI.Parameters.ThresholdTriggerParameters Threshold { get; set; } -> double?
 PrtgAPI.Parameters.ThresholdTriggerParameters ToString() -> string
 PrtgAPI.Parameters.ThresholdTriggerParameters Type { get; } -> TriggerType
-PrtgAPI.Parameters.ThresholdTriggerParameters UpdateCustomParameter(TriggerProperty property, object value, bool requireValue) -> void
+PrtgAPI.Parameters.ThresholdTriggerParameters UpdateCustomParameter(TriggerProperty property, object value, bool requireValue = false) -> void
 PrtgAPI.Parameters.TriggerParameter => Class
 PrtgAPI.Parameters.TriggerParameter Equals(object obj) -> bool
 PrtgAPI.Parameters.TriggerParameter GetHashCode() -> int
@@ -2506,7 +2506,7 @@ PrtgAPI.Parameters.TriggerParameters SetNotificationAction(TriggerProperty actio
 PrtgAPI.Parameters.TriggerParameters SubId { get; } -> int?
 PrtgAPI.Parameters.TriggerParameters ToString() -> string
 PrtgAPI.Parameters.TriggerParameters Type { get; } -> TriggerType
-PrtgAPI.Parameters.TriggerParameters UpdateCustomParameter(TriggerProperty property, object value, bool requireValue) -> void
+PrtgAPI.Parameters.TriggerParameters UpdateCustomParameter(TriggerProperty property, object value, bool requireValue = false) -> void
 PrtgAPI.Parameters.VolumeTriggerParameters => Class
 PrtgAPI.Parameters.VolumeTriggerParameters Action { get; } -> ModifyAction
 PrtgAPI.Parameters.VolumeTriggerParameters Channel { get; set; } -> TriggerChannel
@@ -2528,7 +2528,7 @@ PrtgAPI.Parameters.VolumeTriggerParameters Threshold { get; set; } -> double?
 PrtgAPI.Parameters.VolumeTriggerParameters ToString() -> string
 PrtgAPI.Parameters.VolumeTriggerParameters Type { get; } -> TriggerType
 PrtgAPI.Parameters.VolumeTriggerParameters UnitSize { get; set; } -> DataUnit?
-PrtgAPI.Parameters.VolumeTriggerParameters UpdateCustomParameter(TriggerProperty property, object value, bool requireValue) -> void
+PrtgAPI.Parameters.VolumeTriggerParameters UpdateCustomParameter(TriggerProperty property, object value, bool requireValue = false) -> void
 PrtgAPI.Parameters.WmiServiceSensorParameters => Class
 PrtgAPI.Parameters.WmiServiceSensorParameters AddNameOverride(ObjectProperty property, string newName) -> void
 PrtgAPI.Parameters.WmiServiceSensorParameters ContainsNameOverride(ObjectProperty property) -> bool
@@ -2830,28 +2830,28 @@ PrtgAPI.Property.UserName -> Value
 PrtgAPI.Property.Value -> Value
 PrtgAPI.Property.WarningSensors -> Value
 PrtgAPI.PrtgClient => Class
-PrtgAPI.PrtgClient AcknowledgeSensor(Either<Sensor,int> sensorOrId, int? duration, string message) -> void
-PrtgAPI.PrtgClient AcknowledgeSensor(int[] sensorIds, int? duration, string message) -> void
-PrtgAPI.PrtgClient AcknowledgeSensorAsync(Either<Sensor,int> sensorOrId, int? duration, string message, CancellationToken token) -> Task
-PrtgAPI.PrtgClient AcknowledgeSensorAsync(int[] sensorIds, int? duration, string message, CancellationToken token) -> Task
-PrtgAPI.PrtgClient AddDevice(Either<GroupOrProbe,int> parent, NewDeviceParameters parameters, bool resolve, CancellationToken token) -> Device
-PrtgAPI.PrtgClient AddDevice(Either<GroupOrProbe,int> parent, string name, string host, AutoDiscoveryMode discoveryMode, bool resolve, CancellationToken token) -> Device
-PrtgAPI.PrtgClient AddDeviceAsync(Either<GroupOrProbe,int> parent, NewDeviceParameters parameters, bool resolve, CancellationToken token) -> Task<Device>
-PrtgAPI.PrtgClient AddDeviceAsync(Either<GroupOrProbe,int> parent, string name, string host, AutoDiscoveryMode discoveryMode, bool resolve, CancellationToken token) -> Task<Device>
-PrtgAPI.PrtgClient AddGroup(Either<GroupOrProbe,int> parent, NewGroupParameters parameters, bool resolve, CancellationToken token) -> Group
-PrtgAPI.PrtgClient AddGroup(Either<GroupOrProbe,int> parent, string name, bool resolve, CancellationToken token) -> Group
-PrtgAPI.PrtgClient AddGroupAsync(Either<GroupOrProbe,int> parent, NewGroupParameters parameters, bool resolve, CancellationToken token) -> Task<Group>
-PrtgAPI.PrtgClient AddGroupAsync(Either<GroupOrProbe,int> parent, string name, bool resolve, CancellationToken token) -> Task<Group>
-PrtgAPI.PrtgClient AddNotificationTrigger(TriggerParameters parameters, bool resolve, CancellationToken token) -> NotificationTrigger
-PrtgAPI.PrtgClient AddNotificationTriggerAsync(TriggerParameters parameters, bool resolve, CancellationToken token) -> Task<NotificationTrigger>
-PrtgAPI.PrtgClient AddSensor(Either<Device,int> deviceOrId, NewSensorParameters parameters, bool resolve, CancellationToken token) -> List<Sensor>
-PrtgAPI.PrtgClient AddSensorAsync(Either<Device,int> deviceOrId, NewSensorParameters parameters, bool resolve, CancellationToken token) -> Task<List<Sensor>>
+PrtgAPI.PrtgClient AcknowledgeSensor(Either<Sensor,int> sensorOrId, int? duration = null, string message = null) -> void
+PrtgAPI.PrtgClient AcknowledgeSensor(int[] sensorIds, int? duration = null, string message = null) -> void
+PrtgAPI.PrtgClient AcknowledgeSensorAsync(Either<Sensor,int> sensorOrId, int? duration = null, string message = null, CancellationToken token = default(CancellationToken)) -> Task
+PrtgAPI.PrtgClient AcknowledgeSensorAsync(int[] sensorIds, int? duration = null, string message = null, CancellationToken token = default(CancellationToken)) -> Task
+PrtgAPI.PrtgClient AddDevice(Either<GroupOrProbe,int> parent, NewDeviceParameters parameters, bool resolve = true, CancellationToken token = default(CancellationToken)) -> Device
+PrtgAPI.PrtgClient AddDevice(Either<GroupOrProbe,int> parent, string name, string host = null, AutoDiscoveryMode discoveryMode = AutoDiscoveryMode.Manual, bool resolve = true, CancellationToken token = default(CancellationToken)) -> Device
+PrtgAPI.PrtgClient AddDeviceAsync(Either<GroupOrProbe,int> parent, NewDeviceParameters parameters, bool resolve = true, CancellationToken token = default(CancellationToken)) -> Task<Device>
+PrtgAPI.PrtgClient AddDeviceAsync(Either<GroupOrProbe,int> parent, string name, string host = null, AutoDiscoveryMode discoveryMode = AutoDiscoveryMode.Manual, bool resolve = true, CancellationToken token = default(CancellationToken)) -> Task<Device>
+PrtgAPI.PrtgClient AddGroup(Either<GroupOrProbe,int> parent, NewGroupParameters parameters, bool resolve = true, CancellationToken token = default(CancellationToken)) -> Group
+PrtgAPI.PrtgClient AddGroup(Either<GroupOrProbe,int> parent, string name, bool resolve = true, CancellationToken token = default(CancellationToken)) -> Group
+PrtgAPI.PrtgClient AddGroupAsync(Either<GroupOrProbe,int> parent, NewGroupParameters parameters, bool resolve = true, CancellationToken token = default(CancellationToken)) -> Task<Group>
+PrtgAPI.PrtgClient AddGroupAsync(Either<GroupOrProbe,int> parent, string name, bool resolve = true, CancellationToken token = default(CancellationToken)) -> Task<Group>
+PrtgAPI.PrtgClient AddNotificationTrigger(TriggerParameters parameters, bool resolve = true, CancellationToken token = default(CancellationToken)) -> NotificationTrigger
+PrtgAPI.PrtgClient AddNotificationTriggerAsync(TriggerParameters parameters, bool resolve = true, CancellationToken token = default(CancellationToken)) -> Task<NotificationTrigger>
+PrtgAPI.PrtgClient AddSensor(Either<Device,int> deviceOrId, NewSensorParameters parameters, bool resolve = true, CancellationToken token = default(CancellationToken)) -> List<Sensor>
+PrtgAPI.PrtgClient AddSensorAsync(Either<Device,int> deviceOrId, NewSensorParameters parameters, bool resolve = true, CancellationToken token = default(CancellationToken)) -> Task<List<Sensor>>
 PrtgAPI.PrtgClient ApproveProbe(Either<Probe,int> probeOrId, ProbeApproval action) -> void
 PrtgAPI.PrtgClient ApproveProbeAsync(Either<Probe,int> probeOrId, ProbeApproval action) -> Task
 PrtgAPI.PrtgClient ApproveProbeAsync(Either<Probe,int> probeOrId, ProbeApproval action, CancellationToken token) -> Task
-PrtgAPI.PrtgClient AutoDiscover(Either<IPrtgObject,int> objectOrId, DeviceTemplate[] templates) -> void
-PrtgAPI.PrtgClient AutoDiscoverAsync(Either<IPrtgObject,int> objectOrId, DeviceTemplate[] templates) -> Task
+PrtgAPI.PrtgClient AutoDiscover(Either<IPrtgObject,int> objectOrId, params DeviceTemplate[] templates) -> void
 PrtgAPI.PrtgClient AutoDiscoverAsync(Either<IPrtgObject,int> objectOrId, DeviceTemplate[] templates, CancellationToken token) -> Task
+PrtgAPI.PrtgClient AutoDiscoverAsync(Either<IPrtgObject,int> objectOrId, params DeviceTemplate[] templates) -> Task
 PrtgAPI.PrtgClient BackupConfigDatabase() -> void
 PrtgAPI.PrtgClient BackupConfigDatabaseAsync() -> Task
 PrtgAPI.PrtgClient BackupConfigDatabaseAsync(CancellationToken token) -> Task
@@ -2886,23 +2886,23 @@ PrtgAPI.PrtgClient GetDevicePropertiesAsync(Either<Device,int> device, Cancellat
 PrtgAPI.PrtgClient GetDevices() -> List<Device>
 PrtgAPI.PrtgClient GetDevices(DeviceParameters parameters) -> List<Device>
 PrtgAPI.PrtgClient GetDevices(DeviceParameters parameters, CancellationToken token) -> List<Device>
+PrtgAPI.PrtgClient GetDevices(params SearchFilter[] filters) -> List<Device>
 PrtgAPI.PrtgClient GetDevices(Property property, FilterOperator operator, object value) -> List<Device>
 PrtgAPI.PrtgClient GetDevices(Property property, object value) -> List<Device>
-PrtgAPI.PrtgClient GetDevices(SearchFilter[] filters) -> List<Device>
 PrtgAPI.PrtgClient GetDevicesAsync() -> Task<List<Device>>
 PrtgAPI.PrtgClient GetDevicesAsync(CancellationToken token) -> Task<List<Device>>
 PrtgAPI.PrtgClient GetDevicesAsync(DeviceParameters parameters) -> Task<List<Device>>
 PrtgAPI.PrtgClient GetDevicesAsync(DeviceParameters parameters, CancellationToken token) -> Task<List<Device>>
+PrtgAPI.PrtgClient GetDevicesAsync(params SearchFilter[] filters) -> Task<List<Device>>
 PrtgAPI.PrtgClient GetDevicesAsync(Property property, FilterOperator operator, object value) -> Task<List<Device>>
 PrtgAPI.PrtgClient GetDevicesAsync(Property property, FilterOperator operator, object value, CancellationToken token) -> Task<List<Device>>
 PrtgAPI.PrtgClient GetDevicesAsync(Property property, object value) -> Task<List<Device>>
 PrtgAPI.PrtgClient GetDevicesAsync(Property property, object value, CancellationToken token) -> Task<List<Device>>
-PrtgAPI.PrtgClient GetDevicesAsync(SearchFilter[] filters) -> Task<List<Device>>
 PrtgAPI.PrtgClient GetDevicesAsync(SearchFilter[] filters, CancellationToken token) -> Task<List<Device>>
-PrtgAPI.PrtgClient GetDeviceTemplates(int deviceId) -> List<DeviceTemplate>
-PrtgAPI.PrtgClient GetDeviceTemplatesAsync(int deviceId, CancellationToken token) -> Task<List<DeviceTemplate>>
-PrtgAPI.PrtgClient GetDynamicSensorParameters(Either<Device,int> deviceOrId, string sensorType, Func<int,bool> progressCallback, int timeout, ISensorQueryTargetParameters queryParameters, CancellationToken token) -> DynamicSensorParameters
-PrtgAPI.PrtgClient GetDynamicSensorParametersAsync(Either<Device,int> deviceOrId, string sensorType, Func<int,bool> progressCallback, int timeout, ISensorQueryTargetParameters queryParameters, CancellationToken token) -> Task<DynamicSensorParameters>
+PrtgAPI.PrtgClient GetDeviceTemplates(int deviceId = 40) -> List<DeviceTemplate>
+PrtgAPI.PrtgClient GetDeviceTemplatesAsync(int deviceId = 40, CancellationToken token = default(CancellationToken)) -> Task<List<DeviceTemplate>>
+PrtgAPI.PrtgClient GetDynamicSensorParameters(Either<Device,int> deviceOrId, string sensorType, Func<int,bool> progressCallback = null, int timeout = 60, ISensorQueryTargetParameters queryParameters = null, CancellationToken token = default(CancellationToken)) -> DynamicSensorParameters
+PrtgAPI.PrtgClient GetDynamicSensorParametersAsync(Either<Device,int> deviceOrId, string sensorType, Func<int,bool> progressCallback = null, int timeout = 60, ISensorQueryTargetParameters queryParameters = null, CancellationToken token = default(CancellationToken)) -> Task<DynamicSensorParameters>
 PrtgAPI.PrtgClient GetGroup(int id) -> Group
 PrtgAPI.PrtgClient GetGroupAsync(int id) -> Task<Group>
 PrtgAPI.PrtgClient GetGroupAsync(int id, CancellationToken token) -> Task<Group>
@@ -2912,35 +2912,35 @@ PrtgAPI.PrtgClient GetGroupPropertiesAsync(Either<Group,int> group, Cancellation
 PrtgAPI.PrtgClient GetGroups() -> List<Group>
 PrtgAPI.PrtgClient GetGroups(GroupParameters parameters) -> List<Group>
 PrtgAPI.PrtgClient GetGroups(GroupParameters parameters, CancellationToken token) -> List<Group>
+PrtgAPI.PrtgClient GetGroups(params SearchFilter[] filters) -> List<Group>
 PrtgAPI.PrtgClient GetGroups(Property property, FilterOperator operator, object value) -> List<Group>
 PrtgAPI.PrtgClient GetGroups(Property property, object value) -> List<Group>
-PrtgAPI.PrtgClient GetGroups(SearchFilter[] filters) -> List<Group>
 PrtgAPI.PrtgClient GetGroupsAsync() -> Task<List<Group>>
 PrtgAPI.PrtgClient GetGroupsAsync(CancellationToken token) -> Task<List<Group>>
 PrtgAPI.PrtgClient GetGroupsAsync(GroupParameters parameters) -> Task<List<Group>>
 PrtgAPI.PrtgClient GetGroupsAsync(GroupParameters parameters, CancellationToken token) -> Task<List<Group>>
+PrtgAPI.PrtgClient GetGroupsAsync(params SearchFilter[] filters) -> Task<List<Group>>
 PrtgAPI.PrtgClient GetGroupsAsync(Property property, FilterOperator operator, object value) -> Task<List<Group>>
 PrtgAPI.PrtgClient GetGroupsAsync(Property property, FilterOperator operator, object value, CancellationToken token) -> Task<List<Group>>
 PrtgAPI.PrtgClient GetGroupsAsync(Property property, object value) -> Task<List<Group>>
 PrtgAPI.PrtgClient GetGroupsAsync(Property property, object value, CancellationToken token) -> Task<List<Group>>
-PrtgAPI.PrtgClient GetGroupsAsync(SearchFilter[] filters) -> Task<List<Group>>
 PrtgAPI.PrtgClient GetGroupsAsync(SearchFilter[] filters, CancellationToken token) -> Task<List<Group>>
 PrtgAPI.PrtgClient GetHashCode() -> int
-PrtgAPI.PrtgClient GetLogs(DateTime? startDate, DateTime? endDate, int? count, LogStatus[] status) -> List<Log>
-PrtgAPI.PrtgClient GetLogs(int objectId, DateTime? startDate, DateTime? endDate, int? count, LogStatus[] status) -> List<Log>
-PrtgAPI.PrtgClient GetLogs(int objectId, RecordAge recordAge, int? count, LogStatus[] status) -> List<Log>
+PrtgAPI.PrtgClient GetLogs(DateTime? startDate, DateTime? endDate = null, int? count = 500, params LogStatus[] status) -> List<Log>
+PrtgAPI.PrtgClient GetLogs(int objectId, DateTime? startDate = null, DateTime? endDate = null, int? count = 500, params LogStatus[] status) -> List<Log>
+PrtgAPI.PrtgClient GetLogs(int objectId, RecordAge recordAge, int? count = 500, params LogStatus[] status) -> List<Log>
 PrtgAPI.PrtgClient GetLogs(LogParameters parameters) -> List<Log>
 PrtgAPI.PrtgClient GetLogs(LogParameters parameters, CancellationToken token) -> List<Log>
-PrtgAPI.PrtgClient GetLogs(RecordAge recordAge, int? count, LogStatus[] status) -> List<Log>
-PrtgAPI.PrtgClient GetLogsAsync(DateTime? startDate, DateTime? endDate, int? count, LogStatus[] status) -> Task<List<Log>>
+PrtgAPI.PrtgClient GetLogs(RecordAge recordAge = RecordAge.LastWeek, int? count = 500, params LogStatus[] status) -> List<Log>
+PrtgAPI.PrtgClient GetLogsAsync(DateTime? startDate, DateTime? endDate = null, int? count = 500, params LogStatus[] status) -> Task<List<Log>>
 PrtgAPI.PrtgClient GetLogsAsync(DateTime? startDate, DateTime? endDate, int? count, LogStatus[] status, CancellationToken token) -> Task<List<Log>>
-PrtgAPI.PrtgClient GetLogsAsync(int objectId, DateTime? startDate, DateTime? endDate, int? count, LogStatus[] status) -> Task<List<Log>>
+PrtgAPI.PrtgClient GetLogsAsync(int objectId, DateTime? startDate = null, DateTime? endDate = null, int? count = 500, params LogStatus[] status) -> Task<List<Log>>
 PrtgAPI.PrtgClient GetLogsAsync(int objectId, DateTime? startDate, DateTime? endDate, int? count, LogStatus[] status, CancellationToken token) -> Task<List<Log>>
-PrtgAPI.PrtgClient GetLogsAsync(int objectId, RecordAge recordAge, int? count, LogStatus[] status) -> Task<List<Log>>
+PrtgAPI.PrtgClient GetLogsAsync(int objectId, RecordAge recordAge, int? count = 500, params LogStatus[] status) -> Task<List<Log>>
 PrtgAPI.PrtgClient GetLogsAsync(int objectId, RecordAge recordAge, int? count, LogStatus[] status, CancellationToken token) -> Task<List<Log>>
 PrtgAPI.PrtgClient GetLogsAsync(LogParameters parameters) -> Task<List<Log>>
 PrtgAPI.PrtgClient GetLogsAsync(LogParameters parameters, CancellationToken token) -> Task<List<Log>>
-PrtgAPI.PrtgClient GetLogsAsync(RecordAge recordAge, int? count, LogStatus[] status) -> Task<List<Log>>
+PrtgAPI.PrtgClient GetLogsAsync(RecordAge recordAge = RecordAge.LastWeek, int? count = 500, params LogStatus[] status) -> Task<List<Log>>
 PrtgAPI.PrtgClient GetLogsAsync(RecordAge recordAge, int? count, LogStatus[] status, CancellationToken token) -> Task<List<Log>>
 PrtgAPI.PrtgClient GetModificationHistory(Either<IPrtgObject,int> objectOrId) -> List<ModificationEvent>
 PrtgAPI.PrtgClient GetModificationHistoryAsync(Either<IPrtgObject,int> objectOrId) -> Task<List<ModificationEvent>>
@@ -2952,13 +2952,13 @@ PrtgAPI.PrtgClient GetNotificationActionAsync(int id, CancellationToken token) -
 PrtgAPI.PrtgClient GetNotificationActionAsync(string name) -> Task<NotificationAction>
 PrtgAPI.PrtgClient GetNotificationActionAsync(string name, CancellationToken token) -> Task<NotificationAction>
 PrtgAPI.PrtgClient GetNotificationActions() -> List<NotificationAction>
+PrtgAPI.PrtgClient GetNotificationActions(params SearchFilter[] filters) -> List<NotificationAction>
 PrtgAPI.PrtgClient GetNotificationActions(Property property, object value) -> List<NotificationAction>
-PrtgAPI.PrtgClient GetNotificationActions(SearchFilter[] filters) -> List<NotificationAction>
 PrtgAPI.PrtgClient GetNotificationActionsAsync() -> Task<List<NotificationAction>>
 PrtgAPI.PrtgClient GetNotificationActionsAsync(CancellationToken token) -> Task<List<NotificationAction>>
+PrtgAPI.PrtgClient GetNotificationActionsAsync(params SearchFilter[] filters) -> Task<List<NotificationAction>>
 PrtgAPI.PrtgClient GetNotificationActionsAsync(Property property, object value) -> Task<List<NotificationAction>>
 PrtgAPI.PrtgClient GetNotificationActionsAsync(Property property, object value, CancellationToken token) -> Task<List<NotificationAction>>
-PrtgAPI.PrtgClient GetNotificationActionsAsync(SearchFilter[] filters) -> Task<List<NotificationAction>>
 PrtgAPI.PrtgClient GetNotificationActionsAsync(SearchFilter[] filters, CancellationToken token) -> Task<List<NotificationAction>>
 PrtgAPI.PrtgClient GetNotificationTriggers(Either<IPrtgObject,int> objectOrId) -> List<NotificationTrigger>
 PrtgAPI.PrtgClient GetNotificationTriggersAsync(Either<IPrtgObject,int> objectOrId) -> Task<List<NotificationTrigger>>
@@ -2966,38 +2966,38 @@ PrtgAPI.PrtgClient GetNotificationTriggersAsync(Either<IPrtgObject,int> objectOr
 PrtgAPI.PrtgClient GetNotificationTriggerTypes(Either<IPrtgObject,int> objectOrId) -> List<TriggerType>
 PrtgAPI.PrtgClient GetNotificationTriggerTypesAsync(Either<IPrtgObject,int> objectOrId) -> Task<List<TriggerType>>
 PrtgAPI.PrtgClient GetNotificationTriggerTypesAsync(Either<IPrtgObject,int> objectOrId, CancellationToken token) -> Task<List<TriggerType>>
-PrtgAPI.PrtgClient GetObject(int id, bool resolve) -> PrtgObject
-PrtgAPI.PrtgClient GetObjectAsync(int id, bool resolve, CancellationToken token) -> Task<PrtgObject>
+PrtgAPI.PrtgClient GetObject(int id, bool resolve = false) -> PrtgObject
+PrtgAPI.PrtgClient GetObjectAsync(int id, bool resolve = false, CancellationToken token = default(CancellationToken)) -> Task<PrtgObject>
 PrtgAPI.PrtgClient GetObjectPropertiesRaw(Either<IPrtgObject,int> objectOrId, ObjectType objectType) -> Dictionary<string,string>
-PrtgAPI.PrtgClient GetObjectPropertiesRaw(Either<IPrtgObject,int> objectOrId, string objectType) -> Dictionary<string,string>
+PrtgAPI.PrtgClient GetObjectPropertiesRaw(Either<IPrtgObject,int> objectOrId, string objectType = null) -> Dictionary<string,string>
 PrtgAPI.PrtgClient GetObjectPropertiesRawAsync(Either<IPrtgObject,int> objectOrId, ObjectType objectType) -> Task<Dictionary<string,string>>
 PrtgAPI.PrtgClient GetObjectPropertiesRawAsync(Either<IPrtgObject,int> objectOrId, ObjectType objectType, CancellationToken token) -> Task<Dictionary<string,string>>
-PrtgAPI.PrtgClient GetObjectPropertiesRawAsync(Either<IPrtgObject,int> objectOrId, string objectType, CancellationToken token) -> Task<Dictionary<string,string>>
+PrtgAPI.PrtgClient GetObjectPropertiesRawAsync(Either<IPrtgObject,int> objectOrId, string objectType = null, CancellationToken token = default(CancellationToken)) -> Task<Dictionary<string,string>>
 PrtgAPI.PrtgClient GetObjectProperty(Either<IPrtgObject,int> objectOrId, ObjectProperty property) -> object
 PrtgAPI.PrtgClient GetObjectProperty<T>(Either<IPrtgObject,int> objectOrId, ObjectProperty property) -> T
 PrtgAPI.PrtgClient GetObjectPropertyAsync(Either<IPrtgObject,int> objectOrId, ObjectProperty property) -> Task<object>
 PrtgAPI.PrtgClient GetObjectPropertyAsync(Either<IPrtgObject,int> objectOrId, ObjectProperty property, CancellationToken token) -> Task<object>
 PrtgAPI.PrtgClient GetObjectPropertyAsync<T>(Either<IPrtgObject,int> objectOrId, ObjectProperty property) -> Task<T>
 PrtgAPI.PrtgClient GetObjectPropertyAsync<T>(Either<IPrtgObject,int> objectOrId, ObjectProperty property, CancellationToken token) -> Task<T>
-PrtgAPI.PrtgClient GetObjectPropertyRaw(Either<IPrtgObject,int> objectOrId, int subId, string subType, string property, bool text) -> string
-PrtgAPI.PrtgClient GetObjectPropertyRaw(Either<IPrtgObject,int> objectOrId, string property, bool text) -> string
-PrtgAPI.PrtgClient GetObjectPropertyRawAsync(Either<IPrtgObject,int> objectOrId, int subId, string subType, string property, bool text, CancellationToken token) -> Task<string>
-PrtgAPI.PrtgClient GetObjectPropertyRawAsync(Either<IPrtgObject,int> objectOrId, string property, bool text, CancellationToken token) -> Task<string>
+PrtgAPI.PrtgClient GetObjectPropertyRaw(Either<IPrtgObject,int> objectOrId, int subId, string subType, string property, bool text = false) -> string
+PrtgAPI.PrtgClient GetObjectPropertyRaw(Either<IPrtgObject,int> objectOrId, string property, bool text = false) -> string
+PrtgAPI.PrtgClient GetObjectPropertyRawAsync(Either<IPrtgObject,int> objectOrId, int subId, string subType, string property, bool text = false, CancellationToken token = default(CancellationToken)) -> Task<string>
+PrtgAPI.PrtgClient GetObjectPropertyRawAsync(Either<IPrtgObject,int> objectOrId, string property, bool text = false, CancellationToken token = default(CancellationToken)) -> Task<string>
 PrtgAPI.PrtgClient GetObjects() -> List<PrtgObject>
+PrtgAPI.PrtgClient GetObjects(params SearchFilter[] filters) -> List<PrtgObject>
 PrtgAPI.PrtgClient GetObjects(Property property, FilterOperator operator, object value) -> List<PrtgObject>
 PrtgAPI.PrtgClient GetObjects(Property property, object value) -> List<PrtgObject>
 PrtgAPI.PrtgClient GetObjects(PrtgObjectParameters parameters) -> List<PrtgObject>
 PrtgAPI.PrtgClient GetObjects(PrtgObjectParameters parameters, CancellationToken token) -> List<PrtgObject>
-PrtgAPI.PrtgClient GetObjects(SearchFilter[] filters) -> List<PrtgObject>
 PrtgAPI.PrtgClient GetObjectsAsync() -> Task<List<PrtgObject>>
 PrtgAPI.PrtgClient GetObjectsAsync(CancellationToken token) -> Task<List<PrtgObject>>
+PrtgAPI.PrtgClient GetObjectsAsync(params SearchFilter[] filters) -> Task<List<PrtgObject>>
 PrtgAPI.PrtgClient GetObjectsAsync(Property property, FilterOperator operator, object value) -> Task<List<PrtgObject>>
 PrtgAPI.PrtgClient GetObjectsAsync(Property property, FilterOperator operator, object value, CancellationToken token) -> Task<List<PrtgObject>>
 PrtgAPI.PrtgClient GetObjectsAsync(Property property, object value) -> Task<List<PrtgObject>>
 PrtgAPI.PrtgClient GetObjectsAsync(Property property, object value, CancellationToken token) -> Task<List<PrtgObject>>
 PrtgAPI.PrtgClient GetObjectsAsync(PrtgObjectParameters parameters) -> Task<List<PrtgObject>>
 PrtgAPI.PrtgClient GetObjectsAsync(PrtgObjectParameters parameters, CancellationToken token) -> Task<List<PrtgObject>>
-PrtgAPI.PrtgClient GetObjectsAsync(SearchFilter[] filters) -> Task<List<PrtgObject>>
 PrtgAPI.PrtgClient GetObjectsAsync(SearchFilter[] filters, CancellationToken token) -> Task<List<PrtgObject>>
 PrtgAPI.PrtgClient GetProbe(int id) -> Probe
 PrtgAPI.PrtgClient GetProbeAsync(int id) -> Task<Probe>
@@ -3006,20 +3006,20 @@ PrtgAPI.PrtgClient GetProbeProperties(Either<Probe,int> probe) -> ProbeSettings
 PrtgAPI.PrtgClient GetProbePropertiesAsync(Either<Probe,int> probe) -> Task<ProbeSettings>
 PrtgAPI.PrtgClient GetProbePropertiesAsync(Either<Probe,int> probe, CancellationToken token) -> Task<ProbeSettings>
 PrtgAPI.PrtgClient GetProbes() -> List<Probe>
+PrtgAPI.PrtgClient GetProbes(params SearchFilter[] filters) -> List<Probe>
 PrtgAPI.PrtgClient GetProbes(ProbeParameters parameters) -> List<Probe>
 PrtgAPI.PrtgClient GetProbes(ProbeParameters parameters, CancellationToken token) -> List<Probe>
 PrtgAPI.PrtgClient GetProbes(Property property, FilterOperator operator, object value) -> List<Probe>
 PrtgAPI.PrtgClient GetProbes(Property property, object value) -> List<Probe>
-PrtgAPI.PrtgClient GetProbes(SearchFilter[] filters) -> List<Probe>
 PrtgAPI.PrtgClient GetProbesAsync() -> Task<List<Probe>>
 PrtgAPI.PrtgClient GetProbesAsync(CancellationToken token) -> Task<List<Probe>>
+PrtgAPI.PrtgClient GetProbesAsync(params SearchFilter[] filters) -> Task<List<Probe>>
 PrtgAPI.PrtgClient GetProbesAsync(ProbeParameters parameters) -> Task<List<Probe>>
 PrtgAPI.PrtgClient GetProbesAsync(ProbeParameters parameters, CancellationToken token) -> Task<List<Probe>>
 PrtgAPI.PrtgClient GetProbesAsync(Property property, FilterOperator operator, object value) -> Task<List<Probe>>
 PrtgAPI.PrtgClient GetProbesAsync(Property property, FilterOperator operator, object value, CancellationToken token) -> Task<List<Probe>>
 PrtgAPI.PrtgClient GetProbesAsync(Property property, object value) -> Task<List<Probe>>
 PrtgAPI.PrtgClient GetProbesAsync(Property property, object value, CancellationToken token) -> Task<List<Probe>>
-PrtgAPI.PrtgClient GetProbesAsync(SearchFilter[] filters) -> Task<List<Probe>>
 PrtgAPI.PrtgClient GetProbesAsync(SearchFilter[] filters, CancellationToken token) -> Task<List<Probe>>
 PrtgAPI.PrtgClient GetSchedule(int id) -> Schedule
 PrtgAPI.PrtgClient GetSchedule(string name) -> Schedule
@@ -3028,46 +3028,46 @@ PrtgAPI.PrtgClient GetScheduleAsync(int id, CancellationToken token) -> Task<Sch
 PrtgAPI.PrtgClient GetScheduleAsync(string name) -> Task<Schedule>
 PrtgAPI.PrtgClient GetScheduleAsync(string name, CancellationToken token) -> Task<Schedule>
 PrtgAPI.PrtgClient GetSchedules() -> List<Schedule>
+PrtgAPI.PrtgClient GetSchedules(params SearchFilter[] filters) -> List<Schedule>
 PrtgAPI.PrtgClient GetSchedules(Property property, object value) -> List<Schedule>
-PrtgAPI.PrtgClient GetSchedules(SearchFilter[] filters) -> List<Schedule>
 PrtgAPI.PrtgClient GetSchedulesAsync() -> Task<List<Schedule>>
 PrtgAPI.PrtgClient GetSchedulesAsync(CancellationToken token) -> Task<List<Schedule>>
+PrtgAPI.PrtgClient GetSchedulesAsync(params SearchFilter[] filters) -> Task<List<Schedule>>
 PrtgAPI.PrtgClient GetSchedulesAsync(Property property, object value) -> Task<List<Schedule>>
 PrtgAPI.PrtgClient GetSchedulesAsync(Property property, object value, CancellationToken token) -> Task<List<Schedule>>
-PrtgAPI.PrtgClient GetSchedulesAsync(SearchFilter[] filters) -> Task<List<Schedule>>
 PrtgAPI.PrtgClient GetSchedulesAsync(SearchFilter[] filters, CancellationToken token) -> Task<List<Schedule>>
 PrtgAPI.PrtgClient GetSensor(int id) -> Sensor
 PrtgAPI.PrtgClient GetSensorAsync(int id) -> Task<Sensor>
 PrtgAPI.PrtgClient GetSensorAsync(int id, CancellationToken token) -> Task<Sensor>
-PrtgAPI.PrtgClient GetSensorHistory(Either<Sensor,int> sensorOrId, int average, DateTime? startDate, DateTime? endDate, int? count) -> List<SensorHistoryRecord>
-PrtgAPI.PrtgClient GetSensorHistoryAsync(Either<Sensor,int> sensorOrId, int average, DateTime? startDate, DateTime? endDate, int? count, CancellationToken token) -> Task<List<SensorHistoryRecord>>
+PrtgAPI.PrtgClient GetSensorHistory(Either<Sensor,int> sensorOrId, int average = 300, DateTime? startDate = null, DateTime? endDate = null, int? count = null) -> List<SensorHistoryRecord>
+PrtgAPI.PrtgClient GetSensorHistoryAsync(Either<Sensor,int> sensorOrId, int average = 300, DateTime? startDate = null, DateTime? endDate = null, int? count = null, CancellationToken token = default(CancellationToken)) -> Task<List<SensorHistoryRecord>>
 PrtgAPI.PrtgClient GetSensorProperties(Either<Sensor,int> sensor) -> SensorSettings
 PrtgAPI.PrtgClient GetSensorPropertiesAsync(Either<Sensor,int> sensor) -> Task<SensorSettings>
 PrtgAPI.PrtgClient GetSensorPropertiesAsync(Either<Sensor,int> sensor, CancellationToken token) -> Task<SensorSettings>
 PrtgAPI.PrtgClient GetSensors() -> List<Sensor>
+PrtgAPI.PrtgClient GetSensors(params SearchFilter[] filters) -> List<Sensor>
+PrtgAPI.PrtgClient GetSensors(params Status[] statuses) -> List<Sensor>
 PrtgAPI.PrtgClient GetSensors(Property property, FilterOperator operator, object value) -> List<Sensor>
 PrtgAPI.PrtgClient GetSensors(Property property, object value) -> List<Sensor>
-PrtgAPI.PrtgClient GetSensors(SearchFilter[] filters) -> List<Sensor>
 PrtgAPI.PrtgClient GetSensors(SensorParameters parameters) -> List<Sensor>
 PrtgAPI.PrtgClient GetSensors(SensorParameters parameters, CancellationToken token) -> List<Sensor>
-PrtgAPI.PrtgClient GetSensors(Status[] statuses) -> List<Sensor>
 PrtgAPI.PrtgClient GetSensorsAsync() -> Task<List<Sensor>>
 PrtgAPI.PrtgClient GetSensorsAsync(CancellationToken token) -> Task<List<Sensor>>
+PrtgAPI.PrtgClient GetSensorsAsync(params SearchFilter[] filters) -> Task<List<Sensor>>
+PrtgAPI.PrtgClient GetSensorsAsync(params Status[] statuses) -> Task<List<Sensor>>
 PrtgAPI.PrtgClient GetSensorsAsync(Property property, FilterOperator operator, object value) -> Task<List<Sensor>>
 PrtgAPI.PrtgClient GetSensorsAsync(Property property, FilterOperator operator, object value, CancellationToken token) -> Task<List<Sensor>>
 PrtgAPI.PrtgClient GetSensorsAsync(Property property, object value) -> Task<List<Sensor>>
 PrtgAPI.PrtgClient GetSensorsAsync(Property property, object value, CancellationToken token) -> Task<List<Sensor>>
-PrtgAPI.PrtgClient GetSensorsAsync(SearchFilter[] filters) -> Task<List<Sensor>>
 PrtgAPI.PrtgClient GetSensorsAsync(SearchFilter[] filters, CancellationToken token) -> Task<List<Sensor>>
 PrtgAPI.PrtgClient GetSensorsAsync(SensorParameters parameters) -> Task<List<Sensor>>
 PrtgAPI.PrtgClient GetSensorsAsync(SensorParameters parameters, CancellationToken token) -> Task<List<Sensor>>
-PrtgAPI.PrtgClient GetSensorsAsync(Status[] statuses) -> Task<List<Sensor>>
 PrtgAPI.PrtgClient GetSensorsAsync(Status[] statuses, CancellationToken token) -> Task<List<Sensor>>
 PrtgAPI.PrtgClient GetSensorTotals() -> SensorTotals
 PrtgAPI.PrtgClient GetSensorTotalsAsync() -> Task<SensorTotals>
 PrtgAPI.PrtgClient GetSensorTotalsAsync(CancellationToken token) -> Task<SensorTotals>
-PrtgAPI.PrtgClient GetSensorTypes(int objectId) -> List<SensorTypeDescriptor>
-PrtgAPI.PrtgClient GetSensorTypesAsync(int objectId, CancellationToken token) -> Task<List<SensorTypeDescriptor>>
+PrtgAPI.PrtgClient GetSensorTypes(int objectId = 1) -> List<SensorTypeDescriptor>
+PrtgAPI.PrtgClient GetSensorTypesAsync(int objectId = 1, CancellationToken token = default(CancellationToken)) -> Task<List<SensorTypeDescriptor>>
 PrtgAPI.PrtgClient GetStatus() -> ServerStatus
 PrtgAPI.PrtgClient GetStatusAsync() -> Task<ServerStatus>
 PrtgAPI.PrtgClient GetStatusAsync(CancellationToken token) -> Task<ServerStatus>
@@ -3081,17 +3081,17 @@ PrtgAPI.PrtgClient GetSystemInfoAsync(Either<Device,int> deviceOrId, SystemInfoT
 PrtgAPI.PrtgClient GetSystemInfoAsync<T>(Either<Device,int> deviceOrId) -> Task<List<T>>
 PrtgAPI.PrtgClient GetSystemInfoAsync<T>(Either<Device,int> deviceOrId, CancellationToken token) -> Task<List<T>>
 PrtgAPI.PrtgClient GetTotalObjects(Content content) -> int
-PrtgAPI.PrtgClient GetTotalObjects(Content content, SearchFilter[] filters) -> int
+PrtgAPI.PrtgClient GetTotalObjects(Content content, params SearchFilter[] filters) -> int
 PrtgAPI.PrtgClient GetTotalObjectsAsync(Content content) -> Task<int>
 PrtgAPI.PrtgClient GetTotalObjectsAsync(Content content, CancellationToken token) -> Task<int>
-PrtgAPI.PrtgClient GetTotalObjectsAsync(Content content, SearchFilter[] filters) -> Task<int>
+PrtgAPI.PrtgClient GetTotalObjectsAsync(Content content, params SearchFilter[] filters) -> Task<int>
 PrtgAPI.PrtgClient GetTotalObjectsAsync(Content content, SearchFilter[] filters, CancellationToken token) -> Task<int>
-PrtgAPI.PrtgClient GetTree(Either<PrtgObject,int> objectOrId, FlagEnum<TreeParseOption>? options, ITreeProgressCallback progressCallback, CancellationToken token) -> PrtgNode
-PrtgAPI.PrtgClient GetTree(PrtgObject value, FlagEnum<TreeParseOption>? options, ITreeProgressCallback progressCallback, CancellationToken token) -> PrtgNode
-PrtgAPI.PrtgClient GetTreeAsync(Either<PrtgObject,int> objectOrId, FlagEnum<TreeParseOption>? options, ITreeProgressCallback progressCallback, CancellationToken token) -> Task<PrtgNode>
-PrtgAPI.PrtgClient GetTreeAsync(PrtgObject value, FlagEnum<TreeParseOption>? options, ITreeProgressCallback progressCallback, CancellationToken token) -> Task<PrtgNode>
-PrtgAPI.PrtgClient GetTreeLazy(Either<PrtgObject,int> objectOrId, FlagEnum<TreeParseOption>? options, ITreeProgressCallback progressCallback, CancellationToken token) -> PrtgNode
-PrtgAPI.PrtgClient GetTreeLazy(PrtgObject value, FlagEnum<TreeParseOption>? options, ITreeProgressCallback progressCallback, CancellationToken token) -> PrtgNode
+PrtgAPI.PrtgClient GetTree(Either<PrtgObject,int> objectOrId, FlagEnum<TreeParseOption>? options = null, ITreeProgressCallback progressCallback = null, CancellationToken token = default(CancellationToken)) -> PrtgNode
+PrtgAPI.PrtgClient GetTree(PrtgObject value = null, FlagEnum<TreeParseOption>? options = null, ITreeProgressCallback progressCallback = null, CancellationToken token = default(CancellationToken)) -> PrtgNode
+PrtgAPI.PrtgClient GetTreeAsync(Either<PrtgObject,int> objectOrId, FlagEnum<TreeParseOption>? options = null, ITreeProgressCallback progressCallback = null, CancellationToken token = default(CancellationToken)) -> Task<PrtgNode>
+PrtgAPI.PrtgClient GetTreeAsync(PrtgObject value = null, FlagEnum<TreeParseOption>? options = null, ITreeProgressCallback progressCallback = null, CancellationToken token = default(CancellationToken)) -> Task<PrtgNode>
+PrtgAPI.PrtgClient GetTreeLazy(Either<PrtgObject,int> objectOrId, FlagEnum<TreeParseOption>? options = null, ITreeProgressCallback progressCallback = null, CancellationToken token = default(CancellationToken)) -> PrtgNode
+PrtgAPI.PrtgClient GetTreeLazy(PrtgObject value = null, FlagEnum<TreeParseOption>? options = null, ITreeProgressCallback progressCallback = null, CancellationToken token = default(CancellationToken)) -> PrtgNode
 PrtgAPI.PrtgClient GetType() -> Type
 PrtgAPI.PrtgClient LoadConfigFiles(ConfigFileType fileType) -> void
 PrtgAPI.PrtgClient LoadConfigFilesAsync(ConfigFileType fileType) -> Task
@@ -3102,10 +3102,10 @@ PrtgAPI.PrtgClient MoveObject(Either<IPrtgObject,int> objectOrId, Either<GroupOr
 PrtgAPI.PrtgClient MoveObjectAsync(Either<IPrtgObject,int> objectOrId, Either<GroupOrProbe,int> destination) -> Task
 PrtgAPI.PrtgClient MoveObjectAsync(Either<IPrtgObject,int> objectOrId, Either<GroupOrProbe,int> destination, CancellationToken token) -> Task
 PrtgAPI.PrtgClient PassHash { get; } -> string
-PrtgAPI.PrtgClient PauseObject(Either<IPrtgObject,int> objectOrId, int? duration, string message) -> void
-PrtgAPI.PrtgClient PauseObject(int[] objectIds, int? duration, string message) -> void
-PrtgAPI.PrtgClient PauseObjectAsync(Either<IPrtgObject,int> objectOrId, int? duration, string message, CancellationToken token) -> Task
-PrtgAPI.PrtgClient PauseObjectAsync(int[] objectIds, int? duration, string message, CancellationToken token) -> Task
+PrtgAPI.PrtgClient PauseObject(Either<IPrtgObject,int> objectOrId, int? duration = null, string message = null) -> void
+PrtgAPI.PrtgClient PauseObject(int[] objectIds, int? duration = null, string message = null) -> void
+PrtgAPI.PrtgClient PauseObjectAsync(Either<IPrtgObject,int> objectOrId, int? duration = null, string message = null, CancellationToken token = default(CancellationToken)) -> Task
+PrtgAPI.PrtgClient PauseObjectAsync(int[] objectIds, int? duration = null, string message = null, CancellationToken token = default(CancellationToken)) -> Task
 PrtgAPI.PrtgClient QueryDevices() -> IQueryable<Device>
 PrtgAPI.PrtgClient QueryDevices(bool strict) -> IQueryable<Device>
 PrtgAPI.PrtgClient QueryDevices(Expression<Func<Device,bool>> predicate) -> IQueryable<Device>
@@ -3126,94 +3126,94 @@ PrtgAPI.PrtgClient QuerySensors() -> IQueryable<Sensor>
 PrtgAPI.PrtgClient QuerySensors(bool strict) -> IQueryable<Sensor>
 PrtgAPI.PrtgClient QuerySensors(Expression<Func<Sensor,bool>> predicate) -> IQueryable<Sensor>
 PrtgAPI.PrtgClient QuerySensors(Expression<Func<Sensor,bool>> predicate, bool strict) -> IQueryable<Sensor>
-PrtgAPI.PrtgClient RefreshObject(int[] objectIds) -> void
-PrtgAPI.PrtgClient RefreshObjectAsync(int[] objectIds) -> Task
+PrtgAPI.PrtgClient RefreshObject(params int[] objectIds) -> void
 PrtgAPI.PrtgClient RefreshObjectAsync(int[] objectIds, CancellationToken token) -> Task
-PrtgAPI.PrtgClient RefreshSystemInfo(Either<Device,int> deviceOrId, SystemInfoType[] types) -> void
-PrtgAPI.PrtgClient RefreshSystemInfoAsync(Either<Device,int> deviceOrId, SystemInfoType[] types) -> Task
+PrtgAPI.PrtgClient RefreshObjectAsync(params int[] objectIds) -> Task
+PrtgAPI.PrtgClient RefreshSystemInfo(Either<Device,int> deviceOrId, params SystemInfoType[] types) -> void
+PrtgAPI.PrtgClient RefreshSystemInfoAsync(Either<Device,int> deviceOrId, params SystemInfoType[] types) -> Task
 PrtgAPI.PrtgClient RefreshSystemInfoAsync(Either<Device,int> deviceOrId, SystemInfoType[] types, CancellationToken token) -> Task
 PrtgAPI.PrtgClient RemoveNotificationTrigger(NotificationTrigger trigger) -> void
 PrtgAPI.PrtgClient RemoveNotificationTriggerAsync(NotificationTrigger trigger) -> Task
 PrtgAPI.PrtgClient RemoveNotificationTriggerAsync(NotificationTrigger trigger, CancellationToken token) -> Task
-PrtgAPI.PrtgClient RemoveObject(int[] objectIds) -> void
-PrtgAPI.PrtgClient RemoveObjectAsync(int[] objectIds) -> Task
+PrtgAPI.PrtgClient RemoveObject(params int[] objectIds) -> void
 PrtgAPI.PrtgClient RemoveObjectAsync(int[] objectIds, CancellationToken token) -> Task
+PrtgAPI.PrtgClient RemoveObjectAsync(params int[] objectIds) -> Task
 PrtgAPI.PrtgClient RenameObject(Either<IPrtgObject,int> objectOrId, string name) -> void
 PrtgAPI.PrtgClient RenameObject(int[] objectIds, string name) -> void
 PrtgAPI.PrtgClient RenameObjectAsync(Either<IPrtgObject,int> objectOrId, string name) -> Task
 PrtgAPI.PrtgClient RenameObjectAsync(Either<IPrtgObject,int> objectOrId, string name, CancellationToken token) -> Task
 PrtgAPI.PrtgClient RenameObjectAsync(int[] objectIds, string name) -> Task
 PrtgAPI.PrtgClient RenameObjectAsync(int[] objectIds, string name, CancellationToken token) -> Task
-PrtgAPI.PrtgClient RestartCore(bool waitForRestart, Func<RestartCoreStage,bool> progressCallback, CancellationToken token) -> void
-PrtgAPI.PrtgClient RestartCoreAsync(bool waitForRestart, Func<RestartCoreStage,bool> progressCallback, CancellationToken token) -> Task
-PrtgAPI.PrtgClient RestartProbe(Either<Probe,int> probeOrId, bool waitForRestart, Func<ProbeRestartProgress,bool> progressCallback, CancellationToken token) -> void
-PrtgAPI.PrtgClient RestartProbe(int[] probeIds, bool waitForRestart, Func<ProbeRestartProgress[],bool> progressCallback, CancellationToken token) -> void
-PrtgAPI.PrtgClient RestartProbeAsync(Either<Probe,int> probeOrId, bool waitForRestart, Func<ProbeRestartProgress,bool> progressCallback, CancellationToken token) -> Task
-PrtgAPI.PrtgClient RestartProbeAsync(int[] probeIds, bool waitForRestart, Func<ProbeRestartProgress[],bool> progressCallback, CancellationToken token) -> Task
-PrtgAPI.PrtgClient ResumeObject(int[] objectIds) -> void
-PrtgAPI.PrtgClient ResumeObjectAsync(int[] objectIds) -> Task
+PrtgAPI.PrtgClient RestartCore(bool waitForRestart = false, Func<RestartCoreStage,bool> progressCallback = null, CancellationToken token = default(CancellationToken)) -> void
+PrtgAPI.PrtgClient RestartCoreAsync(bool waitForRestart = false, Func<RestartCoreStage,bool> progressCallback = null, CancellationToken token = default(CancellationToken)) -> Task
+PrtgAPI.PrtgClient RestartProbe(Either<Probe,int> probeOrId, bool waitForRestart = false, Func<ProbeRestartProgress,bool> progressCallback = null, CancellationToken token = default(CancellationToken)) -> void
+PrtgAPI.PrtgClient RestartProbe(int[] probeIds = null, bool waitForRestart = false, Func<ProbeRestartProgress[],bool> progressCallback = null, CancellationToken token = default(CancellationToken)) -> void
+PrtgAPI.PrtgClient RestartProbeAsync(Either<Probe,int> probeOrId, bool waitForRestart = false, Func<ProbeRestartProgress,bool> progressCallback = null, CancellationToken token = default(CancellationToken)) -> Task
+PrtgAPI.PrtgClient RestartProbeAsync(int[] probeIds = null, bool waitForRestart = false, Func<ProbeRestartProgress[],bool> progressCallback = null, CancellationToken token = default(CancellationToken)) -> Task
+PrtgAPI.PrtgClient ResumeObject(params int[] objectIds) -> void
 PrtgAPI.PrtgClient ResumeObjectAsync(int[] objectIds, CancellationToken token) -> Task
+PrtgAPI.PrtgClient ResumeObjectAsync(params int[] objectIds) -> Task
 PrtgAPI.PrtgClient RetryCount { get; set; } -> int
 PrtgAPI.PrtgClient RetryDelay { get; set; } -> int
 PrtgAPI.PrtgClient RetryRequest -> EventHandler<RetryRequestEventArgs>
 PrtgAPI.PrtgClient Server { get; } -> string
-PrtgAPI.PrtgClient SetChannelProperty(Channel channel, ChannelParameter[] parameters) -> void
 PrtgAPI.PrtgClient SetChannelProperty(Channel channel, ChannelParameter[] parameters, CancellationToken token) -> void
 PrtgAPI.PrtgClient SetChannelProperty(Channel channel, ChannelProperty property, object value) -> void
 PrtgAPI.PrtgClient SetChannelProperty(Channel channel, ChannelProperty property, object value, CancellationToken token) -> void
-PrtgAPI.PrtgClient SetChannelProperty(Either<Sensor,int> sensorOrId, int channelId, ChannelParameter[] parameters) -> void
+PrtgAPI.PrtgClient SetChannelProperty(Channel channel, params ChannelParameter[] parameters) -> void
 PrtgAPI.PrtgClient SetChannelProperty(Either<Sensor,int> sensorOrId, int channelId, ChannelParameter[] parameters, CancellationToken token) -> void
 PrtgAPI.PrtgClient SetChannelProperty(Either<Sensor,int> sensorOrId, int channelId, ChannelProperty property, object value) -> void
 PrtgAPI.PrtgClient SetChannelProperty(Either<Sensor,int> sensorOrId, int channelId, ChannelProperty property, object value, CancellationToken token) -> void
-PrtgAPI.PrtgClient SetChannelProperty(IEnumerable<Channel> channels, ChannelParameter[] parameters) -> void
+PrtgAPI.PrtgClient SetChannelProperty(Either<Sensor,int> sensorOrId, int channelId, params ChannelParameter[] parameters) -> void
 PrtgAPI.PrtgClient SetChannelProperty(IEnumerable<Channel> channels, ChannelParameter[] parameters, CancellationToken token) -> void
 PrtgAPI.PrtgClient SetChannelProperty(IEnumerable<Channel> channels, ChannelProperty property, object value) -> void
 PrtgAPI.PrtgClient SetChannelProperty(IEnumerable<Channel> channels, ChannelProperty property, object value, CancellationToken token) -> void
-PrtgAPI.PrtgClient SetChannelProperty(int[] sensorIds, int channelId, ChannelParameter[] parameters) -> void
+PrtgAPI.PrtgClient SetChannelProperty(IEnumerable<Channel> channels, params ChannelParameter[] parameters) -> void
 PrtgAPI.PrtgClient SetChannelProperty(int[] sensorIds, int channelId, ChannelParameter[] parameters, CancellationToken token) -> void
 PrtgAPI.PrtgClient SetChannelProperty(int[] sensorIds, int channelId, ChannelProperty property, object value) -> void
 PrtgAPI.PrtgClient SetChannelProperty(int[] sensorIds, int channelId, ChannelProperty property, object value, CancellationToken token) -> void
-PrtgAPI.PrtgClient SetChannelPropertyAsync(Channel channel, ChannelParameter[] parameters) -> Task
+PrtgAPI.PrtgClient SetChannelProperty(int[] sensorIds, int channelId, params ChannelParameter[] parameters) -> void
 PrtgAPI.PrtgClient SetChannelPropertyAsync(Channel channel, ChannelParameter[] parameters, CancellationToken token) -> Task
 PrtgAPI.PrtgClient SetChannelPropertyAsync(Channel channel, ChannelProperty property, object value) -> Task
 PrtgAPI.PrtgClient SetChannelPropertyAsync(Channel channel, ChannelProperty property, object value, CancellationToken token) -> Task
-PrtgAPI.PrtgClient SetChannelPropertyAsync(Either<Sensor,int> sensorOrId, int channelId, ChannelParameter[] parameters) -> Task
+PrtgAPI.PrtgClient SetChannelPropertyAsync(Channel channel, params ChannelParameter[] parameters) -> Task
 PrtgAPI.PrtgClient SetChannelPropertyAsync(Either<Sensor,int> sensorOrId, int channelId, ChannelParameter[] parameters, CancellationToken token) -> Task
 PrtgAPI.PrtgClient SetChannelPropertyAsync(Either<Sensor,int> sensorOrId, int channelId, ChannelProperty property, object value) -> Task
 PrtgAPI.PrtgClient SetChannelPropertyAsync(Either<Sensor,int> sensorOrId, int channelId, ChannelProperty property, object value, CancellationToken token) -> Task
-PrtgAPI.PrtgClient SetChannelPropertyAsync(IEnumerable<Channel> channels, ChannelParameter[] parameters) -> Task
+PrtgAPI.PrtgClient SetChannelPropertyAsync(Either<Sensor,int> sensorOrId, int channelId, params ChannelParameter[] parameters) -> Task
 PrtgAPI.PrtgClient SetChannelPropertyAsync(IEnumerable<Channel> channels, ChannelParameter[] parameters, CancellationToken token) -> Task
 PrtgAPI.PrtgClient SetChannelPropertyAsync(IEnumerable<Channel> channels, ChannelProperty property, object value) -> Task
 PrtgAPI.PrtgClient SetChannelPropertyAsync(IEnumerable<Channel> channels, ChannelProperty property, object value, CancellationToken token) -> Task
-PrtgAPI.PrtgClient SetChannelPropertyAsync(int[] sensorIds, int channelId, ChannelParameter[] parameters) -> Task
+PrtgAPI.PrtgClient SetChannelPropertyAsync(IEnumerable<Channel> channels, params ChannelParameter[] parameters) -> Task
 PrtgAPI.PrtgClient SetChannelPropertyAsync(int[] sensorIds, int channelId, ChannelParameter[] parameters, CancellationToken token) -> Task
 PrtgAPI.PrtgClient SetChannelPropertyAsync(int[] sensorIds, int channelId, ChannelProperty property, object value) -> Task
 PrtgAPI.PrtgClient SetChannelPropertyAsync(int[] sensorIds, int channelId, ChannelProperty property, object value, CancellationToken token) -> Task
+PrtgAPI.PrtgClient SetChannelPropertyAsync(int[] sensorIds, int channelId, params ChannelParameter[] parameters) -> Task
 PrtgAPI.PrtgClient SetNotificationTrigger(TriggerParameters parameters) -> void
 PrtgAPI.PrtgClient SetNotificationTriggerAsync(TriggerParameters parameters) -> Task
 PrtgAPI.PrtgClient SetNotificationTriggerAsync(TriggerParameters parameters, CancellationToken token) -> Task
 PrtgAPI.PrtgClient SetObjectProperty(Either<IPrtgObject,int> objectOrId, ObjectProperty property, object value) -> void
-PrtgAPI.PrtgClient SetObjectProperty(Either<IPrtgObject,int> objectOrId, PropertyParameter[] parameters) -> void
+PrtgAPI.PrtgClient SetObjectProperty(Either<IPrtgObject,int> objectOrId, params PropertyParameter[] parameters) -> void
 PrtgAPI.PrtgClient SetObjectProperty(int[] objectIds, ObjectProperty property, object value) -> void
-PrtgAPI.PrtgClient SetObjectProperty(int[] objectIds, PropertyParameter[] parameters) -> void
+PrtgAPI.PrtgClient SetObjectProperty(int[] objectIds, params PropertyParameter[] parameters) -> void
 PrtgAPI.PrtgClient SetObjectPropertyAsync(Either<IPrtgObject,int> objectOrId, ObjectProperty property, object value) -> Task
 PrtgAPI.PrtgClient SetObjectPropertyAsync(Either<IPrtgObject,int> objectOrId, ObjectProperty property, object value, CancellationToken token) -> Task
-PrtgAPI.PrtgClient SetObjectPropertyAsync(Either<IPrtgObject,int> objectOrId, PropertyParameter[] parameters) -> Task
+PrtgAPI.PrtgClient SetObjectPropertyAsync(Either<IPrtgObject,int> objectOrId, params PropertyParameter[] parameters) -> Task
 PrtgAPI.PrtgClient SetObjectPropertyAsync(Either<IPrtgObject,int> objectOrId, PropertyParameter[] parameters, CancellationToken token) -> Task
 PrtgAPI.PrtgClient SetObjectPropertyAsync(int[] objectIds, ObjectProperty property, object value) -> Task
 PrtgAPI.PrtgClient SetObjectPropertyAsync(int[] objectIds, ObjectProperty property, object value, CancellationToken token) -> Task
-PrtgAPI.PrtgClient SetObjectPropertyAsync(int[] objectIds, PropertyParameter[] parameters) -> Task
+PrtgAPI.PrtgClient SetObjectPropertyAsync(int[] objectIds, params PropertyParameter[] parameters) -> Task
 PrtgAPI.PrtgClient SetObjectPropertyAsync(int[] objectIds, PropertyParameter[] parameters, CancellationToken token) -> Task
-PrtgAPI.PrtgClient SetObjectPropertyRaw(Either<IPrtgObject,int> objectOrId, CustomParameter[] parameters) -> void
+PrtgAPI.PrtgClient SetObjectPropertyRaw(Either<IPrtgObject,int> objectOrId, params CustomParameter[] parameters) -> void
 PrtgAPI.PrtgClient SetObjectPropertyRaw(Either<IPrtgObject,int> objectOrId, string property, string value) -> void
-PrtgAPI.PrtgClient SetObjectPropertyRaw(int[] objectIds, CustomParameter[] parameters) -> void
+PrtgAPI.PrtgClient SetObjectPropertyRaw(int[] objectIds, params CustomParameter[] parameters) -> void
 PrtgAPI.PrtgClient SetObjectPropertyRaw(int[] objectIds, string property, string value) -> void
-PrtgAPI.PrtgClient SetObjectPropertyRawAsync(Either<IPrtgObject,int> objectOrId, CustomParameter[] parameters) -> Task
 PrtgAPI.PrtgClient SetObjectPropertyRawAsync(Either<IPrtgObject,int> objectOrId, CustomParameter[] parameters, CancellationToken token) -> Task
+PrtgAPI.PrtgClient SetObjectPropertyRawAsync(Either<IPrtgObject,int> objectOrId, params CustomParameter[] parameters) -> Task
 PrtgAPI.PrtgClient SetObjectPropertyRawAsync(Either<IPrtgObject,int> objectOrId, string property, string value) -> Task
 PrtgAPI.PrtgClient SetObjectPropertyRawAsync(Either<IPrtgObject,int> objectOrId, string property, string value, CancellationToken token) -> Task
-PrtgAPI.PrtgClient SetObjectPropertyRawAsync(int[] objectIds, CustomParameter[] parameters) -> Task
 PrtgAPI.PrtgClient SetObjectPropertyRawAsync(int[] objectIds, CustomParameter[] parameters, CancellationToken token) -> Task
+PrtgAPI.PrtgClient SetObjectPropertyRawAsync(int[] objectIds, params CustomParameter[] parameters) -> Task
 PrtgAPI.PrtgClient SetObjectPropertyRawAsync(int[] objectIds, string property, string value) -> Task
 PrtgAPI.PrtgClient SetObjectPropertyRawAsync(int[] objectIds, string property, string value, CancellationToken token) -> Task
 PrtgAPI.PrtgClient SetPosition(Either<IPrtgObject,int> objectOrId, Position position) -> void
@@ -3222,72 +3222,72 @@ PrtgAPI.PrtgClient SetPositionAsync(Either<IPrtgObject,int> objectOrId, Position
 PrtgAPI.PrtgClient SetPositionAsync(Either<IPrtgObject,int> objectOrId, Position position, CancellationToken token) -> Task
 PrtgAPI.PrtgClient SetPositionAsync(SensorOrDeviceOrGroupOrProbe obj, int position) -> Task
 PrtgAPI.PrtgClient SetPositionAsync(SensorOrDeviceOrGroupOrProbe obj, int position, CancellationToken token) -> Task
-PrtgAPI.PrtgClient SetTriggerProperty(Either<IPrtgObject,int> objectOrId, int triggerId, TriggerParameter[] parameters) -> void
+PrtgAPI.PrtgClient SetTriggerProperty(Either<IPrtgObject,int> objectOrId, int triggerId, params TriggerParameter[] parameters) -> void
 PrtgAPI.PrtgClient SetTriggerProperty(Either<IPrtgObject,int> objectOrId, int triggerId, TriggerProperty property, object value) -> void
-PrtgAPI.PrtgClient SetTriggerProperty(IEnumerable<NotificationTrigger> triggers, TriggerParameter[] parameters) -> void
+PrtgAPI.PrtgClient SetTriggerProperty(IEnumerable<NotificationTrigger> triggers, params TriggerParameter[] parameters) -> void
 PrtgAPI.PrtgClient SetTriggerProperty(IEnumerable<NotificationTrigger> triggers, TriggerParameter[] parameters, CancellationToken token) -> void
 PrtgAPI.PrtgClient SetTriggerProperty(IEnumerable<NotificationTrigger> triggers, TriggerProperty property, object value) -> void
 PrtgAPI.PrtgClient SetTriggerProperty(IEnumerable<NotificationTrigger> triggers, TriggerProperty property, object value, CancellationToken token) -> void
-PrtgAPI.PrtgClient SetTriggerProperty(NotificationTrigger trigger, TriggerParameter[] parameters) -> void
+PrtgAPI.PrtgClient SetTriggerProperty(NotificationTrigger trigger, params TriggerParameter[] parameters) -> void
 PrtgAPI.PrtgClient SetTriggerProperty(NotificationTrigger trigger, TriggerParameter[] parameters, CancellationToken token) -> void
 PrtgAPI.PrtgClient SetTriggerProperty(NotificationTrigger trigger, TriggerProperty property, object value) -> void
 PrtgAPI.PrtgClient SetTriggerProperty(NotificationTrigger trigger, TriggerProperty property, object value, CancellationToken token) -> void
-PrtgAPI.PrtgClient SetTriggerPropertyAsync(Either<IPrtgObject,int> objectOrId, int triggerId, TriggerParameter[] parameters) -> Task
+PrtgAPI.PrtgClient SetTriggerPropertyAsync(Either<IPrtgObject,int> objectOrId, int triggerId, params TriggerParameter[] parameters) -> Task
 PrtgAPI.PrtgClient SetTriggerPropertyAsync(Either<IPrtgObject,int> objectOrId, int triggerId, TriggerParameter[] parameters, CancellationToken token) -> Task
 PrtgAPI.PrtgClient SetTriggerPropertyAsync(Either<IPrtgObject,int> objectOrId, int triggerId, TriggerProperty property, object value) -> Task
 PrtgAPI.PrtgClient SetTriggerPropertyAsync(Either<IPrtgObject,int> objectOrId, int triggerId, TriggerProperty property, object value, CancellationToken token) -> Task
-PrtgAPI.PrtgClient SetTriggerPropertyAsync(IEnumerable<NotificationTrigger> triggers, TriggerParameter[] parameters) -> Task
+PrtgAPI.PrtgClient SetTriggerPropertyAsync(IEnumerable<NotificationTrigger> triggers, params TriggerParameter[] parameters) -> Task
 PrtgAPI.PrtgClient SetTriggerPropertyAsync(IEnumerable<NotificationTrigger> triggers, TriggerParameter[] parameters, CancellationToken token) -> Task
 PrtgAPI.PrtgClient SetTriggerPropertyAsync(IEnumerable<NotificationTrigger> triggers, TriggerProperty property, object value) -> Task
 PrtgAPI.PrtgClient SetTriggerPropertyAsync(IEnumerable<NotificationTrigger> triggers, TriggerProperty property, object value, CancellationToken token) -> Task
-PrtgAPI.PrtgClient SetTriggerPropertyAsync(NotificationTrigger trigger, TriggerParameter[] parameters) -> Task
+PrtgAPI.PrtgClient SetTriggerPropertyAsync(NotificationTrigger trigger, params TriggerParameter[] parameters) -> Task
 PrtgAPI.PrtgClient SetTriggerPropertyAsync(NotificationTrigger trigger, TriggerParameter[] parameters, CancellationToken token) -> Task
 PrtgAPI.PrtgClient SetTriggerPropertyAsync(NotificationTrigger trigger, TriggerProperty property, object value) -> Task
 PrtgAPI.PrtgClient SetTriggerPropertyAsync(NotificationTrigger trigger, TriggerProperty property, object value, CancellationToken token) -> Task
-PrtgAPI.PrtgClient SimulateError(int[] sensorIds) -> void
-PrtgAPI.PrtgClient SimulateErrorAsync(int[] sensorIds) -> Task
+PrtgAPI.PrtgClient SimulateError(params int[] sensorIds) -> void
 PrtgAPI.PrtgClient SimulateErrorAsync(int[] sensorIds, CancellationToken token) -> Task
+PrtgAPI.PrtgClient SimulateErrorAsync(params int[] sensorIds) -> Task
 PrtgAPI.PrtgClient SortAlphabetically(Either<IPrtgObject,int> objectOrId) -> void
 PrtgAPI.PrtgClient SortAlphabeticallyAsync(Either<IPrtgObject,int> objectOrId) -> Task
 PrtgAPI.PrtgClient SortAlphabeticallyAsync(Either<IPrtgObject,int> objectOrId, CancellationToken token) -> Task
-PrtgAPI.PrtgClient StreamDevices(bool serial) -> IEnumerable<Device>
-PrtgAPI.PrtgClient StreamDevices(DeviceParameters parameters, bool serial) -> IEnumerable<Device>
+PrtgAPI.PrtgClient StreamDevices(bool serial = false) -> IEnumerable<Device>
+PrtgAPI.PrtgClient StreamDevices(DeviceParameters parameters, bool serial = false) -> IEnumerable<Device>
+PrtgAPI.PrtgClient StreamDevices(params SearchFilter[] filters) -> IEnumerable<Device>
 PrtgAPI.PrtgClient StreamDevices(Property property, FilterOperator operator, object value) -> IEnumerable<Device>
 PrtgAPI.PrtgClient StreamDevices(Property property, object value) -> IEnumerable<Device>
-PrtgAPI.PrtgClient StreamDevices(SearchFilter[] filters) -> IEnumerable<Device>
-PrtgAPI.PrtgClient StreamGroups(bool serial) -> IEnumerable<Group>
-PrtgAPI.PrtgClient StreamGroups(GroupParameters parameters, bool serial) -> IEnumerable<Group>
+PrtgAPI.PrtgClient StreamGroups(bool serial = false) -> IEnumerable<Group>
+PrtgAPI.PrtgClient StreamGroups(GroupParameters parameters, bool serial = false) -> IEnumerable<Group>
+PrtgAPI.PrtgClient StreamGroups(params SearchFilter[] filters) -> IEnumerable<Group>
 PrtgAPI.PrtgClient StreamGroups(Property property, FilterOperator operator, object value) -> IEnumerable<Group>
 PrtgAPI.PrtgClient StreamGroups(Property property, object value) -> IEnumerable<Group>
-PrtgAPI.PrtgClient StreamGroups(SearchFilter[] filters) -> IEnumerable<Group>
-PrtgAPI.PrtgClient StreamLogs(DateTime? startDate, DateTime? endDate, int? count, bool serial, LogStatus[] status) -> IEnumerable<Log>
-PrtgAPI.PrtgClient StreamLogs(int objectId, DateTime? startDate, DateTime? endDate, int? count, bool serial, LogStatus[] status) -> IEnumerable<Log>
-PrtgAPI.PrtgClient StreamLogs(int objectId, RecordAge recordAge, int? count, bool serial, LogStatus[] status) -> IEnumerable<Log>
-PrtgAPI.PrtgClient StreamLogs(LogParameters parameters, bool serial) -> IEnumerable<Log>
-PrtgAPI.PrtgClient StreamLogs(RecordAge recordAge, int? count, bool serial, LogStatus[] status) -> IEnumerable<Log>
-PrtgAPI.PrtgClient StreamObjects(bool serial) -> IEnumerable<PrtgObject>
+PrtgAPI.PrtgClient StreamLogs(DateTime? startDate, DateTime? endDate = null, int? count = null, bool serial = false, params LogStatus[] status) -> IEnumerable<Log>
+PrtgAPI.PrtgClient StreamLogs(int objectId, DateTime? startDate = null, DateTime? endDate = null, int? count = null, bool serial = false, params LogStatus[] status) -> IEnumerable<Log>
+PrtgAPI.PrtgClient StreamLogs(int objectId, RecordAge recordAge, int? count = null, bool serial = false, params LogStatus[] status) -> IEnumerable<Log>
+PrtgAPI.PrtgClient StreamLogs(LogParameters parameters, bool serial = false) -> IEnumerable<Log>
+PrtgAPI.PrtgClient StreamLogs(RecordAge recordAge = RecordAge.LastWeek, int? count = null, bool serial = false, params LogStatus[] status) -> IEnumerable<Log>
+PrtgAPI.PrtgClient StreamObjects(bool serial = false) -> IEnumerable<PrtgObject>
+PrtgAPI.PrtgClient StreamObjects(params SearchFilter[] filters) -> IEnumerable<PrtgObject>
 PrtgAPI.PrtgClient StreamObjects(Property property, FilterOperator operator, object value) -> IEnumerable<PrtgObject>
 PrtgAPI.PrtgClient StreamObjects(Property property, object value) -> IEnumerable<PrtgObject>
-PrtgAPI.PrtgClient StreamObjects(PrtgObjectParameters parameters, bool serial) -> IEnumerable<PrtgObject>
-PrtgAPI.PrtgClient StreamObjects(SearchFilter[] filters) -> IEnumerable<PrtgObject>
-PrtgAPI.PrtgClient StreamProbes(bool serial) -> IEnumerable<Probe>
-PrtgAPI.PrtgClient StreamProbes(ProbeParameters parameters, bool serial) -> IEnumerable<Probe>
+PrtgAPI.PrtgClient StreamObjects(PrtgObjectParameters parameters, bool serial = false) -> IEnumerable<PrtgObject>
+PrtgAPI.PrtgClient StreamProbes(bool serial = false) -> IEnumerable<Probe>
+PrtgAPI.PrtgClient StreamProbes(params SearchFilter[] filters) -> IEnumerable<Probe>
+PrtgAPI.PrtgClient StreamProbes(ProbeParameters parameters, bool serial = false) -> IEnumerable<Probe>
 PrtgAPI.PrtgClient StreamProbes(Property property, FilterOperator operator, object value) -> IEnumerable<Probe>
 PrtgAPI.PrtgClient StreamProbes(Property property, object value) -> IEnumerable<Probe>
-PrtgAPI.PrtgClient StreamProbes(SearchFilter[] filters) -> IEnumerable<Probe>
-PrtgAPI.PrtgClient StreamSensorHistory(Either<Sensor,int> sensorOrId, int average, DateTime? startDate, DateTime? endDate) -> IEnumerable<SensorHistoryRecord>
-PrtgAPI.PrtgClient StreamSensors(bool serial) -> IEnumerable<Sensor>
+PrtgAPI.PrtgClient StreamSensorHistory(Either<Sensor,int> sensorOrId, int average = 300, DateTime? startDate = null, DateTime? endDate = null) -> IEnumerable<SensorHistoryRecord>
+PrtgAPI.PrtgClient StreamSensors(bool serial = false) -> IEnumerable<Sensor>
+PrtgAPI.PrtgClient StreamSensors(params SearchFilter[] filters) -> IEnumerable<Sensor>
+PrtgAPI.PrtgClient StreamSensors(params Status[] statuses) -> IEnumerable<Sensor>
 PrtgAPI.PrtgClient StreamSensors(Property property, FilterOperator operator, object value) -> IEnumerable<Sensor>
 PrtgAPI.PrtgClient StreamSensors(Property property, object value) -> IEnumerable<Sensor>
-PrtgAPI.PrtgClient StreamSensors(SearchFilter[] filters) -> IEnumerable<Sensor>
-PrtgAPI.PrtgClient StreamSensors(SensorParameters parameters, bool serial) -> IEnumerable<Sensor>
-PrtgAPI.PrtgClient StreamSensors(Status[] statuses) -> IEnumerable<Sensor>
+PrtgAPI.PrtgClient StreamSensors(SensorParameters parameters, bool serial = false) -> IEnumerable<Sensor>
 PrtgAPI.PrtgClient Targets { get; } -> PrtgTargetHelper
 PrtgAPI.PrtgClient ToString() -> string
 PrtgAPI.PrtgClient UserName { get; } -> string
 PrtgAPI.PrtgClient Version { get; } -> Version
-PrtgAPI.PrtgClient WatchLogs(Either<IPrtgObject,int> objectOrId, LogStatus[] status, int interval, DateTime? startDate, Func<int,bool> progressCallback, CancellationToken token) -> IEnumerable<Log>
-PrtgAPI.PrtgClient WatchLogs(LogStatus[] status, int interval, DateTime? startDate, Func<int,bool> progressCallback, CancellationToken token) -> IEnumerable<Log>
+PrtgAPI.PrtgClient WatchLogs(Either<IPrtgObject,int> objectOrId, LogStatus[] status = null, int interval = 1, DateTime? startDate = null, Func<int,bool> progressCallback = null, CancellationToken token = default(CancellationToken)) -> IEnumerable<Log>
+PrtgAPI.PrtgClient WatchLogs(LogStatus[] status = null, int interval = 1, DateTime? startDate = null, Func<int,bool> progressCallback = null, CancellationToken token = default(CancellationToken)) -> IEnumerable<Log>
 PrtgAPI.PrtgObject => Class
 PrtgAPI.PrtgObject Active { get; set; } -> bool
 PrtgAPI.PrtgObject DisplayType { get; set; } -> string
@@ -3326,16 +3326,16 @@ PrtgAPI.RecordAge.Today -> Value
 PrtgAPI.RecordAge.Yesterday -> Value
 PrtgAPI.Request.PrtgTargetHelper => Class
 PrtgAPI.Request.PrtgTargetHelper Equals(object obj) -> bool
-PrtgAPI.Request.PrtgTargetHelper GetExeXmlFiles(Either<Device,int> deviceOrId, Func<int,bool> progressCallback, int timeout, CancellationToken token) -> List<ExeFileTarget>
-PrtgAPI.Request.PrtgTargetHelper GetExeXmlFilesAsync(Either<Device,int> deviceOrId, Func<int,bool> progressCallback, int timeout, CancellationToken token) -> Task<List<ExeFileTarget>>
+PrtgAPI.Request.PrtgTargetHelper GetExeXmlFiles(Either<Device,int> deviceOrId, Func<int,bool> progressCallback = null, int timeout = 60, CancellationToken token = default(CancellationToken)) -> List<ExeFileTarget>
+PrtgAPI.Request.PrtgTargetHelper GetExeXmlFilesAsync(Either<Device,int> deviceOrId, Func<int,bool> progressCallback = null, int timeout = 60, CancellationToken token = default(CancellationToken)) -> Task<List<ExeFileTarget>>
 PrtgAPI.Request.PrtgTargetHelper GetHashCode() -> int
-PrtgAPI.Request.PrtgTargetHelper GetSensorTargets(Either<Device,int> deviceOrId, string sensorType, string tableName, Func<int,bool> progressCallback, int timeout, ISensorQueryTargetParameters queryParameters, CancellationToken token) -> List<GenericSensorTarget>
-PrtgAPI.Request.PrtgTargetHelper GetSensorTargetsAsync(Either<Device,int> deviceOrId, string sensorType, string tableName, Func<int,bool> progressCallback, int timeout, ISensorQueryTargetParameters queryParameters, CancellationToken token) -> Task<List<GenericSensorTarget>>
-PrtgAPI.Request.PrtgTargetHelper GetSqlServerQueries(Either<Device,int> deviceOrId, Func<int,bool> progressCallback, int timeout, CancellationToken token) -> List<SqlServerQueryTarget>
-PrtgAPI.Request.PrtgTargetHelper GetSqlServerQueriesAsync(Either<Device,int> deviceOrId, Func<int,bool> progressCallback, int timeout, CancellationToken token) -> Task<List<SqlServerQueryTarget>>
+PrtgAPI.Request.PrtgTargetHelper GetSensorTargets(Either<Device,int> deviceOrId, string sensorType, string tableName = null, Func<int,bool> progressCallback = null, int timeout = 60, ISensorQueryTargetParameters queryParameters = null, CancellationToken token = default(CancellationToken)) -> List<GenericSensorTarget>
+PrtgAPI.Request.PrtgTargetHelper GetSensorTargetsAsync(Either<Device,int> deviceOrId, string sensorType, string tableName = null, Func<int,bool> progressCallback = null, int timeout = 60, ISensorQueryTargetParameters queryParameters = null, CancellationToken token = default(CancellationToken)) -> Task<List<GenericSensorTarget>>
+PrtgAPI.Request.PrtgTargetHelper GetSqlServerQueries(Either<Device,int> deviceOrId, Func<int,bool> progressCallback = null, int timeout = 60, CancellationToken token = default(CancellationToken)) -> List<SqlServerQueryTarget>
+PrtgAPI.Request.PrtgTargetHelper GetSqlServerQueriesAsync(Either<Device,int> deviceOrId, Func<int,bool> progressCallback = null, int timeout = 60, CancellationToken token = default(CancellationToken)) -> Task<List<SqlServerQueryTarget>>
 PrtgAPI.Request.PrtgTargetHelper GetType() -> Type
-PrtgAPI.Request.PrtgTargetHelper GetWmiServices(Either<Device,int> deviceOrId, Func<int,bool> progressCallback, int timeout, CancellationToken token) -> List<WmiServiceTarget>
-PrtgAPI.Request.PrtgTargetHelper GetWmiServicesAsync(Either<Device,int> deviceOrId, Func<int,bool> progressCallback, int timeout, CancellationToken token) -> Task<List<WmiServiceTarget>>
+PrtgAPI.Request.PrtgTargetHelper GetWmiServices(Either<Device,int> deviceOrId, Func<int,bool> progressCallback = null, int timeout = 60, CancellationToken token = default(CancellationToken)) -> List<WmiServiceTarget>
+PrtgAPI.Request.PrtgTargetHelper GetWmiServicesAsync(Either<Device,int> deviceOrId, Func<int,bool> progressCallback = null, int timeout = 60, CancellationToken token = default(CancellationToken)) -> Task<List<WmiServiceTarget>>
 PrtgAPI.Request.PrtgTargetHelper ToString() -> string
 PrtgAPI.RestartCoreStage => Enum
 PrtgAPI.RestartCoreStage.Completed -> Value
@@ -4153,37 +4153,37 @@ PrtgAPI.Tree.ITreeValue Id { get; } -> int?
 PrtgAPI.Tree.ITreeValue Name { get; } -> string
 PrtgAPI.Tree.ITreeValue ParentId { get; } -> int
 PrtgAPI.Tree.NodeExtensions => Class
-PrtgAPI.Tree.NodeExtensions CompareTo(PrtgNode node, PrtgNode other, TreeNodeDifference[] differences) -> CompareNode
+PrtgAPI.Tree.NodeExtensions CompareTo(PrtgNode node, PrtgNode other, params TreeNodeDifference[] differences) -> CompareNode
 PrtgAPI.Tree.NodeExtensions Equals(object obj) -> bool
 PrtgAPI.Tree.NodeExtensions FindNode(CompareNode root, Func<CompareNode,bool> predicate) -> CompareNode
 PrtgAPI.Tree.NodeExtensions FindNode(PrtgNode root, Func<PrtgNode,bool> predicate) -> PrtgNode
-PrtgAPI.Tree.NodeExtensions FindNode<TNode>(PrtgNode root, Func<TNode,bool> predicate) -> TNode
+PrtgAPI.Tree.NodeExtensions FindNode<TNode>(PrtgNode root, Func<TNode,bool> predicate = null) -> TNode
 PrtgAPI.Tree.NodeExtensions FindNodes(CompareNode root, Func<CompareNode,bool> predicate) -> IEnumerable<CompareNode>
 PrtgAPI.Tree.NodeExtensions FindNodes(PrtgNode root, Func<PrtgNode,bool> predicate) -> IEnumerable<PrtgNode>
-PrtgAPI.Tree.NodeExtensions FindNodes<TNode>(PrtgNode root, Func<TNode,bool> predicate) -> IEnumerable<TNode>
+PrtgAPI.Tree.NodeExtensions FindNodes<TNode>(PrtgNode root, Func<TNode,bool> predicate = null) -> IEnumerable<TNode>
 PrtgAPI.Tree.NodeExtensions GetHashCode() -> int
 PrtgAPI.Tree.NodeExtensions GetType() -> Type
 PrtgAPI.Tree.NodeExtensions InsertNodeAfter<TRoot>(TRoot root, PrtgNode nodeInList, PrtgNode newNode) -> TRoot
 PrtgAPI.Tree.NodeExtensions InsertNodeBefore<TRoot>(TRoot root, PrtgNode nodeInList, PrtgNode newNode) -> TRoot
 PrtgAPI.Tree.NodeExtensions InsertNodesAfter<TRoot>(TRoot root, PrtgNode nodeInList, IEnumerable<PrtgNode> newNodes) -> TRoot
-PrtgAPI.Tree.NodeExtensions InsertNodesAfter<TRoot>(TRoot root, PrtgNode nodeInList, PrtgNode[] newNodes) -> TRoot
+PrtgAPI.Tree.NodeExtensions InsertNodesAfter<TRoot>(TRoot root, PrtgNode nodeInList, params PrtgNode[] newNodes) -> TRoot
 PrtgAPI.Tree.NodeExtensions InsertNodesBefore<TRoot>(TRoot root, PrtgNode nodeInList, IEnumerable<PrtgNode> newNodes) -> TRoot
-PrtgAPI.Tree.NodeExtensions InsertNodesBefore<TRoot>(TRoot root, PrtgNode nodeInList, PrtgNode[] newNodes) -> TRoot
+PrtgAPI.Tree.NodeExtensions InsertNodesBefore<TRoot>(TRoot root, PrtgNode nodeInList, params PrtgNode[] newNodes) -> TRoot
 PrtgAPI.Tree.NodeExtensions PrettyPrint(CompareNode node, PrettyWriter writer) -> void
 PrtgAPI.Tree.NodeExtensions PrettyPrint(PrtgNode node, PrettyWriter writer) -> void
 PrtgAPI.Tree.NodeExtensions Reduce(CompareNode node) -> CompareNode
 PrtgAPI.Tree.NodeExtensions RemoveNode<TRoot>(TRoot root, PrtgNode node) -> TRoot
 PrtgAPI.Tree.NodeExtensions RemoveNodes<TRoot>(TRoot root, IEnumerable<PrtgNode> nodes) -> TRoot
-PrtgAPI.Tree.NodeExtensions RemoveNodes<TRoot>(TRoot root, PrtgNode[] nodes) -> TRoot
+PrtgAPI.Tree.NodeExtensions RemoveNodes<TRoot>(TRoot root, params PrtgNode[] nodes) -> TRoot
 PrtgAPI.Tree.NodeExtensions ReplaceNode<TRoot>(TRoot root, PrtgNode oldNode, PrtgNode newNode) -> TRoot
 PrtgAPI.Tree.NodeExtensions ReplaceNodes<TRoot>(TRoot root, IEnumerable<PrtgNode> nodes, Func<PrtgNode,PrtgNode,PrtgNode> computeReplacementNode) -> TRoot
 PrtgAPI.Tree.NodeExtensions ReplaceNodes<TRoot>(TRoot root, PrtgNode oldNode, IEnumerable<PrtgNode> newNodes) -> TRoot
-PrtgAPI.Tree.NodeExtensions ReplaceNodes<TRoot>(TRoot root, PrtgNode oldNode, PrtgNode[] newNodes) -> TRoot
+PrtgAPI.Tree.NodeExtensions ReplaceNodes<TRoot>(TRoot root, PrtgNode oldNode, params PrtgNode[] newNodes) -> TRoot
 PrtgAPI.Tree.NodeExtensions ToString() -> string
-PrtgAPI.Tree.NodeExtensions WithChildren<TRoot>(TRoot node, CompareNode[] children) -> TRoot
 PrtgAPI.Tree.NodeExtensions WithChildren<TRoot>(TRoot node, IEnumerable<CompareNode> children) -> TRoot
 PrtgAPI.Tree.NodeExtensions WithChildren<TRoot>(TRoot node, IEnumerable<PrtgNode> children) -> TRoot
-PrtgAPI.Tree.NodeExtensions WithChildren<TRoot>(TRoot node, PrtgNode[] children) -> TRoot
+PrtgAPI.Tree.NodeExtensions WithChildren<TRoot>(TRoot node, params CompareNode[] children) -> TRoot
+PrtgAPI.Tree.NodeExtensions WithChildren<TRoot>(TRoot node, params PrtgNode[] children) -> TRoot
 PrtgAPI.Tree.ProbeNode => Class
 PrtgAPI.Tree.ProbeNode Accept(PrtgNodeVisitor visitor) -> void
 PrtgAPI.Tree.ProbeNode Accept<T>(PrtgNodeVisitor<T> visitor) -> T
@@ -4294,30 +4294,30 @@ PrtgAPI.Tree.PrtgNode Contains(PrtgNode node) -> bool
 PrtgAPI.Tree.PrtgNode DescendantNodes() -> IEnumerable<PrtgNode>
 PrtgAPI.Tree.PrtgNode DescendantNodesAndSelf() -> IEnumerable<PrtgNode>
 PrtgAPI.Tree.PrtgNode Device(IDevice device, IEnumerable<PrtgNode> children) -> DeviceNode
-PrtgAPI.Tree.PrtgNode Device(IDevice device, PrtgNode[] children) -> DeviceNode
+PrtgAPI.Tree.PrtgNode Device(IDevice device, params PrtgNode[] children) -> DeviceNode
 PrtgAPI.Tree.PrtgNode Equals(object obj) -> bool
 PrtgAPI.Tree.PrtgNode GetHashCode() -> int
 PrtgAPI.Tree.PrtgNode GetMetaObject(Expression parameter) -> DynamicMetaObject
 PrtgAPI.Tree.PrtgNode GetType() -> Type
 PrtgAPI.Tree.PrtgNode Group(IGroup group, IEnumerable<PrtgNode> children) -> GroupNode
-PrtgAPI.Tree.PrtgNode Group(IGroup group, PrtgNode[] children) -> GroupNode
+PrtgAPI.Tree.PrtgNode Group(IGroup group, params PrtgNode[] children) -> GroupNode
 PrtgAPI.Tree.PrtgNode Item { get; } -> PrtgNode
 PrtgAPI.Tree.PrtgNode Item { get; } -> PrtgNode
 PrtgAPI.Tree.PrtgNode Name { get; } -> string
 PrtgAPI.Tree.PrtgNode Parent { get; } -> PrtgNode
 PrtgAPI.Tree.PrtgNode Parent { get; } -> TreeNode
 PrtgAPI.Tree.PrtgNode Probe(IProbe probe, IEnumerable<PrtgNode> children) -> ProbeNode
-PrtgAPI.Tree.PrtgNode Probe(IProbe probe, PrtgNode[] children) -> ProbeNode
+PrtgAPI.Tree.PrtgNode Probe(IProbe probe, params PrtgNode[] children) -> ProbeNode
 PrtgAPI.Tree.PrtgNode Property(Either<IPrtgObject,int> parentOrId, Either<ObjectProperty,string> property, object value) -> PropertyNode
 PrtgAPI.Tree.PrtgNode Property(PropertyValuePair property) -> PropertyNode
 PrtgAPI.Tree.PrtgNode PropertyCollection(IEnumerable<PropertyNode> children) -> PropertyNodeCollection
-PrtgAPI.Tree.PrtgNode PropertyCollection(PropertyNode[] children) -> PropertyNodeCollection
+PrtgAPI.Tree.PrtgNode PropertyCollection(params PropertyNode[] children) -> PropertyNodeCollection
 PrtgAPI.Tree.PrtgNode Sensor(ISensor sensor, IEnumerable<PrtgNode> children) -> SensorNode
-PrtgAPI.Tree.PrtgNode Sensor(ISensor sensor, PrtgNode[] children) -> SensorNode
+PrtgAPI.Tree.PrtgNode Sensor(ISensor sensor, params PrtgNode[] children) -> SensorNode
 PrtgAPI.Tree.PrtgNode ToString() -> string
 PrtgAPI.Tree.PrtgNode Trigger(NotificationTrigger trigger) -> TriggerNode
 PrtgAPI.Tree.PrtgNode TriggerCollection(IEnumerable<TriggerNode> children) -> TriggerNodeCollection
-PrtgAPI.Tree.PrtgNode TriggerCollection(TriggerNode[] children) -> TriggerNodeCollection
+PrtgAPI.Tree.PrtgNode TriggerCollection(params TriggerNode[] children) -> TriggerNodeCollection
 PrtgAPI.Tree.PrtgNode Type { get; } -> PrtgNodeType
 PrtgAPI.Tree.PrtgNode Type { get; } -> TreeNodeType
 PrtgAPI.Tree.PrtgNode Value { get; } -> ITreeValue
@@ -4400,29 +4400,29 @@ PrtgAPI.Tree.PrtgNodeDefaultVisitor<TResult> VisitSensor(SensorNode node) -> TRe
 PrtgAPI.Tree.PrtgNodeDefaultVisitor<TResult> VisitTrigger(TriggerNode node) -> TResult
 PrtgAPI.Tree.PrtgNodeFactory => Class
 PrtgAPI.Tree.PrtgNodeFactory Device(int id, IEnumerable<PrtgNode> children) -> DeviceNode
-PrtgAPI.Tree.PrtgNodeFactory Device(int id, PrtgNode[] children) -> DeviceNode
+PrtgAPI.Tree.PrtgNodeFactory Device(int id, params PrtgNode[] children) -> DeviceNode
 PrtgAPI.Tree.PrtgNodeFactory Device(string name, IEnumerable<PrtgNode> children) -> DeviceNode
-PrtgAPI.Tree.PrtgNodeFactory Device(string name, PrtgNode[] children) -> DeviceNode
+PrtgAPI.Tree.PrtgNodeFactory Device(string name, params PrtgNode[] children) -> DeviceNode
 PrtgAPI.Tree.PrtgNodeFactory Devices(Property property, object value) -> List<DeviceNode>
 PrtgAPI.Tree.PrtgNodeFactory Equals(object obj) -> bool
 PrtgAPI.Tree.PrtgNodeFactory GetHashCode() -> int
 PrtgAPI.Tree.PrtgNodeFactory GetType() -> Type
 PrtgAPI.Tree.PrtgNodeFactory Group(int id, IEnumerable<PrtgNode> children) -> GroupNode
-PrtgAPI.Tree.PrtgNodeFactory Group(int id, PrtgNode[] children) -> GroupNode
+PrtgAPI.Tree.PrtgNodeFactory Group(int id, params PrtgNode[] children) -> GroupNode
 PrtgAPI.Tree.PrtgNodeFactory Group(string name, IEnumerable<PrtgNode> children) -> GroupNode
-PrtgAPI.Tree.PrtgNodeFactory Group(string name, PrtgNode[] children) -> GroupNode
+PrtgAPI.Tree.PrtgNodeFactory Group(string name, params PrtgNode[] children) -> GroupNode
 PrtgAPI.Tree.PrtgNodeFactory Groups(Property property, object value) -> List<GroupNode>
 PrtgAPI.Tree.PrtgNodeFactory Probe(int id, IEnumerable<PrtgNode> children) -> ProbeNode
-PrtgAPI.Tree.PrtgNodeFactory Probe(int id, PrtgNode[] children) -> ProbeNode
+PrtgAPI.Tree.PrtgNodeFactory Probe(int id, params PrtgNode[] children) -> ProbeNode
 PrtgAPI.Tree.PrtgNodeFactory Probe(string name, IEnumerable<PrtgNode> children) -> ProbeNode
-PrtgAPI.Tree.PrtgNodeFactory Probe(string name, PrtgNode[] children) -> ProbeNode
+PrtgAPI.Tree.PrtgNodeFactory Probe(string name, params PrtgNode[] children) -> ProbeNode
 PrtgAPI.Tree.PrtgNodeFactory Probes(Property property, object value) -> List<ProbeNode>
 PrtgAPI.Tree.PrtgNodeFactory Properties(Either<IPrtgObject,int> objectOrId) -> List<PropertyNode>
 PrtgAPI.Tree.PrtgNodeFactory Property(Either<IPrtgObject,int> objectOrId, Either<ObjectProperty,string> property) -> PropertyNode
 PrtgAPI.Tree.PrtgNodeFactory Sensor(int id, IEnumerable<PrtgNode> children) -> SensorNode
-PrtgAPI.Tree.PrtgNodeFactory Sensor(int id, PrtgNode[] children) -> SensorNode
+PrtgAPI.Tree.PrtgNodeFactory Sensor(int id, params PrtgNode[] children) -> SensorNode
 PrtgAPI.Tree.PrtgNodeFactory Sensor(string name, IEnumerable<PrtgNode> children) -> SensorNode
-PrtgAPI.Tree.PrtgNodeFactory Sensor(string name, PrtgNode[] children) -> SensorNode
+PrtgAPI.Tree.PrtgNodeFactory Sensor(string name, params PrtgNode[] children) -> SensorNode
 PrtgAPI.Tree.PrtgNodeFactory Sensors(Property property, object value) -> List<SensorNode>
 PrtgAPI.Tree.PrtgNodeFactory ToString() -> string
 PrtgAPI.Tree.PrtgNodeFactory Trigger(Either<IPrtgObject,int> objectOrId, string name) -> TriggerNode
