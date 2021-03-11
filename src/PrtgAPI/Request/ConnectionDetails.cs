@@ -4,7 +4,7 @@
     {
         public ConnectionDetails(string server, string username, string passhash)
         {
-            Server = server;
+            Server = server.TrimEnd('/');
             UserName = username;
             PassHash = passhash;
         }

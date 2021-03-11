@@ -73,6 +73,17 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
 
         [UnitTest]
         [TestMethod]
+        public void PrtgClient_Constructor_RemovesTrailingServerSlash()
+        {
+            var response = new AddressValidatorResponse(new[] {"https://prtg.example.com/api/getpasshash.htm?password=password&username=username"}, true, new PassHashResponse());
+
+            var client = new PrtgClient("prtg.example.com/", "username", "password", AuthMode.Password, new MockWebClient(response));
+
+            Assert.AreEqual("prtg.example.com", client.Server);
+        }
+
+        [UnitTest]
+        [TestMethod]
         public void PrtgClient_RetriesWhileStreaming()
         {
             var response = new SensorResponse(Enumerable.Repeat(new SensorItem(), 1001).ToArray());

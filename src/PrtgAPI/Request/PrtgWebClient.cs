@@ -27,7 +27,7 @@ namespace PrtgAPI.Request
                 server = server.ToLower();
 
                 //Strip the protocol and port (if applicable)
-                this.server = Regex.Replace(server, "(.+?://)?(.+?)(:.*)?", "$2");
+                this.server = Regex.Replace(server, "(.+?://)?(.+?)(:.*)?(/.*)?", "$2");
             }
 
             //Bypass SSL validation errors if requested
