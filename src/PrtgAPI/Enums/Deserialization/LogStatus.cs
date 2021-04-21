@@ -145,7 +145,11 @@ namespace PrtgAPI
         [XmlEnum("405")]
         UsePerfCounters,
 
-        //todo: apparently theres a 406 ftp mode?
+        /// <summary>
+        /// The type of mode that was used to establish the FTP connection (e.g. implicit, explicit).
+        /// </summary>
+        [XmlEnum("406")] 
+        FtpConnectionMode, 
 
         /// <summary>
         /// An FTP connection could not be established using the specified mode.
