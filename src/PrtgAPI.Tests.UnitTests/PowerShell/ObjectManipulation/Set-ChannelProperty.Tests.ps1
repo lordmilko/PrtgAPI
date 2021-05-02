@@ -188,6 +188,16 @@ Describe "Set-ChannelProperty" -Tag @("PowerShell", "UnitTest") {
 
             $channel | Set-ChannelProperty @splat
         }
+
+        It "sets a Channel Name" {
+            # Name is a special property in that it is both a PropertyParameter for a Property and a ChannelProperty
+
+            SetAddressValidatorResponse @(
+                [Request]::EditSettings("id=4000,4001&name_1=foo")
+            )
+
+            $channel | Set-ChannelProperty Name "foo"
+        }
     }
 
     Context "Manual" {

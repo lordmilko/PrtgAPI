@@ -95,6 +95,7 @@ PrtgAPI.ChannelProperty.LineColor -> Value
 PrtgAPI.ChannelProperty.LineWidth -> Value
 PrtgAPI.ChannelProperty.LowerErrorLimit -> Value
 PrtgAPI.ChannelProperty.LowerWarningLimit -> Value
+PrtgAPI.ChannelProperty.Name -> Value
 PrtgAPI.ChannelProperty.PercentMode -> Value
 PrtgAPI.ChannelProperty.PercentValue -> Value
 PrtgAPI.ChannelProperty.ScalingDivision -> Value

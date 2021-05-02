@@ -242,7 +242,10 @@ namespace PrtgAPI.Parameters.Helpers
             }
             else
             {
-                name = attribute.ElementName.Substring("injected_".Length);
+                if (attribute.ElementName.StartsWith(HtmlParser.DefaultPropertyPrefix))
+                    name = attribute.ElementName.Substring(HtmlParser.DefaultPropertyPrefix.Length);
+                else
+                    name = attribute.ElementName;
             }
 
             if (property.GetEnumAttribute<LiteralValueAttribute>() == null)
@@ -271,7 +274,7 @@ namespace PrtgAPI.Parameters.Helpers
 
         internal static PropertyCache GetPropertyInfoViaPropertyParameter<TObject>(Enum property)
         {
-            var prop = typeof(TObject).GetTypeCache().Properties.FirstOrDefault(p => p.GetAttribute<PropertyParameterAttribute>()?.Property.Equals(property) == true);
+            var prop = typeof(TObject).GetTypeCache().Properties.FirstOrDefault(p => p.GetAttributes<PropertyParameterAttribute>()?.FirstOrDefault(p2 => p2.Property.Equals(property) == true) != null);
 
             if (prop == null)
                 throw new MissingAttributeException(typeof(TObject), property.ToString(), typeof(PropertyParameterAttribute));

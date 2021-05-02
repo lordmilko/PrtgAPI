@@ -108,8 +108,9 @@ Describe "Set-ChannelProperty_IT" -Tag @("PowerShell", "IntegrationTest") {
 
     It "Channel Display" {
 
-        $channel = { Get-Sensor -Id (Settings SNMP) | Get-Channel Value }
+        $channel = { Get-Sensor -Id (Settings SNMP) | Get-Channel -Id 0 }
 
+        SetValue "Name" "foo"
         SetValue "Unit" "Bananas"
         SetValue "ValueLookup" "prtg.standardlookups.yesno.stateyesok"
 

@@ -28,6 +28,7 @@ namespace PrtgAPI
         /// </summary>
         [XmlElement("name")]
         [PropertyParameter(Property.Name)]
+        [PropertyParameter(ChannelProperty.Name)]
         public string Name { get; set; }
 
         // ################################## Sensors, Channel ##################################
