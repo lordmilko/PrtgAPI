@@ -1,6 +1,10 @@
-﻿using System.Management.Automation;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Management.Automation;
 using PrtgAPI.Parameters;
 using PrtgAPI.PowerShell.Base;
+using PrtgAPI.Utilities;
 using IDynamicParameters = System.Management.Automation.IDynamicParameters;
 
 namespace PrtgAPI.PowerShell.Cmdlets
@@ -100,6 +104,45 @@ namespace PrtgAPI.PowerShell.Cmdlets
                 AddPipelineFilter(Property.ProbeStatus, ProbeStatus);
 
             base.ProcessAdditionalParameters();
+        }
+
+        internal override void ModifyFilters(List<SearchFilter> filters, List<Tuple<Property, Type, object>> dynamicParams)
+        {
+            if (dynamicParams == null)
+                return;
+
+            var typeParam = dynamicParams.SingleOrDefault(p => p.Item1 == Property.Type);
+
+            if (typeParam != null)
+            {
+                var typeFilters = filters.Where(f => f.Property == Property.Type).ToArray();
+
+                //Filter out any items that were explicitly specified; Get-Probe only cares about fixing up dynamic filters
+                if (Filter != null)
+                    typeFilters.Except(Filter).ToArray();
+
+                if (typeFilters.Length > 0)
+                {
+                    var typeParamValue = typeParam.Item3;
+
+                    if (typeParamValue.IsIEnumerable())
+                    {
+                        if (typeParamValue.ToIEnumerable().All(v =>
+                        {
+                            var stringEnum = v as StringEnum<ObjectType>;
+
+                            if (stringEnum == null)
+                                return false;
+
+                            return !stringEnum.StringValue.Contains("*");
+                        }))
+                        {
+                            foreach (var filter in typeFilters)
+                                filter.Operator = FilterOperator.Equals;
+                        }
+                    }
+                }
+            }
         }
 
         /// <summary>

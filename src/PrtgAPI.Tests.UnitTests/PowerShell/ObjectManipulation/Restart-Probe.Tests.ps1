@@ -3,7 +3,7 @@
 Describe "Restart-Probe" -Tag @("PowerShell", "UnitTest") {
     It "restarts all probes" {
         SetAddressValidatorResponse @(
-            [Request]::Probes("count=0&filter_parentid=0", $null)
+            [Request]::Probes("count=0&filter_type=probenode", $null)
             [Request]::Get("api/restartprobes.htm?")
         )
 
@@ -78,7 +78,7 @@ Describe "Restart-Probe" -Tag @("PowerShell", "UnitTest") {
 
     It "specifies an ID" {
         SetAddressValidatorResponse @(
-            [Request]::Probes("filter_objid=1000&filter_parentid=0", [Request]::DefaultObjectFlags)
+            [Request]::Probes("filter_objid=1000&filter_type=probenode", [Request]::DefaultObjectFlags)
             [Request]::Get("api/restartprobes.htm?id=1000")
         )
 

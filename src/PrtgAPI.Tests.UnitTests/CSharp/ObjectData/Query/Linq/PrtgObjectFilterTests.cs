@@ -583,7 +583,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData.Query
         {
             ExecuteClient(c => c.QueryProbes(predicate), new[]
             {
-                UnitRequest.Probes($"count=500" + (string.IsNullOrEmpty(url) ? url : $"&{url}") + "&filter_parentid=0", UrlFlag.Columns)
+                UnitRequest.Probes($"count=500" + (string.IsNullOrEmpty(url) ? url : $"&{url}") + "&filter_type=probenode", UrlFlag.Columns)
             }, s => s.ToList());
         }
 

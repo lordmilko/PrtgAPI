@@ -25,7 +25,7 @@ namespace PrtgAPI.Parameters
                 this[Parameter.Count] = 0;
 
             if (content == Content.Probes)
-                this[Parameter.FilterXyz] = new SearchFilter(Property.ParentId, "0");
+                this[Parameter.FilterXyz] = new SearchFilter(Property.Type, ObjectType.Probe);
         }
 
         public TotalObjectParameters(Content content, SearchFilter[] filters) : this(content)

@@ -10,7 +10,7 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
             switch (requestNum)
             {
                 case 1:
-                    Assert.AreEqual(UnitRequest.Probes("filter_parentid=0"), address);
+                    Assert.AreEqual(UnitRequest.Probes("filter_type=probenode"), address);
                     return new ProbeResponse(new ProbeItem(objid: "1001", groupnum: "2", groupnumRaw: "2", devicenum: "3", devicenumRaw: "3", notifiesx: "Inherited"));
 
                 case 2:

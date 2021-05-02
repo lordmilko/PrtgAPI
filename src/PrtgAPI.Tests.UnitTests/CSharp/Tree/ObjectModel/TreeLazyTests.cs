@@ -21,7 +21,7 @@ namespace PrtgAPI.Tests.UnitTests.Tree
             var validator = new EventValidator(client, new[]
             {
                 UnitRequest.Objects("filter_objid=1001"),
-                UnitRequest.Probes("filter_objid=1001&filter_parentid=0")
+                UnitRequest.Probes("filter_objid=1001&filter_type=probenode")
             });
 
             validator.MoveNext(2);
@@ -52,7 +52,7 @@ namespace PrtgAPI.Tests.UnitTests.Tree
                 UnitRequest.Objects("filter_objid=1001"),
                 
                 //Get Probe
-                UnitRequest.Probes("filter_objid=1001&filter_parentid=0"),
+                UnitRequest.Probes("filter_objid=1001&filter_type=probenode"),
 
                 //Probe -> Devices/Groups
                 UnitRequest.Devices("filter_parentid=1001"),

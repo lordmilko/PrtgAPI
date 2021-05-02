@@ -70,9 +70,9 @@ Describe "Get-Probe" -Tag @("PowerShell", "UnitTest") {
 
         It "uses dynamic parameters in conjunction with regular parameters" {
 
-            SetAddressValidatorResponse "filter_name=@sub(probe)&filter_objid=3&filter_parentid=0"
+            SetAddressValidatorResponse "filter_name=@sub(probe)&filter_objid=3&filter_type=probenode"
 
-            Get-Probe *probe* -Id 3 -ParentId 0
+            Get-Probe *probe* -Id 3 -Type Probe
         }
 
         It "uses wildcards with a dynamic parameter" {
@@ -94,7 +94,11 @@ Describe "Get-Probe" -Tag @("PowerShell", "UnitTest") {
         }
     }
 
-    It "throws specifying a ParentId other than 0" {
-        { flt parentid eq -1 | Get-Probe } | Should Throw "Cannot filter for probes based on a ParentId other than 0"
+    It "throws specifying a Type other than Probe" {
+        { flt type eq Device | Get-Probe } | Should Throw "Illegal filter was specified: `"Type Equals 'Device'`""
+    }
+
+    It "throws specifying a -Type containing a wildcard" {
+        { Get-Probe -Type probe* } | Should Throw "Illegal filter was specified: `"Type Contains 'probe'`""
     }
 }

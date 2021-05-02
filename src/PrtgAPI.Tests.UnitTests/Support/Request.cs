@@ -30,7 +30,7 @@ namespace PrtgAPI.Tests.UnitTests.Support
         public static string Groups(string url = "", UrlFlag? flags = DefaultObjectFlags) =>
             RequestObject(url, flags, "groups", DefaultGroupProperties);
 
-        public static string ProbeCount => Get("api/table.xml?content=probenode&count=0&filter_parentid=0");
+        public static string ProbeCount => Get("api/table.xml?content=probenode&count=0&filter_type=probenode");
         public static string Probes(string url = "", UrlFlag? flags = DefaultObjectFlags) =>
             RequestObject(url, flags, "probenode", DefaultProbeProperties);
 
