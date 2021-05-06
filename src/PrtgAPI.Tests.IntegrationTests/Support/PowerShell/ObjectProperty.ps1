@@ -204,6 +204,20 @@ function Describe($name, $script) {
             }
         }
 
+        function TestRequiredField($script, $message)
+        {
+            $version = (Get-PrtgClient).Version
+
+            if($version -ge "21.1.65.1767")
+            {
+                & $script
+            }
+            else
+            {
+                $script | Should Throw $message
+            }
+        }
+
         & $script
     }
 }

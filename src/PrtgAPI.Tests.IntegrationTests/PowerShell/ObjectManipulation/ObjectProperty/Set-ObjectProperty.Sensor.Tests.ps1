@@ -68,10 +68,10 @@ Describe "Set-ObjectProperty_Sensors_IT" -Tag @("PowerShell", "IntegrationTest")
         SetValue "Url"                  "https://"
         SetValue "HttpRequestMethod"    "POST"
         SetChild "PostData"             "blah"       "HttpRequestMethod" "POST"
-        { SetValue "UseCustomPostContent" $true } | Should Throw (ForeignMessage "Required field, not defined")
         SetGrandChild "PostContentType" "customType" "UseCustomPostContent" $true "HttpRequestMethod" "POST"
         #GetValue "SNI" "blah"
         SetValue "UseSNIFromUrl" $true
+        TestRequiredField { SetValue "UseCustomPostContent" $true } (ForeignMessage "Required field, not defined")
     }
 
     It "Sensor Settings (EXE/XML)" {
