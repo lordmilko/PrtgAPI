@@ -116,7 +116,8 @@ namespace PrtgAPI.Linq.Expressions.Serialization
 
             BuildNode(badXml, ElementName, LastElementValue);
 
-            if (reader.ReadToFollowing("message"))
+            //When deserializing an ObjectProperty value, there is no reader
+            if (reader?.ReadToFollowing("message") == true)
             {
                 var node = WebUtility.HtmlDecode(Document.ReadNode(reader).OuterXml);
 
