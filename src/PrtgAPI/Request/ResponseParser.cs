@@ -335,15 +335,17 @@ namespace PrtgAPI.Request
 
         internal static string ParseSetObjectPropertyUrl<T>(BaseSetObjectPropertyParameters<T> parameters, int numObjectIds, HttpResponseMessage response)
         {
-            if (numObjectIds > 1 || parameters is SetChannelPropertyParameters)
+            if (numObjectIds > 1 || IgnoreChannelPropertyError(parameters as SetChannelPropertyParameters))
             {
                 /* When object properties across multiple objects are specified, PRTG doesn't know which one to redirect to
                  * after the properties have been set. As such, we need to replace the response URI from the error page to
                  * the true page that PRTG otherwise would have redirected to (e.g. /sensor.htm?id=1001).
                  * In PRTG 20.4.64 however, for some object properties (e.g. setting the Percent Value of a sensor) PRTG
-                 * will freak out if the ID of the object is not POST'd (which is an issue because we always GET). As such,
-                 * now we simply totally ignore instances where we hit /error.htm for channels only. This is kind of an issue, however theoretically
-                 * we should be catching failed property manipulations in our integration tests.
+                 * will freak out if the ID of the object is not POST'd (which is an issue because we always GET). When this behavior occurs,
+                 * the request is in fact successfully executed (and executing it _again_ without changing the existing value (e.g. Percent Mode
+                 * (the dependent property of Percent Value)) to something else won't trigger the error). As such, now we simply totally ignore
+                 * instances where we hit /error.htm for channels only. This is kind of an issue, however theoretically we should be catching
+                 * failed property manipulations in our integration tests.
                  */
 
                 if (response.RequestMessage?.RequestUri?.AbsolutePath == "/error.htm")
@@ -351,6 +353,28 @@ namespace PrtgAPI.Request
             }
 
             return null;
+        }
+
+        private static bool IgnoreChannelPropertyError(SetChannelPropertyParameters parameters)
+        {
+            if (parameters == null)
+                return false;
+
+            //Bad properties that erroneously give errors when they are successfully set
+            var ignoreList = new[]
+            {
+                ChannelProperty.PercentValue
+            };
+
+            foreach (var customParameter in parameters.CustomParameters)
+            {
+                var value = parameters.GetChannelPropertyFromName(customParameter.Name);
+
+                if (value != null && ignoreList.Any(p => p.Equals(value)) && !string.IsNullOrEmpty(customParameter.Value?.ToString()))
+                    return true;
+            }
+
+            return false;
         }
 
         #endregion

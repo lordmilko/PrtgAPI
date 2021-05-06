@@ -14,6 +14,8 @@ namespace PrtgAPI.Parameters
     {
         private int channelId;
 
+        private Dictionary<string, Enum> channelNameMap = new Dictionary<string, Enum>();
+
         [ExcludeFromCodeCoverage]
         public int[] SensorIds
         {
@@ -74,7 +76,21 @@ namespace PrtgAPI.Parameters
             //Underscore between property name and channelId is inserted by GetObjectPropertyNameViaCache
             var str = ObjectPropertyParser.GetObjectPropertyNameViaCache(property, cache);
 
-            return $"{str}{channelId}";            
+            var name = $"{str}{channelId}";
+
+            channelNameMap[name] = property;
+
+            return name;
+        }
+
+        internal Enum GetChannelPropertyFromName(string str)
+        {
+            Enum value;
+
+            if (channelNameMap.TryGetValue(str, out value))
+                return value;
+
+            return null;
         }
 
         public string GetFactorParameterName(Enum property, PropertyCache cache)
@@ -101,6 +117,9 @@ namespace PrtgAPI.Parameters
             newParameters.FactorParameters = FactorParameters;
             newParameters.Cookie = Cookie;
             newParameters.parser = parser;
+
+            foreach (var kv in channelNameMap)
+                newParameters.channelNameMap[kv.Key] = kv.Value;
 
             return newParameters;
         }
