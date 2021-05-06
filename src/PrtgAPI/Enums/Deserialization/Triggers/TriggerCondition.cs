@@ -26,6 +26,7 @@ namespace PrtgAPI
         /// Trigger when the sensor's value is equal to the threshold.
         /// </summary>
         [XmlEnum("2")]
+        [XmlEnumAlternateName("equal to")]
         [XmlEnumAlternateName("Equal to")]
         Equals,
 
@@ -33,6 +34,7 @@ namespace PrtgAPI
         /// Trigger when the sensor's value is not equal to the threshold.
         /// </summary>
         [XmlEnum("3")]
+        [XmlEnumAlternateName("not equal to")]
         [XmlEnumAlternateName("Not Equal to")]
         NotEquals,
 
