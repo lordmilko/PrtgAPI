@@ -1186,6 +1186,7 @@ PrtgAPI.LogStatus.Down -> Value
 PrtgAPI.LogStatus.DownAcknowledged -> Value
 PrtgAPI.LogStatus.DownPartial -> Value
 PrtgAPI.LogStatus.Edited -> Value
+PrtgAPI.LogStatus.FtpConnectionMode -> Value
 PrtgAPI.LogStatus.FtpMode -> Value
 PrtgAPI.LogStatus.GraphCache -> Value
 PrtgAPI.LogStatus.GroupDiscoveryFinished -> Value
