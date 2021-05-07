@@ -136,7 +136,7 @@ namespace PrtgAPI.Utilities
 
                 //Maybe the display value is the numeric value rounded up to an integer
 
-                var numRoundedStr = Math.Round(raw.Value).ToString(CultureInfo.InvariantCulture);
+                var numRoundedStr = Math.Round(raw.Value, MidpointRounding.AwayFromZero).ToString(CultureInfo.InvariantCulture);
 
                 if (strLastMark == ',' && numRoundedStr == strClean)
                     return ToPeriodDecimal(str);
@@ -169,7 +169,7 @@ namespace PrtgAPI.Utilities
                         else
                             func = ToCommaDecimal;
 
-                        if (strClean == Math.Round(divided).ToString())
+                        if (strClean == Math.Round(divided, MidpointRounding.AwayFromZero).ToString())
                             return func(str);
                     }
                 }
@@ -210,13 +210,20 @@ namespace PrtgAPI.Utilities
             var rawDecimalOnlyRounded = rawDecimalOnly;
             var strDecimalOnlyRounded = strDecimalOnly;
 
-            for (var i = maxDecinalPlaces; i >= decimalPlaces; i--)
-                rawDecimalOnlyRounded = Math.Round(rawDecimalOnlyRounded, i);
+            var strDecimalImmediateRounded = Math.Round(strDecimalOnlyRounded, decimalPlaces, MidpointRounding.AwayFromZero);
+
+            var strDecimalTruncateStr = strDecimalOnlyRounded.ToString();
+            var strDecimalPlaces = strDecimalTruncateStr.Substring(2);
+            var strDecimalTruncateStrResult = strDecimalPlaces.Substring(0, Math.Min(decimalPlaces, strDecimalPlaces.Length));
+            var strDecimalTruncated = Convert.ToDouble("0." + strDecimalTruncateStrResult);
 
             for (var i = maxDecinalPlaces; i >= decimalPlaces; i--)
-                strDecimalOnlyRounded = Math.Round(strDecimalOnlyRounded, i);
+                rawDecimalOnlyRounded = Math.Round(rawDecimalOnlyRounded, i, MidpointRounding.AwayFromZero);
 
-            if (rawDecimalOnlyRounded == strDecimalOnlyRounded)
+            for (var i = maxDecinalPlaces; i >= decimalPlaces; i--)
+                strDecimalOnlyRounded = Math.Round(strDecimalOnlyRounded, i, MidpointRounding.AwayFromZero);
+
+            if (rawDecimalOnlyRounded == strDecimalOnlyRounded || rawDecimalOnlyRounded == strDecimalImmediateRounded || rawDecimalOnlyRounded == strDecimalTruncated)
             {
                 result = strDouble;
                 return true;

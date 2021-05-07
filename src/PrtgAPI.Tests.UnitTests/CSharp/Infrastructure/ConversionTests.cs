@@ -197,6 +197,48 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
             TestDouble("20.10975", 20.1098, 20.10975);
         }
 
+        [UnitTest]
+        [TestMethod]
+        public void Convert_ToDouble_US_CloseRounding_AwayFromZero()
+        {
+            TestDouble("97,17305", 97.1731, 97.17305);
+        }
+
+        [UnitTest]
+        [TestMethod]
+        public void Convert_ToDouble_EU_CloseRounding_AwayFromZero()
+        {
+            TestDouble("97.17305", 97.1731, 97.17305);
+        }
+
+        [UnitTest]
+        [TestMethod]
+        public void Convert_ToDouble_US_CloseRounding_CascadeRound()
+        {
+            TestDouble("2,826947", 2.8269, 2.826947);
+        }
+
+        [UnitTest]
+        [TestMethod]
+        public void Convert_ToDouble_EU_CloseRounding_CascadeRound()
+        {
+            TestDouble("2.826947", 2.8269, 2.826947);
+        }
+
+        [UnitTest]
+        [TestMethod]
+        public void Convert_ToDouble_US_CloseRounding_SilentTruncate()
+        {
+            TestDouble("112,12165", 112.1216, 112.12165);
+        }
+
+        [UnitTest]
+        [TestMethod]
+        public void Convert_ToDouble_EU_CloseRounding_SilentTruncate()
+        {
+            TestDouble("112.12165", 112.1216, 112.12165);
+        }
+
         private void TestDouble(string s, double d, double expected)
         {
             var result = ConvertUtilities.ToDynamicDouble(s, d);
