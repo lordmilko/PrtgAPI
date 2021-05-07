@@ -4,7 +4,7 @@ using PrtgAPI.Utilities;
 namespace PrtgAPI.Tests.UnitTests.Infrastructure
 {
     [TestClass]
-    public class ConversionTests
+    public class ConversionTests : BaseTest
     {
         [UnitTest]
         [TestMethod]
@@ -180,6 +180,22 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
         [TestMethod]
         public void Convert_ToDouble_EU_Incomprehensible_Over1000() =>
             TestDouble("1.234", 772526.123, 1234);
+
+        [UnitTest]
+        [TestMethod]
+        public void Convert_ToDouble_US_CloseRounding()
+        {
+            //Due to how .NET extracts the decimal point, .10975 could become .1097499999... and thus fail to round to 4 decimal places properly
+            TestDouble("20,10975", 20.1098, 20.10975);
+        }
+
+        [UnitTest]
+        [TestMethod]
+        public void Convert_ToDouble_EU_CloseRounding()
+        {
+            //Due to how .NET extracts the decimal point, .10975 could become .1097499999... and thus fail to round to 4 decimal places properly
+            TestDouble("20.10975", 20.1098, 20.10975);
+        }
 
         private void TestDouble(string s, double d, double expected)
         {

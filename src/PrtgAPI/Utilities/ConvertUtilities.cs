@@ -200,8 +200,21 @@ namespace PrtgAPI.Utilities
             //Find whoever has the fewest decimal places, round them to be the same and then compare them
             var decimalPlaces = Math.Min(numDecStr.Length, strDecStr.Length);
 
-            var rawDecimalOnlyRounded = Math.Round(rawDecimalOnly, decimalPlaces);
-            var strDecimalOnlyRounded = Math.Round(strDecimalOnly, decimalPlaces);
+            //Extracting the 10975 off of 20.10975 may have had the effect of turning the number into
+            //the value 0.1097499999..; as such, if we were to round this to four decimal places to compare with
+            //.1098, we would round _down_; as such; to make sure we have a fair comparison, we round 1 character at a time
+
+            //Maximum number of decinal places Math.Round will allow you to specify
+            var maxDecinalPlaces = 15;
+
+            var rawDecimalOnlyRounded = rawDecimalOnly;
+            var strDecimalOnlyRounded = strDecimalOnly;
+
+            for (var i = maxDecinalPlaces; i >= decimalPlaces; i--)
+                rawDecimalOnlyRounded = Math.Round(rawDecimalOnlyRounded, i);
+
+            for (var i = maxDecinalPlaces; i >= decimalPlaces; i--)
+                strDecimalOnlyRounded = Math.Round(strDecimalOnlyRounded, i);
 
             if (rawDecimalOnlyRounded == strDecimalOnlyRounded)
             {
