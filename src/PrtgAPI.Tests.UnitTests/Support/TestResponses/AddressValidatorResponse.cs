@@ -140,21 +140,25 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
                 Key = k
             }).Where(a => a.Expected != a.Actual).ToArray();
 
-            if (differingParts.Length == 1)
+            if (differingParts.All(p =>
             {
-                var part = differingParts[0];
-
-                switch (part.Key)
+                switch (p.Key)
                 {
                     case "sdate":
-                        var expectedDate = TypeHelpers.StringToDate(part.Expected);
-                        var actualDate = TypeHelpers.StringToDate(part.Actual);
+                    case "edate":
+                        var expectedDate = TypeHelpers.StringToDate(p.Expected);
+                        var actualDate = TypeHelpers.StringToDate(p.Actual);
 
                         if (expectedDate.AddSeconds(1) == actualDate)
                             return true;
 
-                        break;
+                        return false;
+                    default:
+                        return false;
                 }
+            }))
+            {
+                return true;
             }
 
             return false;

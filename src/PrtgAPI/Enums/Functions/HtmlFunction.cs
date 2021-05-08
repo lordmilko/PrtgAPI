@@ -34,6 +34,10 @@ namespace PrtgAPI
 
         [Undocumented]
         [Description("addsensorfailed.htm")]
-        AddSensorFailed
+        AddSensorFailed,
+
+        [Undocumented]
+        [Description("historicdata_html.htm")]
+        HistoricDataReport
     }
 }

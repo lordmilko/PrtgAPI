@@ -78,7 +78,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
             WriteProcessProgressRecords(f => ProcessTypes(f, id));
         }
 
-        private object ProcessTypes(Func<int, string, bool> progressCallback, int id)
+        private object ProcessTypes(DisplayProgressCallback progressCallback, int id)
         {
             if (Type == null || Type.Length == 0)
             {

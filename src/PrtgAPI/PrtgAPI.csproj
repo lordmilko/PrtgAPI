@@ -133,6 +133,7 @@
     <Compile Include="Enums\SystemInfoType.cs" />
     <Compile Include="Linq\CachedEnumerableIterator.cs" />
     <Compile Include="Linq\ReadOnlyListEnumerator.cs" />
+    <Compile Include="Objects\EventObjects\SensorHistoryReportItem.cs" />
     <Compile Include="Objects\Interfaces\IDevice.cs" />
     <Compile Include="Objects\Interfaces\IDeviceOrGroup.cs" />
     <Compile Include="Objects\Interfaces\IDeviceOrGroupOrProbe.cs" />
@@ -144,10 +145,14 @@
     <Compile Include="Objects\Interfaces\ISensorOrDeviceOrGroupOrProbeOrTicket.cs" />
     <Compile Include="Objects\Interfaces\ISensorOrDeviceOrGroupOrProbeOrTicketOrTicketData.cs" />
     <Compile Include="Objects\Models\Either.cs" />
+    <Compile Include="Objects\Models\Html\TableData.cs" />
+    <Compile Include="Objects\Models\Html\TableRow.cs" />
     <Compile Include="Objects\WellKnownId.cs" />
     <Compile Include="Parameters\Helpers\ConversionState.cs" />
     <Compile Include="Parameters\Helpers\TypeConversionStateMachine.cs" />
     <Compile Include="Parameters\Interfaces\ISensorQueryTargetParameters.cs" />
+    <Compile Include="Parameters\Base\SensorHistoryParametersBase.cs" />
+    <Compile Include="Parameters\ObjectData\SensorHistoryReportParameters.cs" />
     <Compile Include="Parameters\ObjectManipulation\AddSensor\AddSensorFailedParameters.cs" />
     <Compile Include="Parameters\ObjectManipulation\AddSensor\ContinueAddSensorQueryParameters.cs" />
     <Compile Include="Parameters\ObjectManipulation\AddSensor\SensorMultiQueryTargetParameters.cs" />

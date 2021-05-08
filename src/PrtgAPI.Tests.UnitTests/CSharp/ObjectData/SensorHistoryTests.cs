@@ -1,6 +1,9 @@
-﻿using System.Linq;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using PrtgAPI.Tests.UnitTests.Support;
 using PrtgAPI.Tests.UnitTests.Support.TestItems;
 using PrtgAPI.Tests.UnitTests.Support.TestResponses;
 
@@ -166,6 +169,83 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             var channel = history.ChannelRecords.First();
 
             AssertEx.AllPropertiesRetrieveValues(channel);
+        }
+
+        [UnitTest]
+        [TestMethod]
+        public void SensorHistory_Report_Executes()
+        {
+            var start = DateTime.Now;
+            var end = start.AddDays(-1);
+
+            var response = new AddressValidatorResponse(new[]
+            {
+                UnitRequest.SensorHistoryReport(1001, start, end)
+            }, true, new SensorHistoryReportResponse(true));
+
+            response.AllowSecondDifference = true;
+
+            var client = Initialize_Client(response);
+
+            var results = client.GetSensorHistoryReport(1001);
+
+            ValidateSensorHistory(results);
+
+            response.AssertFinished();
+        }
+
+        [UnitTest]
+        [TestMethod]
+        public async Task SensorHistory_Report_ExecutesAsync()
+        {
+            var start = DateTime.Now;
+            var end = start.AddDays(-1);
+
+            var response = new AddressValidatorResponse(new[]
+            {
+                UnitRequest.SensorHistoryReport(1001, start, end)
+            }, true, new SensorHistoryReportResponse(true));
+
+            response.AllowSecondDifference = true;
+
+            var client = Initialize_Client(response);
+
+            var results = await client.GetSensorHistoryReportAsync(1001);
+
+            ValidateSensorHistory(results);
+
+            response.AssertFinished();
+        }
+
+        private void ValidateSensorHistory(List<SensorHistoryReportItem> results)
+        {
+            Assert.AreEqual(3, results.Count);
+
+            Assert.AreEqual(1001, results[0].SensorId);
+            Assert.AreEqual(Status.Unknown, results[0].Status);
+            Assert.AreEqual(new TimeSpan(0, 0, 18), results[0].Duration);
+            Assert.AreEqual(DateTime.Parse("8/05/2021 7:31:16 PM"), results[0].StartDate);
+
+            Assert.AreEqual(1001, results[1].SensorId);
+            Assert.AreEqual(Status.Up, results[1].Status);
+            Assert.AreEqual(new TimeSpan(0, 59, 0), results[1].Duration);
+            Assert.AreEqual(DateTime.Parse("8/05/2021 7:18:55 PM"), results[1].StartDate);
+
+            Assert.AreEqual(1001, results[2].SensorId);
+            Assert.AreEqual(Status.Unknown, results[2].Status);
+            Assert.AreEqual(new TimeSpan(0, 1, 0), results[2].Duration);
+            Assert.AreEqual(DateTime.Parse("8/05/2021 8:17:55 PM"), results[2].StartDate);
+        }
+
+        [UnitTest]
+        [TestMethod]
+        public void SensorHistory_Report_NoResponse()
+        {
+            var client = Initialize_Client(new SensorHistoryReportResponse(false));
+
+            var result = client.GetSensorHistoryReport(1001);
+
+            Assert.AreEqual(0, result.Count);
         }
     }
 }

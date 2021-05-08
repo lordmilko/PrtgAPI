@@ -491,7 +491,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             var parameters = new SensorHistoryParameters(1001, 600, null, null, null);
 
             Assert.AreEqual(parameters.StartDate.ToString(), start.ToString());
-            Assert.AreEqual(parameters.EndDate.ToString(), start.AddHours(-1).ToString());
+            Assert.AreEqual(parameters.EndDate.ToString(), start.AddHours(-24).ToString());
             Assert.AreEqual(parameters.Average, 600);
         }
 

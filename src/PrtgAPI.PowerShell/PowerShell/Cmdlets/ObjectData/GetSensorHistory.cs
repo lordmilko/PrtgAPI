@@ -44,6 +44,12 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// and the "end time" as the point in time furthest away from now, PRTG's underlying API actually defines these in the opposite way.
     /// Since records are ordered from newest to oldest however, PrtgAPI flips these definitions as to prevent any confusion. Keep this
     /// in mind in the event the -Verbose parameter is specified, as the start and end times will appear to be switched.</para>
+    ///
+    /// <para type="description">Get-SensorHistory can also generate a report on the <see cref="Status"/> changes of a sensor over a given
+    /// time period by specifying the -<see cref="Report"/> parameter. Sensor History Reports will present the same information that is normally
+    /// found at the bottom of the Historic Data reports that can be viewed in the PRTG UI. By using the -<see cref="Report"/> parameter,
+    /// it is easy to generate a succinct view of downtime incidents across a given time period, which you can then further manipulate in order to provide
+    /// a coherent report.</para> 
     /// 
     /// <example>
     ///     <code>C:\> Get-Sensor -Id 1001 | Get-SensorHistory</code>
@@ -68,6 +74,11 @@ namespace PrtgAPI.PowerShell.Cmdlets
     /// <example>
     ///     <code>C:\> Get-Sensor -Tags wmicpu* -count 1 | where Total -gt 90</code>
     ///     <para>Get historical values for all channels on a single WMI CPU Load sensor where the Total channel's value was greater than 90.</para>
+    ///     <para/>
+    /// </example>
+    /// <example>
+    ///     <code>C:\> Get-Sensor -Id 1001 | Get-SensorHistory -Report -EndDate (Get-Date).AddDays(-7) | where Status -eq Down</code>
+    ///     <para>Generates a sensor history report showing all incidents of downtime in the last 7 days.</para>
     /// </example>
     ///
     /// <para type="link" uri="https://github.com/lordmilko/PrtgAPI/wiki/Historical-Information#sensor-history-1">Online version:</para>
@@ -82,22 +93,24 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// <para type="description">Sensor to retrieve historic data for.</para>
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = ParameterSet.Default, ValueFromPipeline = true)]
+        [Parameter(Mandatory = true, ParameterSetName = ParameterSet.Report, ValueFromPipeline = true)]
         public Sensor Sensor { get; set; }
 
         /// <summary>
         /// <para type="description">ID of the sensor to retrieve historic data for.</para>
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = ParameterSet.Manual)]
+        [Parameter(Mandatory = true, ParameterSetName = ParameterSet.ReportManual)]
         public int Id { get; set; }
 
         /// <summary>
-        /// <para type="description">Start time to retrieve history from. If no value is specified, defaults to 24 hours ago.</para>
+        /// <para type="description">Start time to retrieve history from. If no value is specified, defaults to the current date and time.</para>
         /// </summary>
         [Parameter(Mandatory = false)]
         public DateTime? StartDate { get; set; }
 
         /// <summary>
-        /// <para type="description">End time to retrieve history to. If no value is specified, defaults to the current date and time.</para>
+        /// <para type="description">End time to retrieve history to. If no value is specified, defaults to 24 hours ago.</para>
         /// </summary>
         [Parameter(Mandatory = false)]
         public DateTime? EndDate { get; set; }
@@ -107,7 +120,8 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// If a value of 0 is used, PRTG will include value lookup labels in historical results. If a value other than 0 is used, PRTG will include the Downtime
         /// channel in results.</para>
         /// </summary>
-        [Parameter(Mandatory = false)]
+        [Parameter(Mandatory = false, ParameterSetName = ParameterSet.Default)]
+        [Parameter(Mandatory = false, ParameterSetName = ParameterSet.Manual)]
         public int? Average { get; set; }
 
         /// <summary>
@@ -130,6 +144,13 @@ namespace PrtgAPI.PowerShell.Cmdlets
         public int? Count { get; set; }
 
         /// <summary>
+        /// <para type="description">Specifies that a sensor history report showing changes between different sensor statuses should be returned.</para>
+        /// </summary>
+        [Parameter(Mandatory = true, ParameterSetName = ParameterSet.Report)]
+        [Parameter(Mandatory = true, ParameterSetName = ParameterSet.ReportManual)]
+        public SwitchParameter Report { get; set; }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="GetSensorHistory"/> class.
         /// </summary>
         public GetSensorHistory()
@@ -145,9 +166,26 @@ namespace PrtgAPI.PowerShell.Cmdlets
         /// </summary>
         protected override void ProcessRecordEx()
         {
-            if (ParameterSetName == ParameterSet.Default)
+            if (ParameterSetName == ParameterSet.Default || ParameterSetName == ParameterSet.Report)
                 Id = Sensor.Id;
 
+            switch (ParameterSetName)
+            {
+                case ParameterSet.Default:
+                case ParameterSet.Manual:
+                    ProcessSensorHistory();
+                    break;
+                case ParameterSet.Report:
+                case ParameterSet.ReportManual:
+                    ProcessSensorHistoryReport();
+                    break;
+                default:
+                    throw new UnknownParameterSetException(ParameterSetName);
+            }
+        }
+
+        private void ProcessSensorHistory()
+        {
             IEnumerable<PSObject> records;
 
             var average = Average;
@@ -191,6 +229,11 @@ namespace PrtgAPI.PowerShell.Cmdlets
                 records = GetFormattedRecords(parameters);
 
             WriteList(records);
+        }
+
+        private void ProcessSensorHistoryReport()
+        {
+            First(() => client.GetSensorHistoryReport(Id, StartDate, EndDate), "Sensor History Report", "report items").Write();
         }
 
         private void AdjustCountPeriod(SensorHistoryParameters parameters, int average)

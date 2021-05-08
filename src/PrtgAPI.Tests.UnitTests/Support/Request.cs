@@ -95,6 +95,9 @@ namespace PrtgAPI.Tests.UnitTests.Support
         public static string RequestObjectData(int id) =>
             Get($"controls/objectdata.htm?id={id}");
 
+        public static string SensorHistoryReport(int id, DateTime start, DateTime end) =>
+            Get($"historicdata_html.htm?id={id}&edate={start.ToString("yyyy-MM-dd-HH-mm-ss")}&sdate={end.ToString("yyyy-MM-dd-HH-mm-ss")}&avg=3600");
+
         #region Columns
 
         internal static string DefaultSensorProperties()

@@ -58,7 +58,9 @@ namespace PrtgAPI.PowerShell.Base
             }
         }
 
-        internal void WriteProcessProgressRecords(Func<Func<int, string, bool>, object> getItems)
+        internal delegate bool DisplayProgressCallback(int percentage, string operation);
+
+        internal void WriteProcessProgressRecords(Func<DisplayProgressCallback, object> getItems)
         {
             var items = getItems(DisplayProgress);
 

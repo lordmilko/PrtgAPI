@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -658,6 +659,100 @@ namespace PrtgAPI
             parameters.GetParameters().Remove(Parameter.Count);
 
             return Convert.ToInt32(data.TotalCount);
+        }
+
+        internal List<SensorHistoryReportItem> GetSensorHistoryReportInternal(Either<Sensor, int> sensorOrId, PrtgResponse response)
+        {
+            var rows = HtmlParser.Default.GetTableData(response, "table_statereporttable");
+
+            var results = new List<SensorHistoryReportItem>();
+
+            if (rows.Count == 1 && rows.Single().Data.All(d => d.Content == "-"))
+                return new List<SensorHistoryReportItem>();
+
+            foreach (var row in rows)
+            {
+                var status = GetStatus(row.Data[0].Content);
+
+                var escaped = WebUtility.HtmlDecode(row.Data[1].Content);
+
+                var timeStr = Regex.Match(escaped, "<nobr>(.+?) − (.+?) <span.+");
+
+                if (!timeStr.Success)
+                    throw new InvalidOperationException($"Failed to read timespan of sensor history report item for sensor ID '{sensorOrId.GetId()}' from string '{escaped}'.");
+
+                var startStr = timeStr.Groups[1].Value;
+                var endStr = timeStr.Groups[2].Value;
+
+                var start = DateTime.Parse(startStr);
+                var end = DateTime.Parse(endStr);
+
+                results.Add(new SensorHistoryReportItem(sensorOrId.GetId(), status, start, end));
+            }
+
+            return results;
+        }
+
+        private Status GetStatus(string str)
+        {
+            var match = Regex.Match(str, "<div class=\"(.+?)\"");
+
+            //Newer PRTG versions have a CSS class defined that allows us to easily scrape the status name
+            if (match.Success)
+            {
+                var classes = match.Groups[1].Value.Split(' ');
+
+                var colorFlag = classes.FirstOrDefault(c => c.StartsWith("colorflag_"));
+
+                if (colorFlag != null)
+                    return GetStatusInternal(colorFlag);
+            }
+
+            var semicolon = str.LastIndexOf(';');
+
+            var name = str.Substring(semicolon + 1);
+
+            var colorFallback = Regex.Match(str, "background-color:(.+?)(\"|;| )");
+
+            return GetStatusInternal(name, colorFallback);
+        }
+
+        private Status GetStatusInternal(string str, Match colorFallback = null)
+        {
+            switch (str)
+            {
+                case "Up":
+                case "colorflag_statusup":
+                    return Status.Up;
+
+                case "Down":
+                case "colorflag_statusdown":
+                    return Status.Down;
+
+                case "Unknown":
+                case "colorflag_statusunknown":
+                    return Status.Unknown;
+
+                default:
+                    if (colorFallback != null && colorFallback.Success)
+                    {
+                        var color = colorFallback.Groups[1].Value.ToLower();
+
+                        switch (color)
+                        {
+                            case "#b4cc38":
+                                return Status.Up;
+                            case "#d71920":
+                                return Status.Down;
+                            case "#808282":
+                                return Status.Unknown;
+                            default:
+                                throw new NotImplementedException($"Don't know how to handle history status '{str}' and couldn't handle color fallback '{color}'.");
+                        }
+                    }
+
+                    throw new NotImplementedException($"Don't know how to handle history status '{str}'.");
+            }
         }
 
         #endregion

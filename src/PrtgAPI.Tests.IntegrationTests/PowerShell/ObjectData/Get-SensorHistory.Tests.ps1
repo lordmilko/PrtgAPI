@@ -339,4 +339,10 @@ Describe "Get-SensorHistory_IT" -Tag @("PowerShell", "IntegrationTest") {
             }
         }
     }
+
+    Context "Report" {
+        It "retrieves a report for all sensors" {
+            Get-Sensor | Get-SensorHistory -Report -EndDate (Get-Date).AddDays(-7) | Should Not BeNullOrEmpty
+        }
+    }
 }

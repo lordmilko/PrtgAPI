@@ -2325,7 +2325,7 @@ namespace PrtgAPI
         /// Note: due to limitations of the PRTG API, value lookup labels can only be retrieved when the average is 0, while downtime information
         /// can only be retrieved when the average is not 0.</param>
         /// <param name="startDate">The start date and time to retrieve data from. If this value is null, records will be retrieved from the current date and time.</param>
-        /// <param name="endDate">The end date and time to retrieve data to. If this value is null, records will be retrieved from one hour prior to <paramref name="startDate"/>.</param>
+        /// <param name="endDate">The end date and time to retrieve data to. If this value is null, records will be retrieved from one day prior to <paramref name="startDate"/>.</param>
         /// <param name="count">Limit results to the specified number of items within the specified time period.</param>
         /// <returns>Historical data for the specified sensor within the desired date range.</returns>
         public List<SensorHistoryRecord> GetSensorHistory(Either<Sensor, int> sensorOrId, int average = 300, DateTime? startDate = null, DateTime? endDate = null, int? count = null)
@@ -2344,7 +2344,7 @@ namespace PrtgAPI
         /// Note: due to limitations of the PRTG API, value lookup labels can only be retrieved when the average is 0, while downtime information
         /// can only be retrieved when the average is not 0.</param>
         /// <param name="startDate">The start date and time to retrieve data from. If this value is null, records will be retrieved from the current date and time.</param>
-        /// <param name="endDate">The end date and time to retrieve data to. If this value is null, records will be retrieved from one hour prior to <paramref name="startDate"/>.</param>
+        /// <param name="endDate">The end date and time to retrieve data to. If this value is null, records will be retrieved from one day prior to <paramref name="startDate"/>.</param>
         /// <param name="count">Limit results to the specified number of items within the specified time period.</param>
         /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Historical data for the specified sensor within the desired date range.</returns>
@@ -2365,13 +2365,42 @@ namespace PrtgAPI
         /// Note: due to limitations of the PRTG API, value lookup labels can only be retrieved when the average is 0, while downtime information
         /// can only be retrieved when the average is not 0.</param>
         /// <param name="startDate">The start date and time to retrieve data from. If this value is null, records will be retrieved from the current date and time.</param>
-        /// <param name="endDate">The end date and time to retrieve data to. If this value is null, records will be retrieved from one hour prior to <paramref name="startDate"/>.</param>
+        /// <param name="endDate">The end date and time to retrieve data to. If this value is null, records will be retrieved from one day prior to <paramref name="startDate"/>.</param>
         /// <returns>A generator encapsulating a series of requests capable of streaming a response from a PRTG Server.</returns>
         public IEnumerable<SensorHistoryRecord> StreamSensorHistory(Either<Sensor, int> sensorOrId, int average = 300, DateTime? startDate = null, DateTime? endDate = null)
         {
             var parameters = new SensorHistoryParameters(sensorOrId, average, startDate, endDate, null);
 
             return StreamSensorHistoryInternal(parameters, true);
+        }
+
+        /// <summary>
+        /// Retrieves a report of <see cref="Status"/> changes of a sensor from within a specified time period.
+        /// </summary>
+        /// <param name="sensorOrId">The sensor or ID of the sensor to retrieve historical data for.</param>
+        /// <param name="startDate">The start date and time to retrieve data from. If this value is null, records will be retrieved from the current date and time.</param>
+        /// <param name="endDate">The end date and time to retrieve data to. If this value is null, records will be retrieved from one day prior to <paramref name="startDate"/>.</param>
+        /// <returns>A report of the <see cref="Status"/> changes of the specified sensor within the desired date range.</returns>
+        public List<SensorHistoryReportItem> GetSensorHistoryReport(Either<Sensor, int> sensorOrId, DateTime? startDate = null, DateTime? endDate = null)
+        {
+            var response = RequestEngine.ExecuteRequest(new SensorHistoryReportParameters(sensorOrId, startDate, endDate));
+
+            return GetSensorHistoryReportInternal(sensorOrId, response);
+        }
+
+        /// <summary>
+        /// Asynchronously retrieves a report of <see cref="Status"/> changes of a sensor from within a specified time period.
+        /// </summary>
+        /// <param name="sensorOrId">The sensor or ID of the sensor to retrieve historical data for.</param>
+        /// <param name="startDate">The start date and time to retrieve data from. If this value is null, records will be retrieved from the current date and time.</param>
+        /// <param name="endDate">The end date and time to retrieve data to. If this value is null, records will be retrieved from one day prior to <paramref name="startDate"/>.</param>
+        /// <param name="token">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>A report of the <see cref="Status"/> changes of the specified sensor within the desired date range.</returns>
+        public async Task<List<SensorHistoryReportItem>> GetSensorHistoryReportAsync(Either<Sensor, int> sensorOrId, DateTime? startDate = null, DateTime? endDate = null, CancellationToken token = default(CancellationToken))
+        {
+            var response = await RequestEngine.ExecuteRequestAsync(new SensorHistoryReportParameters(sensorOrId, startDate, endDate), token: token).ConfigureAwait(false);
+
+            return GetSensorHistoryReportInternal(sensorOrId, response);
         }
 
         #endregion

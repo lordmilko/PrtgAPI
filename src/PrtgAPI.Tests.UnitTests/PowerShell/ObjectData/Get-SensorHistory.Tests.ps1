@@ -95,6 +95,17 @@ function GetTableColumnHeader($obj, $propertyName)
     return $header.Label
 }
 
+function SetSensorHistoryReportResponse($id, $start, $end)
+{
+    $expected = @(
+        [Request]::SensorHistoryReport($id, $start, $end)
+    )
+
+    $innerResponse = New-Object PrtgAPI.Tests.UnitTests.Support.TestResponses.SensorHistoryReportResponse $true
+    $response = SetResponseAndClientWithArguments "AddressValidatorResponse" @($expected, $true, $innerResponse)
+    $response.AllowSecondDifference = $true
+}
+
 Describe "Get-SensorHistory" -Tag @("PowerShell", "UnitTest") {
 
     SetSensorHistoryResponse
@@ -452,5 +463,40 @@ Describe "Get-SensorHistory" -Tag @("PowerShell", "UnitTest") {
         $dir = gci $formats
 
         $dir.Count | Should BeGreaterThan 1
+    }
+
+    Context "Report" {
+
+        It "generates reports for a sensor" {
+
+            $start = Get-Date
+            $end = $start.AddDays(-1)
+
+            SetSensorHistoryReportResponse 2203 $start $end
+
+            $sensor = Run Sensor { Get-Sensor }
+
+            $sensor | Get-SensorHistory -Report
+        }
+
+        It "generates reports for a sensor ID" {
+            $start = Get-Date
+            $end = $start.AddDays(-1)
+
+            SetSensorHistoryReportResponse 1001 $start $end
+
+            Get-SensorHistory -Id 1001 -Report
+        }
+
+        It "specifies a custom start and end date" {
+            $start = (Get-Date).AddDays(-3)
+            $end = $start.AddDays(-5)
+
+            SetSensorHistoryReportResponse 2203 $start $end
+
+            $sensor = Run Sensor { Get-Sensor }
+
+            $sensor | Get-SensorHistory -Report -StartDate $start -EndDate $end
+        }
     }
 }

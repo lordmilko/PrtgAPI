@@ -506,7 +506,7 @@
                 <Parameter name="sensorOrId" type="Either&lt;Sensor, int&gt;" description="The sensor or ID of the sensor to retrieve historical data for."/>
                 <Parameter name="average" type="int" default="300" description="The time span (in seconds) to average results up to. For example, a value of 300 shows the average of results every 5 minutes. If a value of 0\nis used, PRTG will use the true interval of the sensor.&lt;para/&gt;\nNote: due to limitations of the PRTG API, value lookup labels can only be retrieved when the average is 0, while downtime information\ncan only be retrieved when the average is not 0."/>
                 <Parameter name="startDate" type="DateTime?" default="null" description="The start date and time to retrieve data from. If this value is null, records will be retrieved from the current date and time."/>
-                <Parameter name="endDate" type="DateTime?" default="null" description="The end date and time to retrieve data to. If this value is null, records will be retrieved from one hour prior to &lt;paramref name=&quot;startDate&quot;/&gt;."/>
+                <Parameter name="endDate" type="DateTime?" default="null" description="The end date and time to retrieve data to. If this value is null, records will be retrieved from one day prior to &lt;paramref name=&quot;startDate&quot;/&gt;."/>
                 <Parameter name="count" type="int?" default="null" description="Limit results to the specified number of items within the specified time period." excludeStream="true"/>
 
                 <SyncBody expression="false">
@@ -524,6 +524,22 @@
 
                     return <Call name="{Request}SensorHistoryInternal" args="parameters, true"/>;
                 </StreamBody>
+            </MethodDef>
+            <MethodDef name="{Request}{Name}Report" returns="List&lt;SensorHistoryReportItem&gt;" tokenMode="AutomaticNamedDefault">
+                <Summary>
+                    Retrieves a report of &lt;see cref="Status"/&gt; changes of a sensor from within a specified time period.
+                </Summary>
+                <ReturnDescription>A report of the &lt;see cref="Status"/&gt; changes of the specified sensor within the desired date range.</ReturnDescription>
+
+                <Parameter name="sensorOrId" type="Either&lt;Sensor, int&gt;" description="The sensor or ID of the sensor to retrieve historical data for."/>
+                <Parameter name="startDate" type="DateTime?" default="null" description="The start date and time to retrieve data from. If this value is null, records will be retrieved from the current date and time."/>
+                <Parameter name="endDate" type="DateTime?" default="null" description="The end date and time to retrieve data to. If this value is null, records will be retrieved from one day prior to &lt;paramref name=&quot;startDate&quot;/&gt;."/>
+
+                <Body expression="false">
+                    var response = <Call name="RequestEngine.ExecuteRequest" args="new SensorHistoryReportParameters(sensorOrId, startDate, endDate)"/>;
+
+                    return GetSensorHistoryReportInternal(sensorOrId, response);
+                </Body>
             </MethodDef>
         </Template>
         <Template name="ModificationHistory">

@@ -3043,6 +3043,8 @@ PrtgAPI.PrtgClient GetSensorAsync(int id) -> Task<Sensor>
 PrtgAPI.PrtgClient GetSensorAsync(int id, CancellationToken token) -> Task<Sensor>
 PrtgAPI.PrtgClient GetSensorHistory(Either<Sensor,int> sensorOrId, int average = 300, DateTime? startDate = null, DateTime? endDate = null, int? count = null) -> List<SensorHistoryRecord>
 PrtgAPI.PrtgClient GetSensorHistoryAsync(Either<Sensor,int> sensorOrId, int average = 300, DateTime? startDate = null, DateTime? endDate = null, int? count = null, CancellationToken token = default(CancellationToken)) -> Task<List<SensorHistoryRecord>>
+PrtgAPI.PrtgClient GetSensorHistoryReport(Either<Sensor,int> sensorOrId, DateTime? startDate = null, DateTime? endDate = null) -> List<SensorHistoryReportItem>
+PrtgAPI.PrtgClient GetSensorHistoryReportAsync(Either<Sensor,int> sensorOrId, DateTime? startDate = null, DateTime? endDate = null, CancellationToken token = default(CancellationToken)) -> Task<List<SensorHistoryReportItem>>
 PrtgAPI.PrtgClient GetSensorProperties(Either<Sensor,int> sensor) -> SensorSettings
 PrtgAPI.PrtgClient GetSensorPropertiesAsync(Either<Sensor,int> sensor) -> Task<SensorSettings>
 PrtgAPI.PrtgClient GetSensorPropertiesAsync(Either<Sensor,int> sensor, CancellationToken token) -> Task<SensorSettings>
@@ -3495,6 +3497,16 @@ PrtgAPI.SensorHistoryRecord GetHashCode() -> int
 PrtgAPI.SensorHistoryRecord GetType() -> Type
 PrtgAPI.SensorHistoryRecord SensorId { get; set; } -> int
 PrtgAPI.SensorHistoryRecord ToString() -> string
+PrtgAPI.SensorHistoryReportItem => Class
+PrtgAPI.SensorHistoryReportItem Duration { get; } -> TimeSpan
+PrtgAPI.SensorHistoryReportItem EndDate { get; } -> DateTime
+PrtgAPI.SensorHistoryReportItem Equals(object obj) -> bool
+PrtgAPI.SensorHistoryReportItem GetHashCode() -> int
+PrtgAPI.SensorHistoryReportItem GetType() -> Type
+PrtgAPI.SensorHistoryReportItem SensorId { get; } -> int
+PrtgAPI.SensorHistoryReportItem StartDate { get; } -> DateTime
+PrtgAPI.SensorHistoryReportItem Status { get; } -> Status
+PrtgAPI.SensorHistoryReportItem ToString() -> string
 PrtgAPI.SensorOrDeviceOrGroupOrProbe => Class
 PrtgAPI.SensorOrDeviceOrGroupOrProbe Access { get; set; } -> Access
 PrtgAPI.SensorOrDeviceOrGroupOrProbe Active { get; set; } -> bool

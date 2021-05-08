@@ -9,7 +9,7 @@ using PrtgAPI.Html;
 
 namespace PrtgAPI.Request
 {
-    class HtmlParser
+    internal class HtmlParser
     {
         internal static readonly HtmlParser Default = new HtmlParser();
 
@@ -22,9 +22,15 @@ namespace PrtgAPI.Request
         internal const string DefaultTextAreaRegex = "(<textarea.+?>)(.*?)(<\\/textarea>)";
         internal const string DefaultDependencyDiv = "(<div.+?data-inputname=\"dependency_\")(.+?>)";
 
-        private static Regex inputValueRegex = new Regex("(.+?value=\")(.*?)(\".+)", RegexOptions.Compiled | RegexOptions.Singleline);
-        private static Regex ddlOptionValueRegex = new Regex("(.+?value=\")(.*?)(\".+)", RegexOptions.Compiled | RegexOptions.Singleline);
-        private static Regex ddlOptionInnerHtmlRegex = new Regex("(<.+?>)(.*?)(</.+>)", RegexOptions.Compiled | RegexOptions.Singleline);
+        private static RegexOptions RegexOptions = RegexOptions.Compiled | RegexOptions.Singleline;
+
+        private static Regex inputValueRegex = new Regex("(.+?value=\")(.*?)(\".+)", RegexOptions);
+        private static Regex ddlOptionValueRegex = new Regex("(.+?value=\")(.*?)(\".+)", RegexOptions);
+        private static Regex ddlOptionInnerHtmlRegex = new Regex("(<.+?>)(.*?)(</.+>)", RegexOptions);
+
+        private static Regex tableRegex = new Regex("<table.+?id=\"(.+?)\".*?>.+?</table>", RegexOptions);
+        private static Regex tableRowRegex = new Regex("<tr.+?>.+?</tr>", RegexOptions);
+        private static Regex tableDataRegex = new Regex("<td.*?>(.+?)</td>", RegexOptions);
 
         #region PropertyPrefix
 
@@ -107,6 +113,38 @@ namespace PrtgAPI.Request
         {
             get { return dependencyDiv ?? DefaultDependencyDiv; }
             set { dependencyDiv = value; }
+        }
+
+        #endregion
+        #region Table
+
+        public List<TableRow> GetTableData(PrtgResponse response, string id)
+        {
+            var str = response.StringValue;
+
+            var result = tableRegex.Matches(str);
+
+            var match = result.Cast<Match>().FirstOrDefault(m => m.Groups.Cast<System.Text.RegularExpressions.Group>().Any(g => g.Value == id));
+
+            if (match == null)
+                throw new InvalidOperationException($"Failed to find the table '{id}' in the specified HTML response.");
+
+            var rows = tableRowRegex.Matches(match.Value);
+
+            if (rows.Count == 0)
+                throw new InvalidOperationException($"Failed to find any rows in table '{id}'.");
+
+            var results = new List<TableRow>();
+
+            foreach (Match row in rows)
+            {
+                var data = tableDataRegex.Matches(row.Value);
+
+                if (data.Count > 0)
+                    results.Add(new TableRow(data.Cast<Match>().Select(m => new TableData(m)).ToArray()));
+            }
+
+            return results;
         }
 
         #endregion

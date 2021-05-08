@@ -776,9 +776,11 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
 
         private PrtgClient GetCustomClient(MethodInfo method, PrtgClient defaultClient)
         {
-            if (method.Name == "GetNotificationTriggers" || method.Name == "GetNotificationTriggersAsync")
+            switch (method.Name)
             {
-                return Initialize_Client(new NotificationTriggerResponse(NotificationTriggerItem.StateTrigger()));
+                case "GetNotificationTriggers":
+                case "GetNotificationTriggersAsync":
+                    return Initialize_Client(new NotificationTriggerResponse(NotificationTriggerItem.StateTrigger()));
             }
 
             if (method.Name.StartsWith("GetTree"))
@@ -1020,6 +1022,11 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
                 return null;
             if (t == typeof(FlagEnum<TreeParseOption>?))
                 return new FlagEnum<TreeParseOption>(TreeParseOption.Common);
+            if (t == typeof(Func<DateTime, DateTime>))
+            {
+                Func<DateTime, DateTime> f = d => d;
+                return f;
+            }
 
             throw new NotImplementedException($"Don't know how to create instance for parameter {parameter}");
         }
