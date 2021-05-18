@@ -15,7 +15,7 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
                     return new GroupResponse(new GroupItem(objid: "0", name: "Root"));
 
                 case 2:
-                    Assert.AreEqual(UnitRequest.Probes("filter_type=probenode"), address);
+                    Assert.AreEqual(UnitRequest.Probes("filter_parentid=0"), address);
                     return new ProbeResponse(new ProbeItem(objid: "1001", groupnum: "2", groupnumRaw: "2", devicenum: "3", devicenumRaw: "3"));
 
                 case 3:

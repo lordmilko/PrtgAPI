@@ -663,86 +663,63 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
 
         [UnitTest]
         [TestMethod]
-        public void ProbeParameters_SearchFilter_Type_Equals_ProbeNode_ObjectType()
+        public void ProbeParameters_SearchFilter_ParentId_Equals_0()
         {
-            var parameters = new ProbeParameters(new SearchFilter(Property.Type, ObjectType.Probe));
+            var parameters = new ProbeParameters(new SearchFilter(Property.ParentId, 0));
 
             var url = PrtgRequestMessageTests.CreateUrl(parameters, false);
 
-            Assert.AreEqual(UnitRequest.Probes("filter_type=probenode"), url);
+            Assert.AreEqual(UnitRequest.Probes("filter_parentid=0"), url);
         }
 
         [UnitTest]
         [TestMethod]
-        public void ProbeParameters_SearchFilter_Type_Equals_ProbeNode_ObjectTypeString()
+        public void ProbeParameters_SearchFilter_ParentId_NotEquals_0()
         {
-            var parameters = new ProbeParameters(new SearchFilter(Property.Type, "Probe"));
-
-            var url = PrtgRequestMessageTests.CreateUrl(parameters, false);
-
-            Assert.AreEqual(UnitRequest.Probes("filter_type=probenode"), url);
-        }
-
-        [UnitTest]
-        [TestMethod]
-        public void ProbeParameters_SearchFilter_Type_Equals_ProbeNode_ObjectTypeDescription()
-        {
-            //We intentionally don't suppose specifying PROBENODE in all uppercase, as that would also mean the value is sent to the web server in uppercase as well
-            var parameters = new ProbeParameters(new SearchFilter(Property.Type, "probenode"));
-
-            var url = PrtgRequestMessageTests.CreateUrl(parameters, false);
-
-            Assert.AreEqual(UnitRequest.Probes("filter_type=probenode"), url);
-        }
-
-        [UnitTest]
-        [TestMethod]
-        public void ProbeParameters_SearchFilter_Type_NotEquals_Probe()
-        {
-            AssertEx.Throws<NotSupportedException>(
-                () => new ProbeParameters(new SearchFilter(Property.Type, FilterOperator.NotEquals, ObjectType.Probe)),
-                "Cannot filter where property 'Type' notequals 'probenode'"
+            AssertEx.Throws<InvalidOperationException>(
+                () => new ProbeParameters(new SearchFilter(Property.ParentId, FilterOperator.NotEquals, 0)),
+                "Cannot filter for probes based on a ParentId other than 0."
             );
         }
 
         [UnitTest]
         [TestMethod]
-        public void ProbeParameters_SearchFilter_Type_Equals_Other()
+        public void ProbeParameters_SearchFilter_ParentId_Equals_1()
         {
             AssertEx.Throws<InvalidOperationException>(
-                () => new ProbeParameters(new SearchFilter(Property.Type, "foo")),
-                "Illegal filter was specified: \"Type Equals 'foo'\""
+                () => new ProbeParameters(new SearchFilter(Property.ParentId, 1)),
+                "Cannot filter for probes based on a ParentId other than 0."
             );
         }
 
         [UnitTest]
         [TestMethod]
-        public void ProbeParameters_SearchFilter_Type_Equals_ArrayWith_Probe()
+        public void ProbeParameters_SearchFilter_ParentId_Equals_ArrayWith_0()
         {
-            var parameters = new ProbeParameters(new SearchFilter(Property.Type, new[] {ObjectType.Probe}));
+            var parameters = new ProbeParameters(new SearchFilter(Property.ParentId, new[] {0}));
 
             var url = PrtgRequestMessageTests.CreateUrl(parameters, false);
 
-            Assert.AreEqual(UnitRequest.Probes("filter_type=probenode"), url);
+            Assert.AreEqual(UnitRequest.Probes("filter_parentid=0"), url);
         }
 
         [UnitTest]
         [TestMethod]
-        public void ProbeParameters_SearchFilter_Type_Equals_ArrayWithout_Probe()
+        public void ProbeParameters_SearchFilter_ParentId_Equals_ArrayWithout_0()
         {
             AssertEx.Throws<InvalidOperationException>(
-                () => new ProbeParameters(new SearchFilter(Property.Type, new[] {"foo"})),
-                "Illegal filter was specified: \"Type Equals 'foo'\""
+                () => new ProbeParameters(new SearchFilter(Property.ParentId, new[] {1})),
+                "Cannot filter for probes based on a ParentId other than 0."
             );
         }
 
         [UnitTest]
         [TestMethod]
-        public void ProbeParameters_SearchFilter_Type_Equals_ArrayWith_Probe_AndSomethingElse()
+        public void ProbeParameters_SearchFilter_ParentId_Equals_ArrayWith_0_AndSomethingElse()
         {
             AssertEx.Throws<InvalidOperationException>(
-                () => new ProbeParameters(new SearchFilter(Property.Type, new[] { ObjectType.Probe, ObjectType.Sensor })),
-                "Illegal filter was specified: \"Type Equals 'Probe, Sensor'\""
+                () => new ProbeParameters(new SearchFilter(Property.ParentId, new[] { 0, 1 })),
+                "Cannot filter for probes based on a ParentId other than 0."
             );
         }
 

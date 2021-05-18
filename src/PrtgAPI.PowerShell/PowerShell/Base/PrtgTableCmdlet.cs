@@ -79,13 +79,23 @@ namespace PrtgAPI.PowerShell.Base
             {
                 dynamicParameters = dynamicParameterSet.GetBoundParameters(this, (p, v) =>
                 {
-                    var tuple = GetCleanedUnderlyingTypeAndValue(v);
+                    var cleaned = PSObjectUtilities.CleanPSObject(v);
 
-                    if (tuple == null)
+                    if (cleaned == null)
                         return new List<SearchFilter>();
 
-                    var underlying = tuple.Item1;
-                    var cleaned = tuple.Item2;
+                    var underlying = cleaned.GetType().GetElementType() ?? cleaned.GetType();
+
+                    if (underlying == typeof(object))
+                    {
+                        if (cleaned.IsIEnumerable())
+                        {
+                            var first = cleaned.ToIEnumerable().FirstOrDefault();
+
+                            if (first != null)
+                                underlying = first.GetType();
+                        }
+                    }
 
                     if (underlying == typeof(string))
                         return GetWildcardFilters(p, cleaned, val => val.ToString());
@@ -97,29 +107,6 @@ namespace PrtgAPI.PowerShell.Base
             }
 
             base.BeginProcessingEx();
-        }
-
-        private Tuple<Type, object> GetCleanedUnderlyingTypeAndValue(object v)
-        {
-            var cleaned = PSObjectUtilities.CleanPSObject(v);
-
-            if (cleaned == null)
-                return null;
-
-            var underlying = cleaned.GetType().GetElementType() ?? cleaned.GetType();
-
-            if (underlying == typeof(object))
-            {
-                if (cleaned.IsIEnumerable())
-                {
-                    var first = cleaned.ToIEnumerable().FirstOrDefault();
-
-                    if (first != null)
-                        underlying = first.GetType();
-                }
-            }
-
-            return Tuple.Create(underlying, cleaned);
         }
 
         /// <summary>
@@ -508,25 +495,7 @@ namespace PrtgAPI.PowerShell.Base
                     if (!Name.Any(n => n.Contains("*")))
                         fs.Single().Operator = FilterOperator.Equals;
                 }
-
-                List<Tuple<Property, Type, object>> dynamicParams = null;
-
-                if (this is IDynamicParameters && dynamicParameterSet != null)
-                {
-                    dynamicParams = dynamicParameterSet.GetBoundParameters(this, (p, v) =>
-                    {
-                        var tuple = GetCleanedUnderlyingTypeAndValue(v);
-
-                        return Tuple.Create(p, tuple.Item1, tuple.Item2);
-                    });
-                }
-
-                ModifyFilters(filters, dynamicParams);
             }
-        }
-
-        internal virtual void ModifyFilters(List<SearchFilter> filters, List<Tuple<Property, Type, object>> dynamicParams)
-        {
         }
 
         /// <summary>

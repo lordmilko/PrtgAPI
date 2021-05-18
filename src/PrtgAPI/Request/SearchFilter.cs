@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
 using System.Net;
@@ -107,13 +106,6 @@ namespace PrtgAPI
 
                 if (attrib != null)
                     val = attrib.Name;
-                else
-                {
-                    var descriptionAttrib = ((Enum) value).GetEnumAttribute<DescriptionAttribute>();
-
-                    if (descriptionAttrib != null)
-                        val = descriptionAttrib.Description;
-                }
             }
             else
             {

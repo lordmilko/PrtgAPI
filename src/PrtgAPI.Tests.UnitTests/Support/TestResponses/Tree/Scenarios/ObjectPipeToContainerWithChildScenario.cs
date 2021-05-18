@@ -12,7 +12,7 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
             switch (requestNum)
             {
                 case 1:
-                    Assert.AreEqual(UnitRequest.Probes("count=1&filter_type=probenode", UrlFlag.Columns), address);
+                    Assert.AreEqual(UnitRequest.Probes("count=1&filter_parentid=0", UrlFlag.Columns), address);
                     return new BasicResponse(standardResponse.GetResponseText(ref address));
 
                 //Probe 1

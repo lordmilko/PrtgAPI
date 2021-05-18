@@ -4,7 +4,7 @@ Describe "New-ProbeNode" -Tag @("PowerShell", "UnitTest") {
     It "creates a new node from a Probe" {
 
         SetAddressValidatorResponse @(
-            [Request]::Probes("filter_objid=1000&filter_type=probenode", [Request]::DefaultObjectFlags)
+            [Request]::Probes("filter_objid=1000&filter_parentid=0", [Request]::DefaultObjectFlags)
         )
 
         $device = Get-Probe -Id 1000
@@ -18,7 +18,7 @@ Describe "New-ProbeNode" -Tag @("PowerShell", "UnitTest") {
     It "pipes in an existing Probe" {
         
         SetAddressValidatorResponse @(
-            [Request]::Probes("filter_objid=1000&filter_type=probenode", [Request]::DefaultObjectFlags)
+            [Request]::Probes("filter_objid=1000&filter_parentid=0", [Request]::DefaultObjectFlags)
         )
 
         $device = Get-Probe -Id 1000
@@ -31,7 +31,7 @@ Describe "New-ProbeNode" -Tag @("PowerShell", "UnitTest") {
 
     It "filters by name" {
         SetAddressValidatorResponse @(
-            [Request]::Probes("filter_name=@sub(127)&filter_type=probenode", [Request]::DefaultObjectFlags)
+            [Request]::Probes("filter_name=@sub(127)&filter_parentid=0", [Request]::DefaultObjectFlags)
         )
 
         $node = New-ProbeNode *127*
@@ -84,7 +84,7 @@ Describe "New-ProbeNode" -Tag @("PowerShell", "UnitTest") {
 
     It "specifies multiple IDs" {
         SetAddressValidatorResponse @(
-            [Request]::Probes("filter_objid=1000&filter_objid=1001&filter_type=probenode", [Request]::DefaultObjectFlags)
+            [Request]::Probes("filter_objid=1000&filter_objid=1001&filter_parentid=0", [Request]::DefaultObjectFlags)
         )
 
         $nodes = New-ProbeNode -Id 1000,1001

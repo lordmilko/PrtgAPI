@@ -57,19 +57,6 @@ namespace PrtgAPI.Utilities
 
         public static TEnum DescriptionToEnum<TEnum>(this string value, bool toStringFallback = true)
         {
-            TEnum enumValue;
-
-            if (TryParseDescriptionToEnum(value, out enumValue))
-                return enumValue;
-
-            if (!toStringFallback)
-                throw new ArgumentException($"'{value}' is not a description for any value in {typeof(TEnum)}.", nameof(value));
-
-            return value.ToEnum<TEnum>();
-        }
-
-        public static bool TryParseDescriptionToEnum<TEnum>(this string str, out TEnum value)
-        {
             var cache = typeof(TEnum).GetTypeCache();
 
             foreach (var field in cache.Fields)
@@ -78,24 +65,20 @@ namespace PrtgAPI.Utilities
 
                 if (attribute != null)
                 {
-                    if (attribute.Description == str)
-                    {
-                        value = (TEnum) field.Field.GetValue(null);
-                        return true;
-                    }
+                    if (attribute.Description == value)
+                        return (TEnum) field.Field.GetValue(null);
                 }
                 else
                 {
-                    if (field.Field.Name == str)
-                    {
-                        value = (TEnum) field.Field.GetValue(null);
-                        return true;
-                    }
+                    if (field.Field.Name == value)
+                        return (TEnum) field.Field.GetValue(null);
                 }
             }
 
-            value = default(TEnum);
-            return false;
+            if (!toStringFallback)
+                throw new ArgumentException($"'{value}' is not a description for any value in {typeof(TEnum)}.", nameof(value));
+
+            return value.ToEnum<TEnum>();
         }
 
         internal static T XmlToEnum<T>(this string value)

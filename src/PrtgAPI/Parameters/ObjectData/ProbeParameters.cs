@@ -32,7 +32,7 @@ namespace PrtgAPI.Parameters
 
         private List<SearchFilter> DefaultSearchFilter()
         {
-            return new List<SearchFilter> {new SearchFilter(Property.Type, ObjectType.Probe)};
+            return new List<SearchFilter> {new SearchFilter(Property.ParentId, WellKnownId.Root)};
         }
 
         internal override void SetSearchFilter(List<SearchFilter> value)
@@ -41,57 +41,22 @@ namespace PrtgAPI.Parameters
                 base.SetSearchFilter(value);
             else
             {
-                foreach (var v in value)
-                {
-                    if (v.Property == Property.Type)
-                    {
-                        if (v.Operator != FilterOperator.Equals || ValueEquals(v, ObjectType.Probe, (a, b) => a != b))
-                            throw new InvalidOperationException($"Probes can only be filtered where \"{nameof(Property.Type)} {FilterOperator.Equals} '{nameof(ObjectType.Probe)}'\". Illegal filter was specified: \"{v.Property} {v.Operator} '{GetDisplayValue(v.Value)}'\". Please remove this illegal {nameof(Property.Type)} filter and try again.");
+                if (value.Any(item => item.Property == Property.ParentId && (item.Operator != FilterOperator.Equals || ValueEquals(item, WellKnownId.Root.ToString(), (a, b) => a != b))))
+                    throw new InvalidOperationException("Cannot filter for probes based on a ParentId other than 0.");
 
-                        //We don't know whether the specified value was ObjectType.Probe or not, but at the very least if it didn't throw, we know the user is _trying_ to refer to this value
-                        v.Value = ObjectType.Probe;
-                    }
-                }
-
-                if (!value.Any(item => item.Property == Property.Type && item.Operator == FilterOperator.Equals && ValueEquals(item, ObjectType.Probe, (a, b) => a == b)))
+                if (!value.Any(item => item.Property == Property.ParentId && item.Operator == FilterOperator.Equals && ValueEquals(item, WellKnownId.Root.ToString(), (a, b) => a == b)))
                     value = value.Union(DefaultSearchFilter()).ToList();
 
                 base.SetSearchFilter(value);
             }
         }
 
-        private string GetDisplayValue(object value)
-        {
-            if (value.IsIEnumerable())
-                return string.Join(", ", value.ToIEnumerable());
-
-            return value.ToString();
-        }
-
-        private bool ValueEquals(SearchFilter filter, ObjectType value, Func<ObjectType?, ObjectType, bool> func)
+        private bool ValueEquals(SearchFilter filter, string value, Func<string, string, bool> func)
         {
             if (filter.Value.IsIEnumerable())
-                return filter.Value.ToIEnumerable().Any(v => func(AsObjectType(v), value));
+                return filter.Value.ToIEnumerable().Any(v => func(v.ToString(), value));
 
-            return func(AsObjectType(filter.Value), value);
-        }
-
-        private ObjectType? AsObjectType(object value)
-        {
-            if (value is ObjectType)
-                return (ObjectType?) value;
-
-            ObjectType enumValue = default(ObjectType);
-
-            var str = value?.ToString();
-
-            if (str.TryParseDescriptionToEnum(out enumValue) == true)
-                return enumValue;
-
-            if (Enum.TryParse(str, true, out enumValue))
-                return enumValue;
-
-            return null;
+            return func(filter.Value.ToString(), value);
         }
 
         ProbeParameters IShallowCloneable<ProbeParameters>.ShallowClone()
