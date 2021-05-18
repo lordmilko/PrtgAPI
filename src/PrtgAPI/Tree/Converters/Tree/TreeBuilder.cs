@@ -9,7 +9,7 @@ using PrtgAPI.Tree.Progress;
 namespace PrtgAPI.Tree.Converters.Tree
 {
     /// <summary>
-    /// Constructs a <see cref="PrtgOrphan"/> tre from a specified <see cref="PrtgObject"/>.
+    /// Constructs a <see cref="PrtgOrphan"/> tree from a specified <see cref="PrtgObject"/>.
     /// </summary>
     class TreeBuilder
     {

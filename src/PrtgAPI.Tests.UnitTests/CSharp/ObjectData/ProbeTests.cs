@@ -109,6 +109,40 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             AssertEx.AllPropertiesRetrieveValues(probe);
         }
 
+        [UnitTest]
+        [TestMethod]
+        public void Probe_RemoveNonProbe()
+        {
+            var first = new ProbeItem(name: "First");
+            var second = new ProbeItem(name: "Second");
+            var third = new ProbeItem(typeRaw: "AutonomousDevice");
+
+            var response = new ProbeResponse(first, second, third);
+
+            var client = Initialize_Client(response);
+
+            var probes = client.GetProbes();
+
+            Assert.AreEqual(2, probes.Count);
+        }
+
+        [UnitTest]
+        [TestMethod]
+        public async Task Probe_RemoveNonProbeAsync()
+        {
+            var first = new ProbeItem(name: "First");
+            var second = new ProbeItem(name: "Second");
+            var third = new ProbeItem(typeRaw: "AutonomousDevice");
+
+            var response = new ProbeResponse(first, second, third);
+
+            var client = Initialize_Client(response);
+
+            var probes = await client.GetProbesAsync();
+
+            Assert.AreEqual(2, probes.Count);
+        }
+
         protected override List<Probe> GetObjects(PrtgClient client) => client.GetProbes();
 
         protected override Task<List<Probe>> GetObjectsAsync(PrtgClient client) => client.GetProbesAsync();

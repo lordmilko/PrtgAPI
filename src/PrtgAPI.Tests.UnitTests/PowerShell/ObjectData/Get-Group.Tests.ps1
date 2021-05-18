@@ -50,13 +50,13 @@ Describe "Get-Group" -Tag @("PowerShell", "UnitTest") {
     It "filters by probe name" {
         SetAddressValidatorResponse "filter_probe=@sub(2)"
 
-        $sensors = Get-Group -Probe 2*
-        $sensors.Count | Should Be 0
+        $groups = Get-Group -Probe 2*
+        $groups.Count | Should Be 0
 
         SetAddressValidatorResponse "filter_probe=@sub(1)"
 
-        $sensors = Get-Group -Probe 1*
-        $sensors.Count | Should Be 2
+        $groups = Get-Group -Probe 1*
+        $groups.Count | Should Be 2
     }
 
     Context "Group Recursion" {

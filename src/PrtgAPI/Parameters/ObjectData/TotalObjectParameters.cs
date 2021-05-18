@@ -1,9 +1,12 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using System.Net.Http;
+using System.Threading.Tasks;
+using PrtgAPI.Request;
 
 namespace PrtgAPI.Parameters
 {
     [ExcludeFromCodeCoverage]
-    class TotalObjectParameters : BaseParameters, IXmlParameters
+    class TotalObjectParameters : BaseParameters, IXmlParameters, IResponseParser
     {
         XmlFunction IXmlParameters.Function => XmlFunction.TableData;
 
@@ -25,7 +28,14 @@ namespace PrtgAPI.Parameters
                 this[Parameter.Count] = 0;
 
             if (content == Content.Probes)
-                this[Parameter.FilterXyz] = new SearchFilter(Property.ParentId, "0");
+            {
+                this[Parameter.Count] = "*";
+                this[Parameter.FilterXyz] = new SearchFilter(Property.ParentId, WellKnownId.Root);
+                this[Parameter.Columns] = new[]
+                {
+                    Property.Type
+                };
+            } 
         }
 
         public TotalObjectParameters(Content content, SearchFilter[] filters) : this(content)
@@ -43,6 +53,26 @@ namespace PrtgAPI.Parameters
         {
             get { return (SearchFilter[])this[Parameter.FilterXyz]; }
             set { this[Parameter.FilterXyz] = value; }
+        }
+
+        PrtgResponse IResponseParser.ParseResponse(HttpResponseMessage requestMessage)
+        {
+            if (Content != Content.Probes)
+                return null;
+
+            var content = requestMessage.Content.ReadAsStringAsync().Result;
+
+            return ResponseParser.ParseProbeResponse(content);
+        }
+
+        async Task<PrtgResponse> IResponseParser.ParseResponseAsync(HttpResponseMessage requestMessage)
+        {
+            if (Content != Content.Probes)
+                return null;
+
+            var content = await requestMessage.Content.ReadAsStringAsync().ConfigureAwait(false);
+
+            return ResponseParser.ParseProbeResponse(content);
         }
     }
 }

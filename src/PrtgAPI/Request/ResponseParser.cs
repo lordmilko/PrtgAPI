@@ -67,6 +67,49 @@ namespace PrtgAPI.Request
             return val;
         }
 
+        #region Probes
+
+        internal static PrtgResponse ParseProbeResponse(string content)
+        {
+            /* PRTG 21.2.67 introduces the new PRTG Core Server node, which is returned
+             * from API requests for probes since probes request children of parent ID 0
+             * and "probenode" is not really a valid content type. Attempting to filter
+             * for type == "probenode" seems like an obvious workaround, however in fact
+             * PRTG doesn't always parse this filter properly; as such, we have no choice
+             * but to filter for type == "probenode" locally
+             */
+
+            var xDoc = XDocument.Parse(content);
+
+            var probeNode = xDoc.Element("probenode");
+
+            var items = probeNode.Elements("item").ToArray();
+
+            var toRemove = new List<XElement>();
+
+            var remainingItems = 0;
+
+            foreach (var item in items)
+            {
+                if (item.Element("type_raw").Value != "probenode")
+                    toRemove.Add(item);
+                else
+                    remainingItems++;
+            }
+
+            foreach (var item in toRemove)
+                item.Remove();
+
+            if (toRemove.Count > 0)
+            {
+                var totalCount = probeNode.Attribute("totalcount");
+                totalCount.Value = remainingItems.ToString();
+            }
+
+            return xDoc.ToString();
+        }
+
+        #endregion
         #region Notifications
 
         internal static XElement GroupNotificationActionProperties(XElement xml)

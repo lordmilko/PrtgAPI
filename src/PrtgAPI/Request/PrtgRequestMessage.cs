@@ -22,6 +22,12 @@ namespace PrtgAPI.Request
 
         public Uri Uri { get; }
 
+        /// <summary>
+        /// Gets a parser capable of modifying the request response. If a custom parser external to this request message
+        /// is specified for the API request, this parser is ignored.
+        /// </summary>
+        public IResponseParser Parser { get; }
+
         internal PrtgRequestMessage(ConnectionDetails connectionDetails, XmlFunction function, IParameters parameters) :
             this(connectionDetails, GetResourcePath(function), parameters)
         {
@@ -72,6 +78,8 @@ namespace PrtgAPI.Request
             }
 
             Uri = new Uri(urlBuilder.ToString());
+
+            Parser = parameters as IResponseParser;
 
 #if DEBUG
             Debug.WriteLine(Url);

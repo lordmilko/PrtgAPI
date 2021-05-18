@@ -3,7 +3,7 @@
 Describe "Restart-Probe" -Tag @("PowerShell", "UnitTest") {
     It "restarts all probes" {
         SetAddressValidatorResponse @(
-            [Request]::Probes("count=0&filter_parentid=0", $null)
+            [Request]::Probes("count=*&filter_parentid=0&columns=type", $null)
             [Request]::Get("api/restartprobes.htm?")
         )
 

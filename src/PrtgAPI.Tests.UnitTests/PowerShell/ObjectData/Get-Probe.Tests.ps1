@@ -79,11 +79,11 @@ Describe "Get-Probe" -Tag @("PowerShell", "UnitTest") {
             
             SetAddressValidatorResponse "filter_message=@sub(1)"
 
-            $sensor = @(Get-Probe -Count 3 -Message "*1")
+            $probe = @(Get-Probe -Count 3 -Message "*1")
 
-            $sensor.Count | Should Be 1
+            $probe.Count | Should Be 1
 
-            $sensor.Name | Should Be "127.0.0.11"
+            $probe.Name | Should Be "127.0.0.11"
         }
 
         It "uses a bool with a dynamic parameter" {
@@ -91,6 +91,22 @@ Describe "Get-Probe" -Tag @("PowerShell", "UnitTest") {
             SetAddressValidatorResponse "filter_active=-1"
 
             Get-Probe -Active $true
+        }
+    }
+
+    It "removes non probes from API responses" {
+        $obj1 = GetItem
+        $obj2 = GetItem
+        $obj3 = GetItem
+
+        $obj1.Name = "First"
+        $obj2.Name = "Second"
+        $obj3.TypeRaw = "AutonomousDevice"
+
+        WithItems ($obj1, $obj2, $obj3) {
+            $probes = Get-Probe
+
+            $probes.Count | Should Be 2
         }
     }
 

@@ -257,6 +257,9 @@ namespace PrtgAPI.Request
                     if (responseParser != null)
                         responseContent = responseParser(responseMessage);
 
+                    if (responseContent == null && request.Parser != null)
+                        responseContent = request.Parser.ParseResponse(responseMessage);
+
                     if (responseContent == null)
                         responseContent = GetAppropriateResponse(responseMessage, prtgClient.LogLevel);
 
@@ -313,6 +316,9 @@ namespace PrtgAPI.Request
 
                     if (responseParser != null)
                         responseContent = await responseParser(responseMessage).ConfigureAwait(false);
+
+                    if (responseContent == null && request.Parser != null)
+                        responseContent = await request.Parser.ParseResponseAsync(responseMessage).ConfigureAwait(false);
 
                     if (responseContent == null)
                         responseContent = await GetAppropriateResponseAsync(responseMessage, prtgClient.LogLevel).ConfigureAwait(false);

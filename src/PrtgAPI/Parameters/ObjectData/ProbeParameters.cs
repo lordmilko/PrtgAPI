@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Net.Http;
+using System.Threading.Tasks;
 using PrtgAPI.Request;
 using PrtgAPI.Utilities;
 
@@ -11,7 +13,7 @@ namespace PrtgAPI.Parameters
     /// Represents parameters used to construct a <see cref="PrtgRequestMessage"/> for retrieving <see cref="Probe"/> objects.
     /// </summary>
     [ExcludeFromCodeCoverage]
-    public class ProbeParameters : TableParameters<Probe>, IShallowCloneable<ProbeParameters>
+    public class ProbeParameters : TableParameters<Probe>, IShallowCloneable<ProbeParameters>, IResponseParser
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="ProbeParameters"/> class.
@@ -70,5 +72,19 @@ namespace PrtgAPI.Parameters
 
         [ExcludeFromCodeCoverage]
         object IShallowCloneable.ShallowClone() => ((IShallowCloneable<ProbeParameters>)this).ShallowClone();
+
+        PrtgResponse IResponseParser.ParseResponse(HttpResponseMessage requestMessage)
+        {
+            var content = requestMessage.Content.ReadAsStringAsync().Result;
+
+            return ResponseParser.ParseProbeResponse(content);
+        }
+
+        async Task<PrtgResponse> IResponseParser.ParseResponseAsync(HttpResponseMessage requestMessage)
+        {
+            var content = await requestMessage.Content.ReadAsStringAsync().ConfigureAwait(false);
+
+            return ResponseParser.ParseProbeResponse(content);
+        }
     }
 }

@@ -26,25 +26,25 @@ Describe "Get-Device" -Tag @("PowerShell", "UnitTest") {
     It "filters by group name" {
         SetAddressValidatorResponse "filter_group=@sub(2)"
 
-        $sensors = Get-Device -Group 2*
-        $sensors.Count | Should Be 0
+        $devices = Get-Device -Group 2*
+        $devices.Count | Should Be 0
 
         SetAddressValidatorResponse "filter_group=@sub(1)"
 
-        $sensors = Get-Device -Group 1*
-        $sensors.Count | Should Be 2
+        $devices = Get-Device -Group 1*
+        $devices.Count | Should Be 2
     }
 
     It "filters by probe name" {
         SetAddressValidatorResponse "filter_probe=@sub(2)"
 
-        $sensors = Get-Device -Probe 2*
-        $sensors.Count | Should Be 0
+        $devices = Get-Device -Probe 2*
+        $devices.Count | Should Be 0
 
         SetAddressValidatorResponse "filter_probe=@sub(1)"
 
-        $sensors = Get-Device -Probe 1*
-        $sensors.Count | Should Be 2
+        $devices = Get-Device -Probe 1*
+        $devices.Count | Should Be 2
     }
 
     Context "Group Recursion" {
