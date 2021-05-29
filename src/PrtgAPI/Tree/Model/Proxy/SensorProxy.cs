@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using PrtgAPI.Parameters;
 
 namespace PrtgAPI.Tree
 {
+    [ExcludeFromCodeCoverage]
     internal class SensorProxy : SensorOrDeviceOrGroupOrProbeProxy<Sensor>, ISensor
     {
         public string Probe => Resolved.Probe;

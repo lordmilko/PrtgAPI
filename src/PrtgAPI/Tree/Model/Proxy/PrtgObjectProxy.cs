@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace PrtgAPI.Tree
 {
@@ -7,6 +8,7 @@ namespace PrtgAPI.Tree
         void SetParentResolver(Func<PrtgNode> resolveParent);
     }
 
+    [ExcludeFromCodeCoverage]
     internal abstract class PrtgObjectProxy<T> : IPrtgObjectProxy, IPrtgObject, ITreeValue where T : PrtgObject
     {
         #region PrtgObject

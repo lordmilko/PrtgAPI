@@ -1,4 +1,6 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using System;
+using System.Globalization;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PrtgAPI.Utilities;
 
 namespace PrtgAPI.Tests.UnitTests.Infrastructure
@@ -237,6 +239,53 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
         public void Convert_ToDouble_EU_CloseRounding_SilentTruncate()
         {
             TestDouble("112.12165", 112.1216, 112.12165);
+        }
+
+        [UnitTest]
+        [TestMethod]
+        public void Convert_AllCultures_NoMarks()
+        {
+            TestAllCultures(123);
+        }
+
+        [UnitTest]
+        [TestMethod]
+        public void Convert_AllCultures_OneNumberMark_Thousands()
+        {
+            TestAllCultures(1234);
+        }
+
+        [UnitTest]
+        [TestMethod]
+        public void Convert_AllCultures_OneNumberMark_Decimal()
+        {
+            TestAllCultures(123.456);
+        }
+
+        [UnitTest]
+        [TestMethod]
+        public void Convert_AllCultures_TwoNumberMarks()
+        {
+            TestAllCultures(1234.5678);
+        }
+
+        private void TestAllCultures(double number)
+        {
+            var cultures = CultureInfo.GetCultures(CultureTypes.AllCultures);
+
+            foreach (var culture in cultures)
+            {
+                var str = number.ToString("#,##0.####", culture);
+
+                try
+                {
+                    TestDouble(str, number, number);
+                }
+                catch (Exception ex)
+                {
+                    throw new AssertFailedException($"Failed to convert number '{str}' in culture '{culture}': {ex.Message}", ex);
+                }
+            }
         }
 
         private void TestDouble(string s, double d, double expected)

@@ -2,6 +2,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace PrtgAPI.Utilities
 {
@@ -19,101 +20,136 @@ namespace PrtgAPI.Utilities
 
             var hasDouble = raw != null;
 
-            var numPeriods = str.Count(c => c == '.');
-            var numCommas = str.Count(c => c == ',');
+            var groups = Regex.Replace(str, "\\d", string.Empty).ToCharArray().GroupBy(c => c).ToArray();
 
-            var multipleMarks = numPeriods > 0 && numCommas > 0;
+            if (groups.Length > 2)
+                throw new ArgumentException($"Cannot parse display value '{str}': value should have at most two numeric group separators, however {groups.Length} were found.");
+
+            char? markA = null;
+            char? markB = null;
+
+            char[] chars;
+
+            var numA = 0;
+            var numB = 0;
+
+            if (groups.Length > 0)
+            {
+                markA = groups[0].Key;
+                numA = groups[0].Count();
+
+                if (groups.Length > 1)
+                {
+                    markB = groups[1].Key;
+                    numB = groups[1].Count();
+
+                    chars = new[] {markA.Value, markB.Value};
+                }
+                else
+                    chars = new[] {markA.Value};
+            }
+            else
+                chars = new char[0];
+
+            var multipleMarks = numA > 0 && numB > 0;
 
             //If there is no punctuation it's a regular integer value, so just convert it
-            if (numPeriods == 0 && numCommas == 0)
-                return ToPeriodDecimal(str);
+            if (numA == 0 && numB == 0)
+                return ToDecimal(str, thousands: markA, @decimal: markB);
 
             //As you can't have two decimal points, having two of any punctuation mark
             //indicates that mark must be the thousands operator, so convert using the appropriate culture
-            if (numCommas > 1)
-                return ToPeriodDecimal(str);
+            if (numA > 1)
+                return ToDecimal(str, thousands: markA, @decimal: markB);
 
-            if (numPeriods > 1)
-                return ToCommaDecimal(str);
+            //If we have more than 1 thousands separators, it would occurred before any decimal separators; as such, we would expect this code path
+            //never gets hit
+            if (numB > 1)
+                return ToDecimal(str, thousands: markB, @decimal: markA);
 
-            //If the number is between 0 and 1 we can just check what the number starts with
-            if (str.StartsWith("0."))
-                return ToPeriodDecimal(str);
+            if (str.StartsWith("0") && str.Length > 1)
+            {
+                //If the number is between 0 and 1 we can just check what the number starts with
+                if (str[1] == markA)
+                    return ToDecimal(str, thousands: markB, @decimal: markA);
 
-            if (str.StartsWith("0,"))
-                return ToCommaDecimal(str);
+                //Implicitly if the number starts with "0" there is _only_ markA
+                if (str[1] == markB)
+                    return ToDecimal(str, thousands: markA, @decimal: markB);
+            }
 
             //If we have both punctuation marks, whichever comes first is the thousands separator
             if (multipleMarks)
             {
-                var strFirstMarkIndex = str.IndexOfAny(new[] {'.', ','});
+                var strFirstMarkIndex = str.IndexOfAny(chars);
 
-                if (str[strFirstMarkIndex] == '.')
-                    return ToCommaDecimal(str);
+                //markA by definition always comes first, so we would expect the else pathway here never gets hit
+                if (str[strFirstMarkIndex] == markA)
+                    return ToDecimal(str, thousands: markA, @decimal: markB);
                 else
-                    return ToPeriodDecimal(str);
+                    return ToDecimal(str, thousands: markB, @decimal: markA);
             }
 
             //The value is either a whole number >= 1000 or a decimal number < 1000
             //If there's fewer than 3 digits after the last punctuation mark, that mark must be the period separator
 
-            var strLastMarkIndex = str.LastIndexOfAny(new[] {'.', ','});
+            var strLastMarkIndex = str.LastIndexOfAny(chars);
             var strLastMark = str[strLastMarkIndex];
 
             //We have fewer than 3 decimal places
-            if (strLastMark == '.' && strLastMarkIndex >= str.Length - 3)
-                return ToPeriodDecimal(str);
+            if (strLastMark == markA && strLastMarkIndex >= str.Length - 3)
+                return ToDecimal(str, thousands: markB, @decimal: markA);
 
-            if (strLastMark == ',' && strLastMarkIndex >= str.Length - 3)
-                return ToCommaDecimal(str);
+            if (strLastMark == markB && strLastMarkIndex >= str.Length - 3)
+                return ToDecimal(str, thousands: markA, @decimal: markB);
 
             if (hasDouble)
             {
                 //Compare the decimal component of the raw number
 
-                var rawStr = raw.Value.ToString(CultureInfo.InvariantCulture);
-                var rawLastMarkIndex = rawStr.LastIndexOfAny(new[] {'.', ','});
+                //We know we have _some kind of numeric separator_ (after all, if we didn't we would have already returned a simple value above)
+                var rawStr = raw.Value.ToString("#,##0.####", CultureInfo.InvariantCulture);
+                var rawLastMarkIndex = rawStr.LastIndexOfAny(new[] {',', '.'});
 
-                if (rawLastMarkIndex == -1)
+                if (rawStr[rawLastMarkIndex] == '.')
                 {
-                    //All zeroes. Whatever punctuation we have is for thousands
-                    if (numCommas > 0)
-                        return ToPeriodDecimal(str);
-                    else
-                        return ToCommaDecimal(str);
-                }
-                else
-                {
+                    //The raw value definitely has a decimal component on it
+
                     var numDecStr = rawStr.Substring(rawLastMarkIndex + 1).TrimEnd('0'); //Trim trailing decimal zeroes
                     var strDecStr = str.Substring(strLastMarkIndex + 1);
 
                     if (numDecStr == strDecStr)
                     {
                         //The character at lastIndex is the decimal separator
-                        if (strLastMark == '.')
-                            return ToPeriodDecimal(str);
+
+                        if (strLastMark == markA)
+                            return ToDecimal(str, thousands: markB, @decimal: markA);
                         else
-                            return ToCommaDecimal(str);
+                            return ToDecimal(str, thousands: markA, @decimal: markB);
                     }
                     else
                     {
                         //Maybe the number of decimal places was rounded up is a match (e.g. 1.67 vs 1.6667).
                         //If the raw number is bigger than 1000, we'll catch it in the catch all at the end.
 
-                        if (strLastMark == '.')
-                        {
-                            double val;
+                        char? thousands;
+                        char? @decimal;
 
-                            if (raw < 1000 && TryRoundDecimal(str, raw.Value, ToPeriodDecimal, numDecStr, strDecStr, out val))
-                                return val;
+                        if (strLastMark == markA)
+                        {
+                            thousands = markB;
+                            @decimal = markA;
                         }
                         else
                         {
-                            double val;
-
-                            if (raw < 1000 & TryRoundDecimal(str, raw.Value, ToCommaDecimal, numDecStr, strDecStr, out val))
-                                return val;
+                            thousands = markA;
+                            @decimal = markB;
                         }
+
+                        double val;
+
+                        if (raw < 1000 && TryRoundDecimal(str, raw.Value, s => ToDecimal(s, thousands: thousands, @decimal: @decimal), numDecStr, strDecStr, out val))
+                            return val;
                     }
                 }
 
@@ -126,23 +162,29 @@ namespace PrtgAPI.Utilities
                 //shortcut out by inspecting the first mark above. Therefore, we most likely have a display
                 //value that doesn't have a decimal and a raw value that does
 
-                var strClean = strIntStr.Replace(".", string.Empty).Replace(",", string.Empty);
+                var strClean = strIntStr;
 
-                if (strLastMark == ',' && numIntStr == strClean)
-                    return ToPeriodDecimal(str);
+                if (markA != null)
+                    strClean = strClean.Replace(markA.ToString(), string.Empty);
 
-                if (strLastMark == '.' && numIntStr == strClean)
-                    return ToCommaDecimal(str);
+                if (markB != null)
+                    strClean = strClean.Replace(markB.ToString(), string.Empty);
+
+                if (strLastMark == markA && numIntStr == strClean)
+                    return ToDecimal(str, thousands: markA, @decimal: markB);
+
+                if (strLastMark == markB && numIntStr == strClean)
+                    return ToDecimal(str, thousands: markB, @decimal: markA);
 
                 //Maybe the display value is the numeric value rounded up to an integer
 
                 var numRoundedStr = Math.Round(raw.Value, MidpointRounding.AwayFromZero).ToString(CultureInfo.InvariantCulture);
 
-                if (strLastMark == ',' && numRoundedStr == strClean)
-                    return ToPeriodDecimal(str);
+                if (strLastMark == markA && numRoundedStr == strClean)
+                    return ToDecimal(str, thousands: markA, @decimal: markB);
 
-                if (strLastMark == '.' && numRoundedStr == strClean)
-                    return ToCommaDecimal(str);
+                if (strLastMark == markB && numRoundedStr == strClean)
+                    return ToDecimal(str, thousands: markB, @decimal: markA);
 
                 //Maybe the display value is in bytes
                 var divided = raw.Value;
@@ -155,19 +197,19 @@ namespace PrtgAPI.Utilities
                     if (strClean == ((int) divided).ToString())
                     {
                         //All we have is the thousands separator
-                        if (strLastMark == ',')
-                            return ToPeriodDecimal(str);
+                        if (strLastMark == markA)
+                            return ToDecimal(str, thousands: markA, @decimal: markB);
                         else
-                            return ToCommaDecimal(str);
+                            return ToDecimal(str, thousands: markB, @decimal: markA);
                     }
                     else
                     {
                         Func<string, double> func;
 
-                        if (strLastMark == ',')
-                            func = ToPeriodDecimal;
+                        if (strLastMark == markA)
+                            func = s => ToDecimal(s, thousands: markA, @decimal: markB);
                         else
-                            func = ToCommaDecimal;
+                            func = s => ToDecimal(s, thousands: markB, @decimal: markA);
 
                         if (strClean == Math.Round(divided, MidpointRounding.AwayFromZero).ToString())
                             return func(str);
@@ -178,10 +220,10 @@ namespace PrtgAPI.Utilities
 
                 if (raw >= 1000)
                 {
-                    if (strLastMark == ',')
-                        return ToPeriodDecimal(str);
+                    if (strLastMark == markA)
+                        return ToDecimal(str, thousands: markA, @decimal: markB);
                     else
-                        return ToCommaDecimal(str);
+                        return ToDecimal(str, thousands: markB, @decimal: markA);
                 }
             }
 
@@ -215,7 +257,7 @@ namespace PrtgAPI.Utilities
             var strDecimalTruncateStr = strDecimalOnlyRounded.ToString();
             var strDecimalPlaces = strDecimalTruncateStr.Substring(2);
             var strDecimalTruncateStrResult = strDecimalPlaces.Substring(0, Math.Min(decimalPlaces, strDecimalPlaces.Length));
-            var strDecimalTruncated = Convert.ToDouble("0." + strDecimalTruncateStrResult);
+            var strDecimalTruncated = Convert.ToDouble("0." + strDecimalTruncateStrResult, CultureInfo.InvariantCulture);
 
             for (var i = maxDecinalPlaces; i >= decimalPlaces; i--)
                 rawDecimalOnlyRounded = Math.Round(rawDecimalOnlyRounded, i, MidpointRounding.AwayFromZero);
@@ -233,14 +275,60 @@ namespace PrtgAPI.Utilities
             return false;
         }
 
-        private static double ToPeriodDecimal(string s)
+        private static double ToDecimal(string s, char? thousands, char? @decimal)
         {
-            return double.Parse(s, NumberFormatInfo.InvariantInfo);
+            bool needsFixup;
+
+            var culture = GetCulture(thousands, @decimal, out needsFixup);
+
+            if (needsFixup)
+            {
+                if (thousands == null || @decimal == null)
+                {
+                    if (thousands == null)
+                    {
+                        if (@decimal != null)
+                            s = s.Replace(@decimal.Value, '.');
+                    }
+                    else
+                        s = s.Replace(thousands.Value, ',');
+                }
+                else
+                {
+                    var arr = s.ToCharArray();
+
+                    for (var i = 0; i < arr.Length; i++)
+                    {
+                        if (arr[i] == thousands.Value)
+                            arr[i] = ',';
+                        else if (arr[i] == @decimal.Value)
+                            arr[i] = '.';
+                    }
+
+                    s = new string(arr);
+                }
+            }
+
+            return double.Parse(s, NumberFormatInfo.GetInstance(culture));
         }
 
-        private static double ToCommaDecimal(string s)
+        private static CultureInfo GetCulture(char? thousands, char? @decimal, out bool needsFixup)
         {
-            return double.Parse(s, NumberFormatInfo.GetInstance(CultureInfo.GetCultureInfo("de-DE")));
+            if ((thousands == ',' && @decimal == '.') || (thousands == ',' && @decimal == null) || (@decimal == '.' && thousands == null))
+            {
+                needsFixup = false;
+                return CultureInfo.InvariantCulture;
+            }
+
+            if ((thousands == '.' && @decimal == ',') || (thousands == '.' && @decimal == null) || (@decimal == ',' && thousands == null))
+            {
+                needsFixup = false;
+                return CultureInfo.GetCultureInfo("de-DE");
+            }
+
+            //It's something weird; let's just manually turn it into an invariant string
+            needsFixup = true;
+            return CultureInfo.InvariantCulture;
         }
 
         /// <summary>
