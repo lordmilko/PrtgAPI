@@ -344,7 +344,7 @@ namespace PrtgAPI.Tests.UnitTests
             var result = Uri.Compare(firstSorted, secondSorted, UriComponents.AbsoluteUri, UriFormat.SafeUnescaped,
                 StringComparison.OrdinalIgnoreCase);
 
-            Assert.IsTrue(result == 0, "Urls were not equal");
+            Assert.IsTrue(result == 0, $"Urls '{first}' and '{second}' were not equal");
         }
 
         private static Uri OrderUri(string str)
