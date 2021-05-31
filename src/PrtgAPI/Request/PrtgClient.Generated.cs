@@ -1109,7 +1109,7 @@ namespace PrtgAPI
                 Action<CancellationToken> addObjectInternal = t => AddObjectInternal(parent, parameters, t);
                 Func<CancellationToken, List<T>> getObjs = t => getObjects(filters, t);
 
-                return (ResolveWithDiff(addObjectInternal, getObjs, ResponseParser.ExceptTableObject, token, errorCallback, shouldStop, allowMultiple)).OrderBy(o => o.Id).ToList();
+                return (ResolveWithDiff(addObjectInternal, getObjs, ResponseParser.ExceptTableObject, token, errorCallback, shouldStop, allowMultiple, RequestParser.GetEnhancedResolutionError(parameters))).OrderBy(o => o.Id).ToList();
             }
             else
             {
@@ -1148,13 +1148,13 @@ namespace PrtgAPI
             RequestEngine.ExecuteRequest(internalParams, token: token);
 
         private List<T> ResolveWithDiff<T>(Action<CancellationToken> createObject, Func<CancellationToken, List<T>> getObjects, Func<List<T>, List<T>, List<T>> exceptFunc,
-             CancellationToken token, Action<Type, int> errorCallback, Func<bool> shouldStop, bool allowMultiple = false)
+             CancellationToken token, Action<Type, int> errorCallback, Func<bool> shouldStop, bool allowMultiple = false, string enhancedResolutionError = null)
         {
             var before = getObjects(token);
 
             createObject(token);
 
-            var after = ResolveObject(getObjects, token, a => exceptFunc(before, a).Any(), errorCallback: errorCallback, shouldStop: shouldStop);
+            var after = ResolveObject(getObjects, token, a => exceptFunc(before, a).Any(), errorCallback: errorCallback, shouldStop: shouldStop, enhancedResolutionError: enhancedResolutionError);
 
             var newObjects = exceptFunc(before, after);
 
@@ -1182,7 +1182,7 @@ namespace PrtgAPI
         }
 
         internal List<T> ResolveObject<T>(Func<CancellationToken, List<T>> getObjects, CancellationToken token, Func<List<T>, bool> recordsFound, string resolutionError = "Could not resolve object",
-            Type trueType = null, Action<Type, int> errorCallback = null, Func<bool> shouldStop = null)
+            Type trueType = null, Action<Type, int> errorCallback = null, Func<bool> shouldStop = null, string enhancedResolutionError = null)
         {
             List<T> @object;
 
@@ -1197,7 +1197,10 @@ namespace PrtgAPI
                 {
                     if (retriesRemaining == 0)
                     {
-                        throw new ObjectResolutionException($"{resolutionError}: PRTG is taking too long to create the object. Confirm the object has been created in the Web UI and then attempt resolution again manually.");
+                        if (enhancedResolutionError != null)
+                            enhancedResolutionError = " " + enhancedResolutionError;
+
+                        throw new ObjectResolutionException($"{resolutionError}: PRTG is taking too long to create the object.{enhancedResolutionError} Confirm the object has been created in the Web UI and then attempt resolution again manually.");
                     }
 
                     var type = trueType ?? typeof (T);
@@ -1261,7 +1264,7 @@ namespace PrtgAPI
                 Func<CancellationToken, Task> addObjectInternal = async t => await AddObjectInternalAsync(parent, parameters, t).ConfigureAwait(false);
                 Func<CancellationToken, Task<List<T>>> getObjs = async t => await getObjects(filters, t).ConfigureAwait(false);
 
-                return (await ResolveWithDiffAsync(addObjectInternal, getObjs, ResponseParser.ExceptTableObject, token, errorCallback, shouldStop, allowMultiple).ConfigureAwait(false)).OrderBy(o => o.Id).ToList();
+                return (await ResolveWithDiffAsync(addObjectInternal, getObjs, ResponseParser.ExceptTableObject, token, errorCallback, shouldStop, allowMultiple, RequestParser.GetEnhancedResolutionError(parameters)).ConfigureAwait(false)).OrderBy(o => o.Id).ToList();
             }
             else
             {
@@ -1300,13 +1303,13 @@ namespace PrtgAPI
             await RequestEngine.ExecuteRequestAsync(internalParams, token: token).ConfigureAwait(false);
 
         private async Task<List<T>> ResolveWithDiffAsync<T>(Func<CancellationToken, Task> createObject, Func<CancellationToken, Task<List<T>>> getObjects, Func<List<T>, List<T>, List<T>> exceptFunc,
-             CancellationToken token, Action<Type, int> errorCallback, Func<bool> shouldStop, bool allowMultiple = false)
+             CancellationToken token, Action<Type, int> errorCallback, Func<bool> shouldStop, bool allowMultiple = false, string enhancedResolutionError = null)
         {
             var before = await getObjects(token).ConfigureAwait(false);
 
             await createObject(token).ConfigureAwait(false);
 
-            var after = await ResolveObjectAsync(getObjects, token, a => exceptFunc(before, a).Any(), errorCallback: errorCallback, shouldStop: shouldStop).ConfigureAwait(false);
+            var after = await ResolveObjectAsync(getObjects, token, a => exceptFunc(before, a).Any(), errorCallback: errorCallback, shouldStop: shouldStop, enhancedResolutionError: enhancedResolutionError).ConfigureAwait(false);
 
             var newObjects = exceptFunc(before, after);
 
@@ -1334,7 +1337,7 @@ namespace PrtgAPI
         }
 
         internal async Task<List<T>> ResolveObjectAsync<T>(Func<CancellationToken, Task<List<T>>> getObjects, CancellationToken token, Func<List<T>, bool> recordsFound, string resolutionError = "Could not resolve object",
-            Type trueType = null, Action<Type, int> errorCallback = null, Func<bool> shouldStop = null)
+            Type trueType = null, Action<Type, int> errorCallback = null, Func<bool> shouldStop = null, string enhancedResolutionError = null)
         {
             List<T> @object;
 
@@ -1349,7 +1352,10 @@ namespace PrtgAPI
                 {
                     if (retriesRemaining == 0)
                     {
-                        throw new ObjectResolutionException($"{resolutionError}: PRTG is taking too long to create the object. Confirm the object has been created in the Web UI and then attempt resolution again manually.");
+                        if (enhancedResolutionError != null)
+                            enhancedResolutionError = " " + enhancedResolutionError;
+
+                        throw new ObjectResolutionException($"{resolutionError}: PRTG is taking too long to create the object.{enhancedResolutionError} Confirm the object has been created in the Web UI and then attempt resolution again manually.");
                     }
 
                     var type = trueType ?? typeof (T);

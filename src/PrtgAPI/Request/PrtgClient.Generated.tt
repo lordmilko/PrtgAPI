@@ -717,7 +717,7 @@ for(int i = 0; i < 2; i++)
                 <#= DeclareTokenAction0("addObjectInternal", "AddObjectInternal", "parent, parameters", i) #>;
                 <#= DeclareTokenFuncFromVariable0("getObjs", "getObjects", "filters", "List<T>", i) #>;
 
-                return (<#= CallFunction("ResolveWithDiff", "addObjectInternal, getObjs, ResponseParser.ExceptTableObject, token, errorCallback, shouldStop, allowMultiple", i) #>).OrderBy(o => o.Id).ToList();
+                return (<#= CallFunction("ResolveWithDiff", "addObjectInternal, getObjs, ResponseParser.ExceptTableObject, token, errorCallback, shouldStop, allowMultiple, RequestParser.GetEnhancedResolutionError(parameters)", i) #>).OrderBy(o => o.Id).ToList();
             }
             else
             {
@@ -756,13 +756,13 @@ for(int i = 0; i < 2; i++)
             <#= CallFunction("RequestEngine.ExecuteRequest", "internalParams, token: token", i) #>;
 
         private <#= GetSignature("ResolveWithDiff", "List<T>", i) #><T>(<#= GetTokenActionParam0(i) #> createObject, Func<CancellationToken, <#= GetFuncRet("List<T>", i) #>> getObjects, Func<List<T>, List<T>, List<T>> exceptFunc,
-             CancellationToken token, Action<Type, int> errorCallback, Func<bool> shouldStop, bool allowMultiple = false)
+             CancellationToken token, Action<Type, int> errorCallback, Func<bool> shouldStop, bool allowMultiple = false, string enhancedResolutionError = null)
         {
             var before = <#= CallFunc("getObjects", "token", i) #>;
 
             <#= CallFunc("createObject", "token", i) #>;
 
-            var after = <#= CallFunction("ResolveObject", "getObjects, token, a => exceptFunc(before, a).Any(), errorCallback: errorCallback, shouldStop: shouldStop", i) #>;
+            var after = <#= CallFunction("ResolveObject", "getObjects, token, a => exceptFunc(before, a).Any(), errorCallback: errorCallback, shouldStop: shouldStop, enhancedResolutionError: enhancedResolutionError", i) #>;
 
             var newObjects = exceptFunc(before, after);
 
@@ -790,7 +790,7 @@ for(int i = 0; i < 2; i++)
         }
 
         internal <#= GetSignature("ResolveObject", "List<T>", i) #><T>(Func<CancellationToken, <#= GetFuncRet("List<T>", i) #>> getObjects, CancellationToken token, Func<List<T>, bool> recordsFound, string resolutionError = "Could not resolve object",
-            Type trueType = null, Action<Type, int> errorCallback = null, Func<bool> shouldStop = null)
+            Type trueType = null, Action<Type, int> errorCallback = null, Func<bool> shouldStop = null, string enhancedResolutionError = null)
         {
             List<T> @object;
 
@@ -805,7 +805,10 @@ for(int i = 0; i < 2; i++)
                 {
                     if (retriesRemaining == 0)
                     {
-                        throw new ObjectResolutionException($"{resolutionError}: PRTG is taking too long to create the object. Confirm the object has been created in the Web UI and then attempt resolution again manually.");
+                        if (enhancedResolutionError != null)
+                            enhancedResolutionError = " " + enhancedResolutionError;
+
+                        throw new ObjectResolutionException($"{resolutionError}: PRTG is taking too long to create the object.{enhancedResolutionError} Confirm the object has been created in the Web UI and then attempt resolution again manually.");
                     }
 
                     var type = trueType ?? typeof (T);

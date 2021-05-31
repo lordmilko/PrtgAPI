@@ -672,5 +672,15 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
 
             await AssertEx.ThrowsAsync<ObjectResolutionException>(async () => await client.AddGroupAsync(1001, "newDevice"), "Could not resolve object: PRTG is taking too long to create the object");
         }
+
+        [UnitTest]
+        [TestMethod]
+        public void AddObject_Throws_FailingToResolve_EnhancedError_Sensor()
+        {
+            var client = Initialize_Client(new MultiTypeResponse());
+
+            var parameters = new ExeXmlSensorParameters("test.ps1");
+            AssertEx.Throws<ObjectResolutionException>(() => client.AddSensor(1001, parameters), "DynamicType = true");
+        }
     }
 }

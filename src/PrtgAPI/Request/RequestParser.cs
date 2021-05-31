@@ -91,6 +91,22 @@ namespace PrtgAPI.Request
             return filters.ToArray();
         }
 
+        internal static string GetEnhancedResolutionError(NewObjectParameters parameters)
+        {
+            var sensorParameters = parameters as NewSensorParameters;
+
+            if (sensorParameters != null && !sensorParameters.DynamicType)
+            {
+                var sensorType = sensorParameters[Parameter.SensorType];
+
+                var str = sensorType is SensorType ? ((Enum) sensorType).EnumToXml() : sensorType?.ToString();
+
+                return $"If resulting sensor changes from type '{str}' to something else based on the parameters that were specified (a common occurrence with snmplibrary sensors) the sensor may have been successfully created, in which case specify '{nameof(NewSensorParameters.DynamicType)} = true' on future requests to avoid this error.";
+            }
+
+            return null;
+        }
+
         internal static List<KeyValuePair<Parameter, object>> ValidateObjectParameters(NewObjectParameters parameters)
         {
             var propertyCaches = parameters.GetType().GetNormalProperties().ToList();
