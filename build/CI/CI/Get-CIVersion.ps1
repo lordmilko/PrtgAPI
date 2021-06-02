@@ -2,23 +2,22 @@ function Get-CIVersion
 {
     [CmdletBinding()]
     param(
-        [Parameter(Mandatory = $true, Position = 0)]
-        $BuildFolder,
-
         [Parameter(Mandatory = $false)]
         [switch]$IsCore = $true
     )
 
     Get-CallerPreference $PSCmdlet $ExecutionContext.SessionState
 
-    $versionTable = Get-CIVersionInternal $BuildFolder $IsCore
+    $root = Get-SolutionRoot
+
+    $versionTable = Get-CIVersionInternal $root $IsCore
 
     Validate-VersionTable $versionTable
 
     return $versionTable
 }
 
-function Get-CIVersionInternal($BuildFolder, $IsCore)
+function Get-CIVersionInternal($buildFolder, $IsCore)
 {
     $package = $null
     $assembly = $null
@@ -26,7 +25,7 @@ function Get-CIVersionInternal($BuildFolder, $IsCore)
 
     if($IsCore)
     {
-        $versionPath = Join-Path $BuildFolder "build\Version.props"
+        $versionPath = Join-Path $buildFolder "build\Version.props"
 
         if(!(Test-Path $versionPath))
         {
@@ -38,10 +37,11 @@ function Get-CIVersionInternal($BuildFolder, $IsCore)
         $package = $versionProps.Version
         $assembly = $versionProps.AssemblyVersion
         $file = $versionProps.FileVersion
+        $info = $versionProps.InformationalVersion
     }
     else
     {
-        $versionPath = Join-Path $BuildFolder "src\PrtgAPI\Properties\Version.cs"
+        $versionPath = Join-Path $buildFolder "src\PrtgAPI\Properties\Version.cs"
 
         if(!(Test-Path $versionPath))
         {
@@ -50,8 +50,9 @@ function Get-CIVersionInternal($BuildFolder, $IsCore)
 
         $versionContents = gc $versionPath
 
-        $assembly = ($versionContents|sls AssemblyVersion) -replace "`n" -replace ".+AssemblyVersion\(`"(.+?)`"\).+",'$1'
-        $file = ($versionContents|sls AssemblyFileVersion) -replace "`n" -replace ".+AssemblyFileVersion\(`"(.+?)`"\).+",'$1'
+        $assembly = GetAssemblyAttribute $versionContents AssemblyVersion
+        $file = GetAssemblyAttribute $versionContents AssemblyFileVersion
+        $info = GetAssemblyAttribute $versionContents AssemblyInformationalVersion
         $package = ([Version]$file).ToString(3)
     }
 
@@ -71,6 +72,7 @@ function Get-CIVersionInternal($BuildFolder, $IsCore)
         Package = $package
         Assembly = $assembly
         File = $file
+        Info = $info
         Module = $moduleVersion
         ModuleTag = $releaseTag
     }
@@ -85,10 +87,29 @@ function Get-CIVersionInternal($BuildFolder, $IsCore)
     return $versionTable
 }
 
-function GetGitTag($BuildFolder)
+function GetAssemblyAttribute($contents, $name)
+{
+    $matches = @($contents|sls $name)
+
+    if ($matches.Count -eq 0)
+    {
+        throw "Could not find any matches for attribute '$name' in contents '$contents'"
+    }
+
+    if ($matches.Count -gt 1)
+    {
+        throw "Found $($matches.Count) matches for attribute '$name' in contents '$contents'"
+    }
+
+    $result = $matches -replace "`n" -replace ".+$name\(`"(.+?)`"\).+",'$1'
+
+    return $result
+}
+
+function GetGitTag($buildFolder)
 {
     # Defined in a separate function so we can mock calling git
-    return (git -C $BuildFolder describe --tags) -replace "(.+?)(-.+)",'$1'
+    return (git -C $buildFolder describe --tags) -replace "(.+?)(-.+)",'$1'
 }
 
 function Validate-VersionTable($versionTable)

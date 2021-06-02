@@ -167,7 +167,7 @@ function ReduceCandidates($candidates)
 
         if($PSEdition -ne $_.Edition)
         {
-            Write-Verbose "Eliminating candidate '$($_.TestProjectDll)' as candidate edition '$_.Edition' does not match required edition '$PSEdition'"
+            Write-Verbose "Eliminating candidate '$($_.TestProjectDll)' as candidate edition '$($_.Edition)' does not match required edition '$PSEdition'"
             return $false
         }
 
@@ -176,7 +176,14 @@ function ReduceCandidates($candidates)
 
     if(!$newCandidates)
     {
-        throw "Could not find any valid build candidates for PowerShell $($PSEdition)"
+        $extendedError = $null
+
+        if ($PSEdition -eq "Core")
+        {
+            $extendedError = " Note that PrtgAPI only builds test projects for .NET Core on Windows when building as Release."
+        }
+
+        throw "Could not find any valid build candidates for PowerShell $($PSEdition).$extendedError"
     }
 
     return $newCandidates

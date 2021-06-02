@@ -78,6 +78,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CI", "CI", "{BB80643E-F1C3-
 		build\CI\CI\Invoke-CITest.ps1 = build\CI\CI\Invoke-CITest.ps1
 		build\CI\CI\New-CSharpPackage.ps1 = build\CI\CI\New-CSharpPackage.ps1
 		build\CI\CI\New-PowerShellPackage.ps1 = build\CI\CI\New-PowerShellPackage.ps1
+		build\CI\CI\Set-CIVersion.ps1 = build\CI\CI\Set-CIVersion.ps1
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Helpers", "Helpers", "{AA803D07-FAA3-4BE2-8532-8CD804A7F51A}"

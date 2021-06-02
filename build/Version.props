@@ -6,5 +6,6 @@
     <Version>0.9.15</Version>
     <AssemblyVersion>0.9.0.0</AssemblyVersion>
     <FileVersion>0.9.15.0</FileVersion>
+    <InformationalVersion>0.9.15</InformationalVersion>
   </PropertyGroup>
 </Project>

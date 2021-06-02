@@ -41,9 +41,7 @@ function Get-PrtgVersion
         [switch]$Legacy
     )
 
-    $root = Get-SolutionRoot
-
     Get-CallerPreference $PSCmdlet $ExecutionContext.SessionState -DefaultErrorAction "Continue"
 
-    Get-CIVersion $root -IsCore:(-not $Legacy) -ErrorAction $ErrorActionPreference
+    Get-CIVersion -IsCore:(-not $Legacy) -ErrorAction $ErrorActionPreference
 }

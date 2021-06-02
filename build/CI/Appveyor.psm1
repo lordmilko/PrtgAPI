@@ -42,7 +42,7 @@ function GetVersion
         [switch]$IsCore
     )
 
-    return (Get-CIVersion $env:APPVEYOR_BUILD_FOLDER -IsCore:$IsCore).File.ToString(3)
+    return (Get-CIVersion -IsCore:$IsCore).File.ToString(3)
 }
 
 Export-ModuleMember Set-AppveyorBuildMode,Enable-AppveyorRDPAccess,Simulate-Environment,Get-DebugTargetFramework

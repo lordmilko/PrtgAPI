@@ -9,7 +9,7 @@ Describe "CI" {
     }
 
     It "gets the PrtgAPI version" {
-        $version = Get-CIVersion $PSScriptRoot\..\..\..\
+        $version = Get-CIVersion
 
         $version.File.ToString() -match "\d+\.\d+\.\d+" | Should Be $true
     }

@@ -5,6 +5,4 @@ function Invoke-AppveyorAfterBuild
         [Parameter(Position = 0)]
         [switch]$IsCore = $script:APPEYOR_BUILD_CORE
     )
-
-    Set-AppveyorVersion -IsCore:$IsCore
 }

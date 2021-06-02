@@ -14,6 +14,7 @@ function Mock-GetContent
 <Version>1.2.3</Version>
 <AssemblyVersion>1.2.0.0</AssemblyVersion>
 <FileVersion>1.2.3.4</FileVersion>
+<InformationalVersion>1.2.3</InformationalVersion>
 </PropertyGroup>
 </Project>
 "@
@@ -38,6 +39,7 @@ using System.Reflection;
 
 [assembly: AssemblyVersion("1.2.0.0")]
 [assembly: AssemblyFileVersion("1.2.3.4")]
+[assembly: AssemblyInformationalVersion("1.2.3")]
 "@
         }
 
@@ -104,6 +106,7 @@ Describe "Get-PrtgVersion" -Tag @("PowerShell", "Build") {
         $info.Package | Should Be "1.2.3"
         $info.Assembly | Should Be "1.2.0.0"
         $info.File | Should Be "1.2.3.4"
+        $info.Info | Should Be "1.2.3"
         $info.Module | Should Be "1.2.3"
         $info.ModuleTag | Should Be "v1.2.3"
         $info.PreviousTag | Should Be "v1.2.2"
@@ -149,6 +152,7 @@ Describe "Get-PrtgVersion" -Tag @("PowerShell", "Build") {
         $info.Package | Should Be "1.2.3"
         $info.Assembly | Should Be "1.2.0.0"
         $info.File | Should Be "1.2.3.4"
+        $info.Info | Should Be "1.2.3"
         $info.Module | Should Be "1.2.3"
         $info.ModuleTag | Should Be "v1.2.3"
         $info.PreviousTag | Should Be $null
@@ -175,6 +179,7 @@ Describe "Get-PrtgVersion" -Tag @("PowerShell", "Build") {
         $info.Package | Should Be "1.2.3"
         $info.Assembly | Should Be "1.2.0.0"
         $info.File | Should Be "1.2.3.4"
+        $info.Info | Should Be "1.2.3"
         $info.Module | Should Be "1.2.3"
         $info.ModuleTag | Should Be "v1.2.3"
         $info.PreviousTag | Should Be $null
@@ -186,6 +191,7 @@ Describe "Get-PrtgVersion" -Tag @("PowerShell", "Build") {
             return [PSCustomObject]@{
                 Package = "1.2.3"
                 File = "1.2.0.4"
+                Info = "1.2.3"
                 Assembly = 0
                 Module = 0
                 ModuleTag = 0
@@ -201,6 +207,7 @@ Describe "Get-PrtgVersion" -Tag @("PowerShell", "Build") {
                 Package = "1.2.3"
                 Assembly = "1.0.0.0"
                 File = "1.2.3.4"
+                Info = "1.2.3"
                 Module = 0
                 ModuleTag = 0
             }
@@ -215,6 +222,7 @@ Describe "Get-PrtgVersion" -Tag @("PowerShell", "Build") {
                 Package = "1.2.3"
                 Assembly = "1.2.0.0"
                 File = "1.2.3.4"
+                Info = "1.2.3"
                 Module = "1.2.0"
                 ModuleTag = 0
             }
@@ -229,6 +237,7 @@ Describe "Get-PrtgVersion" -Tag @("PowerShell", "Build") {
                 Package = "1.2.3"
                 Assembly = "1.2.0.0"
                 File = "1.2.3.4"
+                Info = "1.2.3"
                 Module = "1.2.3"
                 ModuleTag = "v1.2.0"
             }
@@ -243,6 +252,7 @@ Describe "Get-PrtgVersion" -Tag @("PowerShell", "Build") {
                 Package = "1.2.3"
                 Assembly = "1.2.0.0"
                 File = "1.2.3.4"
+                Info = "1.2.3"
                 Module = "1.2.3"
                 ModuleTag = "v1.2.3"
                 PreviousTag = "v4.5.6"
@@ -259,6 +269,7 @@ Describe "Get-PrtgVersion" -Tag @("PowerShell", "Build") {
                 Package = "1.2.3"
                 Assembly = "1.2.0.0"
                 File = "1.2.3.4"
+                Info = "1.2.3"
                 Module = "1.2.3"
                 ModuleTag = "v1.2.0"
             }

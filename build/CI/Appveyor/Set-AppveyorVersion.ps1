@@ -295,6 +295,8 @@ function Set-AppveyorVersion
         
         throw
     }
+
+    Set-CIVersion -IsCore:$IsCore -CIBuild $version
 }
 
 #endregion

@@ -13,9 +13,12 @@ function MockVersion
         $FileVersion = "1.2.3.4",
 
         [Parameter(Position = 3)]
-        $ModuleVersion = "1.2.3",
+        $InfoVersion = "1.2.3",
 
         [Parameter(Position = 4)]
+        $ModuleVersion = "1.2.3",
+
+        [Parameter(Position = 5)]
         $ReleaseNotes = "v1.2.3"
     )
 
@@ -31,6 +34,7 @@ function MockVersion
     <Version>$Version</Version>
     <AssemblyVersion>$AssemblyVersion</AssemblyVersion>
     <FileVersion>$FileVersion</FileVersion>
+    <InformationalVersion>$InfoVersion</InformationalVersion>
   </PropertyGroup>
 </Project>
 "@
@@ -46,6 +50,7 @@ using System.Reflection;
 
 [assembly: AssemblyVersion("$AssemblyVersion")]
 [assembly: AssemblyFileVersion("$FileVersion")]
+[assembly: AssemblyInformationalVersion("$InfoVersion")]
 
 "@
 
@@ -60,7 +65,7 @@ ModuleVersion = '$ModuleVersion'
 
     Mock "Get-SolutionRoot" {
         return $TestDrive
-    } -ModuleName PrtgAPI.Build
+    } -ModuleName CI
 }
 
 Describe "Set-PrtgVersion" -Tag @("PowerShell", "Build") {
@@ -73,6 +78,7 @@ Describe "Set-PrtgVersion" -Tag @("PowerShell", "Build") {
         $result.Package | Should Be "1.2.3 -> 4.5.6"
         $result.Assembly | Should Be "1.2.0.0 -> 4.5.0.0"
         $result.File | Should Be "1.2.3.4 -> 4.5.6.0"
+        $result.Info | Should Be "1.2.3 -> 4.5.6"
         $result.Module | Should Be "1.2.3 -> 4.5.6"
         $result.ModuleTag | Should Be "v1.2.3 -> v4.5.6"
     }
@@ -89,6 +95,7 @@ Describe "Set-PrtgVersion" -Tag @("PowerShell", "Build") {
         $result.Package | Should Be "1.2.3 -> 4.5.6"
         $result.Assembly | Should Be "1.2.0.0 -> 4.5.0.0"
         $result.File | Should Be "1.2.3.4 -> 4.5.6.0"
+        $result.Info | Should Be "1.2.3 -> 4.5.6"
         $result.Module | Should Be "1.2.3 -> 4.5.6"
         $result.ModuleTag | Should Be "v1.2.3 -> v4.5.6"
     }
@@ -101,19 +108,104 @@ Describe "Set-PrtgVersion" -Tag @("PowerShell", "Build") {
         $result.Package | Should Be "4.5.6"
         $result.Assembly | Should Be "1.2.0.0 -> 4.5.0.0"
         $result.File | Should Be "1.2.3.4 -> 4.5.6.0"
+        $result.Info | Should Be "1.2.3 -> 4.5.6"
         $result.Module | Should Be "1.2.3 -> 4.5.6"
         $result.ModuleTag | Should Be "v1.2.3 -> v4.5.6"
     }
     
     It "sets the same version as current" {
-        MockVersion
+        MockVersion -InfoVersion 1.2.3.4
 
         $result = Set-PrtgVersion 1.2.3.4
 
         $result.Package | Should Be "1.2.3"
         $result.Assembly | Should Be "1.2.0.0"
         $result.File | Should Be "1.2.3.4"
+        $result.Info | Should Be "1.2.3.4"
         $result.Module | Should Be "1.2.3"
         $result.ModuleTag | Should Be "v1.2.3"
+    }
+
+    Context "CI" {
+        It "doesn't add a build number when this is the first build" {
+
+            MockVersion
+
+            Set-CIVersion -CIBuild "1.2.4"
+
+            $result = Get-PrtgVersion
+
+            # In .NET Core, SourceLink sets the Info Version from the Package Version ("Version" XML attribute)
+            # Therefore, it is expected a. this won't match the default File Version we have here and b.
+            # that we didn't mess with the existing File Version
+            $result.File | Should Be "1.2.3.4"
+            $result.Info | Should Be "1.2.4"
+        }
+
+        It "adds a build number when this is the second build or later with Core" {
+
+            MockVersion
+
+            Set-CIVersion -CIBuild "1.2.4-build.1"
+
+            $result = Get-PrtgVersion
+
+            # Modify the existing File Version and Info Version
+            $result.File | Should Be "1.2.4.1"
+            $result.Info | Should Be "1.2.4.1"
+        }
+
+        It "sets the info version when this is a preview build with Core" {
+            
+            MockVersion
+
+            Set-CIVersion -CIBuild "1.2.4-preview.1"
+
+            $result = Get-PrtgVersion
+
+            $result.Package | Should Be "1.2.3"
+            $result.Assembly | Should Be "1.2.0.0"
+            $result.File | Should Be "1.2.3.4"
+            $result.Info | Should Be "1.2.4-preview.1"
+            $result.Module | Should Be "1.2.3"
+            $result.ModuleTag | Should Be "v1.2.3"
+        }
+
+        It "adds a build number when this is the second build or later with Desktop" {
+
+            MockVersion
+
+            Mock "Test-CIIsWindows" {
+                return $true
+            } -ModuleName "CI"
+
+            Set-CIVersion -CIBuild "1.2.4-build.1" -IsCore:$false
+
+            $result = Get-PrtgVersion -Legacy
+
+            # Modify the existing File Version and Info Version
+            $result.File | Should Be "1.2.4.1"
+            $result.Info | Should Be "1.2.4.1"
+        }
+
+        It "sets the info version when this is a preview build with Desktop" {
+            
+            MockVersion
+
+            Mock "Test-CIIsWindows" {
+                return $true
+            } -ModuleName "CI"
+
+            Set-CIVersion -CIBuild "1.2.4-preview.1" -IsCore:$false
+
+            $result = Get-PrtgVersion -Legacy
+
+            $result.Package | Should Be "1.2.3"
+            $result.Assembly | Should Be "1.2.0.0"
+            $result.File | Should Be "1.2.3.4"
+            $result.Info | Should Be "1.2.4-preview.1"
+            $result.Module | Should Be "1.2.3"
+            $result.ModuleTag | Should Be "v1.2.3"
+        }
     }
 }

@@ -36,7 +36,7 @@ Describe "Update-PrtgVersion" -Tag @("PowerShell", "Build") {
                 throw "Don't know how to handle request for index $global:getPrtgVersionIndex"
             }
 
-            Mock "SetPrtgVersionInternal" {
+            Mock "Set-CIVersion" {
                 param($Version)
 
                 $Version | Should Be "1.2.4.4"

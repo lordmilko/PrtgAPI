@@ -15,4 +15,6 @@ function Invoke-AppveyorBeforeBuild
     {
         Invoke-Process { nuget restore (Join-Path $env:APPVEYOR_BUILD_FOLDER "PrtgAPI.sln") }
     }
+
+    Set-AppveyorVersion -IsCore:$IsCore
 }

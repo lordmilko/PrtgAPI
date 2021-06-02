@@ -15,12 +15,12 @@ install:
       Invoke-AppveyorInstall
 before_build:
   # Restore NuGet packages
+  # Set Appveyor build from PrtgAPI version
   - ps: Invoke-AppveyorBeforeBuild
 build_script:
   # Build all target frameworks
   - ps: Invoke-AppveyorBuild
 after_build:
-  # Set Appveyor build from PrtgAPI version
   - ps: Invoke-AppveyorAfterBuild
 before_test:
   # Build NuGet packages

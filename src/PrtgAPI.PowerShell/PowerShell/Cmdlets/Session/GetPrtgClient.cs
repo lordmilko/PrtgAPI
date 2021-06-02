@@ -68,15 +68,12 @@ namespace PrtgAPI.PowerShell.Cmdlets
 
             var versionTable = (Hashtable) GetVariableValue("PSVersionTable");
 
-            var asmPath = typeof(PSCmdlet).Assembly.Location;
-            var version = FileVersionInfo.GetVersionInfo(asmPath).ProductVersion;
-
             var dict = new Dictionary<string, string>
             {
                 ["PSVersion"]      = versionTable["PSVersion"].ToString(),
                 ["PSEdition"]      = versionTable["PSEdition"].ToString(),
                 ["OS"]             = GetOS(versionTable),
-                ["PrtgAPIVersion"] = ValueOrUnknown(InvokeCommand.InvokeScript("(Get-Module PrtgAPI).Version")),
+                ["PrtgAPIVersion"] = GetPrtgAPIVersion(),
                 ["Culture"]        = CultureInfo.CurrentCulture.ToString(),
                 ["CLRVersion"]     = GetCLRVersion(),
 
@@ -105,6 +102,20 @@ namespace PrtgAPI.PowerShell.Cmdlets
             }
 
             return versionTable["OS"]?.ToString();
+        }
+
+        private string GetPrtgAPIVersion()
+        {
+            var asmPath = typeof(PrtgClient).Assembly.Location;
+            var version = FileVersionInfo.GetVersionInfo(asmPath).ProductVersion;
+
+            var versionPlus = version.IndexOf('+');
+
+            //Strip Git hash information off from SourceLink builds
+            if (versionPlus != -1)
+                version = version.Substring(0, versionPlus);
+
+            return version;
         }
 
         [ExcludeFromCodeCoverage]
