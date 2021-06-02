@@ -91,7 +91,7 @@ namespace PrtgAPI.Request
 
             foreach (var item in items)
             {
-                if (item.Element("type_raw").Value != "probenode")
+                if (item.Element("type_raw").Value != "probenode" && !(item.Element("type_raw").Value?.StartsWith("probenode[") == true))
                     toRemove.Add(item);
                 else
                     remainingItems++;
