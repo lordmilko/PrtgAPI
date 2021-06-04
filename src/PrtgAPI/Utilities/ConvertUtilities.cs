@@ -111,6 +111,17 @@ namespace PrtgAPI.Utilities
                 var rawStr = raw.Value.ToString("#,##0.####", CultureInfo.InvariantCulture);
                 var rawLastMarkIndex = rawStr.LastIndexOfAny(new[] {',', '.'});
 
+                if (rawLastMarkIndex == -1)
+                {
+                    //The raw value has no decimal, so we know that the punctuation mark in the
+                    //display value must be the decimal point! We also know that numA or numB has exactly
+                    //1 punctuation mark (since if there were two, we would have taken multiple mark fast path above)
+                    if (numA == 0)
+                        return ToDecimal(str, thousands: markA, @decimal: markB); //numB MUST have exactly 1 mark
+                    else
+                        return ToDecimal(str, thousands: markB, @decimal: markA); //numA MUST have exactly 1 mark
+                }
+
                 if (rawStr[rawLastMarkIndex] == '.')
                 {
                     //The raw value definitely has a decimal component on it

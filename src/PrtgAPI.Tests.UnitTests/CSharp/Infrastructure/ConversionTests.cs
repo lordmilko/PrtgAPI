@@ -243,6 +243,44 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
 
         [UnitTest]
         [TestMethod]
+        public void Convert_ToDouble_US_RawInteger_DecimalDisplay()
+        {
+            TestDouble("19.00001", 19, 19.00001);
+        }
+
+        [UnitTest]
+        [TestMethod]
+        public void Convert_ToDouble_US_RawInteger_DecimalDisplay_Thousands()
+        {
+            //Will take multiple marks "easy path"
+            TestDouble("1,019.00001", 1019, 1019.00001);
+        }
+
+        [UnitTest]
+        [TestMethod]
+        public void Convert_ToDouble_EU_RawInteger_DecimalDisplay()
+        {
+            TestDouble("19,00001", 19, 19.00001);
+        }
+
+        [UnitTest]
+        [TestMethod]
+        public void Convert_ToDouble_EU_RawInteger_DecimalDisplay_Thousands()
+        {
+            //Will take multiple marks "easy path"
+            TestDouble("1.019,00001", 1019, 1019.00001);
+        }
+
+        [UnitTest]
+        [TestMethod]
+        public void Convert_ToDouble_RawDecimal_IntegerDisplay()
+        {
+            //We're only interested in converting the _display value_, so if the raw value is different, who cares!
+            TestDouble("19", 19.00001, 19);
+        }
+
+        [UnitTest]
+        [TestMethod]
         public void Convert_AllCultures_NoMarks()
         {
             TestAllCultures(123);
