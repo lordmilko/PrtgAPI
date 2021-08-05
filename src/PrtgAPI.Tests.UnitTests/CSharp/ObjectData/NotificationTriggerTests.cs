@@ -490,6 +490,32 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             var triggers = client.GetNotificationTriggers(1001);
         }
 
+        [UnitTest]
+        [TestMethod]
+        public void NotificationTrigger_Parses_DoubleThreshold()
+        {
+            var threshold = 1.1;
+
+            var client = Initialize_Client(new NotificationTriggerResponse(NotificationTriggerItem.ThresholdTrigger(threshold: threshold.ToString())));
+
+            var trigger = client.GetNotificationTriggers(1001).Single();
+
+            Assert.AreEqual(threshold, trigger.Threshold);
+        }
+
+        [UnitTest]
+        [TestMethod]
+        public void NotificationTrigger_Parses_LongThreshold()
+        {
+            var threshold = 5000000000;
+
+            var client = Initialize_Client(new NotificationTriggerResponse(NotificationTriggerItem.ThresholdTrigger(threshold: threshold.ToString())));
+
+            var trigger = client.GetNotificationTriggers(1001).Single();
+
+            Assert.AreEqual(threshold, trigger.Threshold);
+        }
+
         private void ChangeTrigger_AllFields_HaveValues(string propertyName, object val)
         {
             switch (propertyName)
@@ -1108,6 +1134,32 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
             var trigger = client.GetNotificationTriggers(4000).Single();
 
             Assert.AreEqual("Percent Available Memory", trigger.channelObj.Name);
+        }
+
+        [UnitTest]
+        [TestMethod]
+        public void NotificationTrigger_Translates_LongThreshold()
+        {
+            var threshold = 5000000000;
+
+            var xml = NotificationTriggerItem.ThresholdTrigger(threshold: threshold.ToString());
+            var json = NotificationTriggerJsonItem.ThresholdTrigger(threshold: threshold.ToString());
+
+            var addresses = new[]
+            {
+                UnitRequest.Triggers(4000),
+                UnitRequest.RequestObjectData(810),
+                UnitRequest.TriggerTypes(1),
+                UnitRequest.Objects("filter_objid=4000"),
+                UnitRequest.Channels(4000),
+                UnitRequest.ChannelProperties(4000, 1)
+            };
+
+            var client = TranslationClient(xml, json, false, addresses);
+
+            var trigger = client.GetNotificationTriggers(4000).Single();
+
+            Assert.AreEqual(threshold, trigger.Threshold);
         }
 
         #region Multiple Languages, Single Client

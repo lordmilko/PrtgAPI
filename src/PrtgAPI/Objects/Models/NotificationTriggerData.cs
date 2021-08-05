@@ -104,7 +104,7 @@ namespace PrtgAPI
 
         [DataMember(Name = "threshold")]
         [PropertyParameter(TriggerProperty.Threshold)]
-        int? Threshold { get; set; }
+        double? Threshold { get; set; }
 
         [DataMember(Name = "threshold_input")]
         string ThresholdInput { get; set; }
