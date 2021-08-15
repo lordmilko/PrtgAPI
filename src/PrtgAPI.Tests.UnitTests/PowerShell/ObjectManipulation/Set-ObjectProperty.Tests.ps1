@@ -164,6 +164,152 @@ Describe "Set-ObjectProperty" -Tag @("PowerShell", "UnitTest") {
 
             $sensor | Set-ObjectProperty Location $value
         }
+
+        It "specifies a PrimaryChannel with a Channel value" {
+
+            SetMultiTypeResponse
+
+            $sensor = Get-Sensor -Count 1
+
+            $channel = $sensor | Get-Channel | select -First 1
+
+            SetAddressValidatorResponse @(
+                [Request]::Channels(4000)
+                [Request]::ChannelProperties(4000, 1)
+                [Request]::EditSettings("id=4000&primarychannel_=1%7CPercent+Available+Memory+(%25)%7C")
+            )
+
+            $sensor | Set-ObjectProperty PrimaryChannel $channel
+        }
+
+        It "specifies a PrimaryChannel with a string value" {
+
+            SetMultiTypeResponse
+
+            $sensor = Get-Sensor -Count 1
+
+            $response = SetAddressValidatorResponse @(
+                [Request]::Channels(4000)
+                [Request]::ChannelProperties(4000, 0)
+                [Request]::ChannelProperties(4000, 1)
+                [Request]::EditSettings("id=4000&primarychannel_=0%7CPercent+Available+Memory0+(%25)%7C")
+            )
+            
+            $response.CountOverride = GetCustomCountDictionary @{
+                Channels = 2
+            }
+
+            $sensor | Set-ObjectProperty PrimaryChannel *memory0*
+        }
+
+        It "specifies a PrimaryChannel with a string value with -Batch:`$false" {
+            SetMultiTypeResponse
+
+            $sensor = Get-Sensor -Count 1
+
+            $response = SetAddressValidatorResponse @(
+                [Request]::Channels(4000)
+                [Request]::ChannelProperties(4000, 0)
+                [Request]::ChannelProperties(4000, 1)
+                [Request]::EditSettings("id=4000&primarychannel_=0%7CPercent+Available+Memory0+(%25)%7C")
+            )
+            
+            $response.CountOverride = GetCustomCountDictionary @{
+                Channels = 2
+            }
+
+            $sensor | Set-ObjectProperty PrimaryChannel *memory0* -Batch:$false
+        }
+
+        It "specifies a PrimaryChannel with an ambiguous wildcard" {
+
+            SetMultiTypeResponse
+
+            $sensor = Get-Sensor -Count 1
+
+            $response = SetAddressValidatorResponse @(
+                [Request]::Channels(4000)
+                [Request]::ChannelProperties(4000, 0)
+                [Request]::ChannelProperties(4000, 1)
+            )
+            
+            $response.CountOverride = GetCustomCountDictionary @{
+                Channels = 2
+            }
+
+            { $sensor | Set-ObjectProperty PrimaryChannel *memory* } | Should Throw "Channel wildcard '*memory*' on parameter 'PrimaryChannel' is ambiguous between the channels: 'Percent Available Memory0', 'Percent Available Memory1'."
+        }
+
+        It "specifies a PrimaryChannel with a string that does not exist" {
+            
+            SetMultiTypeResponse
+
+            $sensor = Get-Sensor -Count 1
+
+            $response = SetAddressValidatorResponse @(
+                [Request]::Channels(4000)
+                [Request]::ChannelProperties(4000, 0)
+                [Request]::ChannelProperties(4000, 1)
+            )
+            
+            $response.CountOverride = GetCustomCountDictionary @{
+                Channels = 2
+            }
+
+            { $sensor | Set-ObjectProperty PrimaryChannel foo } | Should Throw "Channel wildcard 'foo' does not exist on sensor ID 4000. Specify one of the following channel names and try again: 'Percent Available Memory0', 'Percent Available Memory1'."
+        }
+
+        It "specifies a PrimaryChannel with a Channel that does not exist" {
+            SetMultiTypeResponse
+
+            $sensor = Get-Sensor -Count 1
+            $channel = $sensor | Get-Channel
+
+            $response = SetAddressValidatorResponse @(
+                [Request]::Channels(4000)
+                [Request]::ChannelProperties(4000, 0)
+                [Request]::ChannelProperties(4000, 1)
+            )
+            
+            $response.CountOverride = GetCustomCountDictionary @{
+                Channels = 2
+            }
+
+            { $sensor | Set-ObjectProperty PrimaryChannel $channel } | Should Throw "Channel wildcard 'Percent Available Memory' does not exist on sensor ID 4000. Specify one of the following channel names and try again: 'Percent Available Memory0', 'Percent Available Memory1'."
+        }
+
+        It "specifies a PrimaryChannel that has different channel IDs on different sensors" {
+            SetMultiTypeResponse
+
+            $sensors = Get-Sensor -Count 4
+
+            $response = SetAddressValidatorResponse @(
+                [Request]::Channels(4000)
+                [Request]::ChannelProperties(4000, 0)
+                [Request]::Channels(4001)
+                [Request]::ChannelProperties(4001, 1)
+                [Request]::Channels(4002)
+                [Request]::ChannelProperties(4002, 0)
+                [Request]::Channels(4003)
+                [Request]::ChannelProperties(4003, 1)
+                [Request]::EditSettings("id=4000,4002&primarychannel_=0%7CPercent+Available+Memory+(%25)%7C")
+                [Request]::EditSettings("id=4001,4003&primarychannel_=1%7CPercent+Available+Memory+(%25)%7C")
+
+            )
+
+            $response.ResponseTextManipulator = [Func[[string],[string],[string]]]{
+                param($text, $address)
+
+                if($address -eq [Request]::Channels(4000) -or $address -eq [Request]::Channels(4002))
+                {
+                    $text = $text -replace "<objid>1</objid>","<objid>0</objid>"
+                }
+
+                return $text
+            }
+
+            $sensors | Set-ObjectProperty PrimaryChannel *memory*
+        }
     }
 
     Context "Raw" {
@@ -326,6 +472,200 @@ Describe "Set-ObjectProperty" -Tag @("PowerShell", "UnitTest") {
             }
 
             $devices | Set-ObjectProperty @splat
+        }
+
+        It "specifies a -PrimaryChannel with a Channel value" {
+            SetMultiTypeResponse
+
+            $sensor = Get-Sensor -Count 1
+
+            $channel = $sensor | Get-Channel | select -First 1
+
+            SetAddressValidatorResponse @(
+                [Request]::Channels(4000)
+                [Request]::ChannelProperties(4000, 1)
+                [Request]::EditSettings("id=4000&primarychannel_=1%7CPercent+Available+Memory+(%25)%7C")
+            )
+
+            $sensor | Set-ObjectProperty -PrimaryChannel $channel
+        }
+
+        It "specifies a -PrimaryChannel with a string value" {
+            SetMultiTypeResponse
+
+            $sensor = Get-Sensor -Count 1
+
+            $response = SetAddressValidatorResponse @(
+                [Request]::Channels(4000)
+                [Request]::ChannelProperties(4000, 0)
+                [Request]::ChannelProperties(4000, 1)
+                [Request]::EditSettings("id=4000&primarychannel_=0%7CPercent+Available+Memory0+(%25)%7C")
+            )
+            
+            $response.CountOverride = GetCustomCountDictionary @{
+                Channels = 2
+            }
+
+            $sensor | Set-ObjectProperty -PrimaryChannel *memory0*
+        }
+
+        It "specifies a -PrimaryChannel with a string value with -Batch:`$false" {
+            SetMultiTypeResponse
+
+            $sensor = Get-Sensor -Count 1
+
+            $response = SetAddressValidatorResponse @(
+                [Request]::Channels(4000)
+                [Request]::ChannelProperties(4000, 0)
+                [Request]::ChannelProperties(4000, 1)
+                [Request]::EditSettings("id=4000&primarychannel_=0%7CPercent+Available+Memory0+(%25)%7C")
+            )
+            
+            $response.CountOverride = GetCustomCountDictionary @{
+                Channels = 2
+            }
+
+            $sensor | Set-ObjectProperty -PrimaryChannel *memory0* -Batch:$false
+        }
+
+        It "specifies a -PrimaryChannel with an ambiguous wildcard" {
+            SetMultiTypeResponse
+
+            $sensor = Get-Sensor -Count 1
+
+            $response = SetAddressValidatorResponse @(
+                [Request]::Channels(4000)
+                [Request]::ChannelProperties(4000, 0)
+                [Request]::ChannelProperties(4000, 1)
+            )
+            
+            $response.CountOverride = GetCustomCountDictionary @{
+                Channels = 2
+            }
+
+            { $sensor | Set-ObjectProperty -PrimaryChannel *memory* } | Should Throw "Channel wildcard '*memory*' on parameter 'PrimaryChannel' is ambiguous between the channels: 'Percent Available Memory0', 'Percent Available Memory1'."
+        }
+
+        It "specifies a -PrimaryChannel with a string that does not exist" {
+            SetMultiTypeResponse
+
+            $sensor = Get-Sensor -Count 1
+
+            $response = SetAddressValidatorResponse @(
+                [Request]::Channels(4000)
+                [Request]::ChannelProperties(4000, 0)
+                [Request]::ChannelProperties(4000, 1)
+            )
+            
+            $response.CountOverride = GetCustomCountDictionary @{
+                Channels = 2
+            }
+
+            { $sensor | Set-ObjectProperty -PrimaryChannel foo } | Should Throw "Channel wildcard 'foo' does not exist on sensor ID 4000. Specify one of the following channel names and try again: 'Percent Available Memory0', 'Percent Available Memory1'."
+        }
+
+        It "specifies a -PrimaryChannel with a Channel that does not exist" {
+            SetMultiTypeResponse
+
+            $sensor = Get-Sensor -Count 1
+            $channel = $sensor | Get-Channel
+
+            $response = SetAddressValidatorResponse @(
+                [Request]::Channels(4000)
+                [Request]::ChannelProperties(4000, 0)
+                [Request]::ChannelProperties(4000, 1)
+            )
+            
+            $response.CountOverride = GetCustomCountDictionary @{
+                Channels = 2
+            }
+
+            { $sensor | Set-ObjectProperty -PrimaryChannel $channel } | Should Throw "Channel wildcard 'Percent Available Memory' does not exist on sensor ID 4000. Specify one of the following channel names and try again: 'Percent Available Memory0', 'Percent Available Memory1'."
+        }
+
+        It "specifies a -PrimaryChannel and another property" {
+            SetMultiTypeResponse
+
+            $sensor = Get-Sensor -Count 1
+
+            $response = SetAddressValidatorResponse @(
+                [Request]::Channels(4000)
+                [Request]::ChannelProperties(4000, 0)
+                [Request]::ChannelProperties(4000, 1)
+                [Request]::EditSettings("id=4000&primarychannel_=0%7CPercent+Available+Memory0+(%25)%7C&interval_=600%7C10+minutes&intervalgroup=0")
+            )
+            
+            $response.CountOverride = GetCustomCountDictionary @{
+                Channels = 2
+            }
+
+            $sensor | Set-ObjectProperty -PrimaryChannel *memory0* -Interval 00:10:00
+        }
+
+        It "specifies a -PrimaryChannel that has different channel IDs on different sensors" {
+            SetMultiTypeResponse
+
+            $sensors = Get-Sensor -Count 4
+
+            $response = SetAddressValidatorResponse @(
+                [Request]::Channels(4000)
+                [Request]::ChannelProperties(4000, 0)
+                [Request]::Channels(4001)
+                [Request]::ChannelProperties(4001, 1)
+                [Request]::Channels(4002)
+                [Request]::ChannelProperties(4002, 0)
+                [Request]::Channels(4003)
+                [Request]::ChannelProperties(4003, 1)
+                [Request]::EditSettings("id=4000,4002&primarychannel_=0%7CPercent+Available+Memory+(%25)%7C")
+                [Request]::EditSettings("id=4001,4003&primarychannel_=1%7CPercent+Available+Memory+(%25)%7C")
+
+            )
+
+            $response.ResponseTextManipulator = [Func[[string],[string],[string]]]{
+                param($text, $address)
+
+                if($address -eq [Request]::Channels(4000) -or $address -eq [Request]::Channels(4002))
+                {
+                    $text = $text -replace "<objid>1</objid>","<objid>0</objid>"
+                }
+
+                return $text
+            }
+
+            $sensors | Set-ObjectProperty -PrimaryChannel *memory*
+        }
+
+        It "specifies a -PrimaryChannel that has different channel IDs on different sensors and another property" {
+            SetMultiTypeResponse
+
+            $sensors = Get-Sensor -Count 4
+
+            $response = SetAddressValidatorResponse @(
+                [Request]::Channels(4000)
+                [Request]::ChannelProperties(4000, 0)
+                [Request]::Channels(4001)
+                [Request]::ChannelProperties(4001, 1)
+                [Request]::Channels(4002)
+                [Request]::ChannelProperties(4002, 0)
+                [Request]::Channels(4003)
+                [Request]::ChannelProperties(4003, 1)
+                [Request]::EditSettings("id=4000,4002&primarychannel_=0%7CPercent+Available+Memory+(%25)%7C&interval_=600%7C10+minutes&intervalgroup=0")
+                [Request]::EditSettings("id=4001,4003&primarychannel_=1%7CPercent+Available+Memory+(%25)%7C&interval_=600%7C10+minutes&intervalgroup=0")
+
+            )
+
+            $response.ResponseTextManipulator = [Func[[string],[string],[string]]]{
+                param($text, $address)
+
+                if($address -eq [Request]::Channels(4000) -or $address -eq [Request]::Channels(4002))
+                {
+                    $text = $text -replace "<objid>1</objid>","<objid>0</objid>"
+                }
+
+                return $text
+            }
+
+            $sensors | Set-ObjectProperty -PrimaryChannel *memory* -Interval 00:10:00
         }
     }
 

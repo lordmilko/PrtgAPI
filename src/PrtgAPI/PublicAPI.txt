@@ -1504,6 +1504,7 @@ PrtgAPI.ObjectProperty.PingPacketSize -> Value
 PrtgAPI.ObjectProperty.PingRemotePacketSize -> Value
 PrtgAPI.ObjectProperty.PostContentType -> Value
 PrtgAPI.ObjectProperty.PostData -> Value
+PrtgAPI.ObjectProperty.PrimaryChannel -> Value
 PrtgAPI.ObjectProperty.Priority -> Value
 PrtgAPI.ObjectProperty.ProxyAddress -> Value
 PrtgAPI.ObjectProperty.ProxyPassword -> Value
@@ -3614,6 +3615,7 @@ PrtgAPI.SensorSettings PingPacketSize { get; set; } -> int?
 PrtgAPI.SensorSettings PingRemotePacketSize { get; set; } -> int?
 PrtgAPI.SensorSettings PostContentType { get; set; } -> string
 PrtgAPI.SensorSettings PostData { get; set; } -> string
+PrtgAPI.SensorSettings PrimaryChannel { get; } -> Channel
 PrtgAPI.SensorSettings Priority { get; set; } -> Priority?
 PrtgAPI.SensorSettings ProxyAddress { get; set; } -> string
 PrtgAPI.SensorSettings ProxyPort { get; set; } -> int?

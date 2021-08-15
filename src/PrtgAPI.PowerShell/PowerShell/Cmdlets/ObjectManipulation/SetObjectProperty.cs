@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using System.Management.Automation;
 using PrtgAPI.Attributes;
@@ -299,13 +300,21 @@ namespace PrtgAPI.PowerShell.Cmdlets
             var ids = GetSingleOperationId(Object, Id);
 
             if (IsNormalParameterSet)
-                ExecuteOperation(() => client.SetObjectProperty(ids, Property, Value), $"Setting object {BasicShouldProcessMessage} setting '{Property}' to {Value.ToQuotedList()}");
+            {
+                //There will be a single group with a single parameter
+                var parameter = GetMultiOperationGroups(ids, new PropertyParameter(Property, Value)).Single().Item2.Single();
+
+                ExecuteOperation(() => client.SetObjectProperty(ids, parameter), $"Setting object {BasicShouldProcessMessage} setting '{parameter.Property}' to {parameter.Value.ToQuotedList()}");
+            }
             else if (IsDynamicParameterSet)
             {
-                var strActions = dynamicParameters.Select(p => $"'{p.Property}' to {p.Value.ToQuotedList()}");
+                //There will be a single group with multiple parameters
+                var parameters = GetMultiOperationGroups(ids, dynamicParameters).Single().Item2;
+
+                var strActions = parameters.Select(p => $"'{p.Property}' to {p.Value.ToQuotedList()}");
                 var str = string.Join(", ", strActions);
 
-                ExecuteOperation(() => client.SetObjectProperty(ids, dynamicParameters), $"Setting object {BasicShouldProcessMessage} setting {str}");
+                ExecuteOperation(() => client.SetObjectProperty(ids, parameters), $"Setting object {BasicShouldProcessMessage} setting {str}");
             }
             else
             {
@@ -330,13 +339,32 @@ namespace PrtgAPI.PowerShell.Cmdlets
         protected override void PerformMultiOperation(int[] ids)
         {
             if (IsNormalParameterSet)
-                ExecuteMultiOperation(() => client.SetObjectProperty(ids, Property, Value), $"Setting {GetMultiTypeListSummary()} setting '{Property}' to {Value.ToQuotedList()}");
+            {
+                var groups = GetMultiOperationGroups(ids, new PropertyParameter(Property, Value));
+
+                ExecuteMultiOperation(
+                    () =>
+                    {
+                        foreach (var group in groups)
+                            client.SetObjectProperty(group.Item1, group.Item2);
+                    },
+                    $"Setting {GetMultiTypeListSummary()} setting '{Property}' to {groups.First().Item2.First().Value.ToQuotedList()}"
+                );
+            }
             else if (IsDynamicParameterSet)
             {
-                var strActions = dynamicParameters.Select(p => $"'{p.Property}' to {p.Value.ToQuotedList()}");
+                var groups = GetMultiOperationGroups(ids, dynamicParameters);
+                var strActions = groups.First().Item2.Select(p => $"'{p.Property}' to {p.Value.ToQuotedList()}");
                 var str = string.Join(", ", strActions);
 
-                ExecuteMultiOperation(() => client.SetObjectProperty(ids, dynamicParameters), $"Setting {GetMultiTypeListSummary()} setting {str}");
+                ExecuteMultiOperation(
+                    () =>
+                    {
+                        foreach (var group in groups)
+                            client.SetObjectProperty(group.Item1, group.Item2);
+                    },
+                    $"Setting {GetMultiTypeListSummary()} setting {str}"
+                );
             }
             else
             {
@@ -354,6 +382,78 @@ namespace PrtgAPI.PowerShell.Cmdlets
             }
         }
 
+        private Tuple<int[], PropertyParameter[]>[] GetMultiOperationGroups(int[] ids, params PropertyParameter[] parameters)
+        {
+            if (!parameters.Any(p => p.Property == ObjectProperty.PrimaryChannel))
+                return new[] { Tuple.Create(ids, parameters) };
+
+            var channels = new List<Channel>();
+
+            var groups = ids.Select(i => Tuple.Create(i, parameters.Select(p =>
+            {
+                if (p.Property == ObjectProperty.PrimaryChannel)
+                {
+                    var newValue = (Channel) ParseValueLate(i, p.Property, p.Value);
+
+                    channels.Add(newValue);
+
+                    return new PropertyParameter(p.Property, newValue);
+                }
+                else
+                    return p;
+            }).ToArray())).ToArray();
+
+            var channelNames = channels.GroupBy(c => c.Name).ToArray();
+
+            if (channelNames.Length > 1)
+                throw new NonTerminatingException($"Cannot set {nameof(ObjectProperty.PrimaryChannel)} on sensor IDs {string.Join(", ", ids)}: specified {nameof(ObjectProperty.PrimaryChannel)} value '{parameters.Single(p => p.Property == ObjectProperty.PrimaryChannel).Value}' matched different channels ({channelNames.ToQuotedList()}) across all of the sensors. Only one specific channel should be modified at a time.");
+
+            var trueGroups = groups.GroupBy(g =>
+            {
+                var channel = (Channel) g.Item2.Single(p => p.Property == ObjectProperty.PrimaryChannel).Value;
+
+                return channel.Id;
+            });
+
+            var result = trueGroups.Select(
+                g => Tuple.Create(
+                    g.Select(sg => sg.Item1).ToArray(), //Get the object IDs
+                    g.First().Item2                     //The first object's parameters will do
+                )
+            ).ToArray();
+
+            return result;
+        }
+
+        private object ParseValueLate(int objectId, ObjectProperty property, object value)
+        {
+            if (property == ObjectProperty.PrimaryChannel && value != null)
+            {
+                var channels = client.GetChannels(objectId);
+
+                var wildcard = new WildcardPattern(value.ToString(), WildcardOptions.IgnoreCase);
+                var matches = channels.Where(c => wildcard.IsMatch(c.Name)).ToArray();
+
+                if (matches.Length == 0)
+                {
+                    string str2 = null;
+
+                    if (channels.Count > 0)
+                        str2 = $"Specify one of the following channel names and try again: {channels.ToQuotedList()}";
+                    else
+                        str2 = "No channels currently exist on this sensor";
+
+                    throw new NonTerminatingException($"Channel wildcard '{value}' does not exist on sensor ID {objectId}. {str2}.");
+                }
+                else if (matches.Length > 1)
+                    throw new NonTerminatingException($"Channel wildcard '{value}' on parameter '{property}' is ambiguous between the channels: {matches.ToQuotedList()}.");
+
+                return matches.Single();
+            }
+
+            return value;
+        }
+
         /// <summary>
         /// Returns the current object that should be passed through this cmdlet.
         /// </summary>
@@ -368,8 +468,13 @@ namespace PrtgAPI.PowerShell.Cmdlets
             if (dynamicParams == null)
                 dynamicParams = new PropertyDynamicParameterSet<ObjectProperty>(
                     new[] {ParameterSet.Dynamic, ParameterSet.DynamicManual },
-                    e => ObjectPropertyParser.GetPropertyInfoViaTypeLookup(e).Property.PropertyType
-                );
+                    e =>
+                    {
+                        if (e == ObjectProperty.PrimaryChannel)
+                            return typeof(string);
+
+                        return ObjectPropertyParser.GetPropertyInfoViaTypeLookup(e).Property.PropertyType;
+                    });
 
             return dynamicParams.Parameters;
         }

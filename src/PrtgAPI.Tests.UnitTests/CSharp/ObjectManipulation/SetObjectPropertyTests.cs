@@ -120,6 +120,23 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             SetObjectProperty(ObjectProperty.Location, "23 Fleet Street, Boston", "23 Fleet St, Boston, MA 02113, USA");
         }
 
+        [UnitTest]
+        [TestMethod]
+        public void SetObjectProperty_CanSetChannels()
+        {
+            var channel = new Channel
+            {
+                Id = 1,
+                Name = "Total",
+                Unit = "%"
+            };
+
+            Execute(
+                c => c.SetObjectProperty(1001, ObjectProperty.PrimaryChannel, channel),
+                UnitRequest.EditSettings("id=1001&primarychannel_=1%7CTotal+(%25)%7C")
+            );
+        }
+
         #region Google Location
 
         [UnitTest]

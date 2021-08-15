@@ -820,6 +820,19 @@ namespace PrtgAPI
 
             var data = ResponseParser.GetObjectProperties<T>(response, ObjectEngine.XmlEngine, mandatoryProperty);
 
+            if (data is SensorSettings)
+            {
+                var sensor = (SensorSettings) (object) data;
+
+                if (sensor.primaryChannelStr != null)
+                {
+                    sensor.primaryChannel = new LazyValue<Channel>(
+                        sensor.primaryChannelStr,
+                        () => GetChannel(objectOrId.GetId(), PrtgObject.GetId(sensor.primaryChannelStr))
+                    );
+                }
+            }
+
             if (data is TableSettings)
             {
                 var table = (TableSettings) (object) data;
@@ -847,9 +860,21 @@ namespace PrtgAPI
 
             var data = ResponseParser.GetObjectProperties<T>(response, ObjectEngine.XmlEngine, mandatoryProperty);
 
+            if (data is SensorSettings)
+            {
+                var sensor = (SensorSettings) (object) data;
+
+                if (sensor.primaryChannelStr != null)
+                {
+                    var channel = await GetChannelAsync(objectOrId.GetId(), PrtgObject.GetId(sensor.primaryChannelStr), token).ConfigureAwait(false);
+
+                    sensor.primaryChannel = new LazyValue<Channel>(sensor.primaryChannelStr, () => channel);
+                }
+            }
+
             if (data is TableSettings)
             {
-                var table = (TableSettings)(object)data;
+                var table = (TableSettings) (object) data;
 
                 if (table.scheduleStr == null || PrtgObject.GetId(table.scheduleStr) == -1)
                     table.schedule = new LazyValue<Schedule>(table.scheduleStr, () => new Schedule(table.scheduleStr));

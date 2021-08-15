@@ -284,7 +284,7 @@
     <Compile Include="Support\TestResponses\Objects\ChannelResponse.cs" />
     <Compile Include="Support\TestResponses\CloneResponse.cs" />
     <Compile Include="Support\TestResponses\Objects\DeviceResponse.cs" />
-    <Compile Include="Support\TestResponses\DeviceSettingsResponse.cs" />
+    <Compile Include="Support\TestResponses\Objects\DeviceSettingsResponse.cs" />
     <Compile Include="Support\TestResponses\DiffBasedResolveResponse.cs" />
     <Compile Include="Support\TestResponses\ExceptionResponse.cs" />
     <Compile Include="Support\TestResponses\Objects\ObjectResponse.cs" />

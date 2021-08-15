@@ -77,5 +77,31 @@ namespace PrtgAPI.Tests.IntegrationTests.ObjectManipulation
                     client.SetObjectProperty(sensor, ObjectProperty.InheritInterval, false);
             }
         }
+
+        [TestMethod]
+        [IntegrationTest]
+        public void Action_SetObjectProperty_PrimaryChannel()
+        {
+            var sensor = client.GetSensor(Settings.WarningSensor);
+
+            var newChannel = client.GetChannel(sensor, "Processor 1");
+            var initialChannel = client.GetSensorProperties(sensor).PrimaryChannel;
+            Assert.IsNotNull(initialChannel, "Initial channel should not have been null");
+            Assert.AreNotEqual(initialChannel.Name, newChannel.Name, "Initial channel name matched");
+            Assert.AreNotEqual(initialChannel.Id, newChannel.Id, "Initial channel ID matched");
+
+            try
+            {
+                client.SetObjectProperty(sensor, ObjectProperty.PrimaryChannel, newChannel);
+                var updatedChannel = client.GetSensorProperties(sensor).PrimaryChannel;
+
+                Assert.AreEqual(newChannel.Name, updatedChannel.Name, "Updated channel name is incorrecet");
+                Assert.AreEqual(newChannel.Id, updatedChannel.Id, "Updated channel ID is incorrect");
+            }
+            finally
+            {
+                client.SetObjectProperty(sensor, ObjectProperty.PrimaryChannel, initialChannel);
+            }
+        }
     }
 }

@@ -108,7 +108,7 @@ namespace PrtgAPI.PowerShell
                 else
                     str2 = "No channels currently exist on this sensor";
 
-                throw new NonTerminatingException($"Channel '{str}' does not exist on sensor '{@object}' (ID: {@object.Value.Id}). {str2}.");
+                throw new NonTerminatingException($"Channel wildcard '{str}' does not exist on sensor '{@object}' (ID: {@object.Value.Id}). {str2}.");
             }
             if (matches.Length == 1)
                 parameter.Value = matches.Single();

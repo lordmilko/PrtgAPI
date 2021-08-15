@@ -12404,6 +12404,60 @@ Describe "Test-Progress" -Tag @("PowerShell", "UnitTest") {
         ))
     }
 
+    It "Table -> Action (Throw) -Batch:`$true Completes" {
+        # When an exception is thrown in the EndProcessing block it should complete
+        # We force ErrorActionPreference = 'Continue' so that we can clean up our progress after the
+        # ErrorRecord is written (which wouldn't happen if we were ErrorActionPreference = 'Stop')
+
+        Get-Sensor -Count 1 | Set-ObjectProperty PrimaryChannel *foo* -ErrorAction Continue
+
+        Validate(@(
+            (Gen "PRTG Sensor Search" "Retrieving all sensors")
+            (Gen "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (ID: 4000) (1/1)" 100)
+            (Gen "Modify PRTG Object Settings" "Queuing sensor 'Volume IO _Total0' (ID: 4000) (1/1)" 100)
+            (Gen "Modify PRTG Object Settings (Completed)" "Queuing sensor 'Volume IO _Total0' (ID: 4000) (1/1)")
+        ))
+    }
+
+    It "Variable -> Action (Throw) -Batch:`$true Completes" {
+        # When an exception is thrown in the EndProcessing block it should complete
+        # We force ErrorActionPreference = 'Continue' so that we can clean up our progress after the
+        # ErrorRecord is written (which wouldn't happen if we were ErrorActionPreference = 'Stop')
+
+        $sensors = Get-Sensor -Count 2
+
+        $sensors | Set-ObjectProperty PrimaryChannel *foo* -ErrorAction Continue
+
+        Validate(@(
+            (Gen "Modify PRTG Object Settings" "Queuing sensor 'Volume IO _Total0' (ID: 4000) (1/2)" 50)
+            (Gen "Modify PRTG Object Settings" "Queuing sensor 'Volume IO _Total1' (ID: 4001) (2/2)" 100)
+            (Gen "Modify PRTG Object Settings (Completed)" "Queuing sensor 'Volume IO _Total0' (ID: 4000) (1/2)")
+        ))
+    }
+
+    It "Table -> NonTerminatingException When ErrorActionPreference = 'Stop' Completes'" {
+        { Get-Sensor -Count 1 | Set-ObjectProperty PrimaryChannel *foo* } | Should Throw "Channel wildcard '*foo*' does not exist on sensor ID 4000"
+
+        Validate(@(
+            (Gen "PRTG Sensor Search" "Retrieving all sensors")
+            (Gen "PRTG Sensor Search" "Processing sensor 'Volume IO _Total0' (ID: 4000) (1/1)" 100)
+            (Gen "Modify PRTG Object Settings" "Queuing sensor 'Volume IO _Total0' (ID: 4000) (1/1)" 100)
+            (Gen "Modify PRTG Object Settings (Completed)" "Queuing sensor 'Volume IO _Total0' (ID: 4000) (1/1)")
+        ))
+    }
+
+    It "Variable -> NonTerminatingException When ErrorActionPreference = 'Stop' Completes'" {
+        $sensors = Get-Sensor -Count 2
+
+        { $sensors | Set-ObjectProperty PrimaryChannel *foo* } | Should Throw "Channel wildcard '*foo*' does not exist on sensor ID 4000"
+
+        Validate(@(
+            (Gen "Modify PRTG Object Settings" "Queuing sensor 'Volume IO _Total0' (ID: 4000) (1/2)" 50)
+            (Gen "Modify PRTG Object Settings" "Queuing sensor 'Volume IO _Total1' (ID: 4001) (2/2)" 100)
+            (Gen "Modify PRTG Object Settings (Completed)" "Queuing sensor 'Volume IO _Total0' (ID: 4000) (1/2)")
+        ))
+    }
+
         #endregion
         
     It "Selects a property" {

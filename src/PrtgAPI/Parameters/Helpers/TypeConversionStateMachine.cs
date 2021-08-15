@@ -108,6 +108,24 @@ namespace PrtgAPI.Parameters.Helpers
                 }
             }
 
+            if (Mode == SerializationMode.Serialize)
+            {
+                if (Property.Equals(ObjectProperty.PrimaryChannel))
+                {
+                    if (ValueType != typeof(Channel))
+                        throw GetInvalidTypeException(typeof(Channel));
+
+                    if (OriginalValue != null)
+                    {
+                        var channel = (Channel) OriginalValue;
+
+                        NewValue = $"{channel.Id}|{channel.Name} ({channel.Unit})|";
+                    }
+
+                    return ConversionState.ValueConversionWithNullCheck;
+                }
+            }
+
             return MoveNext();
         }
 

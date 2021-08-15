@@ -1036,7 +1036,14 @@ namespace PrtgAPI
         #endregion
         #region Sensor Display
 
-        //PrimaryChannel,
+        /// <summary>
+        /// The primary channel of the sensor.<para/>
+        /// Corresponds to Sensor Display -> Primary Channel
+        /// </summary>
+        [Description("primarychannel")]
+        [TypeLookup(typeof(SensorSettings))]
+        [Category(ObjectPropertyCategory.SensorDisplay)]
+        PrimaryChannel,
 
         /// <summary>
         /// Whether channels should be shown independently in graphs, or stacked on top of each other.<para/>
@@ -1287,7 +1294,7 @@ namespace PrtgAPI
         /// Any comments applied to the object.<para>
         /// Corresponds to Comments Tab -> Comments.</para>
         /// </summary>
-        [DescriptionAttribute("comments")]
+        [Description("comments")]
         [TypeLookup(typeof(SpecialPropertySettings))]
         [Category(ObjectPropertyCategory.Special)]
         Comments,

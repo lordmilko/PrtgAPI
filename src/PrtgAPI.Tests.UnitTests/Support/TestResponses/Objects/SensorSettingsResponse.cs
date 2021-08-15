@@ -339,7 +339,7 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
 
         private static string GetContainerTagContents(string body, string tag, string nameAttrib)
         {
-            var regex = new Regex($"(<{tag}.+?name=\\\"{nameAttrib}\\\".+?>)(.+?)(<\\/{tag}>)", RegexOptions.Singleline);
+            var regex = new Regex($"(<{tag}[^>]+?name=\\\"{nameAttrib}\\\".+?>)(.+?)(<\\/{tag}>)", RegexOptions.Singleline);
 
             var match = regex.Match(body);
 

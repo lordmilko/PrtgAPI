@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using PrtgAPI.Tests.UnitTests.Support;
 using PrtgAPI.Tests.UnitTests.Support.TestResponses;
 
 namespace PrtgAPI.Tests.UnitTests.ObjectData
@@ -42,8 +43,17 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         {
             var client = Initialize_Client(new MultiTypeResponse());
 
+            var validator = new EventValidator(client, new[]
+            {
+                UnitRequest.SensorProperties(1001),
+                UnitRequest.Schedules("filter_objid=627"),
+                UnitRequest.ScheduleProperties(623)
+            });
+
+            validator.MoveNext();
             var settings = client.GetSensorProperties(1001);
 
+            validator.MoveNext(2);
             var schedule = settings.Schedule;
 
             AssertEx.AllPropertiesAreNotDefault(schedule, p =>
@@ -61,7 +71,18 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         {
             var client = Initialize_Client(new MultiTypeResponse());
 
+            var validator = new EventValidator(client, new[]
+            {
+                UnitRequest.SensorProperties(1001),
+                UnitRequest.Channels(1001),
+                UnitRequest.ChannelProperties(1001, 1),
+                UnitRequest.Schedules("filter_objid=627"),
+                UnitRequest.ScheduleProperties(623)
+            });
+
+            validator.MoveNext(5);
             var settings = await client.GetSensorPropertiesAsync(1001);
+            Assert.IsTrue(validator.Finished);
 
             var schedule = settings.Schedule;
 
@@ -72,6 +93,96 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
 
                 return false;
             });
+        }
+
+        [UnitTest]
+        [TestMethod]
+        public void SensorSettings_LoadsChannel_Lazy()
+        {
+            var client = Initialize_Client(new MultiTypeResponse());
+
+            var validator = new EventValidator(client, new[]
+            {
+                UnitRequest.SensorProperties(1001),
+                UnitRequest.Channels(1001),
+                UnitRequest.ChannelProperties(1001, 1)
+            });
+
+            validator.MoveNext();
+            var settings = client.GetSensorProperties(1001);
+
+            validator.MoveNext(2);
+            var channel = settings.PrimaryChannel;
+
+            Assert.IsNotNull(channel);
+        }
+
+        [UnitTest]
+        [TestMethod]
+        public async Task SensorSettings_LoadsChannel_LazyAsync()
+        {
+            var client = Initialize_Client(new MultiTypeResponse());
+
+            var validator = new EventValidator(client, new[]
+            {
+                UnitRequest.SensorProperties(1001),
+                UnitRequest.Channels(1001),
+                UnitRequest.ChannelProperties(1001, 1),
+                UnitRequest.Schedules("filter_objid=627"),
+                UnitRequest.ScheduleProperties(623)
+            });
+
+            validator.MoveNext(5);
+            var settings = await client.GetSensorPropertiesAsync(1001);
+            Assert.IsTrue(validator.Finished);
+
+            var channel = settings.PrimaryChannel;
+
+            Assert.IsNotNull(channel);
+        }
+
+        [UnitTest]
+        [TestMethod]
+        public void SensorSettings_DoesntLoadChannel_WhenHasNoChannel_Lazy()
+        {
+            var response = new MultiTypeResponse
+            {
+                ResponseTextManipulator = (text, address) =>
+                {
+                    if (address == UnitRequest.SensorProperties(1001))
+                        text = SensorSettingsResponse.SetContainerTagContents(text, string.Empty, "select", "primarychannel_");
+
+                    return text;
+                }
+            };
+
+            var client = Initialize_Client(response);
+
+            var settings = client.GetSensorProperties(1001);
+
+            Assert.IsNull(settings.PrimaryChannel);
+        }
+
+        [UnitTest]
+        [TestMethod]
+        public async Task SensorSettings_DoesntLoadChannel_WhenHasNoChannel_LazyAsync()
+        {
+            var response = new MultiTypeResponse
+            {
+                ResponseTextManipulator = (text, address) =>
+                {
+                    if (address == UnitRequest.SensorProperties(1001))
+                        text = SensorSettingsResponse.SetContainerTagContents(text, string.Empty, "select", "primarychannel_");
+
+                    return text;
+                }
+            };
+
+            var client = Initialize_Client(response);
+
+            var settings = await client.GetSensorPropertiesAsync(1001);
+
+            Assert.IsNull(settings.PrimaryChannel);
         }
 
         [UnitTest]

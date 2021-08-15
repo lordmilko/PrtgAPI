@@ -416,7 +416,7 @@ Describe "Add-NotificationTrigger" -Tag @("PowerShell", "UnitTest") {
         It "throws when an invalid channel is specified for a sensor" {
             SetMultiTypeResponse
 
-            { $sensor | New-Trigger -Type Threshold -Channel "test" -Resolve:$false } | Should Throw "Channel 'test' does not exist on sensor 'Volume IO _Total' (ID: 2203). Specify one of the following channel names and try again: 'Percent Available Memory'"
+            { $sensor | New-Trigger -Type Threshold -Channel "test" -Resolve:$false } | Should Throw "Channel wildcard 'test' does not exist on sensor 'Volume IO _Total' (ID: 2203). Specify one of the following channel names and try again: 'Percent Available Memory'"
         }
 
         It "throws when an invalid channel is specified for a container" {
