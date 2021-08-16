@@ -156,26 +156,32 @@ namespace PrtgAPI.Parameters
         /// Retrieves the original value of a serialized array property from the underlying parameter set.
         /// </summary>
         /// <param name="property">The parameter to retrieve</param>
-        /// <param name="delim">The value that was used to combine the array when originally serialized via <see cref="SetCustomParameterArray(ObjectProperty, string[], char)"/> </param>
+        /// <param name="delim">The value that was used to combine the array when originally serialized via <see cref="SetCustomParameterArray(ObjectProperty, string[], char[])"/> </param>
         /// <returns>The original unserialized value.</returns>
-        protected string[] GetCustomParameterArray(ObjectProperty property, char delim) =>
+        protected string[] GetCustomParameterArray(ObjectProperty property, params char[] delim) =>
             GetCustomParameterArray(GetObjectPropertyName(property), delim);
 
         [ExcludeFromCodeCoverage]
-        internal string[] GetCustomParameterArray(ObjectPropertyInternal property, char delim) =>
+        internal string[] GetCustomParameterArray(ObjectPropertyInternal property, params char[] delim) =>
             GetCustomParameterArray(GetObjectPropertyName(property), delim);
 
         /// <summary>
         /// Retrieves the original value of a serialized array property from the underlying parameter set, using its raw serialized name.
         /// </summary>
         /// <param name="name">The raw name of the parameter</param>
-        /// <param name="delim">The value that was used to combine the array when originally serialized via <see cref="SetCustomParameterArray(string, string[], char)"/> </param>
+        /// <param name="delim">The value that was used to combine the array when originally serialized via <see cref="SetCustomParameterArray(string, string[], char[])"/> </param>
         /// <returns>The original unserialized value.</returns>
-        protected string[] GetCustomParameterArray(string name, char delim)
+        protected string[] GetCustomParameterArray(string name, params char[] delim)
         {
+            if (delim == null)
+                throw new ArgumentNullException(nameof(delim));
+
+            if (delim.Length == 0)
+                throw new ArgumentException("At least one element delimiter must be specified.", nameof(delim));
+
             var value = GetCustomParameterInternal(name);
 
-            var array = value?.ToString().Split(delim);
+            var array = value?.ToString().Split(delim, StringSplitOptions.RemoveEmptyEntries);
 
             return array;
         }
@@ -276,12 +282,12 @@ namespace PrtgAPI.Parameters
         /// </summary>
         /// <param name="property">The property whose value should be stored.</param>
         /// <param name="value">The array to serialize.</param>
-        /// <param name="delim">The character that should delimit each array entry.</param>
-        protected void SetCustomParameterArray(ObjectProperty property, string[] value, char delim) =>
+        /// <param name="delim">The character(s) that should delimit each array entry.</param>
+        protected void SetCustomParameterArray(ObjectProperty property, string[] value, params char[] delim) =>
             SetCustomParameterArray(SetDependenciesAndGetPropertyName(property), value, delim);
 
         [ExcludeFromCodeCoverage]
-        internal void SetCustomParameterArray(ObjectPropertyInternal property, string[] value, char delim) =>
+        internal void SetCustomParameterArray(ObjectPropertyInternal property, string[] value, params char[] delim) =>
             SetCustomParameterArray(SetDependenciesAndGetPropertyName(property), value, delim);
 
         /// <summary>
@@ -289,10 +295,16 @@ namespace PrtgAPI.Parameters
         /// </summary>
         /// <param name="name">The raw name of the parameter.</param>
         /// <param name="value">The array to serialize.</param>
-        /// <param name="delim">The character that should delimit each array entry.</param>
-        protected void SetCustomParameterArray(string name, string[] value, char delim)
+        /// <param name="delim">The character(s) that should delimit each array entry.</param>
+        protected void SetCustomParameterArray(string name, string[] value, params char[] delim)
         {
-            var str = value != null ? string.Join(delim.ToString(), value) : null;
+            if (delim == null)
+                throw new ArgumentNullException(nameof(delim));
+
+            if (delim.Length == 0)
+                throw new ArgumentException("At least one element delimiter must be specified.", nameof(delim));
+
+            var str = value != null ? string.Join(new string(delim), value) : null;
 
             SetCustomParameterInternal(name, str);
         }

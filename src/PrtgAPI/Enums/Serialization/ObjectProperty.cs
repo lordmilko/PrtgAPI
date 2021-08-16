@@ -1,4 +1,5 @@
 ﻿using PrtgAPI.Attributes;
+using PrtgAPI.Request.Serialization.ValueConverters;
 using PrtgAPI.Targets;
 using DescriptionAttribute = System.ComponentModel.DescriptionAttribute;
 
@@ -1137,6 +1138,7 @@ namespace PrtgAPI
         /// Corresponds to Sensor Factory Specific Settings -> Channel Definition
         /// </summary>
         [TypeLookup(typeof(SensorSettings))]
+        [ValueConverter(typeof(ChannelDefinitionConverter))]
         [Category(ObjectPropertyCategory.SensorFactorySpecific)]
         ChannelDefinition,
 

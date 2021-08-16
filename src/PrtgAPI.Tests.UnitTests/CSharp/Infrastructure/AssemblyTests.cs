@@ -215,7 +215,8 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
                 "Appveyor.Tests.ps1",
                 "Start-PrtgAPI.ps1",
                 "MethodXmlDocBuilder.cs",
-                "New-PowerShellPackage.ps1"
+                "New-PowerShellPackage.ps1",
+                "ChannelDefinitionConverter.cs"
             };
 
             var exprs = new[]

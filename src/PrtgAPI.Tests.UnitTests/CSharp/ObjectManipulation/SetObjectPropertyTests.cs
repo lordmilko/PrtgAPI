@@ -630,7 +630,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         public async Task Location_Label_NewLineCarriageReturn_AddressAsync()
         {
             await ExecuteAsync(
-                async c => await c.SetObjectPropertyAsync(1001, ObjectProperty.Location, "Headquarters\n23 Fleet Street"),
+                async c => await c.SetObjectPropertyAsync(1001, ObjectProperty.Location, "Headquarters\r\n23 Fleet Street"),
                 new[]
                 {
                     UnitRequest.Status(),
@@ -789,6 +789,49 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         #endregion
+        #region ChannelDefinition
+
+        [UnitTest]
+        [TestMethod]
+        public void SetObjectProperty_ChannelDefinition_Array()
+        {
+            Execute(
+                c => c.SetObjectProperty(1001, ObjectProperty.ChannelDefinition, new[] {"#1:Test", "channel(1001,0)"}),
+                UnitRequest.EditSettings("id=1001&aggregationchannel_=%231%3ATest%0D%0Achannel(1001%2C0)")
+            );
+        }
+
+        [UnitTest]
+        [TestMethod]
+        public void SetObjectProperty_ChannelDefinition_String_NewLine()
+        {
+            Execute(
+                c => c.SetObjectProperty(1001, ObjectProperty.ChannelDefinition, "#1:Test\nchannel(1001,0)"),
+                UnitRequest.EditSettings("id=1001&aggregationchannel_=%231%3ATest%0D%0Achannel(1001%2C0)")
+            );
+        }
+
+        [UnitTest]
+        [TestMethod]
+        public void SetObjectProperty_ChannelDefinition_CarriageReturn()
+        {
+            Execute(
+                c => c.SetObjectProperty(1001, ObjectProperty.ChannelDefinition, "#1:Test\rchannel(1001,0)"),
+                UnitRequest.EditSettings("id=1001&aggregationchannel_=%231%3ATest%0D%0Achannel(1001%2C0)")
+            );
+        }
+
+        [UnitTest]
+        [TestMethod]
+        public void SetObjectProperty_ChannelDefinition_NewLineCarriageReturn()
+        {
+            Execute(
+                c => c.SetObjectProperty(1001, ObjectProperty.ChannelDefinition, "#1:Test\r\nchannel(1001,0)"),
+                UnitRequest.EditSettings("id=1001&aggregationchannel_=%231%3ATest%0D%0Achannel(1001%2C0)")
+            );
+        }
+
+        #endregion
 
         private PrtgClient GetLocationClient(RequestVersion version)
         {
@@ -847,7 +890,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
                 "channel(2001,1)"
             };
 
-            SetObjectProperty(ObjectProperty.ChannelDefinition, channels, string.Join("\n", channels));
+            //Splittable string is \n, but then ChannelDefinitionConverter changes it to \r\n
+            SetObjectProperty(ObjectProperty.ChannelDefinition, channels, string.Join("\r\n", channels));
         }
 
         private void SetObjectProperty(ObjectProperty property, object value, string expectedSerializedValue = null)
