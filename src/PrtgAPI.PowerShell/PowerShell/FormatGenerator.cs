@@ -147,6 +147,8 @@ namespace PrtgAPI.PowerShell
 
         internal int Impurity { get; set; }
 
+        internal bool XmlGenerated { get; set; }
+
         public TypeNameRecord(int index, int impurity)
         {
             Index = index;

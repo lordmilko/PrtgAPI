@@ -2,6 +2,7 @@
 using System.Text;
 using System.Xml.Linq;
 using PrtgAPI.Tests.UnitTests.Support.TestItems;
+using PrtgAPI.Utilities;
 
 namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
 {
@@ -54,6 +55,8 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
 
     public class SensorHistoryResponse : BaseResponse<SensorHistoryItem>
     {
+        public ChannelItem[] Channels { get; set; }
+
         public SensorHistoryResponse(params SensorHistoryItem[] history) : base ("histdata", history)
         {
         }
@@ -76,6 +79,16 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
             );
 
             return xml;
+        }
+
+        public override string GetResponseText(ref string address)
+        {
+            if (address.Contains(XmlFunction.TableData.GetDescription()) || address.Contains(HtmlFunction.ChannelEdit.GetDescription()))
+            {
+                return new ChannelResponse(Channels ?? new ChannelItem[0]).GetResponseText(ref address);
+            }
+
+            return base.GetResponseText(ref address);
         }
     }
 }

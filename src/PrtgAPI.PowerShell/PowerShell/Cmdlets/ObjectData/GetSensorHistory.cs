@@ -188,6 +188,10 @@ namespace PrtgAPI.PowerShell.Cmdlets
         {
             IEnumerable<PSObject> records;
 
+            //Get the channels in case a Scaling Division was specified on the Channel properties; if so, ConvertUtilities.ToDynamicDouble will explode
+            //without taking this into consideration
+            List<Channel> channels = Raw ? null : client.GetChannels(Id);
+
             var average = Average;
 
             if (average == null)
@@ -216,17 +220,17 @@ namespace PrtgAPI.PowerShell.Cmdlets
             if (EndDate != null)
             {
                 StreamProvider.ForceStream = true;
-                records = StreamProvider.StreamResultsWithProgress(parameters, Count, () => GetFormattedRecords(parameters));
+                records = StreamProvider.StreamResultsWithProgress(parameters, Count, () => GetFormattedRecords(parameters, channels));
 
                 if (Count != null)
                     records = records.Take(Count.Value);
             }
             else if (ProgressManager.GetRecordsWithVariableProgress)
-                records = GetResultsWithVariableProgress(() => GetFormattedRecords(parameters));
+                records = GetResultsWithVariableProgress(() => GetFormattedRecords(parameters, channels));
             else if (ProgressManager.GetResultsWithProgress)
-                records = GetResultsWithProgress(() => GetFormattedRecords(parameters));
+                records = GetResultsWithProgress(() => GetFormattedRecords(parameters, channels));
             else
-                records = GetFormattedRecords(parameters);
+                records = GetFormattedRecords(parameters, channels);
 
             WriteList(records);
         }
@@ -257,7 +261,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
             parameters.EndDate = requiredEnd;
         }
 
-        private IEnumerable<PSObject> GetFormattedRecords(SensorHistoryParameters parameters)
+        private IEnumerable<PSObject> GetFormattedRecords(SensorHistoryParameters parameters, List<Channel> channels)
         {
             IEnumerable<SensorHistoryRecord> records;
 
@@ -268,7 +272,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
                 records = StreamProvider.StreamRecords<SensorHistoryRecord>(parameters, null);
             }
 
-            var formatter = new SensorHistoryFormatter(this);
+            var formatter = new SensorHistoryFormatter(this, channels);
 
             return formatter.Format(records, EndDate != null, Count);
         }

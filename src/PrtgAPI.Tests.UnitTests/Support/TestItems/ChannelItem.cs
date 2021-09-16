@@ -29,6 +29,8 @@
         public string ObjIdRaw { get; set; }
         public string Name { get; set; }
         public string Type { get; set; }
+        public string ScalingMultiplication { get; set; }
+        public string ScalingDivision { get; set; }
 
         public ChannelItem(string lastValue = "26 %", string lastValueRaw = "0000000000000260.0000",
             string objId = "1",

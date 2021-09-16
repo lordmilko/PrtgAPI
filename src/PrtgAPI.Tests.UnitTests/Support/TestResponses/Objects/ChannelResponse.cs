@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Text;
 using System.Xml.Linq;
 using PrtgAPI.Utilities;
@@ -11,6 +12,8 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
         string GetSettingsResponseText(int channelId)
         {
             var builder = new StringBuilder();
+
+            var match = Items.FirstOrDefault(i => i.ObjId == channelId.ToString());
 
             builder.Append("\n");
             builder.Append("<div>\n");
@@ -37,11 +40,11 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
             builder.Append("\n");
             builder.Append($"<label class=\"control-label has_help \" for=\"factorm_{channelId}\">Scaling Multiplication</label>\n");
             builder.Append("<div class=\"controls \" data-placement=\"right\" data-helptext=\"Enter a number that multiplies the raw values of this channel.\">\n");
-            builder.Append($"<input class=\"text\"  type=\"text\" name=\"factorm_{channelId}\" id=\"factorm_{channelId}\" autocomplete=\"off\" value=\"1\" ></div>\n");
+            builder.Append($"<input class=\"text\"  type=\"text\" name=\"factorm_{channelId}\" id=\"factorm_{channelId}\" autocomplete=\"off\" value=\"{match?.ScalingMultiplication ?? "1"}\" ></div>\n");
             builder.Append("\n");
             builder.Append($"<label class=\"control-label has_help \" for=\"factord_{channelId}\">Scaling Division</label>\n");
             builder.Append("<div class=\"controls \" data-placement=\"right\" data-helptext=\"Enter a number that divides the raw values of this channel.\">\n");
-            builder.Append($"<input class=\"text\"  type=\"text\" name=\"factord_{channelId}\" id=\"factord_{channelId}\" autocomplete=\"off\" value=\"1\" ></div>\n");
+            builder.Append($"<input class=\"text\"  type=\"text\" name=\"factord_{channelId}\" id=\"factord_{channelId}\" autocomplete=\"off\" value=\"{match?.ScalingDivision ?? "1"}\" ></div>\n");
             builder.Append("\n");
             builder.Append($"<label class=\"control-label has_help \" for=\"valuelookup_{channelId}\">Value Lookup</label>\n");
             builder.Append("<div class=\"controls \" data-placement=\"right\" data-helptext=\"Select the lookup file that you want to use for the values of this channel.<br><br><b>Note:</b> Do not use this option for channels of sensors that provide the unit <b>Value Lookup</b> in the sensor settings!\">\n");

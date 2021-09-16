@@ -132,7 +132,8 @@ function GetCustomContentDictionary($hashtable, $valueType)
 
 #region Custom Responses
 
-function WithResponse($responseName, $scriptBlock) {
+function WithResponse($responseName, $scriptBlock)
+{
 
     $client = Get-PrtgClient
 
@@ -156,6 +157,20 @@ function WithResponseArgs($responseName, $arguments, $scriptBlock) {
     {
         SetResponseAndClientWithArguments $responseName $arguments | Out-Null
 
+        & $scriptBlock
+    }
+    finally
+    {
+        SetPrtgClient $client
+    }
+}
+
+function WithCustomResponse($scriptBlock)
+{
+    $client = Get-PrtgClient
+
+    try
+    {
         & $scriptBlock
     }
     finally
