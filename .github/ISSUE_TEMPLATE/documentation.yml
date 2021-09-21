@@ -1,0 +1,26 @@
+name: "Documentation \U0001F4DA"
+description: Your epic documentation contains an epic issue!
+labels: [proposed-documentation]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Man, PrtgAPI has some [great documentation](https://github.com/lordmilko/PrtgAPI/wiki)
+
+        Or does it!
+
+  - type: textarea
+    id: info
+    attributes:
+      label: The following information is wrong/spurious/misleading/missing. Fix it immediately!
+      placeholder: On the page about Quantum Widgets...
+    validations:
+      required: true
+
+  - type: textarea
+    id: pages
+    attributes:
+      label: Link to the page/s containing/MISSING! this information
+      placeholder: Links go here
+    validations:
+      required: true

@@ -1,0 +1,31 @@
+name: "Feature request/Idea \U0001F680"
+description: "Help improve PrtgAPI! ❤️"
+labels: [proposed-enhancement]
+body:
+  - type: textarea
+    id: requested-feature
+    attributes:
+      label: What are you trying to do, and to what extent does PrtgAPI provide existing functionality around this?
+      placeholder: Well, you see...
+    validations:
+      required: true
+
+  - type: textarea
+    id: prtg-parallel
+    attributes:
+      label: Is this something that has some sort of parallel in the PRTG UI? If so where do you go/how do you normally do it?
+      placeholder: In the PRTG UI, if you go to...
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: due-dilligance
+    attributes:
+      label: Due Dilligance
+      description: Please ensure you have considered the following prior to submitting your request
+      options:
+        - label: I've read the [wiki](https://github.com/lordmilko/PrtgAPI/wiki) and am sure this feature doesn't already exist
+          required: true
+
+        - label: This is a general feature that belongs in PrtgAPI and isn't highly specific to my scenario
+          required: true
