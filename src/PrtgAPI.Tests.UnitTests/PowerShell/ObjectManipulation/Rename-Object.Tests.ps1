@@ -32,7 +32,7 @@ Describe "Rename-Object" -Tag @("PowerShell", "UnitTest") {
         $sensors = Get-Sensor -Count 2
 
         SetAddressValidatorResponse @(
-            [Request]::EditSettings("id=4000,4001&name_=newName")
+            [Request]::EditSettings("id=4000,4001&name_=newName&nosession=1")
         )
 
         $sensors | Rename-Object newName -Batch:$true

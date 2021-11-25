@@ -34,6 +34,7 @@ namespace PrtgAPI.Parameters
 
             CustomParameters = new List<CustomParameter>();
             parser = new ObjectPropertyParser(this, this, GetParameterName);
+            this[Parameter.NoSession] = true;
         }
 
         protected void AddTypeSafeValue(Enum property, object value, bool disableDependentsOnNotReqiuiredValue)

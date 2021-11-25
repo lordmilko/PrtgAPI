@@ -48,6 +48,7 @@ Describe "Add-NotificationTrigger" -Tag @("PowerShell", "UnitTest") {
                     "esclatency_new=300"
                     "repeatival_new=0"
                     "objecttype=nodetrigger"
+                    "nosession=1"
                 ) -join "&")
             )
 
@@ -68,6 +69,7 @@ Describe "Add-NotificationTrigger" -Tag @("PowerShell", "UnitTest") {
                     "period_new=0"
                     "threshold_new=0"
                     "objecttype=nodetrigger"
+                    "nosession=1"
                 ) -join "&")
             )
 
@@ -95,6 +97,7 @@ Describe "Add-NotificationTrigger" -Tag @("PowerShell", "UnitTest") {
                     "threshold_new=0"
                     "latency_new=60"
                     "objecttype=nodetrigger"
+                    "nosession=1"
                 ) -join "&")
             )
 
@@ -120,6 +123,7 @@ Describe "Add-NotificationTrigger" -Tag @("PowerShell", "UnitTest") {
                     "threshold_new=0"
                     "latency_new=60"
                     "objecttype=nodetrigger"
+                    "nosession=1"
                 ) -join "&")
             )
 
@@ -139,6 +143,7 @@ Describe "Add-NotificationTrigger" -Tag @("PowerShell", "UnitTest") {
                     "onnotificationid_new=-1%7CNone"
                     "class=change"
                     "objecttype=nodetrigger"
+                    "nosession=1"
                 ) -join "&")
             )
 
@@ -165,6 +170,7 @@ Describe "Add-NotificationTrigger" -Tag @("PowerShell", "UnitTest") {
                     "threshold_new=0"
                     "latency_new=60"
                     "objecttype=nodetrigger"
+                    "nosession=1"
                 ) -join "&")
             )
 
@@ -190,6 +196,7 @@ Describe "Add-NotificationTrigger" -Tag @("PowerShell", "UnitTest") {
                     "threshold_new=0"
                     "latency_new=60"
                     "objecttype=nodetrigger"
+                    "nosession=1"
                 ) -join "&")
             )
 
@@ -217,6 +224,7 @@ Describe "Add-NotificationTrigger" -Tag @("PowerShell", "UnitTest") {
                     "threshold_new=0"
                     "latency_new=60"
                     "objecttype=nodetrigger"
+                    "nosession=1"
                 ) -join "&")
             )
 
@@ -246,6 +254,7 @@ Describe "Add-NotificationTrigger" -Tag @("PowerShell", "UnitTest") {
                     "threshold_new=0"
                     "latency_new=60"
                     "objecttype=nodetrigger"
+                    "nosession=1"
                 ) -join "&")
             )
 
@@ -279,6 +288,7 @@ Describe "Add-NotificationTrigger" -Tag @("PowerShell", "UnitTest") {
                     "threshold_new=0"
                     "latency_new=60"
                     "objecttype=nodetrigger"
+                    "nosession=1"
                 ) -join "&")
             )
 
@@ -308,6 +318,7 @@ Describe "Add-NotificationTrigger" -Tag @("PowerShell", "UnitTest") {
                     "esclatency_new=300"
                     "repeatival_new=0"
                     "objecttype=nodetrigger"
+                    "nosession=1"
                 ) -join "&")
             )
 
@@ -338,6 +349,7 @@ Describe "Add-NotificationTrigger" -Tag @("PowerShell", "UnitTest") {
                     "esclatency_new=300"
                     "repeatival_new=0"
                     "objecttype=nodetrigger"
+                    "nosession=1"
                 ) -join "&")
             )
 
@@ -359,6 +371,7 @@ Describe "Add-NotificationTrigger" -Tag @("PowerShell", "UnitTest") {
                     "esclatency_new=300"
                     "repeatival_new=0"
                     "objecttype=nodetrigger"
+                    "nosession=1"
                 ) -join "&")
             )
 
@@ -387,6 +400,7 @@ Describe "Add-NotificationTrigger" -Tag @("PowerShell", "UnitTest") {
                     "esclatency_new=300"
                     "repeatival_new=0"
                     "objecttype=nodetrigger"
+                    "nosession=1"
                 ) -join "&")
             )
 

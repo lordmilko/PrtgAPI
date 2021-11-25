@@ -301,6 +301,14 @@ namespace PrtgAPI
         [Undocumented]
         [ParameterType(ParameterType.SingleValue)]
         [Description("showhide")]
-        ShowHide
+        ShowHide,
+
+        /// <summary>
+        /// Whether PRTG should avoid creating a session as a result of the API call.
+        /// </summary>
+        [Undocumented]
+        [ParameterType(ParameterType.SingleValue)]
+        [Description("nosession")]
+        NoSession //Theoretically this can be used with any API call that is listed as Undocumented (does not target /api/)
     }
 }

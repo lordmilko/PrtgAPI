@@ -1626,6 +1626,7 @@ PrtgAPI.Parameter.Id -> Value
 PrtgAPI.Parameter.Kind -> Value
 PrtgAPI.Parameter.Name -> Value
 PrtgAPI.Parameter.NewPos -> Value
+PrtgAPI.Parameter.NoSession -> Value
 PrtgAPI.Parameter.ObjectType -> Value
 PrtgAPI.Parameter.Output -> Value
 PrtgAPI.Parameter.PassHash -> Value

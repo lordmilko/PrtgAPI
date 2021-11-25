@@ -96,7 +96,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         {
             Execute(
                 c => c.SetChannelProperty(1001, 1, ChannelProperty.ValueLookup, value),
-                UnitRequest.EditSettings($"id=1001&valuelookup_1={url}")
+                UnitRequest.EditSettings($"id=1001&valuelookup_1={url}&nosession=1")
             );
         }
 

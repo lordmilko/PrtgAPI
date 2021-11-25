@@ -20,7 +20,7 @@ namespace PrtgAPI.Tests.UnitTests.CSharp.ObjectManipulation
 
             Execute(
                 c => c.SetTriggerProperty(trigger, TriggerProperty.Threshold, 20.0),
-                UnitRequest.EditSettings("id=1&subid=7&threshold_7=20")
+                UnitRequest.EditSettings("id=1&subid=7&nosession=1&threshold_7=20")
             );
         }
 
@@ -32,7 +32,7 @@ namespace PrtgAPI.Tests.UnitTests.CSharp.ObjectManipulation
 
             await ExecuteAsync(
                 async c => await c.SetTriggerPropertyAsync(trigger, TriggerProperty.Threshold, 20.0),
-                UnitRequest.EditSettings("id=1&subid=7&threshold_7=20")
+                UnitRequest.EditSettings("id=1&subid=7&nosession=1&threshold_7=20")
             );
         }
 
@@ -47,7 +47,7 @@ namespace PrtgAPI.Tests.UnitTests.CSharp.ObjectManipulation
                     new TriggerParameter(TriggerProperty.Threshold, 20.1),
                     new TriggerParameter(TriggerProperty.Latency, 30)
                 ),
-                UnitRequest.EditSettings("id=1&subid=7&threshold_7=20.1&latency_7=30")
+                UnitRequest.EditSettings("id=1&subid=7&nosession=1&threshold_7=20.1&latency_7=30")
             );
         }
 
@@ -62,7 +62,7 @@ namespace PrtgAPI.Tests.UnitTests.CSharp.ObjectManipulation
                     new TriggerParameter(TriggerProperty.Threshold, 20),
                     new TriggerParameter(TriggerProperty.Latency, 30)
                 ),
-                UnitRequest.EditSettings("id=1&subid=7&threshold_7=20&latency_7=30")
+                UnitRequest.EditSettings("id=1&subid=7&nosession=1&threshold_7=20&latency_7=30")
             );
         }
 
@@ -78,7 +78,7 @@ namespace PrtgAPI.Tests.UnitTests.CSharp.ObjectManipulation
 
             Execute(
                 c => c.SetTriggerProperty(trigger, TriggerProperty.OnNotificationAction, action),
-                UnitRequest.EditSettings("id=1&subid=7&onnotificationid_7=300%7CEmail+and+push+notification+to+admin")
+                UnitRequest.EditSettings("id=1&subid=7&nosession=1&onnotificationid_7=300%7CEmail+and+push+notification+to+admin")
             );
         }
 
@@ -94,7 +94,7 @@ namespace PrtgAPI.Tests.UnitTests.CSharp.ObjectManipulation
 
             await ExecuteAsync(
                 async c => await c.SetTriggerPropertyAsync(trigger, TriggerProperty.OnNotificationAction, action),
-                UnitRequest.EditSettings("id=1&subid=7&onnotificationid_7=300%7CEmail+and+push+notification+to+admin")
+                UnitRequest.EditSettings("id=1&subid=7&nosession=1&onnotificationid_7=300%7CEmail+and+push+notification+to+admin")
             );
         }
 
@@ -123,7 +123,7 @@ namespace PrtgAPI.Tests.UnitTests.CSharp.ObjectManipulation
                     UnitRequest.Sensors("filter_objid=4000"),
                     UnitRequest.Channels(4000),
                     UnitRequest.ChannelProperties(4000, 1),
-                    UnitRequest.EditSettings("id=4000&subid=7&channel_7=1")
+                    UnitRequest.EditSettings("id=4000&subid=7&nosession=1&channel_7=1")
                 }
             );
         }
@@ -153,7 +153,7 @@ namespace PrtgAPI.Tests.UnitTests.CSharp.ObjectManipulation
                     UnitRequest.Sensors("filter_objid=4000"),
                     UnitRequest.Channels(4000),
                     UnitRequest.ChannelProperties(4000, 1),
-                    UnitRequest.EditSettings("id=4000&subid=7&channel_7=1")
+                    UnitRequest.EditSettings("id=4000&subid=7&nosession=1&channel_7=1")
                 }
             );
         }
@@ -166,7 +166,7 @@ namespace PrtgAPI.Tests.UnitTests.CSharp.ObjectManipulation
 
             Execute(
                 c => c.SetTriggerProperty(trigger, TriggerProperty.OnNotificationAction, null),
-                UnitRequest.EditSettings("id=1&subid=7&onnotificationid_7=-1%7CNone")
+                UnitRequest.EditSettings("id=1&subid=7&nosession=1&onnotificationid_7=-1%7CNone")
             );
         }
 
@@ -178,7 +178,7 @@ namespace PrtgAPI.Tests.UnitTests.CSharp.ObjectManipulation
 
             await ExecuteAsync(
                 async c => await c.SetTriggerPropertyAsync(trigger, TriggerProperty.OnNotificationAction, null),
-                UnitRequest.EditSettings("id=1&subid=7&onnotificationid_7=-1%7CNone")
+                UnitRequest.EditSettings("id=1&subid=7&nosession=1&onnotificationid_7=-1%7CNone")
             );
         }
 

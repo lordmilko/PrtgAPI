@@ -325,7 +325,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             var lat = "40.71455";
             var lon = "-74.00714";
 
-            var url = $"editsettings?id=1001&location_={lat}%2C+{lon}&lonlat_={lon}%2C{lat}&locationgroup=0&username";
+            var url = $"editsettings?id=1001&location_={lat}%2C+{lon}&lonlat_={lon}%2C{lat}&locationgroup=0&nosession=1&username";
 
             Execute(c =>
             {
@@ -346,7 +346,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             var lat = "40.71455";
             var lon = "-74.00714";
 
-            var url = $"editsettings?id=1001&location_={lat}%2C+{lon}&lonlat_={lon}%2C{lat}&locationgroup=0&username";
+            var url = $"editsettings?id=1001&location_={lat}%2C+{lon}&lonlat_={lon}%2C{lat}&locationgroup=0&nosession=1&username";
 
             await ExecuteAsync(async c =>
             {
@@ -369,7 +369,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
 
             Execute(
                 c => c.SetObjectProperty(1001, ObjectProperty.Location, new[] {40.71455, -74.00714}),
-                $"editsettings?id=1001&location_={lat}%2C+{lon}&lonlat_={lon}%2C{lat}&locationgroup=0&username"
+                $"editsettings?id=1001&location_={lat}%2C+{lon}&lonlat_={lon}%2C{lat}&locationgroup=0&nosession=1&username"
             );
         }
 
@@ -382,7 +382,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
 
             await ExecuteAsync(
                 async c => await c.SetObjectPropertyAsync(1001, ObjectProperty.Location, new[] { 40.71455, -74.00714 }),
-                $"editsettings?id=1001&location_={lat}%2C+{lon}&lonlat_={lon}%2C{lat}&locationgroup=0&username"
+                $"editsettings?id=1001&location_={lat}%2C+{lon}&lonlat_={lon}%2C{lat}&locationgroup=0&nosession=1&username"
             );
         }
 
@@ -435,7 +435,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
 
             Execute(
                 c => c.SetObjectProperty(1001, ObjectProperty.Location, $"{lat} {lon}"),
-                $"editsettings?id=1001&location_={lat}%2C+{lon}&lonlat_={lon}%2C{lat}&locationgroup=0&username"
+                $"editsettings?id=1001&location_={lat}%2C+{lon}&lonlat_={lon}%2C{lat}&locationgroup=0&nosession=1&username"
             );
         }
 
@@ -448,7 +448,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
 
             Execute(
                 c => c.SetObjectProperty(1001, ObjectProperty.Location, $"{lat}{lon}"),
-                $"editsettings?id=1001&location_={lat}%2C+{lon}&lonlat_={lon}%2C{lat}&locationgroup=0&username"
+                $"editsettings?id=1001&location_={lat}%2C+{lon}&lonlat_={lon}%2C{lat}&locationgroup=0&nosession=1&username"
             );
         }
 
@@ -479,7 +479,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         {
             Execute(
                 c => c.SetObjectProperty(1001, ObjectProperty.Location, "Headquarters\n12.3456, -7.8910"),
-                "editsettings?id=1001&location_=Headquarters%0A12.3456%2C+-7.891&lonlat_=-7.891%2C12.3456&locationgroup=0&username"
+                "editsettings?id=1001&location_=Headquarters%0A12.3456%2C+-7.891&lonlat_=-7.891%2C12.3456&locationgroup=0&nosession=1&username"
             );
         }
 
@@ -489,7 +489,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         {
             await ExecuteAsync(
                 async c => await c.SetObjectPropertyAsync(1001, ObjectProperty.Location, "Headquarters\n12.3456, -7.8910"),
-                "editsettings?id=1001&location_=Headquarters%0A12.3456%2C+-7.891&lonlat_=-7.891%2C12.3456&locationgroup=0&username"
+                "editsettings?id=1001&location_=Headquarters%0A12.3456%2C+-7.891&lonlat_=-7.891%2C12.3456&locationgroup=0&nosession=1&username"
             );
         }
 
@@ -499,7 +499,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         {
             Execute(
                 c => c.SetObjectProperty(1001, ObjectProperty.Location, "Headquarters\r12.3456, -7.8910"),
-                "editsettings?id=1001&location_=Headquarters%0A12.3456%2C+-7.891&lonlat_=-7.891%2C12.3456&locationgroup=0&username"
+                "editsettings?id=1001&location_=Headquarters%0A12.3456%2C+-7.891&lonlat_=-7.891%2C12.3456&locationgroup=0&nosession=1&username"
             );
         }
 
@@ -509,7 +509,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         {
             await ExecuteAsync(
                 async c => await c.SetObjectPropertyAsync(1001, ObjectProperty.Location, "Headquarters\r12.3456, -7.8910"),
-                "editsettings?id=1001&location_=Headquarters%0A12.3456%2C+-7.891&lonlat_=-7.891%2C12.3456&locationgroup=0&username"
+                "editsettings?id=1001&location_=Headquarters%0A12.3456%2C+-7.891&lonlat_=-7.891%2C12.3456&locationgroup=0&nosession=1&username"
             );
         }
 
@@ -519,7 +519,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         {
             Execute(
                 c => c.SetObjectProperty(1001, ObjectProperty.Location, "Headquarters\r\n12.3456, -7.8910"),
-                "editsettings?id=1001&location_=Headquarters%0A12.3456%2C+-7.891&lonlat_=-7.891%2C12.3456&locationgroup=0&username"
+                "editsettings?id=1001&location_=Headquarters%0A12.3456%2C+-7.891&lonlat_=-7.891%2C12.3456&locationgroup=0&nosession=1&username"
             );
         }
 
@@ -529,7 +529,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         {
             await ExecuteAsync(
                 async c => await c.SetObjectPropertyAsync(1001, ObjectProperty.Location, "Headquarters\r\n12.3456, -7.8910"),
-                "editsettings?id=1001&location_=Headquarters%0A12.3456%2C+-7.891&lonlat_=-7.891%2C12.3456&locationgroup=0&username"
+                "editsettings?id=1001&location_=Headquarters%0A12.3456%2C+-7.891&lonlat_=-7.891%2C12.3456&locationgroup=0&nosession=1&username"
             );
         }
 
@@ -543,7 +543,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
                 {
                     UnitRequest.Status(),
                     UnitRequest.Get("api/geolocator.htm?cache=false&dom=0&path=23%2BFleet%2BStreet"),
-                    UnitRequest.EditSettings("id=1001&location_=Headquarters%0A23+Fleet+St%2C+Boston%2C+MA+02113%2C+USA&lonlat_=-71.0527997%2C42.3643847&locationgroup=0")
+                    UnitRequest.EditSettings("id=1001&location_=Headquarters%0A23+Fleet+St%2C+Boston%2C+MA+02113%2C+USA&lonlat_=-71.0527997%2C42.3643847&locationgroup=0&nosession=1")
                 }
             );
         }
@@ -558,7 +558,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
                 {
                     UnitRequest.Status(),
                     UnitRequest.Get("api/geolocator.htm?cache=false&dom=0&path=23%2BFleet%2BStreet"),
-                    UnitRequest.EditSettings("id=1001&location_=Headquarters%0A23+Fleet+St%2C+Boston%2C+MA+02113%2C+USA&lonlat_=-71.0527997%2C42.3643847&locationgroup=0")
+                    UnitRequest.EditSettings("id=1001&location_=Headquarters%0A23+Fleet+St%2C+Boston%2C+MA+02113%2C+USA&lonlat_=-71.0527997%2C42.3643847&locationgroup=0&nosession=1")
                 }
             );
         }
@@ -573,7 +573,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
                 {
                     UnitRequest.Status(),
                     UnitRequest.Get("api/geolocator.htm?cache=false&dom=0&path=23%2BFleet%2BStreet"),
-                    UnitRequest.EditSettings("id=1001&location_=Headquarters%0A23+Fleet+St%2C+Boston%2C+MA+02113%2C+USA&lonlat_=-71.0527997%2C42.3643847&locationgroup=0")
+                    UnitRequest.EditSettings("id=1001&location_=Headquarters%0A23+Fleet+St%2C+Boston%2C+MA+02113%2C+USA&lonlat_=-71.0527997%2C42.3643847&locationgroup=0&nosession=1")
                 }
             );
         }
@@ -588,7 +588,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
                 {
                     UnitRequest.Status(),
                     UnitRequest.Get("api/geolocator.htm?cache=false&dom=0&path=23%2BFleet%2BStreet"),
-                    UnitRequest.EditSettings("id=1001&location_=Headquarters%0A23+Fleet+St%2C+Boston%2C+MA+02113%2C+USA&lonlat_=-71.0527997%2C42.3643847&locationgroup=0")
+                    UnitRequest.EditSettings("id=1001&location_=Headquarters%0A23+Fleet+St%2C+Boston%2C+MA+02113%2C+USA&lonlat_=-71.0527997%2C42.3643847&locationgroup=0&nosession=1")
                 }
             );
         }
@@ -603,7 +603,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
                 {
                     UnitRequest.Status(),
                     UnitRequest.Get("api/geolocator.htm?cache=false&dom=0&path=23%2BFleet%2BStreet"),
-                    UnitRequest.EditSettings("id=1001&location_=Headquarters%0A23+Fleet+St%2C+Boston%2C+MA+02113%2C+USA&lonlat_=-71.0527997%2C42.3643847&locationgroup=0")
+                    UnitRequest.EditSettings("id=1001&location_=Headquarters%0A23+Fleet+St%2C+Boston%2C+MA+02113%2C+USA&lonlat_=-71.0527997%2C42.3643847&locationgroup=0&nosession=1")
                 }
             );
         }
@@ -618,7 +618,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
                 {
                     UnitRequest.Status(),
                     UnitRequest.Get("api/geolocator.htm?cache=false&dom=0&path=23%2BFleet%2BStreet"),
-                    UnitRequest.EditSettings("id=1001&location_=Headquarters%0A23+Fleet+St%2C+Boston%2C+MA+02113%2C+USA&lonlat_=-71.0527997%2C42.3643847&locationgroup=0")
+                    UnitRequest.EditSettings("id=1001&location_=Headquarters%0A23+Fleet+St%2C+Boston%2C+MA+02113%2C+USA&lonlat_=-71.0527997%2C42.3643847&locationgroup=0&nosession=1")
                 }
             );
         }
@@ -633,7 +633,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
                     new PropertyParameter(ObjectProperty.Location, "12.3456, -7.8910"),
                     new PropertyParameter(ObjectProperty.LocationName, "Headquarters")
                 ),
-                "editsettings?id=1001&location_=Headquarters%0A12.3456%2C+-7.891&lonlat_=-7.891%2C12.3456&locationgroup=0&username"
+                "editsettings?id=1001&location_=Headquarters%0A12.3456%2C+-7.891&lonlat_=-7.891%2C12.3456&locationgroup=0&nosession=1&username"
             );
         }
 
@@ -647,7 +647,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
                     new PropertyParameter(ObjectProperty.Location, "12.3456, -7.8910"),
                     new PropertyParameter(ObjectProperty.LocationName, "Headquarters")
                 ),
-                "editsettings?id=1001&location_=Headquarters%0A12.3456%2C+-7.891&lonlat_=-7.891%2C12.3456&locationgroup=0&username"
+                "editsettings?id=1001&location_=Headquarters%0A12.3456%2C+-7.891&lonlat_=-7.891%2C12.3456&locationgroup=0&nosession=1&username"
             );
         }
 
@@ -665,7 +665,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
                 {
                     UnitRequest.Status(),
                     UnitRequest.Get("api/geolocator.htm?cache=false&dom=0&path=23%2BFleet%2BStreet"),
-                    UnitRequest.EditSettings("id=1001&location_=Headquarters%0A23+Fleet+St%2C+Boston%2C+MA+02113%2C+USA&lonlat_=-71.0527997%2C42.3643847&locationgroup=0")
+                    UnitRequest.EditSettings("id=1001&location_=Headquarters%0A23+Fleet+St%2C+Boston%2C+MA+02113%2C+USA&lonlat_=-71.0527997%2C42.3643847&locationgroup=0&nosession=1")
                 }
             );
         }
@@ -684,7 +684,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
                 {
                     UnitRequest.Status(),
                     UnitRequest.Get("api/geolocator.htm?cache=false&dom=0&path=23%2BFleet%2BStreet"),
-                    UnitRequest.EditSettings("id=1001&location_=Headquarters%0A23+Fleet+St%2C+Boston%2C+MA+02113%2C+USA&lonlat_=-71.0527997%2C42.3643847&locationgroup=0")
+                    UnitRequest.EditSettings("id=1001&location_=Headquarters%0A23+Fleet+St%2C+Boston%2C+MA+02113%2C+USA&lonlat_=-71.0527997%2C42.3643847&locationgroup=0&nosession=1")
                 }
             );
         }
@@ -721,7 +721,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
 
             Execute(
                 c => c.SetObjectProperty(1001, ObjectProperty.Location, "1.1, 2.2\n"),
-                "editsettings?id=1001&location_=1.1%2C+2.2&lonlat_=2.2%2C1.1&locationgroup=0&username"
+                "editsettings?id=1001&location_=1.1%2C+2.2&lonlat_=2.2%2C1.1&locationgroup=0&nosession=1&username"
             );
         }
 
@@ -733,7 +733,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
 
             await ExecuteAsync(
                 async c => await c.SetObjectPropertyAsync(1001, ObjectProperty.Location, "1.1, 2.2\n"),
-                "editsettings?id=1001&location_=1.1%2C+2.2&lonlat_=2.2%2C1.1&locationgroup=0&username"
+                "editsettings?id=1001&location_=1.1%2C+2.2&lonlat_=2.2%2C1.1&locationgroup=0&nosession=1&username"
             );
         }
 
@@ -749,7 +749,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
                 {
                     UnitRequest.Status(),
                     UnitRequest.Get("api/geolocator.htm?cache=false&dom=0&path=23%2BFleet%2BStreet%0A"),
-                    UnitRequest.EditSettings("id=1001&location_=23+Fleet+St%2C+Boston%2C+MA+02113%2C+USA&lonlat_=-71.0527997%2C42.3643847&locationgroup=0")
+                    UnitRequest.EditSettings("id=1001&location_=23+Fleet+St%2C+Boston%2C+MA+02113%2C+USA&lonlat_=-71.0527997%2C42.3643847&locationgroup=0&nosession=1")
                 }
             );
         }
@@ -766,7 +766,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
                 {
                     UnitRequest.Status(),
                     UnitRequest.Get("api/geolocator.htm?cache=false&dom=0&path=23%2BFleet%2BStreet%0A"),
-                    UnitRequest.EditSettings("id=1001&location_=23+Fleet+St%2C+Boston%2C+MA+02113%2C+USA&lonlat_=-71.0527997%2C42.3643847&locationgroup=0")
+                    UnitRequest.EditSettings("id=1001&location_=23+Fleet+St%2C+Boston%2C+MA+02113%2C+USA&lonlat_=-71.0527997%2C42.3643847&locationgroup=0&nosession=1")
                 }
             );
         }
@@ -911,7 +911,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             {
                 UnitRequest.Channels(1001),
                 UnitRequest.ChannelProperties(1001, 1),
-                UnitRequest.EditSettings("id=1001&limitmaxerror_1=100&limitmode_1=1&limitminerror_1=20&limitmaxerror_1_factor=1&limitminerror_1_factor=1")
+                UnitRequest.EditSettings("id=1001&limitmaxerror_1=100&limitmode_1=1&limitminerror_1=20&limitmaxerror_1_factor=1&limitminerror_1_factor=1&nosession=1")
             };
 
             Execute(c => c.SetChannelProperty(
@@ -930,7 +930,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             {
                 UnitRequest.Channels(1001),
                 UnitRequest.ChannelProperties(1001, 1),
-                UnitRequest.EditSettings("id=1001&limitmaxerror_1=100&limitmode_1=1&limitminerror_1=20&limitmaxerror_1_factor=1&limitminerror_1_factor=1")
+                UnitRequest.EditSettings("id=1001&limitmaxerror_1=100&limitmode_1=1&limitminerror_1=20&limitmaxerror_1_factor=1&limitminerror_1_factor=1&nosession=1")
             };
 
             await ExecuteAsync(
@@ -997,10 +997,10 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             );
 
             SetChannelProperty(config, RequestVersion.v14_4,
-                UnitRequest.EditSettings("id=1001,2001&limiterrormsg_1=test&limitmode_1=1")
+                UnitRequest.EditSettings("id=1001,2001&limiterrormsg_1=test&limitmode_1=1&nosession=1")
             );
             SetChannelProperty(config, RequestVersion.v18_1,
-                UnitRequest.EditSettings("id=1001,2001&limiterrormsg_1=test&limitmode_1=1&limitmaxerror_1=1&limitmaxerror_1_factor=0.1")
+                UnitRequest.EditSettings("id=1001,2001&limiterrormsg_1=test&limitmode_1=1&limitmaxerror_1=1&limitmaxerror_1_factor=0.1&nosession=1")
             );
         }
 
@@ -1022,10 +1022,10 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             );
 
             SetChannelProperty(config, RequestVersion.v14_4,
-                UnitRequest.EditSettings("id=1001,2001&limiterrormsg_1=test&limitmode_1=1")
+                UnitRequest.EditSettings("id=1001,2001&limiterrormsg_1=test&limitmode_1=1&nosession=1")
             );
             SetChannelProperty(config, RequestVersion.v18_1,
-                UnitRequest.EditSettings("id=1001,2001&limiterrormsg_1=test&limitmode_1=1&limitminerror_1=1&limitminerror_1_factor=0.1")
+                UnitRequest.EditSettings("id=1001,2001&limiterrormsg_1=test&limitmode_1=1&limitminerror_1=1&limitminerror_1_factor=0.1&nosession=1")
             );
         }
 
@@ -1047,10 +1047,10 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             );
 
             SetChannelProperty(config, RequestVersion.v14_4,
-                UnitRequest.EditSettings("id=1001,2001&limiterrormsg_1=test&limitmode_1=1")
+                UnitRequest.EditSettings("id=1001,2001&limiterrormsg_1=test&limitmode_1=1&nosession=1")
             );
             SetChannelProperty(config, RequestVersion.v18_1,
-                UnitRequest.EditSettings("id=1001,2001&limiterrormsg_1=test&limitmode_1=1&limitmaxwarning_1=1&limitmaxwarning_1_factor=0.1")
+                UnitRequest.EditSettings("id=1001,2001&limiterrormsg_1=test&limitmode_1=1&limitmaxwarning_1=1&limitmaxwarning_1_factor=0.1&nosession=1")
             );
         }
 
@@ -1072,10 +1072,10 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             );
 
             SetChannelProperty(config, RequestVersion.v14_4,
-                UnitRequest.EditSettings("id=1001,2001&limiterrormsg_1=test&limitmode_1=1")
+                UnitRequest.EditSettings("id=1001,2001&limiterrormsg_1=test&limitmode_1=1&nosession=1")
             );
             SetChannelProperty(config, RequestVersion.v18_1,
-                UnitRequest.EditSettings("id=1001,2001&limiterrormsg_1=test&limitmode_1=1&limitminwarning_1=1&limitminwarning_1_factor=0.1")
+                UnitRequest.EditSettings("id=1001,2001&limiterrormsg_1=test&limitmode_1=1&limitminwarning_1=1&limitminwarning_1_factor=0.1&nosession=1")
             );
         }
 
@@ -1104,12 +1104,12 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             );
 
             SetChannelProperty(config, RequestVersion.v14_4,
-                UnitRequest.EditSettings("id=1001,2001,3001&limiterrormsg_1=test&limitmode_1=1")
+                UnitRequest.EditSettings("id=1001,2001,3001&limiterrormsg_1=test&limitmode_1=1&nosession=1")
             );
             SetChannelProperty(config, RequestVersion.v18_1, new[]
             {
-                UnitRequest.EditSettings("id=2001,3001&limiterrormsg_1=test&limitmode_1=1&limitmaxerror_1=2&limitmaxerror_1_factor=0.1"),
-                UnitRequest.EditSettings("id=1001&limiterrormsg_1=test&limitmode_1=1&limitmaxerror_1=1&limitmaxerror_1_factor=0.1")
+                UnitRequest.EditSettings("id=2001,3001&limiterrormsg_1=test&limitmode_1=1&limitmaxerror_1=2&limitmaxerror_1_factor=0.1&nosession=1"),
+                UnitRequest.EditSettings("id=1001&limiterrormsg_1=test&limitmode_1=1&limitmaxerror_1=1&limitmaxerror_1_factor=0.1&nosession=1")
             });
         }
 
@@ -1137,12 +1137,12 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             //todo: does this actually group together the sensor IDs to execute against for the request?
 
             SetChannelProperty(config, RequestVersion.v14_4,
-                UnitRequest.EditSettings("id=1001,2001,3001&limiterrormsg_1=test&limitmode_1=1")
+                UnitRequest.EditSettings("id=1001,2001,3001&limiterrormsg_1=test&limitmode_1=1&nosession=1")
             );
             SetChannelProperty(config, RequestVersion.v18_1, new[]
             {
-                UnitRequest.EditSettings("id=2001,3001&limiterrormsg_1=test&limitmode_1=1&limitminerror_1=2&limitminerror_1_factor=0.1"),
-                UnitRequest.EditSettings("id=1001&limiterrormsg_1=test&limitmode_1=1&limitminerror_1=1&limitminerror_1_factor=0.1")
+                UnitRequest.EditSettings("id=2001,3001&limiterrormsg_1=test&limitmode_1=1&limitminerror_1=2&limitminerror_1_factor=0.1&nosession=1"),
+                UnitRequest.EditSettings("id=1001&limiterrormsg_1=test&limitmode_1=1&limitminerror_1=1&limitminerror_1_factor=0.1&nosession=1")
             });
         }
 
@@ -1168,12 +1168,12 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             );
 
             SetChannelProperty(config, RequestVersion.v14_4,
-                UnitRequest.EditSettings("id=1001,2001,3001&limiterrormsg_1=test&limitmode_1=1")
+                UnitRequest.EditSettings("id=1001,2001,3001&limiterrormsg_1=test&limitmode_1=1&nosession=1")
             );
             SetChannelProperty(config, RequestVersion.v18_1, new[]
             {
-                UnitRequest.EditSettings("id=2001,3001&limiterrormsg_1=test&limitmode_1=1&limitmaxwarning_1=2&limitmaxwarning_1_factor=0.1"),
-                UnitRequest.EditSettings("id=1001&limiterrormsg_1=test&limitmode_1=1&limitmaxwarning_1=1&limitmaxwarning_1_factor=0.1")
+                UnitRequest.EditSettings("id=2001,3001&limiterrormsg_1=test&limitmode_1=1&limitmaxwarning_1=2&limitmaxwarning_1_factor=0.1&nosession=1"),
+                UnitRequest.EditSettings("id=1001&limiterrormsg_1=test&limitmode_1=1&limitmaxwarning_1=1&limitmaxwarning_1_factor=0.1&nosession=1")
             });
         }
 
@@ -1199,12 +1199,12 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             );
 
             SetChannelProperty(config, RequestVersion.v14_4,
-                UnitRequest.EditSettings("id=1001,2001,3001&limiterrormsg_1=test&limitmode_1=1")
+                UnitRequest.EditSettings("id=1001,2001,3001&limiterrormsg_1=test&limitmode_1=1&nosession=1")
             );
             SetChannelProperty(config, RequestVersion.v18_1, new[]
             {
-                UnitRequest.EditSettings("id=2001,3001&limiterrormsg_1=test&limitmode_1=1&limitminwarning_1=2&limitminwarning_1_factor=0.1"),
-                UnitRequest.EditSettings("id=1001&limiterrormsg_1=test&limitmode_1=1&limitminwarning_1=1&limitminwarning_1_factor=0.1")
+                UnitRequest.EditSettings("id=2001,3001&limiterrormsg_1=test&limitmode_1=1&limitminwarning_1=2&limitminwarning_1_factor=0.1&nosession=1"),
+                UnitRequest.EditSettings("id=1001&limiterrormsg_1=test&limitmode_1=1&limitminwarning_1=1&limitminwarning_1_factor=0.1&nosession=1")
                 
             });
         }
@@ -1231,10 +1231,10 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             );
 
             SetChannelProperty(config, RequestVersion.v14_4,
-                UnitRequest.EditSettings("id=1001,2001&limiterrormsg_1=test&limitmode_1=1")
+                UnitRequest.EditSettings("id=1001,2001&limiterrormsg_1=test&limitmode_1=1&nosession=1")
             );
             SetChannelProperty(config, RequestVersion.v18_1,
-                UnitRequest.EditSettings("id=1001,2001&limiterrormsg_1=test&limitmode_1=1&limitmaxerror_1=1&limitmaxerror_1_factor=0.1")
+                UnitRequest.EditSettings("id=1001,2001&limiterrormsg_1=test&limitmode_1=1&limitmaxerror_1=1&limitmaxerror_1_factor=0.1&nosession=1")
             );
         }
 
@@ -1255,10 +1255,10 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             );
 
             SetChannelProperty(config, RequestVersion.v14_4,
-                UnitRequest.EditSettings("id=1001,2001&limitwarningmsg_1=test&limitmode_1=1")
+                UnitRequest.EditSettings("id=1001,2001&limitwarningmsg_1=test&limitmode_1=1&nosession=1")
             );
             SetChannelProperty(config, RequestVersion.v18_1,
-                UnitRequest.EditSettings("id=1001,2001&limitwarningmsg_1=test&limitmode_1=1&limitmaxerror_1=1&limitmaxerror_1_factor=0.1")
+                UnitRequest.EditSettings("id=1001,2001&limitwarningmsg_1=test&limitmode_1=1&limitmaxerror_1=1&limitmaxerror_1_factor=0.1&nosession=1")
             );
         }
 
@@ -1279,10 +1279,10 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             );
 
             SetChannelProperty(config, RequestVersion.v14_4,
-                UnitRequest.EditSettings("id=1001,2001&limitmode_1=1")
+                UnitRequest.EditSettings("id=1001,2001&limitmode_1=1&nosession=1")
             );
             SetChannelProperty(config, RequestVersion.v18_1,
-                UnitRequest.EditSettings("id=1001,2001&limitmode_1=1&limitmaxerror_1=1&limitmaxerror_1_factor=0.1")
+                UnitRequest.EditSettings("id=1001,2001&limitmode_1=1&limitmaxerror_1=1&limitmaxerror_1_factor=0.1&nosession=1")
             );
         }
 
@@ -1303,10 +1303,10 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             );
 
             SetChannelProperty(config, RequestVersion.v14_4,
-                UnitRequest.EditSettings("id=1001,2001&limitmode_1=0&limitmaxerror_1=&limitmaxwarning_1=&limitminerror_1=&limitminwarning_1=&limiterrormsg_1=&limitwarningmsg_1=")
+                UnitRequest.EditSettings("id=1001,2001&limitmode_1=0&limitmaxerror_1=&limitmaxwarning_1=&limitminerror_1=&limitminwarning_1=&limiterrormsg_1=&limitwarningmsg_1=&nosession=1")
             );
             SetChannelProperty(config, RequestVersion.v18_1,
-                new[] {UnitRequest.EditSettings("id=1001,2001&limitmode_1=0&limitmaxerror_1=&limitmaxwarning_1=&limitminerror_1=&limitminwarning_1=&limiterrormsg_1=&limitwarningmsg_1=")},
+                new[] {UnitRequest.EditSettings("id=1001,2001&limitmode_1=0&limitmaxerror_1=&limitmaxwarning_1=&limitminerror_1=&limitminwarning_1=&limiterrormsg_1=&limitwarningmsg_1=&nosession=1")},
                 true
             );
         }
@@ -1328,10 +1328,10 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             );
 
             SetChannelProperty(config, RequestVersion.v14_4,
-                UnitRequest.EditSettings("id=1001,2001&spikemax_1=100&spikemode_1=1")
+                UnitRequest.EditSettings("id=1001,2001&spikemax_1=100&spikemode_1=1&nosession=1")
             );
             SetChannelProperty(config, RequestVersion.v18_1,
-                new[] {UnitRequest.EditSettings("id=1001,2001&spikemax_1=100&spikemode_1=1")},
+                new[] {UnitRequest.EditSettings("id=1001,2001&spikemax_1=100&spikemode_1=1&nosession=1")},
                 true
             );
         }
@@ -1377,13 +1377,13 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             );
 
             SetChannelProperty(config, RequestVersion.v14_4,
-                UnitRequest.EditSettings("id=1001,2001,3001,4001,5001,6001&limiterrormsg_1=test&limitmode_1=1")
+                UnitRequest.EditSettings("id=1001,2001,3001,4001,5001,6001&limiterrormsg_1=test&limitmode_1=1&nosession=1")
             );
             SetChannelProperty(config, RequestVersion.v18_1, new[]
             {
-                UnitRequest.EditSettings("id=4001,5001,6001&limiterrormsg_1=test&limitmode_1=1&limitminerror_1=3&limitminerror_1_factor=0.1"),
-                UnitRequest.EditSettings("id=1001,2001&limiterrormsg_1=test&limitmode_1=1&limitmaxerror_1=1&limitmaxerror_1_factor=0.1"),
-                UnitRequest.EditSettings("id=3001&limiterrormsg_1=test&limitmode_1=1&limitmaxerror_1=5&limitmaxerror_1_factor=0.1")
+                UnitRequest.EditSettings("id=4001,5001,6001&limiterrormsg_1=test&limitmode_1=1&limitminerror_1=3&limitminerror_1_factor=0.1&nosession=1"),
+                UnitRequest.EditSettings("id=1001,2001&limiterrormsg_1=test&limitmode_1=1&limitmaxerror_1=1&limitmaxerror_1_factor=0.1&nosession=1"),
+                UnitRequest.EditSettings("id=3001&limiterrormsg_1=test&limitmode_1=1&limitmaxerror_1=5&limitmaxerror_1_factor=0.1&nosession=1")
             });
         }
 
@@ -1405,7 +1405,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
 
             Action<RequestVersion> action = version =>
                 SetChannelProperty(config, version,
-                    UnitRequest.EditSettings("id=1001,2001&limiterrormsg_1=test&limitmode_1=1")
+                    UnitRequest.EditSettings("id=1001,2001&limiterrormsg_1=test&limitmode_1=1&nosession=1")
                 );
 
             action(RequestVersion.v14_4);
@@ -1436,7 +1436,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
 
             Action<RequestVersion> action = version =>
                 SetChannelProperty(config, version,
-                    UnitRequest.EditSettings("id=1001,2001&limiterrormsg_1=test&limitmode_1=1")
+                    UnitRequest.EditSettings("id=1001,2001&limiterrormsg_1=test&limitmode_1=1&nosession=1")
                 );
 
             action(RequestVersion.v14_4);
@@ -1457,7 +1457,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             {
                 UnitRequest.Channels(1001),
                 UnitRequest.ChannelProperties(1001, 1),
-                UnitRequest.EditSettings("id=1001&limiterrormsg_1=hello&limitmode_1=1&limitmaxerror_1=100&limitmaxerror_1_factor=1")
+                UnitRequest.EditSettings("id=1001&limiterrormsg_1=hello&limitmode_1=1&limitmaxerror_1=100&limitmaxerror_1_factor=1&nosession=1")
             };
 
             var property = ChannelProperty.ErrorLimitMessage;
@@ -1624,10 +1624,10 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             );
 
             await SetChannelPropertyAsync(config, RequestVersion.v14_4,
-                UnitRequest.EditSettings("id=1001,2001&limiterrormsg_1=test&limitmode_1=1")
+                UnitRequest.EditSettings("id=1001,2001&limiterrormsg_1=test&limitmode_1=1&nosession=1")
             );
             await SetChannelPropertyAsync(config, RequestVersion.v18_1,
-                UnitRequest.EditSettings("id=1001,2001&limiterrormsg_1=test&limitmode_1=1&limitmaxerror_1=1&limitmaxerror_1_factor=0.1")
+                UnitRequest.EditSettings("id=1001,2001&limiterrormsg_1=test&limitmode_1=1&limitmaxerror_1=1&limitmaxerror_1_factor=0.1&nosession=1")
             );
         }
 
@@ -1648,10 +1648,10 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             );
 
             await SetChannelPropertyAsync(config, RequestVersion.v14_4,
-                UnitRequest.EditSettings("id=1001,2001&limiterrormsg_1=test&limitmode_1=1")
+                UnitRequest.EditSettings("id=1001,2001&limiterrormsg_1=test&limitmode_1=1&nosession=1")
             );
             await SetChannelPropertyAsync(config, RequestVersion.v18_1,
-                UnitRequest.EditSettings("id=1001,2001&limiterrormsg_1=test&limitmode_1=1&limitminerror_1=1&limitminerror_1_factor=0.1")
+                UnitRequest.EditSettings("id=1001,2001&limiterrormsg_1=test&limitmode_1=1&limitminerror_1=1&limitminerror_1_factor=0.1&nosession=1")
             );
         }
 
@@ -1672,10 +1672,10 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             );
 
             await SetChannelPropertyAsync(config, RequestVersion.v14_4,
-                UnitRequest.EditSettings("id=1001,2001&limiterrormsg_1=test&limitmode_1=1")
+                UnitRequest.EditSettings("id=1001,2001&limiterrormsg_1=test&limitmode_1=1&nosession=1")
             );
             await SetChannelPropertyAsync(config, RequestVersion.v18_1,
-                UnitRequest.EditSettings("id=1001,2001&limiterrormsg_1=test&limitmode_1=1&limitmaxwarning_1=1&limitmaxwarning_1_factor=0.1")
+                UnitRequest.EditSettings("id=1001,2001&limiterrormsg_1=test&limitmode_1=1&limitmaxwarning_1=1&limitmaxwarning_1_factor=0.1&nosession=1")
             );
         }
 
@@ -1696,10 +1696,10 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             );
 
             await SetChannelPropertyAsync(config, RequestVersion.v14_4,
-                UnitRequest.EditSettings("id=1001,2001&limiterrormsg_1=test&limitmode_1=1")
+                UnitRequest.EditSettings("id=1001,2001&limiterrormsg_1=test&limitmode_1=1&nosession=1")
             );
             await SetChannelPropertyAsync(config, RequestVersion.v18_1,
-                UnitRequest.EditSettings("id=1001,2001&limiterrormsg_1=test&limitmode_1=1&limitminwarning_1=1&limitminwarning_1_factor=0.1")
+                UnitRequest.EditSettings("id=1001,2001&limiterrormsg_1=test&limitmode_1=1&limitminwarning_1=1&limitminwarning_1_factor=0.1&nosession=1")
             );
         }
 
@@ -1724,12 +1724,12 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             );
 
             await SetChannelPropertyAsync(config, RequestVersion.v14_4,
-                UnitRequest.EditSettings("id=1001,2001,3001&limiterrormsg_1=test&limitmode_1=1")
+                UnitRequest.EditSettings("id=1001,2001,3001&limiterrormsg_1=test&limitmode_1=1&nosession=1")
             );
             await SetChannelPropertyAsync(config, RequestVersion.v18_1, new[]
             {
-                UnitRequest.EditSettings("id=2001,3001&limiterrormsg_1=test&limitmode_1=1&limitmaxerror_1=2&limitmaxerror_1_factor=0.1"),
-                UnitRequest.EditSettings("id=1001&limiterrormsg_1=test&limitmode_1=1&limitmaxerror_1=1&limitmaxerror_1_factor=0.1")
+                UnitRequest.EditSettings("id=2001,3001&limiterrormsg_1=test&limitmode_1=1&limitmaxerror_1=2&limitmaxerror_1_factor=0.1&nosession=1"),
+                UnitRequest.EditSettings("id=1001&limiterrormsg_1=test&limitmode_1=1&limitmaxerror_1=1&limitmaxerror_1_factor=0.1&nosession=1")
             });
         }
 
@@ -1753,12 +1753,12 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             //todo: does this actually group together the sensor IDs to execute against for the request?
 
             await SetChannelPropertyAsync(config, RequestVersion.v14_4,
-                UnitRequest.EditSettings("id=1001,2001,3001&limiterrormsg_1=test&limitmode_1=1")
+                UnitRequest.EditSettings("id=1001,2001,3001&limiterrormsg_1=test&limitmode_1=1&nosession=1")
             );
             await SetChannelPropertyAsync(config, RequestVersion.v18_1, new[]
             {
-                UnitRequest.EditSettings("id=2001,3001&limiterrormsg_1=test&limitmode_1=1&limitminerror_1=2&limitminerror_1_factor=0.1"),
-                UnitRequest.EditSettings("id=1001&limiterrormsg_1=test&limitmode_1=1&limitminerror_1=1&limitminerror_1_factor=0.1")
+                UnitRequest.EditSettings("id=2001,3001&limiterrormsg_1=test&limitmode_1=1&limitminerror_1=2&limitminerror_1_factor=0.1&nosession=1"),
+                UnitRequest.EditSettings("id=1001&limiterrormsg_1=test&limitmode_1=1&limitminerror_1=1&limitminerror_1_factor=0.1&nosession=1")
             });
         }
 
@@ -1780,12 +1780,12 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             );
 
             await SetChannelPropertyAsync(config, RequestVersion.v14_4,
-                UnitRequest.EditSettings("id=1001,2001,3001&limiterrormsg_1=test&limitmode_1=1")
+                UnitRequest.EditSettings("id=1001,2001,3001&limiterrormsg_1=test&limitmode_1=1&nosession=1")
             );
             await SetChannelPropertyAsync(config, RequestVersion.v18_1, new[]
             {
-                UnitRequest.EditSettings("id=2001,3001&limiterrormsg_1=test&limitmode_1=1&limitmaxwarning_1=2&limitmaxwarning_1_factor=0.1"),
-                UnitRequest.EditSettings("id=1001&limiterrormsg_1=test&limitmode_1=1&limitmaxwarning_1=1&limitmaxwarning_1_factor=0.1")
+                UnitRequest.EditSettings("id=2001,3001&limiterrormsg_1=test&limitmode_1=1&limitmaxwarning_1=2&limitmaxwarning_1_factor=0.1&nosession=1"),
+                UnitRequest.EditSettings("id=1001&limiterrormsg_1=test&limitmode_1=1&limitmaxwarning_1=1&limitmaxwarning_1_factor=0.1&nosession=1")
             });
         }
 
@@ -1807,12 +1807,12 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             );
 
             await SetChannelPropertyAsync(config, RequestVersion.v14_4,
-                UnitRequest.EditSettings("id=1001,2001,3001&limiterrormsg_1=test&limitmode_1=1")
+                UnitRequest.EditSettings("id=1001,2001,3001&limiterrormsg_1=test&limitmode_1=1&nosession=1")
             );
             await SetChannelPropertyAsync(config, RequestVersion.v18_1, new[]
             {
-                UnitRequest.EditSettings("id=2001,3001&limiterrormsg_1=test&limitmode_1=1&limitminwarning_1=2&limitminwarning_1_factor=0.1"),
-                UnitRequest.EditSettings("id=1001&limiterrormsg_1=test&limitmode_1=1&limitminwarning_1=1&limitminwarning_1_factor=0.1")
+                UnitRequest.EditSettings("id=2001,3001&limiterrormsg_1=test&limitmode_1=1&limitminwarning_1=2&limitminwarning_1_factor=0.1&nosession=1"),
+                UnitRequest.EditSettings("id=1001&limiterrormsg_1=test&limitmode_1=1&limitminwarning_1=1&limitminwarning_1_factor=0.1&nosession=1")
 
             });
         }
@@ -1837,10 +1837,10 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             );
 
             await SetChannelPropertyAsync(config, RequestVersion.v14_4,
-                UnitRequest.EditSettings("id=1001,2001&limiterrormsg_1=test&limitmode_1=1")
+                UnitRequest.EditSettings("id=1001,2001&limiterrormsg_1=test&limitmode_1=1&nosession=1")
             );
             await SetChannelPropertyAsync(config, RequestVersion.v18_1,
-                UnitRequest.EditSettings("id=1001,2001&limiterrormsg_1=test&limitmode_1=1&limitmaxerror_1=1&limitmaxerror_1_factor=0.1")
+                UnitRequest.EditSettings("id=1001,2001&limiterrormsg_1=test&limitmode_1=1&limitmaxerror_1=1&limitmaxerror_1_factor=0.1&nosession=1")
             );
         }
 
@@ -1861,10 +1861,10 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             );
 
             await SetChannelPropertyAsync(config, RequestVersion.v14_4,
-                UnitRequest.EditSettings("id=1001,2001&limitwarningmsg_1=test&limitmode_1=1")
+                UnitRequest.EditSettings("id=1001,2001&limitwarningmsg_1=test&limitmode_1=1&nosession=1")
             );
             await SetChannelPropertyAsync(config, RequestVersion.v18_1,
-                UnitRequest.EditSettings("id=1001,2001&limitwarningmsg_1=test&limitmode_1=1&limitmaxerror_1=1&limitmaxerror_1_factor=0.1")
+                UnitRequest.EditSettings("id=1001,2001&limitwarningmsg_1=test&limitmode_1=1&limitmaxerror_1=1&limitmaxerror_1_factor=0.1&nosession=1")
             );
         }
 
@@ -1885,10 +1885,10 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             );
 
             await SetChannelPropertyAsync(config, RequestVersion.v14_4,
-                UnitRequest.EditSettings("id=1001,2001&limitmode_1=1")
+                UnitRequest.EditSettings("id=1001,2001&limitmode_1=1&nosession=1")
             );
             await SetChannelPropertyAsync(config, RequestVersion.v18_1,
-                UnitRequest.EditSettings("id=1001,2001&limitmode_1=1&limitmaxerror_1=1&limitmaxerror_1_factor=0.1")
+                UnitRequest.EditSettings("id=1001,2001&limitmode_1=1&limitmaxerror_1=1&limitmaxerror_1_factor=0.1&nosession=1")
             );
         }
 
@@ -1909,10 +1909,10 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             );
 
             await SetChannelPropertyAsync(config, RequestVersion.v14_4,
-                UnitRequest.EditSettings("id=1001,2001&limitmode_1=0&limitmaxerror_1=&limitmaxwarning_1=&limitminerror_1=&limitminwarning_1=&limiterrormsg_1=&limitwarningmsg_1=")
+                UnitRequest.EditSettings("id=1001,2001&limitmode_1=0&limitmaxerror_1=&limitmaxwarning_1=&limitminerror_1=&limitminwarning_1=&limiterrormsg_1=&limitwarningmsg_1=&nosession=1")
             );
             await SetChannelPropertyAsync(config, RequestVersion.v18_1,
-                new[] { UnitRequest.EditSettings("id=1001,2001&limitmode_1=0&limitmaxerror_1=&limitmaxwarning_1=&limitminerror_1=&limitminwarning_1=&limiterrormsg_1=&limitwarningmsg_1=") },
+                new[] { UnitRequest.EditSettings("id=1001,2001&limitmode_1=0&limitmaxerror_1=&limitmaxwarning_1=&limitminerror_1=&limitminwarning_1=&limiterrormsg_1=&limitwarningmsg_1=&nosession=1") },
                 true
             );
         }
@@ -1934,10 +1934,10 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             );
 
             await SetChannelPropertyAsync(config, RequestVersion.v14_4,
-                UnitRequest.EditSettings("id=1001,2001&spikemax_1=100&spikemode_1=1")
+                UnitRequest.EditSettings("id=1001,2001&spikemax_1=100&spikemode_1=1&nosession=1")
             );
             await SetChannelPropertyAsync(config, RequestVersion.v18_1,
-                new[] { UnitRequest.EditSettings("id=1001,2001&spikemax_1=100&spikemode_1=1") },
+                new[] { UnitRequest.EditSettings("id=1001,2001&spikemax_1=100&spikemode_1=1&nosession=1") },
                 true
             );
         }
@@ -1966,13 +1966,13 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             );
 
             await SetChannelPropertyAsync(config, RequestVersion.v14_4,
-                UnitRequest.EditSettings("id=1001,2001,3001,4001,5001,6001&limiterrormsg_1=test&limitmode_1=1")
+                UnitRequest.EditSettings("id=1001,2001,3001,4001,5001,6001&limiterrormsg_1=test&limitmode_1=1&nosession=1")
             );
             await SetChannelPropertyAsync(config, RequestVersion.v18_1, new[]
             {
-                UnitRequest.EditSettings("id=4001,5001,6001&limiterrormsg_1=test&limitmode_1=1&limitminerror_1=3&limitminerror_1_factor=0.1"),
-                UnitRequest.EditSettings("id=1001,2001&limiterrormsg_1=test&limitmode_1=1&limitmaxerror_1=1&limitmaxerror_1_factor=0.1"),
-                UnitRequest.EditSettings("id=3001&limiterrormsg_1=test&limitmode_1=1&limitmaxerror_1=5&limitmaxerror_1_factor=0.1")
+                UnitRequest.EditSettings("id=4001,5001,6001&limiterrormsg_1=test&limitmode_1=1&limitminerror_1=3&limitminerror_1_factor=0.1&nosession=1"),
+                UnitRequest.EditSettings("id=1001,2001&limiterrormsg_1=test&limitmode_1=1&limitmaxerror_1=1&limitmaxerror_1_factor=0.1&nosession=1"),
+                UnitRequest.EditSettings("id=3001&limiterrormsg_1=test&limitmode_1=1&limitmaxerror_1=5&limitmaxerror_1_factor=0.1&nosession=1")
             });
         }
 
@@ -1994,7 +1994,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
 
             Func<RequestVersion, Task> action = async version =>
                 await SetChannelPropertyAsync(config, version,
-                    UnitRequest.EditSettings("id=1001,2001&limiterrormsg_1=test&limitmode_1=1")
+                    UnitRequest.EditSettings("id=1001,2001&limiterrormsg_1=test&limitmode_1=1&nosession=1")
                 );
 
             await action(RequestVersion.v14_4);
@@ -2025,7 +2025,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
 
             Func<RequestVersion, Task> action = async version =>
                 await SetChannelPropertyAsync(config, version,
-                    UnitRequest.EditSettings("id=1001,2001&limiterrormsg_1=test&limitmode_1=1")
+                    UnitRequest.EditSettings("id=1001,2001&limiterrormsg_1=test&limitmode_1=1&nosession=1")
                 );
 
             await action(RequestVersion.v14_4);
@@ -2046,7 +2046,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             {
                 UnitRequest.Channels(1001),
                 UnitRequest.ChannelProperties(1001, 1),
-                UnitRequest.EditSettings("id=1001&limiterrormsg_1=hello&limitmode_1=1&limitmaxerror_1=100&limitmaxerror_1_factor=1")
+                UnitRequest.EditSettings("id=1001&limiterrormsg_1=hello&limitmode_1=1&limitmaxerror_1=100&limitmaxerror_1_factor=1&nosession=1")
             };
 
             var property = ChannelProperty.ErrorLimitMessage;
@@ -2140,7 +2140,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         {
             Execute(
                 c => c.SetChannelProperty(new[] { 1001, 1001 }, 1, ChannelProperty.SpikeFilterEnabled, true),
-                UnitRequest.EditSettings("id=1001&spikemode_1=1")
+                UnitRequest.EditSettings("id=1001&spikemode_1=1&nosession=1")
             );
         }
 
@@ -2150,7 +2150,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         {
             await ExecuteAsync(
                 async c => await c.SetChannelPropertyAsync(new[] { 1001, 1001 }, 1, ChannelProperty.SpikeFilterEnabled, true),
-                UnitRequest.EditSettings("id=1001&spikemode_1=1")
+                UnitRequest.EditSettings("id=1001&spikemode_1=1&nosession=1")
             );
         }
 
@@ -2169,7 +2169,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
                 {
                     UnitRequest.Channels(1001),
                     UnitRequest.ChannelProperties(1001, 1),
-                    UnitRequest.EditSettings("id=1001&limitmaxerror_1=100&limitmode_1=1&limitmaxerror_1_factor=1")
+                    UnitRequest.EditSettings("id=1001&limitmaxerror_1=100&limitmode_1=1&limitmaxerror_1_factor=1&nosession=1")
                 }
             );
         }
@@ -2184,7 +2184,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
                 {
                     UnitRequest.Channels(1001),
                     UnitRequest.ChannelProperties(1001, 1),
-                    UnitRequest.EditSettings("id=1001&limitmaxerror_1=100&limitmode_1=1&limitmaxerror_1_factor=1")
+                    UnitRequest.EditSettings("id=1001&limitmaxerror_1=100&limitmode_1=1&limitmaxerror_1_factor=1&nosession=1")
                 }
             );
         }
@@ -2204,7 +2204,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
                     UnitRequest.ChannelProperties(1001, 1),
                     UnitRequest.Channels(1002),
                     UnitRequest.ChannelProperties(1002, 1),
-                    UnitRequest.EditSettings("id=1001,1002&limitmaxerror_1=100&limitmode_1=1&limitmaxerror_1_factor=1")
+                    UnitRequest.EditSettings("id=1001,1002&limitmaxerror_1=100&limitmode_1=1&limitmaxerror_1_factor=1&nosession=1")
                 }
             );
         }
@@ -2221,7 +2221,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
                     UnitRequest.ChannelProperties(1001, 1),
                     UnitRequest.Channels(1002),
                     UnitRequest.ChannelProperties(1002, 1),
-                    UnitRequest.EditSettings("id=1001,1002&limitmaxerror_1=100&limitmode_1=1&limitmaxerror_1_factor=1")
+                    UnitRequest.EditSettings("id=1001,1002&limitmaxerror_1=100&limitmode_1=1&limitmaxerror_1_factor=1&nosession=1")
                 }
             );
         }
@@ -2243,7 +2243,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
                     UnitRequest.ChannelProperties(1001, 1),
                     UnitRequest.Channels(1002),
                     UnitRequest.ChannelProperties(1002, 1),
-                    UnitRequest.EditSettings("id=1001,1002&limitmaxerror_1=100&limitmode_1=1&limitminerror_1=50&limitmaxerror_1_factor=1&limitminerror_1_factor=1")
+                    UnitRequest.EditSettings("id=1001,1002&limitmaxerror_1=100&limitmode_1=1&limitminerror_1=50&limitmaxerror_1_factor=1&limitminerror_1_factor=1&nosession=1")
                 }
             );
         }
@@ -2265,7 +2265,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
                     UnitRequest.ChannelProperties(1001, 1),
                     UnitRequest.Channels(1002),
                     UnitRequest.ChannelProperties(1002, 1),
-                    UnitRequest.EditSettings("id=1001,1002&limitmaxerror_1=100&limitmode_1=1&limitminerror_1=50&limitmaxerror_1_factor=1&limitminerror_1_factor=1")
+                    UnitRequest.EditSettings("id=1001,1002&limitmaxerror_1=100&limitmode_1=1&limitminerror_1=50&limitmaxerror_1_factor=1&limitminerror_1_factor=1&nosession=1")
                 }
             );
         }
@@ -2308,7 +2308,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
 
             Execute(
                 c => c.SetChannelProperty(channels, ChannelProperty.SpikeFilterEnabled, true),
-                UnitRequest.EditSettings("id=1001&spikemode_1=1"),
+                UnitRequest.EditSettings("id=1001&spikemode_1=1&nosession=1"),
                 version: version
             );
         }
@@ -2326,7 +2326,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
 
             await ExecuteAsync(
                 async c => await c.SetChannelPropertyAsync(channels, ChannelProperty.SpikeFilterEnabled, true),
-                UnitRequest.EditSettings("id=1001&spikemode_1=1"),
+                UnitRequest.EditSettings("id=1001&spikemode_1=1&nosession=1"),
                 version: version
             );
         }
@@ -2367,7 +2367,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
 
             Execute(
                 c => c.SetChannelProperty(channels, ChannelProperty.SpikeFilterEnabled, true),
-                UnitRequest.EditSettings("id=1001&spikemode_1=1&spikemode_2=1"),
+                UnitRequest.EditSettings("id=1001&spikemode_1=1&spikemode_2=1&nosession=1"),
                 version: version
             );
         }
@@ -2385,7 +2385,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
 
             await ExecuteAsync(
                 async c => await c.SetChannelPropertyAsync(channels, ChannelProperty.SpikeFilterEnabled, true),
-                UnitRequest.EditSettings("id=1001&spikemode_1=1&spikemode_2=1"),
+                UnitRequest.EditSettings("id=1001&spikemode_1=1&spikemode_2=1&nosession=1"),
                 version: version
             );
         }
@@ -2426,7 +2426,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
 
             Execute(
                 c => c.SetChannelProperty(channels, ChannelProperty.SpikeFilterEnabled, true),
-                UnitRequest.EditSettings("id=1001,1002&spikemode_1=1"),
+                UnitRequest.EditSettings("id=1001,1002&spikemode_1=1&nosession=1"),
                 version: version
             );
         }
@@ -2444,7 +2444,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
 
             await ExecuteAsync(
                 async c => await c.SetChannelPropertyAsync(channels, ChannelProperty.SpikeFilterEnabled, true),
-                UnitRequest.EditSettings("id=1001,1002&spikemode_1=1"),
+                UnitRequest.EditSettings("id=1001,1002&spikemode_1=1&nosession=1"),
                 version: version
             );
         }
@@ -2487,8 +2487,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
                 c => c.SetChannelProperty(channels, ChannelProperty.SpikeFilterEnabled, true),
                 new[]
                 {
-                    UnitRequest.EditSettings("id=1001&spikemode_1=1"),
-                    UnitRequest.EditSettings("id=1002&spikemode_2=1")
+                    UnitRequest.EditSettings("id=1001&spikemode_1=1&nosession=1"),
+                    UnitRequest.EditSettings("id=1002&spikemode_2=1&nosession=1")
                 },
                 version: version
             );
@@ -2509,8 +2509,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
                 async c => await c.SetChannelPropertyAsync(channels, ChannelProperty.SpikeFilterEnabled, true),
                 new[]
                 {
-                    UnitRequest.EditSettings("id=1001&spikemode_1=1"),
-                    UnitRequest.EditSettings("id=1002&spikemode_2=1")
+                    UnitRequest.EditSettings("id=1001&spikemode_1=1&nosession=1"),
+                    UnitRequest.EditSettings("id=1002&spikemode_2=1&nosession=1")
                 },
                 version: version
             );
@@ -2554,7 +2554,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
 
             Execute(
                 c => c.SetChannelProperty(channels, ChannelProperty.UpperErrorLimit, 100),
-                UnitRequest.EditSettings("id=1001&limitmaxerror_1=100&limitmode_1=1&limitmaxerror_1_factor=0.1"),
+                UnitRequest.EditSettings("id=1001&limitmaxerror_1=100&limitmode_1=1&limitmaxerror_1_factor=0.1&nosession=1"),
                 version: version
             );
         }
@@ -2572,7 +2572,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
 
             await ExecuteAsync(
                 async c => await c.SetChannelPropertyAsync(channels, ChannelProperty.UpperErrorLimit, 100),
-                UnitRequest.EditSettings("id=1001&limitmaxerror_1=100&limitmode_1=1&limitmaxerror_1_factor=0.1"),
+                UnitRequest.EditSettings("id=1001&limitmaxerror_1=100&limitmode_1=1&limitmaxerror_1_factor=0.1&nosession=1"),
                 version: version
             );
         }
@@ -2595,7 +2595,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
 
             Execute(
                 c => c.SetChannelProperty(channels, ChannelProperty.ErrorLimitMessage, "test"),
-                UnitRequest.EditSettings("id=1001&limiterrormsg_1=test&limitmode_1=1&limitmaxerror_1=50&limitmaxerror_1_factor=0.1"),
+                UnitRequest.EditSettings("id=1001&limiterrormsg_1=test&limitmode_1=1&limitmaxerror_1=50&limitmaxerror_1_factor=0.1&nosession=1"),
                 version: RequestVersion.v18_1
             );
         }
@@ -2618,7 +2618,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
 
             await ExecuteAsync(
                 async c => await c.SetChannelPropertyAsync(channels, ChannelProperty.ErrorLimitMessage, "test"),
-                UnitRequest.EditSettings("id=1001&limiterrormsg_1=test&limitmode_1=1&limitmaxerror_1=50&limitmaxerror_1_factor=0.1"),
+                UnitRequest.EditSettings("id=1001&limiterrormsg_1=test&limitmode_1=1&limitmaxerror_1=50&limitmaxerror_1_factor=0.1&nosession=1"),
                 version: RequestVersion.v18_1
             );
         }
@@ -2659,7 +2659,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
 
             Execute(
                 c => c.SetChannelProperty(channels, ChannelProperty.UpperErrorLimit, 100),
-                UnitRequest.EditSettings("id=1001&limitmaxerror_1=100&limitmode_1=1&limitmaxerror_1_factor=0.1&limitmaxerror_2=100&limitmode_2=1&limitmaxerror_2_factor=0.2"),
+                UnitRequest.EditSettings("id=1001&limitmaxerror_1=100&limitmode_1=1&limitmaxerror_1_factor=0.1&limitmaxerror_2=100&limitmode_2=1&limitmaxerror_2_factor=0.2&nosession=1"),
                 version: version
             );
         }
@@ -2677,7 +2677,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
 
             await ExecuteAsync(
                 async c => await c.SetChannelPropertyAsync(channels, ChannelProperty.UpperErrorLimit, 100),
-                UnitRequest.EditSettings("id=1001&limitmaxerror_1=100&limitmode_1=1&limitmaxerror_1_factor=0.1&limitmaxerror_2=100&limitmode_2=1&limitmaxerror_2_factor=0.2"),
+                UnitRequest.EditSettings("id=1001&limitmaxerror_1=100&limitmode_1=1&limitmaxerror_1_factor=0.1&limitmaxerror_2=100&limitmode_2=1&limitmaxerror_2_factor=0.2&nosession=1"),
                 version: version
             );
         }
@@ -2700,7 +2700,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
 
             Execute(
                 c => c.SetChannelProperty(channels, ChannelProperty.ErrorLimitMessage, "test"),
-                UnitRequest.EditSettings("id=1001&limiterrormsg_1=test&limitmode_1=1&limitmaxerror_1=50&limitmaxerror_1_factor=0.1&limiterrormsg_2=test&limitmode_2=1&limitminerror_2=25&limitminerror_2_factor=0.2"),
+                UnitRequest.EditSettings("id=1001&limiterrormsg_1=test&limitmode_1=1&limitmaxerror_1=50&limitmaxerror_1_factor=0.1&limiterrormsg_2=test&limitmode_2=1&limitminerror_2=25&limitminerror_2_factor=0.2&nosession=1"),
                 version: RequestVersion.v18_1
             );
         }
@@ -2723,7 +2723,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
 
             await ExecuteAsync(
                 async c => await c.SetChannelPropertyAsync(channels, ChannelProperty.ErrorLimitMessage, "test"),
-                UnitRequest.EditSettings("id=1001&limiterrormsg_1=test&limitmode_1=1&limitmaxerror_1=50&limitmaxerror_1_factor=0.1&limiterrormsg_2=test&limitmode_2=1&limitminerror_2=25&limitminerror_2_factor=0.2"),
+                UnitRequest.EditSettings("id=1001&limiterrormsg_1=test&limitmode_1=1&limitmaxerror_1=50&limitmaxerror_1_factor=0.1&limiterrormsg_2=test&limitmode_2=1&limitminerror_2=25&limitminerror_2_factor=0.2&nosession=1"),
                 version: RequestVersion.v18_1
             );
         }
@@ -2765,7 +2765,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
 
             Execute(
                 c => c.SetChannelProperty(channels, ChannelProperty.UpperErrorLimit, 100),
-                UnitRequest.EditSettings("id=1001,1002&limitmaxerror_1=100&limitmode_1=1&limitmaxerror_1_factor=0.1"),
+                UnitRequest.EditSettings("id=1001,1002&limitmaxerror_1=100&limitmode_1=1&limitmaxerror_1_factor=0.1&nosession=1"),
                 version: version
             );
         }
@@ -2783,7 +2783,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
 
             await ExecuteAsync(
                 async c => await c.SetChannelPropertyAsync(channels, ChannelProperty.UpperErrorLimit, 100),
-                UnitRequest.EditSettings("id=1001,1002&limitmaxerror_1=100&limitmode_1=1&limitmaxerror_1_factor=0.1"),
+                UnitRequest.EditSettings("id=1001,1002&limitmaxerror_1=100&limitmode_1=1&limitmaxerror_1_factor=0.1&nosession=1"),
                 version: version
             );
         }
@@ -2828,7 +2828,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
                     new ChannelParameter(ChannelProperty.UpperErrorLimit, 100),
                     new ChannelParameter(ChannelProperty.LowerErrorLimit, 50)
                 ),
-                UnitRequest.EditSettings("id=1001,1002&limitmaxerror_1=100&limitmode_1=1&limitminerror_1=50&limitmaxerror_1_factor=0.1&limitminerror_1_factor=0.1"),
+                UnitRequest.EditSettings("id=1001,1002&limitmaxerror_1=100&limitmode_1=1&limitminerror_1=50&limitmaxerror_1_factor=0.1&limitminerror_1_factor=0.1&nosession=1"),
                 version: version
             );
         }
@@ -2850,7 +2850,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
                     new ChannelParameter(ChannelProperty.UpperErrorLimit, 100),
                     new ChannelParameter(ChannelProperty.LowerErrorLimit, 50)
                 ),
-                UnitRequest.EditSettings("id=1001,1002&limitmaxerror_1=100&limitmode_1=1&limitminerror_1=50&limitmaxerror_1_factor=0.1&limitminerror_1_factor=0.1"),
+                UnitRequest.EditSettings("id=1001,1002&limitmaxerror_1=100&limitmode_1=1&limitminerror_1=50&limitmaxerror_1_factor=0.1&limitminerror_1_factor=0.1&nosession=1"),
                 version: version
             );
         }
@@ -2893,8 +2893,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
                 c => c.SetChannelProperty(channels, ChannelProperty.UpperErrorLimit, 100),
                 new[]
                 {
-                    UnitRequest.EditSettings("id=1001&limitmaxerror_1=100&limitmode_1=1&limitmaxerror_1_factor=0.1"),
-                    UnitRequest.EditSettings("id=1002&limitmaxerror_1=100&limitmode_1=1&limitmaxerror_1_factor=0.2")
+                    UnitRequest.EditSettings("id=1001&limitmaxerror_1=100&limitmode_1=1&limitmaxerror_1_factor=0.1&nosession=1"),
+                    UnitRequest.EditSettings("id=1002&limitmaxerror_1=100&limitmode_1=1&limitmaxerror_1_factor=0.2&nosession=1")
                 },
                 version: version
             );
@@ -2915,8 +2915,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
                 async c => await c.SetChannelPropertyAsync(channels, ChannelProperty.UpperErrorLimit, 100),
                 new[]
                 {
-                    UnitRequest.EditSettings("id=1001&limitmaxerror_1=100&limitmode_1=1&limitmaxerror_1_factor=0.1"),
-                    UnitRequest.EditSettings("id=1002&limitmaxerror_1=100&limitmode_1=1&limitmaxerror_1_factor=0.2")
+                    UnitRequest.EditSettings("id=1001&limitmaxerror_1=100&limitmode_1=1&limitmaxerror_1_factor=0.1&nosession=1"),
+                    UnitRequest.EditSettings("id=1002&limitmaxerror_1=100&limitmode_1=1&limitmaxerror_1_factor=0.2&nosession=1")
                 },
                 version: version
             );
@@ -2964,8 +2964,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
                 ),
                 new[]
                 {
-                    UnitRequest.EditSettings("id=1001&limitmaxerror_1=100&limitmode_1=1&limitminerror_1=50&limitmaxerror_1_factor=0.1&limitminerror_1_factor=0.1"),
-                    UnitRequest.EditSettings("id=1002&limitmaxerror_1=100&limitmode_1=1&limitminerror_1=50&limitmaxerror_1_factor=0.2&limitminerror_1_factor=0.2")
+                    UnitRequest.EditSettings("id=1001&limitmaxerror_1=100&limitmode_1=1&limitminerror_1=50&limitmaxerror_1_factor=0.1&limitminerror_1_factor=0.1&nosession=1"),
+                    UnitRequest.EditSettings("id=1002&limitmaxerror_1=100&limitmode_1=1&limitminerror_1=50&limitmaxerror_1_factor=0.2&limitminerror_1_factor=0.2&nosession=1")
                 },
                 version: version
             );
@@ -2990,8 +2990,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
                 ),
                 new[]
                 {
-                    UnitRequest.EditSettings("id=1001&limitmaxerror_1=100&limitmode_1=1&limitminerror_1=50&limitmaxerror_1_factor=0.1&limitminerror_1_factor=0.1"),
-                    UnitRequest.EditSettings("id=1002&limitmaxerror_1=100&limitmode_1=1&limitminerror_1=50&limitmaxerror_1_factor=0.2&limitminerror_1_factor=0.2")
+                    UnitRequest.EditSettings("id=1001&limitmaxerror_1=100&limitmode_1=1&limitminerror_1=50&limitmaxerror_1_factor=0.1&limitminerror_1_factor=0.1&nosession=1"),
+                    UnitRequest.EditSettings("id=1002&limitmaxerror_1=100&limitmode_1=1&limitminerror_1=50&limitmaxerror_1_factor=0.2&limitminerror_1_factor=0.2&nosession=1")
                 },
                 version: version
             );
@@ -3035,7 +3035,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
                 c => c.SetChannelProperty(channels, ChannelProperty.UpperErrorLimit, null),
                 new[]
                 {
-                    UnitRequest.EditSettings("id=1001,1002&limitmaxerror_1=&limitmode_1=1"),
+                    UnitRequest.EditSettings("id=1001,1002&limitmaxerror_1=&limitmode_1=1&nosession=1"),
                 },
                 version: version
             );
@@ -3056,7 +3056,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
                 async c => await c.SetChannelPropertyAsync(channels, ChannelProperty.UpperErrorLimit, null),
                 new[]
                 {
-                    UnitRequest.EditSettings("id=1001,1002&limitmaxerror_1=&limitmode_1=1"),
+                    UnitRequest.EditSettings("id=1001,1002&limitmaxerror_1=&limitmode_1=1&nosession=1"),
                 },
                 version: version
             );
@@ -3084,8 +3084,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
                 c => c.SetChannelProperty(channels, ChannelProperty.ErrorLimitMessage, "test"),
                 new[]
                 {
-                    UnitRequest.EditSettings("id=1001&limiterrormsg_1=test&limitmode_1=1&limitmaxerror_1=50&limitmaxerror_1_factor=0.1"),
-                    UnitRequest.EditSettings("id=1002&limiterrormsg_1=test&limitmode_1=1&limitminerror_1=25&limitminerror_1_factor=0.2")
+                    UnitRequest.EditSettings("id=1001&limiterrormsg_1=test&limitmode_1=1&limitmaxerror_1=50&limitmaxerror_1_factor=0.1&nosession=1"),
+                    UnitRequest.EditSettings("id=1002&limiterrormsg_1=test&limitmode_1=1&limitminerror_1=25&limitminerror_1_factor=0.2&nosession=1")
                 },
                 version: RequestVersion.v18_1
             );
@@ -3111,8 +3111,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
                 async c => await c.SetChannelPropertyAsync(channels, ChannelProperty.ErrorLimitMessage, "test"),
                 new[]
                 {
-                    UnitRequest.EditSettings("id=1001&limiterrormsg_1=test&limitmode_1=1&limitmaxerror_1=50&limitmaxerror_1_factor=0.1"),
-                    UnitRequest.EditSettings("id=1002&limiterrormsg_1=test&limitmode_1=1&limitminerror_1=25&limitminerror_1_factor=0.2")
+                    UnitRequest.EditSettings("id=1001&limiterrormsg_1=test&limitmode_1=1&limitmaxerror_1=50&limitmaxerror_1_factor=0.1&nosession=1"),
+                    UnitRequest.EditSettings("id=1002&limiterrormsg_1=test&limitmode_1=1&limitminerror_1=25&limitminerror_1_factor=0.2&nosession=1")
                 },
                 version: RequestVersion.v18_1
             );
@@ -3157,8 +3157,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
                 c => c.SetChannelProperty(channels, ChannelProperty.UpperErrorLimit, 100),
                 new[]
                 {
-                    UnitRequest.EditSettings("id=1001,1002&limitmaxerror_1=100&limitmode_1=1&limitmaxerror_1_factor=0.1"),
-                    UnitRequest.EditSettings("id=1003&limitmaxerror_2=100&limitmode_2=1&limitmaxerror_2_factor=0.2")
+                    UnitRequest.EditSettings("id=1001,1002&limitmaxerror_1=100&limitmode_1=1&limitmaxerror_1_factor=0.1&nosession=1"),
+                    UnitRequest.EditSettings("id=1003&limitmaxerror_2=100&limitmode_2=1&limitmaxerror_2_factor=0.2&nosession=1")
                 },
                 version: version
             );
@@ -3180,8 +3180,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
                 async c => await c.SetChannelPropertyAsync(channels, ChannelProperty.UpperErrorLimit, 100),
                 new[]
                 {
-                    UnitRequest.EditSettings("id=1001,1002&limitmaxerror_1=100&limitmode_1=1&limitmaxerror_1_factor=0.1"),
-                    UnitRequest.EditSettings("id=1003&limitmaxerror_2=100&limitmode_2=1&limitmaxerror_2_factor=0.2")
+                    UnitRequest.EditSettings("id=1001,1002&limitmaxerror_1=100&limitmode_1=1&limitmaxerror_1_factor=0.1&nosession=1"),
+                    UnitRequest.EditSettings("id=1003&limitmaxerror_2=100&limitmode_2=1&limitmaxerror_2_factor=0.2&nosession=1")
                 },
                 version: version
             );
@@ -3207,8 +3207,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
                 c => c.SetChannelProperty(channels, ChannelProperty.ErrorLimitMessage, "test"),
                 new[]
                 {
-                    UnitRequest.EditSettings("id=1001&limiterrormsg_1=test&limitmode_1=1&limitmaxerror_1=50&limitmaxerror_1_factor=0.1"),
-                    UnitRequest.EditSettings("id=1002&limiterrormsg_2=test&limitmode_2=1&limitminerror_2=25&limitminerror_2_factor=0.2")
+                    UnitRequest.EditSettings("id=1001&limiterrormsg_1=test&limitmode_1=1&limitmaxerror_1=50&limitmaxerror_1_factor=0.1&nosession=1"),
+                    UnitRequest.EditSettings("id=1002&limiterrormsg_2=test&limitmode_2=1&limitminerror_2=25&limitminerror_2_factor=0.2&nosession=1")
                 },
                 version: RequestVersion.v18_1
             );
@@ -3234,8 +3234,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
                 async c => await c.SetChannelPropertyAsync(channels, ChannelProperty.ErrorLimitMessage, "test"),
                 new[]
                 {
-                    UnitRequest.EditSettings("id=1001&limiterrormsg_1=test&limitmode_1=1&limitmaxerror_1=50&limitmaxerror_1_factor=0.1"),
-                    UnitRequest.EditSettings("id=1002&limiterrormsg_2=test&limitmode_2=1&limitminerror_2=25&limitminerror_2_factor=0.2")
+                    UnitRequest.EditSettings("id=1001&limiterrormsg_1=test&limitmode_1=1&limitmaxerror_1=50&limitmaxerror_1_factor=0.1&nosession=1"),
+                    UnitRequest.EditSettings("id=1002&limiterrormsg_2=test&limitmode_2=1&limitminerror_2=25&limitminerror_2_factor=0.2&nosession=1")
                 },
                 version: RequestVersion.v18_1
             );
@@ -3304,7 +3304,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
                     ObjectProperty.ExeFile,
                     "test.ps1"
                 ),
-                UnitRequest.EditSettings("id=1001&exefile_=test.ps1%7Ctest.ps1%7C%7C&exefilelabel_=test.ps1%7Ctest.ps1%7C%7C")
+                UnitRequest.EditSettings("id=1001&exefile_=test.ps1%7Ctest.ps1%7C%7C&exefilelabel_=test.ps1%7Ctest.ps1%7C%7C&nosession=1")
             );
         }
 
@@ -3532,7 +3532,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
                 {
                     UnitRequest.Channels(1001),
                     UnitRequest.ChannelProperties(1001, 1),
-                    UnitRequest.EditSettings($"id=1001&limitmaxerror_1={encoded}&limitmode_1=1&limitmaxerror_1_factor=1")
+                    UnitRequest.EditSettings($"id=1001&limitmaxerror_1={encoded}&limitmode_1=1&limitmaxerror_1_factor=1&nosession=1")
                 }
             );
         }

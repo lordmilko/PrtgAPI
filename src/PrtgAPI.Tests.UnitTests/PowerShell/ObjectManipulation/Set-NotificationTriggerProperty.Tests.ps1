@@ -136,6 +136,7 @@ Describe "Set-NotificationTriggerProperty" -Tag @("PowerShell", "UnitTest") {
             [Request]::EditSettings(@(
                 "id=0"
                 "subid=1"
+                "nosession=1"
                 "onnotificationid_1=300%7CEmail+and+push+notification+to+admin"
             ) -join "&")
         )
@@ -167,6 +168,7 @@ Describe "Set-NotificationTriggerProperty" -Tag @("PowerShell", "UnitTest") {
             [Request]::EditSettings(@(
                 "id=0"
                 "subid=1"
+                "nosession=1"
                 "onnotificationid_1=300%7CEmail+and+push+notification+to+admin"
             ) -join "&")
         )
@@ -190,6 +192,7 @@ Describe "Set-NotificationTriggerProperty" -Tag @("PowerShell", "UnitTest") {
             [Request]::EditSettings(@(
                 "id=0"
                 "subid=1"
+                "nosession=1"
                 "onnotificationid_1=300%7CEmail+and+push+notification+to+admin"
             ) -join "&")
         )
@@ -220,6 +223,7 @@ Describe "Set-NotificationTriggerProperty" -Tag @("PowerShell", "UnitTest") {
             [Request]::EditSettings(@(
                 "id=4000"
                 "subid=7"
+                "nosession=1"
                 "channel_7=1"
             ) -join "&")
         )
@@ -240,6 +244,7 @@ Describe "Set-NotificationTriggerProperty" -Tag @("PowerShell", "UnitTest") {
             [Request]::EditSettings(@(
                 "id=4000"
                 "subid=7"
+                "nosession=1"
                 "channel_7=1"
             ) -join "&")
         )
@@ -264,6 +269,7 @@ Describe "Set-NotificationTriggerProperty" -Tag @("PowerShell", "UnitTest") {
             [Request]::EditSettings(@(
                 "id=4000"
                 "subid=7"
+                "nosession=1"
                 "channel_7=1"
             ) -join "&")
         )
@@ -286,6 +292,7 @@ Describe "Set-NotificationTriggerProperty" -Tag @("PowerShell", "UnitTest") {
             [Request]::EditSettings(@(
                 "id=4000"
                 "subid=7"
+                "nosession=1"
                 "channel_7=1"
             ) -join "&")
         )
@@ -317,6 +324,7 @@ Describe "Set-NotificationTriggerProperty" -Tag @("PowerShell", "UnitTest") {
             [Request]::EditSettings(@(
                 "id=4000"
                 "subid=7"
+                "nosession=1"
                 "channel_7=-1"
             ) -join "&")
         )
@@ -338,6 +346,7 @@ Describe "Set-NotificationTriggerProperty" -Tag @("PowerShell", "UnitTest") {
             [Request]::EditSettings(@(
                 "id=3000"
                 "subid=7"
+                "nosession=1"
                 "channel_7=-1"
             ) -join "&")#>
         )
@@ -354,7 +363,7 @@ Describe "Set-NotificationTriggerProperty" -Tag @("PowerShell", "UnitTest") {
 
         $trigger = GetTrigger "Volume"
 
-        SetAddressValidatorResponse ([Request]::EditSettings("id=1&subid=6&onnotificationid_6=-1%7CNone"))
+        SetAddressValidatorResponse ([Request]::EditSettings("id=1&subid=6&nosession=1&onnotificationid_6=-1%7CNone"))
 
         $trigger | Set-TriggerProperty OnNotificationAction $null
     }
@@ -364,7 +373,7 @@ Describe "Set-NotificationTriggerProperty" -Tag @("PowerShell", "UnitTest") {
 
         $trigger = GetTrigger "Volume"
 
-        SetAddressValidatorResponse ([Request]::EditSettings("id=1&subid=6&onnotificationid_6=-1%7CNone"))
+        SetAddressValidatorResponse ([Request]::EditSettings("id=1&subid=6&nosession=1&onnotificationid_6=-1%7CNone"))
 
         $trigger | Set-TriggerProperty -OnNotificationAction $null
     }

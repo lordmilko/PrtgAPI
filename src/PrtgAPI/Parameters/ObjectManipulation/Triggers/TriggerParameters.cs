@@ -98,6 +98,8 @@ namespace PrtgAPI.Parameters
                 Parameters.Add(new CustomParameter("class", type));
                 this[Parameter.ObjectType] = "nodetrigger";
             }
+
+            this[Parameter.NoSession] = true;
         }
 
         /// <summary>

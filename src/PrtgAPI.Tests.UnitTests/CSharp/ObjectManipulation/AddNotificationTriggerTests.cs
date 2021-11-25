@@ -213,7 +213,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             {
                 UnitRequest.TriggerTypes(1001),              //Validate Supported Triggers
                 UnitRequest.Sensors("filter_objid=1001"), //Validate TriggerChannel target compatibility
-                UnitRequest.EditSettings("id=1001&subid=new&onnotificationid_new=-1%7CNone&class=threshold&offnotificationid_new=-1%7CNone&channel_new=-1&condition_new=0&threshold_new=0&latency_new=60&objecttype=nodetrigger") //Add Trigger
+                UnitRequest.EditSettings("id=1001&subid=new&onnotificationid_new=-1%7CNone&class=threshold&offnotificationid_new=-1%7CNone&channel_new=-1&condition_new=0&threshold_new=0&latency_new=60&objecttype=nodetrigger&nosession=1") //Add Trigger
             };
 
             TestTriggerChannel(TriggerChannel.Total, urls, false);
@@ -229,7 +229,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
                 UnitRequest.Sensors("filter_objid=1001"),    //Validate TriggerChannel target compatibility
                 UnitRequest.Channels(1001),
                 UnitRequest.ChannelProperties(1001, 1),
-                UnitRequest.EditSettings("id=1001&subid=new&onnotificationid_new=-1%7CNone&class=threshold&offnotificationid_new=-1%7CNone&channel_new=1&condition_new=0&threshold_new=0&latency_new=60&objecttype=nodetrigger") //Add Trigger
+                UnitRequest.EditSettings("id=1001&subid=new&onnotificationid_new=-1%7CNone&class=threshold&offnotificationid_new=-1%7CNone&channel_new=1&condition_new=0&threshold_new=0&latency_new=60&objecttype=nodetrigger&nosession=1") //Add Trigger
             };
 
             var channel = new Channel
@@ -269,7 +269,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
                 UnitRequest.TriggerTypes(1001),              //Validate Supported Triggers
                 UnitRequest.Sensors("filter_objid=1001"),                                                                    //Validate TriggerChannel target compatibility
                 UnitRequest.ChannelProperties(1001, 3),
-                UnitRequest.EditSettings("id=1001&subid=new&onnotificationid_new=-1%7CNone&class=threshold&offnotificationid_new=-1%7CNone&channel_new=3&condition_new=0&threshold_new=0&latency_new=60&objecttype=nodetrigger") //Add Trigger
+                UnitRequest.EditSettings("id=1001&subid=new&onnotificationid_new=-1%7CNone&class=threshold&offnotificationid_new=-1%7CNone&channel_new=3&condition_new=0&threshold_new=0&latency_new=60&objecttype=nodetrigger&nosession=1") //Add Trigger
             };
 
             TestTriggerChannel(new TriggerChannel(3), urls, true);
@@ -325,7 +325,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
                 UnitRequest.Sensors("filter_objid=1001"),                                                                    //Validate TriggerChannel target compatibility
                 UnitRequest.Channels(1001),
                 UnitRequest.ChannelProperties(1001, 1),
-                UnitRequest.EditSettings("id=1001&subid=new&onnotificationid_new=-1%7CNone&class=threshold&offnotificationid_new=-1%7CNone&channel_new=1&condition_new=0&threshold_new=0&latency_new=60&objecttype=nodetrigger") //Add Trigger
+                UnitRequest.EditSettings("id=1001&subid=new&onnotificationid_new=-1%7CNone&class=threshold&offnotificationid_new=-1%7CNone&channel_new=1&condition_new=0&threshold_new=0&latency_new=60&objecttype=nodetrigger&nosession=1") //Add Trigger
             };
 
             var channel = new Channel

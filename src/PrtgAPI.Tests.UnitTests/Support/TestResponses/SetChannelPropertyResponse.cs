@@ -35,7 +35,7 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
             {
                 if (Convert.ToBoolean(value))
                 {
-                    AssertCollectionLength(address, queries, 1);
+                    AssertCollectionLength(address, queries, 2);
                     KeyExistsWithCorrectValue(queries, "limitmode", Convert.ToInt32(value));
                 }
                 else
@@ -52,7 +52,7 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
             else if (property == ChannelProperty.UpperErrorLimit)
             {
                 //If no value was specified, we didn't need to include a factor
-                var limitMaxErrorCount = string.IsNullOrEmpty(queries["limitmaxerror_1"]) ? 2 : 3;
+                var limitMaxErrorCount = string.IsNullOrEmpty(queries["limitmaxerror_1"]) ? 3 : 4;
 
                 AssertCollectionLength(address, queries, limitMaxErrorCount);
 
