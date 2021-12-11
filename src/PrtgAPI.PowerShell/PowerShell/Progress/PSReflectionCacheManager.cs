@@ -463,7 +463,7 @@ namespace PrtgAPI.PowerShell.Progress
 
                 IEnumerable<object> list;
 
-                if (declaringType == typeof(Array) || enumeratorType.Name == "SZArrayEnumerator") //It's a SZArrayEnumerator (piping straight from a variable). In .NET Core 3.1 SZArrayEnumerator is no longer nested
+                if (declaringType == typeof(Array) || enumeratorType.Name == "SZArrayEnumerator" || enumeratorType.Name == "ArrayEnumerator") //It's a SZArrayEnumerator (piping straight from a variable). In .NET Core 3.1 SZArrayEnumerator is no longer nested
                     list = ((object[]) enumerator.GetInternalField("_array"));
                 else if (declaringType == typeof(List<>)) //It's a List<T>.Enumerator (piping from $groups[0].Group)
                     list = enumerator.PSGetInternalField("_list", "list", null).ToIEnumerable();
