@@ -154,22 +154,14 @@ namespace PrtgAPI
         [PropertyParameter(ChannelProperty.Unit)]
         public string Unit
         {
-            get { return unit; }
-            set
+            get
             {
-                //Property will be set to null by deserialization engine
-                if (value != null)
-                    unit = value;
-                else
-                {
-                    if (LastValue == null)
-                        unit = null;
-                    else
-                    {
-                        unit = DisplayLastValue?.Substring(DisplayLastValue.LastIndexOf(' ') + 1);
-                    }
-                }
+                if (unit == null && LastValue != null)
+                    unit = DisplayLastValue?.Substring(DisplayLastValue.LastIndexOf(' ') + 1);
+
+                return unit;
             }
+            set { unit = value; }
         }
 
         [XmlElement("injected_valuelookup")]
