@@ -296,13 +296,13 @@ namespace PrtgAPI.Request
             var versionRegex = "<version>(.+)<\\/version>";
             var resultRegex = "<result>(.+)<\\/result>";
 
-            var versionMatch = Regex.Match(response, versionRegex);
-            var resultMatch = Regex.Match(response, resultRegex);
+            var versionMatch = Regex.Match(response, versionRegex, RegexOptions.Singleline);
+            var resultMatch = Regex.Match(response, resultRegex, RegexOptions.Singleline);
 
             if (versionMatch.Success && resultMatch.Success)
             {
-                var version = Regex.Replace(versionMatch.Value, versionRegex, "$1", RegexOptions.Multiline);
-                var result = Regex.Replace(resultMatch.Value, resultRegex, "$1", RegexOptions.Multiline);
+                var version = Regex.Replace(versionMatch.Value, versionRegex, "$1", RegexOptions.Singleline);
+                var result = Regex.Replace(resultMatch.Value, resultRegex, "$1", RegexOptions.Singleline);
 
                 var newResult = WebUtility.HtmlDecode(result);
 

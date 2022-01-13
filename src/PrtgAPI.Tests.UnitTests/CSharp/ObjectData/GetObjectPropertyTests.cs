@@ -143,6 +143,22 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
 
         [UnitTest]
         [TestMethod]
+        public void GetObjectProperty_Deserializes_EncodedXml_Multiline()
+        {
+            var nl = Environment.NewLine;
+            TestEncodedProperty($"&gt;{nl}&gt;", $">\n>");
+        }
+
+        [UnitTest]
+        [TestMethod]
+        public void GetObjectProperty_Deserializes_UnencodedXml_Multiline()
+        {
+            var nl = Environment.NewLine;
+            TestEncodedProperty($"&{nl}&", $"&\n&");
+        }
+
+        [UnitTest]
+        [TestMethod]
         public void GetObjectProperty_Deserializes_EncodedHtml()
         {
             TestEncodedProperty("&#92;", "\\");
@@ -155,6 +171,22 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         public void GetObjectProperty_Deserializes_UnencodedHtml()
         {
             TestEncodedProperty("\\", "\\");
+        }
+
+        [UnitTest]
+        [TestMethod]
+        public void GetObjectProperty_Deserializes_EncodedHtml_Multiline()
+        {
+            var nl = Environment.NewLine;
+            TestEncodedProperty($"&#92;{nl}&#92;", $"\\\n\\");
+        }
+
+        [UnitTest]
+        [TestMethod]
+        public void GetObjectProperty_Deserializes_UnencodedHtml_Multiline()
+        {
+            var nl = Environment.NewLine;
+            TestEncodedProperty($"\\{nl}\\", $"\\\n\\");
         }
 
         private void TestEncodedProperty(string value, string expected)
