@@ -107,7 +107,17 @@ namespace PrtgAPI.Request
             //needs to be refactored to have the deserialization happen in a callback to ExecuteRequest
             //so that there is no problem wrapping the HttpResponseMessage up in a using for both
             //sync/async
-            return asyncClient.GetAsync(request.Uri, token);
+
+            var httpRequestMessage = new HttpRequestMessage
+            {
+                Method = HttpMethod.Get,
+                RequestUri = request.Uri
+            };
+
+            foreach (var header in request.Headers)
+                httpRequestMessage.Headers.Add(header.Key, header.Value);
+
+            return asyncClient.SendAsync(httpRequestMessage, token);
         }
     }
 }

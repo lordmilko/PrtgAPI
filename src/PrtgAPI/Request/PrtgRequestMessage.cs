@@ -22,6 +22,8 @@ namespace PrtgAPI.Request
 
         public Uri Uri { get; }
 
+        public IDictionary<string, string> Headers { get; } = new Dictionary<string, string>();
+
         /// <summary>
         /// Gets a parser capable of modifying the request response. If a custom parser external to this request message
         /// is specified for the API request, this parser is ignored.
@@ -76,6 +78,9 @@ namespace PrtgAPI.Request
 
                 AddParameter(urlBuilder, Parameter.PassHash, connectionDetails.PassHash);
             }
+
+            if (parameters.Cookie)
+                Headers.Add("X-Requested-With", "XMLHttpRequest");
 
             Uri = new Uri(urlBuilder.ToString());
 
