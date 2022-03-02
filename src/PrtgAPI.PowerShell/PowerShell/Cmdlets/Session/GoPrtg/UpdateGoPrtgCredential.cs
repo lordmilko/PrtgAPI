@@ -50,7 +50,7 @@ namespace PrtgAPI.PowerShell.Cmdlets
         protected override void BeginProcessing()
         {
             if (PrtgSessionState.Client == null)
-                throw new InvalidOperationException("You are not connected to a PRTG Server. Please connect first using GoPrtg [<server>].");
+                throw new InvalidOperationException("You are not connected to a PRTG Server. Please connect first using GoPrtg [<server>] or Connect-PrtgServer.");
 
             AssertProfileExists();
         }

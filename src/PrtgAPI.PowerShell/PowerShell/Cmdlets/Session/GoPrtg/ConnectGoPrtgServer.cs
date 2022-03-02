@@ -109,7 +109,10 @@ namespace PrtgAPI.PowerShell.Cmdlets
             }
             else
             {
-                var passhash = InvokeCommand.InvokeScript($"ConvertTo-SecureString {server.PassHash}").First().BaseObject as SecureString;
+                var passhash = InvokeCommand.InvokeScript($"ConvertTo-SecureString {server.PassHash}").FirstOrDefault()?.BaseObject as SecureString;
+
+                if (passhash == null)
+                    throw new InvalidOperationException($"Cannot parse encrypted passhash for server '{server.Server}': passhash appears to have been encrypted on another computer. Please connect using Connect-PrtgServer and then run Update-GoPrtgCredential.");
 
                 var credential = new PSCredential(server.UserName, passhash);
 

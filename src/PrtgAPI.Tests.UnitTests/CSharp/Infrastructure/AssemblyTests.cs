@@ -320,6 +320,7 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
                 Tuple.Create("UpdateGoPrtgCredential.cs"),
                 Tuple.Create("GoPrtgCmdlet.cs"),
                 Tuple.Create("InstallGoPrtgServer.cs"),
+                Tuple.Create("ConnectGoPrtgServer.cs"),
                 Tuple.Create("UninstallGoPrtgServer.cs"),
                 Tuple.Create("SetGoPrtgAlias.cs"),
                 Tuple.Create("ProgressManager.cs")
