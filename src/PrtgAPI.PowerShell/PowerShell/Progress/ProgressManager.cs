@@ -1065,7 +1065,7 @@ namespace PrtgAPI.PowerShell.Progress
                         return false;
 
                     //It's all over; complete the MultiOperationProgress.
-                    if (multiOperationAnalyzer.PipelineFinished)
+                    if (multiOperationAnalyzer.PipelineFinished && PipelineIsProgressPure && ProgressWritten)
                         return true;
 
                     //we need to inspect all cmdlets up the chain to see whether they still have records to generate
