@@ -46,7 +46,7 @@ namespace PrtgAPI.Parameters
         public string Name
         {
             get { return GetCustomParameter(ObjectProperty.Name)?.ToString(); }
-            set { SetCustomParameter(ObjectProperty.Name, value); }
+            set { SetCustomParameter(ObjectProperty.Name, value?.Trim()); }
         }
 
         /// <summary>

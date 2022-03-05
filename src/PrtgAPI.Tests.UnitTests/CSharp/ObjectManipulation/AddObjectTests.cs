@@ -538,6 +538,31 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
 
         [UnitTest]
         [TestMethod]
+        public void AddDevice_ResolvesNameWithLeadingSpace()
+        {
+            var urls = new[]
+            {
+                UnitRequest.Devices("filter_parentid=1001&filter_name=newDevice"),
+                UnitRequest.Get("adddevice2.htm?name_=newDevice&host_=127.0.0.1&ipversion_=0&discoverytype_=0&discoveryschedule_=0&id=1001"),
+                UnitRequest.Devices("filter_parentid=1001&filter_name=newDevice"),
+
+                UnitRequest.Devices("filter_parentid=1001&filter_name=newDevice"),
+                UnitRequest.Get("adddevice2.htm?name_=newDevice&host_=127.0.0.1&ipversion_=0&discoverytype_=0&discoveryschedule_=0&id=1001"),
+                UnitRequest.Devices("filter_parentid=1001&filter_name=newDevice")
+            };
+
+            var response = new AddressValidatorResponse(urls, true, new DiffBasedResolveResponse(false));
+
+            var client = Initialize_Client(response);
+            var lightDevice = client.AddDevice(1001, " newDevice", "127.0.0.1");
+            Assert.AreEqual("Probe Device2", lightDevice.Name);
+
+            var paramsDevice = client.AddDevice(1001, new NewDeviceParameters(" newDevice", "127.0.0.1"));
+            Assert.AreEqual("Probe Device2", paramsDevice.Name);
+        }
+
+        [UnitTest]
+        [TestMethod]
         public void DeviceTemplate_ReadOnly()
         {
             var client = Initialize_ReadOnlyClient(new MultiTypeResponse());
