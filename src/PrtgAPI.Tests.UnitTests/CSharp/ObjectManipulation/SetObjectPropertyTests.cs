@@ -332,6 +332,42 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             AssertEx.Throws<PrtgRequestException>(() => client.ResolveAddress("something", CancellationToken.None), "the PRTG map provider is not currently available");
         }
 
+        [UnitTest]
+        [TestMethod]
+        public void Location_Here_AmericanCulture()
+        {
+            TestCustomCulture(() =>
+            {
+                Execute(
+                    c => c.SetObjectProperty(1001, ObjectProperty.Location, "HERE"),
+                    new[]
+                    {
+                        UnitRequest.Get("api/geolocator.htm?cache=false&dom=2&path=HERE"),
+                        UnitRequest.EditSettings("id=1001&location_=100+HERE+Lane&lonlat_=-91.0527997%2C62.3643847&locationgroup=0")
+                    },
+                    version: RequestVersion.v18_1
+                );
+            }, new CultureInfo("en-US"));
+        }
+
+        [UnitTest]
+        [TestMethod]
+        public void Location_Here_EuropeanCulture()
+        {
+            TestCustomCulture(() =>
+            {
+                Execute(
+                    c => c.SetObjectProperty(1001, ObjectProperty.Location, "HERE"),
+                    new[]
+                    {
+                        UnitRequest.Get("api/geolocator.htm?cache=false&dom=2&path=HERE"),
+                        UnitRequest.EditSettings("id=1001&location_=100+HERE+Lane&lonlat_=-91.0527997%2C62.3643847&locationgroup=0")
+                    },
+                    version: RequestVersion.v18_1
+                );
+            }, new CultureInfo("de-DE"));
+        }
+
         #endregion
         #region Coordinates Location
 
@@ -388,6 +424,38 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
                 c => c.SetObjectProperty(1001, ObjectProperty.Location, new[] {40.71455, -74.00714}),
                 $"editsettings?id=1001&location_={lat}%2C+{lon}&lonlat_={lon}%2C{lat}&locationgroup=0&username"
             );
+        }
+
+        [UnitTest]
+        [TestMethod]
+        public void Location_Coordinates_AmericanCulture()
+        {
+            TestCustomCulture(() =>
+            {
+                var lat = "40.71455";
+                var lon = "-74.00714";
+
+                Execute(
+                    c => c.SetObjectProperty(1001, ObjectProperty.Location, new[] { 40.71455, -74.00714 }),
+                    $"editsettings?id=1001&location_={lat}%2C+{lon}&lonlat_={lon}%2C{lat}&locationgroup=0&username"
+                );
+            }, new CultureInfo("en-US"));
+        }
+
+        [UnitTest]
+        [TestMethod]
+        public void Location_Coordinates_EuropeanCulture()
+        {
+            TestCustomCulture(() =>
+            {
+                var lat = "40.71455";
+                var lon = "-74.00714";
+
+                Execute(
+                    c => c.SetObjectProperty(1001, ObjectProperty.Location, new[] { 40.71455, -74.00714 }),
+                    $"editsettings?id=1001&location_={lat}%2C+{lon}&lonlat_={lon}%2C{lat}&locationgroup=0&username"
+                );
+            }, new CultureInfo("de-DE"));
         }
 
         [UnitTest]

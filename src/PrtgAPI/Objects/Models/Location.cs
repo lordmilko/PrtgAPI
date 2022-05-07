@@ -1,4 +1,6 @@
-﻿using System.Runtime.Serialization;
+﻿using System.Globalization;
+using System.Linq;
+using System.Runtime.Serialization;
 using PrtgAPI.Request;
 using PrtgAPI.Utilities;
 
@@ -12,7 +14,7 @@ namespace PrtgAPI
 
         internal GpsLocation(double latitude, double longitude)
         {
-            Address = $"{latitude}, {longitude}";
+            Address = $"{latitude.ToString(CultureInfo.InvariantCulture)}, {longitude.ToString(CultureInfo.InvariantCulture)}";
             Latitude = latitude;
             Longitude = longitude;
         }
@@ -24,10 +26,24 @@ namespace PrtgAPI
         internal static string GetAddress(object value)
         {
             string str = value != null && value.IsIEnumerable()
-                ? string.Join(", ", value.ToIEnumerable())
-                : value?.ToString();
+                ? string.Join(", ", value.ToIEnumerable().Select(GetValueStr))
+                : GetValueStr(value);
 
             return str;
+        }
+
+        private static string GetValueStr(object v)
+        {
+            if (v == null)
+                return null;
+
+            if (v is int)
+                return ((int) v).ToString(CultureInfo.InvariantCulture);
+
+            if (v is double)
+                return ((double) v).ToString(CultureInfo.InvariantCulture);
+
+            return v.ToString();
         }
 
         public virtual string Address { get; set; }
@@ -59,7 +75,7 @@ namespace PrtgAPI
             return new[]
             {
                 ((Request.ISerializable)this).GetSerializedFormat(),
-                $"{Longitude},{Latitude}"
+                $"{Longitude.ToString(CultureInfo.InvariantCulture)},{Latitude.ToString(CultureInfo.InvariantCulture)}"
             };
         }
     }

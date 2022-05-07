@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
@@ -242,7 +243,9 @@ namespace PrtgAPI.Request
                 double latitude;
                 double longitude;
 
-                if (double.TryParse(matches[0].Value, out latitude) && double.TryParse(matches[1].Value, out longitude))
+                var styles = NumberStyles.Float | NumberStyles.AllowThousands;
+
+                if (double.TryParse(matches[0].Value, styles, CultureInfo.InvariantCulture, out latitude) && double.TryParse(matches[1].Value, styles, CultureInfo.InvariantCulture, out longitude))
                 {
                     if (!findLabel && (address.Contains('\n') || address.Contains('\r')))
                     {
