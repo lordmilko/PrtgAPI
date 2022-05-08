@@ -345,6 +345,38 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             );
         }
 
+        [UnitTest]
+        [TestMethod]
+        public void AddSensor_Ignores_HttpStatus556OnRedirect()
+        {
+            var client = Initialize_Client(new DiffBasedResolveResponse
+            {
+                StatusCodeMap = new Dictionary<string, HttpStatusCode>
+                {
+                    { nameof(CommandFunction.AddSensor5), (HttpStatusCode) 556 }
+                }
+            });
+
+            var sensors = client.AddSensor(1001, new ExeXmlSensorParameters("test.ps1"));
+            Assert.AreEqual(2, sensors.Count);
+        }
+
+        [UnitTest]
+        [TestMethod]
+        public async Task AddSensor_Ignores_HttpStatus556OnRedirectAsync()
+        {
+            var client = Initialize_Client(new DiffBasedResolveResponse
+            {
+                StatusCodeMap = new Dictionary<string, HttpStatusCode>
+                {
+                    { nameof(CommandFunction.AddSensor5), (HttpStatusCode) 556 }
+                }
+            });
+
+            var sensors = await client.AddSensorAsync(1001, new ExeXmlSensorParameters("test.ps1"));
+            Assert.AreEqual(2, sensors.Count);
+        }
+
         #endregion
         #region AddDevice
 

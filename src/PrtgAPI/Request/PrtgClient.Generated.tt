@@ -752,8 +752,12 @@ for(int i = 0; i < 2; i++)
                 <#= CallFunction("AddObjectInternalDefault", "internalParams, token", i) #>;
         }
 
-        internal <#= GetSignature("AddObjectInternalDefault", "void", i)#>(ICommandParameters internalParams, CancellationToken token) =>
-            <#= CallFunction("RequestEngine.ExecuteRequest", "internalParams, token: token", i) #>;
+        internal <#= GetSignature("AddObjectInternalDefault", "void", i)#>(ICommandParameters internalParams, CancellationToken token)
+        {
+            <#= DeclareLightFunc1("parseAddObjectResponse", "HttpResponseMessage", "PrtgResponse", "ResponseParser.ParseAddObjectResponse", i) #>;
+
+            <#= CallFunction("RequestEngine.ExecuteRequest", "internalParams, parseAddObjectResponse, token", i) #>;
+        }
 
         private <#= GetSignature("ResolveWithDiff", "List<T>", i) #><T>(<#= GetTokenActionParam0(i) #> createObject, Func<CancellationToken, <#= GetFuncRet("List<T>", i) #>> getObjects, Func<List<T>, List<T>, List<T>> exceptFunc,
              CancellationToken token, Action<Type, int> errorCallback, Func<bool> shouldStop, bool allowMultiple = false, string enhancedResolutionError = null)

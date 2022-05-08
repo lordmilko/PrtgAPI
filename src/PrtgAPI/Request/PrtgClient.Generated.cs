@@ -1144,8 +1144,12 @@ namespace PrtgAPI
                 AddObjectInternalDefault(internalParams, token);
         }
 
-        internal void AddObjectInternalDefault(ICommandParameters internalParams, CancellationToken token) =>
-            RequestEngine.ExecuteRequest(internalParams, token: token);
+        internal void AddObjectInternalDefault(ICommandParameters internalParams, CancellationToken token)
+        {
+            Func<HttpResponseMessage, PrtgResponse> parseAddObjectResponse = ResponseParser.ParseAddObjectResponse;
+
+            RequestEngine.ExecuteRequest(internalParams, parseAddObjectResponse, token);
+        }
 
         private List<T> ResolveWithDiff<T>(Action<CancellationToken> createObject, Func<CancellationToken, List<T>> getObjects, Func<List<T>, List<T>, List<T>> exceptFunc,
              CancellationToken token, Action<Type, int> errorCallback, Func<bool> shouldStop, bool allowMultiple = false, string enhancedResolutionError = null)
@@ -1299,8 +1303,12 @@ namespace PrtgAPI
                 await AddObjectInternalDefaultAsync(internalParams, token).ConfigureAwait(false);
         }
 
-        internal async Task AddObjectInternalDefaultAsync(ICommandParameters internalParams, CancellationToken token) =>
-            await RequestEngine.ExecuteRequestAsync(internalParams, token: token).ConfigureAwait(false);
+        internal async Task AddObjectInternalDefaultAsync(ICommandParameters internalParams, CancellationToken token)
+        {
+            Func<HttpResponseMessage, Task<PrtgResponse>> parseAddObjectResponse = o => Task.FromResult(ResponseParser.ParseAddObjectResponse(o));
+
+            await RequestEngine.ExecuteRequestAsync(internalParams, parseAddObjectResponse, token).ConfigureAwait(false);
+        }
 
         private async Task<List<T>> ResolveWithDiffAsync<T>(Func<CancellationToken, Task> createObject, Func<CancellationToken, Task<List<T>>> getObjects, Func<List<T>, List<T>, List<T>> exceptFunc,
              CancellationToken token, Action<Type, int> errorCallback, Func<bool> shouldStop, bool allowMultiple = false, string enhancedResolutionError = null)

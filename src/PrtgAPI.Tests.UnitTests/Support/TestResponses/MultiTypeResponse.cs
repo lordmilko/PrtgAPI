@@ -4,6 +4,7 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using PrtgAPI.Utilities;
@@ -11,7 +12,7 @@ using PrtgAPI.Tests.UnitTests.Support.TestItems;
 
 namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
 {
-    public class MultiTypeResponse : IWebStreamResponse
+    public class MultiTypeResponse : IWebStreamResponse, IWebStatusResponse
     {
         private StringEnum<SensorType> newSensorType;
 
@@ -34,6 +35,9 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
         public Dictionary<Content, BaseItem[]> ItemOverride { get; set; }
         private Dictionary<string, int> hitCount = new Dictionary<string, int>();
         public Func<string, string, string> ResponseTextManipulator { get; set; }
+        public HttpStatusCode StatusCode { get; set; }
+
+        public Dictionary<string, HttpStatusCode> StatusCodeMap;
 
         public int[] HasSchedule { get; set; }
 
@@ -51,6 +55,16 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
                 hitCount.Add(function, 1);
 
             var text = GetResponse(ref address, function).GetResponseText(ref address);
+
+            HttpStatusCode code;
+
+            if (StatusCodeMap != null)
+            {
+                if (StatusCodeMap.TryGetValue(function, out code))
+                    StatusCode = code;
+                else
+                    StatusCode = 0;
+            }
 
             if (ResponseTextManipulator != null)
                 return ResponseTextManipulator(text, address);
@@ -152,6 +166,8 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
                     return new SensorHistoryReportResponse(true);
                 case nameof(CommandFunction.AcknowledgeAlarm):
                 case nameof(CommandFunction.AddSensor5):
+                    address = "http://prtg.example.com/device.htm?id=9999";
+                    return new BasicResponse(string.Empty);
                 case nameof(CommandFunction.AddDevice2):
                 case nameof(CommandFunction.AddGroup2):
                 case nameof(CommandFunction.ClearCache):

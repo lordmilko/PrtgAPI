@@ -255,6 +255,17 @@ namespace PrtgAPI.Request
             return after.Where(a => !before.Any(b => a.ObjectId == b.ObjectId && a.SubId == b.SubId) && a.OnNotificationAction.Id == parameters.OnNotificationAction.Id).ToList();
         }
 
+        internal static PrtgResponse ParseAddObjectResponse(HttpResponseMessage response)
+        {
+            if (response.StatusCode == (HttpStatusCode) 556)
+            {
+                if (response.RequestMessage?.RequestUri?.AbsolutePath == "/device.htm")
+                    response.StatusCode = HttpStatusCode.OK;
+            }
+
+            return null;
+        }
+
         #endregion
         #region Clone Object
 
