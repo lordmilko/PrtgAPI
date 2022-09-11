@@ -20,6 +20,8 @@ namespace PrtgAPI.Tests.UnitTests.Support
         public static string Sensors(string url = "", UrlFlag? flags = DefaultObjectFlags) =>
             RequestObject(url, flags, "sensors", DefaultSensorProperties);
 
+        public static string SensorProperties(int id) => RequestObjectData(id, "sensor");
+
         public static string DeviceCount => Count("devices");
         public static string Devices(string url = "", UrlFlag? flags = DefaultObjectFlags) =>
             RequestObject(url, flags, "devices", DefaultDeviceProperties);

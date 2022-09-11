@@ -14,15 +14,17 @@ namespace PrtgAPI.PowerShell
         private int readCount;
 
         private GetSensorHistory cmdlet;
+        private List<Channel> channels;
 
         private bool xmlLoaded = false;
 
         private static Dictionary<string, TypeNameRecord> typeNameMap = new Dictionary<string, TypeNameRecord>();
         private static int mapCount;
 
-        public SensorHistoryFormatter(GetSensorHistory cmdlet)
+        public SensorHistoryFormatter(GetSensorHistory cmdlet, List<Channel> channels)
         {
             this.cmdlet = cmdlet;
+            this.channels = channels;
         }
 
         private PSObject PrepareObject(SensorHistoryRecord data, bool isNew = false)
@@ -123,7 +125,7 @@ namespace PrtgAPI.PowerShell
                             }
                             else
                             {
-                                if (unitValue.ToCharArray().Count(c => c == ' ') <= 1 && !IsTimeSpan(unitValueChannel))
+                                if (unitValue.ToCharArray().Count(c => c == ' ') <= 1 && !IsTimeSpan(unitValueChannel, unitValueChannel.Value))
                                 {
                                     unitValue = unitValue.Substring(unitValue.IndexOf(' ') + 1).Trim();
                                 }
@@ -138,7 +140,7 @@ namespace PrtgAPI.PowerShell
             }
         }
 
-        private bool IsTimeSpan(ChannelHistoryRecord record)
+        private bool IsTimeSpan(ChannelHistoryRecord record, double? rawValue)
         {
             if (record.DisplayValue != null)
             {
@@ -164,7 +166,7 @@ namespace PrtgAPI.PowerShell
                     }
 
                     //With large units (such as days) the display value will almost never be the same as the raw value
-                    if (total == record.Value)
+                    if (total == rawValue)
                         return true;
 
                     var largestUnit = GetSecondsForTimeSpanUnit(split[1]);
@@ -172,7 +174,7 @@ namespace PrtgAPI.PowerShell
                     //If we elapse the next hour or day, etc and it turns out we're bigger,
                     //then perhaps we are in fact a TimeSpan. Otherwise, whatever our units mean they don't
                     //relate to TimeSpans
-                    if(total < record.Value && total + largestUnit > record.Value)
+                    if(total < rawValue && total + largestUnit > rawValue)
                         return true;
                 }
             }
@@ -264,7 +266,7 @@ namespace PrtgAPI.PowerShell
 
             foreach (var channel in date.ChannelRecords)
             {
-                if (!cmdlet.Raw && (channelUnitMap[channel.Name] != null || IsTimeSpan(channel)))
+                if (!cmdlet.Raw && (channelUnitMap[channel.Name] != null || IsTimeSpan(channel, channel.Value)))
                 {
                     //Implicitly not Raw if we have a channel unit
                     var value = GetChannelValue(channel);
@@ -290,8 +292,12 @@ namespace PrtgAPI.PowerShell
 
             if (channel.DisplayValue != null)
             {
-                if (channel.Value != null && IsTimeSpan(channel))
-                    return TimeSpan.FromSeconds(channel.Value.Value);
+                var rawValue = channel.Value;
+
+                rawValue = ApplyScaling(channel.ChannelId, rawValue);
+
+                if (rawValue != null && IsTimeSpan(channel, rawValue))
+                    return TimeSpan.FromSeconds(rawValue.Value);
 
                 if (IsValueLookup(channel.DisplayValue))
                     return channel.DisplayValue;
@@ -315,10 +321,29 @@ namespace PrtgAPI.PowerShell
                     valueStr = channel.DisplayValue.Substring(first, second - first);
                 }
 
-                value = ConvertUtilities.ToDynamicDouble(valueStr, channel.Value);
+                value = ConvertUtilities.ToDynamicDouble(valueStr, rawValue);
             }
 
             return value;
+        }
+
+        private double? ApplyScaling(int channelId, double? rawValue)
+        {
+            if (rawValue == null)
+                return null;
+
+            var match = channels.FirstOrDefault(c => c.Id == channelId);
+
+            if (match != null)
+            {
+                if (match.ScalingDivision != null)
+                    rawValue /= match.ScalingDivision;
+
+                if (match.ScalingMultiplication != null)
+                    rawValue *= match.ScalingMultiplication;
+            }
+
+            return rawValue;
         }
 
         private void LoadFormat(PSObject obj, bool isNew)
@@ -331,8 +356,11 @@ namespace PrtgAPI.PowerShell
             var index = tuples.IndexOf(coverage);
             tuples[index] = Tuple.Create(coverage.Item1, $"{coverage.Item1}(%)");
 
-            if (isNew)
+            if (isNew || !typeNameRecord.XmlGenerated)
+            {
                 FormatGenerator.Generate(typeNameRecord.TypeName, tuples, typeNameRecord.Index);
+                typeNameRecord.XmlGenerated = true;
+            }
 
             FormatGenerator.LoadXml(cmdlet);
         }

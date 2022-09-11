@@ -501,6 +501,23 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
                 AssertEx.AllPropertiesRetrieveValues(prop.GetValue(info));
         }
 
+        [UnitTest]
+        [TestMethod]
+        public void SystemInfo_IllegalDateIgnored()
+        {
+            var client = Initialize_Client(new SystemInfoResponse(
+                SystemInfoItem.ProcessItem(),
+                SystemInfoItem.ProcessItem(creationDate: "Unavailable")
+            ));
+
+            var info = client.GetSystemInfo<DeviceProcessInfo>(1001);
+
+            Assert.AreEqual(2, info.Count);
+
+            Assert.IsNotNull(info[0].CreationDate);
+            Assert.IsNull(info[1].CreationDate);
+        }
+
         private PrtgClient GetFullSummaryClient()
         {
             return GetSystemInfoClient(

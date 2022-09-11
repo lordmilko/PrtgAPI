@@ -13,10 +13,9 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
         NoAPIKey
     }
 
-    class GeoLocatorResponse : MultiTypeResponse, IWebStatusResponse, IWebContentHeaderResponse
+    class GeoLocatorResponse : MultiTypeResponse, IWebContentHeaderResponse
     {
         public Action<HttpContentHeaders> HeaderAction { get; set; }
-        public HttpStatusCode StatusCode { get; set; }
 
         GeoLocatorResponseType type;
 

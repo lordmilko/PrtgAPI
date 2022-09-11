@@ -26,18 +26,17 @@ namespace PrtgAPI.Tests.UnitTests
         {
             var address = request.ToString();
 
-            var statusCode = GetStatusCode();
-
             if (token.IsCancellationRequested)
                 throw new TaskCanceledException();
 
-            var message = new HttpResponseMessage(statusCode)
+            var message = new HttpResponseMessage
             {
                 Content = new StringContent(response.GetResponseText(ref address)),
                 RequestMessage = new HttpRequestMessage()
                 {
                     RequestUri = new Uri(address)
-                }
+                },
+                StatusCode = GetStatusCode()
             };
 
             SetContentHeaders(message);
@@ -53,8 +52,6 @@ namespace PrtgAPI.Tests.UnitTests
                 await Task.Yield();
 
             var address = request.ToString();
-
-            var statusCode = GetStatusCode();
 
             if (token.IsCancellationRequested)
                 throw new TaskCanceledException();
@@ -82,13 +79,14 @@ namespace PrtgAPI.Tests.UnitTests
             }
             //we should check whether the method is a streamer or an async, and if its async we should to task.fromresult
 
-            var message = new HttpResponseMessage(statusCode)
+            var message = new HttpResponseMessage
             {
                 Content = new StringContent(responseStr),
                 RequestMessage = new HttpRequestMessage()
                 {
                     RequestUri = new Uri(address)
-                }
+                },
+                StatusCode = GetStatusCode()
             };
 
             SetContentHeaders(message);

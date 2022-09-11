@@ -20,10 +20,20 @@ namespace PrtgAPI.PowerShell.Progress
             public bool Completed { get; set; }
         }
 
+        internal bool ProgressPreviouslyWritten { get; set; }
+
+        private bool progressWritten;
+
         /// <summary>
         /// Indicates whether progress has been written to this record.
         /// </summary>
-        public bool ProgressWritten { get; set; }
+        public bool ProgressWritten
+        {
+            get { return progressWritten || ProgressPreviouslyWritten; }
+            set { progressWritten = value; }
+        }
+
+        internal bool ProgressOnlyPreviouslyWritten => !progressWritten && ProgressPreviouslyWritten;
 
         /// <summary>
         /// Indicates whether the cmdlet that owns this record is responsible for completing it.

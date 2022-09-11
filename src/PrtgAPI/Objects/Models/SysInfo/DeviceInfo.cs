@@ -104,7 +104,16 @@ namespace PrtgAPI
 
         internal void SetDateColon(string value, ref string strField, ref DateTime? dateField, string format = "yyyy-MM-dd HH:mm:ss")
         {
-            SetDateInternal(value, ref strField, ref dateField, s => DateTime.ParseExact(s, format, CultureInfo.InvariantCulture));
+            SetDateInternal(value, ref strField, ref dateField, s =>
+            {
+                DateTime date;
+
+                //Date could potentially be a string like "Unavailable"
+                if (DateTime.TryParseExact(s, format, CultureInfo.InvariantCulture, DateTimeStyles.None, out date))
+                    return date;
+
+                return null;
+            });
         }
 
         private void SetDateInternal(string value, ref string strField, ref DateTime? dateField, Func<string, DateTime?> func)

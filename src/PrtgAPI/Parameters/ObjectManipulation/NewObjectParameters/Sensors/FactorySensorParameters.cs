@@ -42,8 +42,8 @@ namespace PrtgAPI.Parameters
         [PropertyParameter(ObjectProperty.ChannelDefinition)]
         public string[] ChannelDefinition
         {
-            get { return GetCustomParameterArray(ObjectProperty.ChannelDefinition, '\n'); }
-            set { SetCustomParameterArray(ObjectProperty.ChannelDefinition, value, '\n'); }
+            get { return GetCustomParameterArray(ObjectProperty.ChannelDefinition, '\r', '\n'); }
+            set { SetCustomParameterArray(ObjectProperty.ChannelDefinition, value, '\r', '\n'); }
         }
 
         /// <summary>

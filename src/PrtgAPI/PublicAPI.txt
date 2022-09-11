@@ -1504,6 +1504,7 @@ PrtgAPI.ObjectProperty.PingPacketSize -> Value
 PrtgAPI.ObjectProperty.PingRemotePacketSize -> Value
 PrtgAPI.ObjectProperty.PostContentType -> Value
 PrtgAPI.ObjectProperty.PostData -> Value
+PrtgAPI.ObjectProperty.PrimaryChannel -> Value
 PrtgAPI.ObjectProperty.Priority -> Value
 PrtgAPI.ObjectProperty.ProxyAddress -> Value
 PrtgAPI.ObjectProperty.ProxyPassword -> Value
@@ -1684,8 +1685,8 @@ PrtgAPI.Parameters.ContainerSensorParameters ContainsNameOverride(ObjectProperty
 PrtgAPI.Parameters.ContainerSensorParameters DynamicType { get; set; } -> bool
 PrtgAPI.Parameters.ContainerSensorParameters Equals(object obj) -> bool
 PrtgAPI.Parameters.ContainerSensorParameters GetCustomParameter(ObjectProperty property) -> object
-PrtgAPI.Parameters.ContainerSensorParameters GetCustomParameterArray(ObjectProperty property, char delim) -> string[]
-PrtgAPI.Parameters.ContainerSensorParameters GetCustomParameterArray(string name, char delim) -> string[]
+PrtgAPI.Parameters.ContainerSensorParameters GetCustomParameterArray(ObjectProperty property, params char[] delim) -> string[]
+PrtgAPI.Parameters.ContainerSensorParameters GetCustomParameterArray(string name, params char[] delim) -> string[]
 PrtgAPI.Parameters.ContainerSensorParameters GetCustomParameterBool(ObjectProperty property) -> bool?
 PrtgAPI.Parameters.ContainerSensorParameters GetCustomParameterBool(string name) -> bool?
 PrtgAPI.Parameters.ContainerSensorParameters GetCustomParameterEnumXml<T>(ObjectProperty property) -> object
@@ -1708,8 +1709,8 @@ PrtgAPI.Parameters.ContainerSensorParameters RemoveCustomParameterInternal(strin
 PrtgAPI.Parameters.ContainerSensorParameters RemoveNameOverride(ObjectProperty property) -> bool
 PrtgAPI.Parameters.ContainerSensorParameters SensorType { get; set; } -> string
 PrtgAPI.Parameters.ContainerSensorParameters SetCustomParameter(ObjectProperty property, object value) -> void
-PrtgAPI.Parameters.ContainerSensorParameters SetCustomParameterArray(ObjectProperty property, string[] value, char delim) -> void
-PrtgAPI.Parameters.ContainerSensorParameters SetCustomParameterArray(string name, string[] value, char delim) -> void
+PrtgAPI.Parameters.ContainerSensorParameters SetCustomParameterArray(ObjectProperty property, string[] value, params char[] delim) -> void
+PrtgAPI.Parameters.ContainerSensorParameters SetCustomParameterArray(string name, string[] value, params char[] delim) -> void
 PrtgAPI.Parameters.ContainerSensorParameters SetCustomParameterBool(ObjectProperty property, bool? value) -> void
 PrtgAPI.Parameters.ContainerSensorParameters SetCustomParameterBool(string name, bool? value) -> void
 PrtgAPI.Parameters.ContainerSensorParameters SetCustomParameterEnumXml<T>(ObjectProperty property, T enum) -> void
@@ -1771,8 +1772,8 @@ PrtgAPI.Parameters.DynamicSensorParameters ContainsNameOverride(ObjectProperty p
 PrtgAPI.Parameters.DynamicSensorParameters DynamicType { get; set; } -> bool
 PrtgAPI.Parameters.DynamicSensorParameters Equals(object obj) -> bool
 PrtgAPI.Parameters.DynamicSensorParameters GetCustomParameter(ObjectProperty property) -> object
-PrtgAPI.Parameters.DynamicSensorParameters GetCustomParameterArray(ObjectProperty property, char delim) -> string[]
-PrtgAPI.Parameters.DynamicSensorParameters GetCustomParameterArray(string name, char delim) -> string[]
+PrtgAPI.Parameters.DynamicSensorParameters GetCustomParameterArray(ObjectProperty property, params char[] delim) -> string[]
+PrtgAPI.Parameters.DynamicSensorParameters GetCustomParameterArray(string name, params char[] delim) -> string[]
 PrtgAPI.Parameters.DynamicSensorParameters GetCustomParameterBool(ObjectProperty property) -> bool?
 PrtgAPI.Parameters.DynamicSensorParameters GetCustomParameterBool(string name) -> bool?
 PrtgAPI.Parameters.DynamicSensorParameters GetCustomParameterEnumXml<T>(ObjectProperty property) -> object
@@ -1799,8 +1800,8 @@ PrtgAPI.Parameters.DynamicSensorParameters RemoveCustomParameterInternal(string 
 PrtgAPI.Parameters.DynamicSensorParameters RemoveNameOverride(ObjectProperty property) -> bool
 PrtgAPI.Parameters.DynamicSensorParameters SensorType { get; set; } -> string
 PrtgAPI.Parameters.DynamicSensorParameters SetCustomParameter(ObjectProperty property, object value) -> void
-PrtgAPI.Parameters.DynamicSensorParameters SetCustomParameterArray(ObjectProperty property, string[] value, char delim) -> void
-PrtgAPI.Parameters.DynamicSensorParameters SetCustomParameterArray(string name, string[] value, char delim) -> void
+PrtgAPI.Parameters.DynamicSensorParameters SetCustomParameterArray(ObjectProperty property, string[] value, params char[] delim) -> void
+PrtgAPI.Parameters.DynamicSensorParameters SetCustomParameterArray(string name, string[] value, params char[] delim) -> void
 PrtgAPI.Parameters.DynamicSensorParameters SetCustomParameterBool(ObjectProperty property, bool? value) -> void
 PrtgAPI.Parameters.DynamicSensorParameters SetCustomParameterBool(string name, bool? value) -> void
 PrtgAPI.Parameters.DynamicSensorParameters SetCustomParameterEnumXml<T>(ObjectProperty property, T enum) -> void
@@ -1820,8 +1821,8 @@ PrtgAPI.Parameters.ExeXmlSensorParameters Equals(object obj) -> bool
 PrtgAPI.Parameters.ExeXmlSensorParameters ExeFile { get; set; } -> ExeFileTarget
 PrtgAPI.Parameters.ExeXmlSensorParameters ExeParameters { get; set; } -> string
 PrtgAPI.Parameters.ExeXmlSensorParameters GetCustomParameter(ObjectProperty property) -> object
-PrtgAPI.Parameters.ExeXmlSensorParameters GetCustomParameterArray(ObjectProperty property, char delim) -> string[]
-PrtgAPI.Parameters.ExeXmlSensorParameters GetCustomParameterArray(string name, char delim) -> string[]
+PrtgAPI.Parameters.ExeXmlSensorParameters GetCustomParameterArray(ObjectProperty property, params char[] delim) -> string[]
+PrtgAPI.Parameters.ExeXmlSensorParameters GetCustomParameterArray(string name, params char[] delim) -> string[]
 PrtgAPI.Parameters.ExeXmlSensorParameters GetCustomParameterBool(ObjectProperty property) -> bool?
 PrtgAPI.Parameters.ExeXmlSensorParameters GetCustomParameterBool(string name) -> bool?
 PrtgAPI.Parameters.ExeXmlSensorParameters GetCustomParameterEnumXml<T>(ObjectProperty property) -> object
@@ -1844,8 +1845,8 @@ PrtgAPI.Parameters.ExeXmlSensorParameters RemoveCustomParameterInternal(string n
 PrtgAPI.Parameters.ExeXmlSensorParameters RemoveNameOverride(ObjectProperty property) -> bool
 PrtgAPI.Parameters.ExeXmlSensorParameters SensorType { get; set; } -> SensorType
 PrtgAPI.Parameters.ExeXmlSensorParameters SetCustomParameter(ObjectProperty property, object value) -> void
-PrtgAPI.Parameters.ExeXmlSensorParameters SetCustomParameterArray(ObjectProperty property, string[] value, char delim) -> void
-PrtgAPI.Parameters.ExeXmlSensorParameters SetCustomParameterArray(string name, string[] value, char delim) -> void
+PrtgAPI.Parameters.ExeXmlSensorParameters SetCustomParameterArray(ObjectProperty property, string[] value, params char[] delim) -> void
+PrtgAPI.Parameters.ExeXmlSensorParameters SetCustomParameterArray(string name, string[] value, params char[] delim) -> void
 PrtgAPI.Parameters.ExeXmlSensorParameters SetCustomParameterBool(ObjectProperty property, bool? value) -> void
 PrtgAPI.Parameters.ExeXmlSensorParameters SetCustomParameterBool(string name, bool? value) -> void
 PrtgAPI.Parameters.ExeXmlSensorParameters SetCustomParameterEnumXml<T>(ObjectProperty property, T enum) -> void
@@ -1867,8 +1868,8 @@ PrtgAPI.Parameters.FactorySensorParameters FactoryErrorFormula { get; set; } -> 
 PrtgAPI.Parameters.FactorySensorParameters FactoryErrorMode { get; set; } -> FactoryErrorMode
 PrtgAPI.Parameters.FactorySensorParameters FactoryMissingDataMode { get; set; } -> FactoryMissingDataMode
 PrtgAPI.Parameters.FactorySensorParameters GetCustomParameter(ObjectProperty property) -> object
-PrtgAPI.Parameters.FactorySensorParameters GetCustomParameterArray(ObjectProperty property, char delim) -> string[]
-PrtgAPI.Parameters.FactorySensorParameters GetCustomParameterArray(string name, char delim) -> string[]
+PrtgAPI.Parameters.FactorySensorParameters GetCustomParameterArray(ObjectProperty property, params char[] delim) -> string[]
+PrtgAPI.Parameters.FactorySensorParameters GetCustomParameterArray(string name, params char[] delim) -> string[]
 PrtgAPI.Parameters.FactorySensorParameters GetCustomParameterBool(ObjectProperty property) -> bool?
 PrtgAPI.Parameters.FactorySensorParameters GetCustomParameterBool(string name) -> bool?
 PrtgAPI.Parameters.FactorySensorParameters GetCustomParameterEnumXml<T>(ObjectProperty property) -> object
@@ -1890,8 +1891,8 @@ PrtgAPI.Parameters.FactorySensorParameters RemoveCustomParameterInternal(string 
 PrtgAPI.Parameters.FactorySensorParameters RemoveNameOverride(ObjectProperty property) -> bool
 PrtgAPI.Parameters.FactorySensorParameters SensorType { get; set; } -> SensorType
 PrtgAPI.Parameters.FactorySensorParameters SetCustomParameter(ObjectProperty property, object value) -> void
-PrtgAPI.Parameters.FactorySensorParameters SetCustomParameterArray(ObjectProperty property, string[] value, char delim) -> void
-PrtgAPI.Parameters.FactorySensorParameters SetCustomParameterArray(string name, string[] value, char delim) -> void
+PrtgAPI.Parameters.FactorySensorParameters SetCustomParameterArray(ObjectProperty property, string[] value, params char[] delim) -> void
+PrtgAPI.Parameters.FactorySensorParameters SetCustomParameterArray(string name, string[] value, params char[] delim) -> void
 PrtgAPI.Parameters.FactorySensorParameters SetCustomParameterBool(ObjectProperty property, bool? value) -> void
 PrtgAPI.Parameters.FactorySensorParameters SetCustomParameterBool(string name, bool? value) -> void
 PrtgAPI.Parameters.FactorySensorParameters SetCustomParameterEnumXml<T>(ObjectProperty property, T enum) -> void
@@ -1929,8 +1930,8 @@ PrtgAPI.Parameters.HttpSensorParameters ContainsNameOverride(ObjectProperty prop
 PrtgAPI.Parameters.HttpSensorParameters DynamicType { get; set; } -> bool
 PrtgAPI.Parameters.HttpSensorParameters Equals(object obj) -> bool
 PrtgAPI.Parameters.HttpSensorParameters GetCustomParameter(ObjectProperty property) -> object
-PrtgAPI.Parameters.HttpSensorParameters GetCustomParameterArray(ObjectProperty property, char delim) -> string[]
-PrtgAPI.Parameters.HttpSensorParameters GetCustomParameterArray(string name, char delim) -> string[]
+PrtgAPI.Parameters.HttpSensorParameters GetCustomParameterArray(ObjectProperty property, params char[] delim) -> string[]
+PrtgAPI.Parameters.HttpSensorParameters GetCustomParameterArray(string name, params char[] delim) -> string[]
 PrtgAPI.Parameters.HttpSensorParameters GetCustomParameterBool(ObjectProperty property) -> bool?
 PrtgAPI.Parameters.HttpSensorParameters GetCustomParameterBool(string name) -> bool?
 PrtgAPI.Parameters.HttpSensorParameters GetCustomParameterEnumXml<T>(ObjectProperty property) -> object
@@ -1955,8 +1956,8 @@ PrtgAPI.Parameters.HttpSensorParameters RemoveCustomParameterInternal(string nam
 PrtgAPI.Parameters.HttpSensorParameters RemoveNameOverride(ObjectProperty property) -> bool
 PrtgAPI.Parameters.HttpSensorParameters SensorType { get; set; } -> SensorType
 PrtgAPI.Parameters.HttpSensorParameters SetCustomParameter(ObjectProperty property, object value) -> void
-PrtgAPI.Parameters.HttpSensorParameters SetCustomParameterArray(ObjectProperty property, string[] value, char delim) -> void
-PrtgAPI.Parameters.HttpSensorParameters SetCustomParameterArray(string name, string[] value, char delim) -> void
+PrtgAPI.Parameters.HttpSensorParameters SetCustomParameterArray(ObjectProperty property, string[] value, params char[] delim) -> void
+PrtgAPI.Parameters.HttpSensorParameters SetCustomParameterArray(string name, string[] value, params char[] delim) -> void
 PrtgAPI.Parameters.HttpSensorParameters SetCustomParameterBool(ObjectProperty property, bool? value) -> void
 PrtgAPI.Parameters.HttpSensorParameters SetCustomParameterBool(string name, bool? value) -> void
 PrtgAPI.Parameters.HttpSensorParameters SetCustomParameterEnumXml<T>(ObjectProperty property, T enum) -> void
@@ -2011,8 +2012,8 @@ PrtgAPI.Parameters.NewDeviceParameters ContainsNameOverride(ObjectProperty prope
 PrtgAPI.Parameters.NewDeviceParameters DeviceTemplates { get; set; } -> List<DeviceTemplate>
 PrtgAPI.Parameters.NewDeviceParameters Equals(object obj) -> bool
 PrtgAPI.Parameters.NewDeviceParameters GetCustomParameter(ObjectProperty property) -> object
-PrtgAPI.Parameters.NewDeviceParameters GetCustomParameterArray(ObjectProperty property, char delim) -> string[]
-PrtgAPI.Parameters.NewDeviceParameters GetCustomParameterArray(string name, char delim) -> string[]
+PrtgAPI.Parameters.NewDeviceParameters GetCustomParameterArray(ObjectProperty property, params char[] delim) -> string[]
+PrtgAPI.Parameters.NewDeviceParameters GetCustomParameterArray(string name, params char[] delim) -> string[]
 PrtgAPI.Parameters.NewDeviceParameters GetCustomParameterBool(ObjectProperty property) -> bool?
 PrtgAPI.Parameters.NewDeviceParameters GetCustomParameterBool(string name) -> bool?
 PrtgAPI.Parameters.NewDeviceParameters GetCustomParameterEnumXml<T>(ObjectProperty property) -> object
@@ -2030,8 +2031,8 @@ PrtgAPI.Parameters.NewDeviceParameters RemoveCustomParameter(ObjectProperty prop
 PrtgAPI.Parameters.NewDeviceParameters RemoveCustomParameterInternal(string name) -> bool
 PrtgAPI.Parameters.NewDeviceParameters RemoveNameOverride(ObjectProperty property) -> bool
 PrtgAPI.Parameters.NewDeviceParameters SetCustomParameter(ObjectProperty property, object value) -> void
-PrtgAPI.Parameters.NewDeviceParameters SetCustomParameterArray(ObjectProperty property, string[] value, char delim) -> void
-PrtgAPI.Parameters.NewDeviceParameters SetCustomParameterArray(string name, string[] value, char delim) -> void
+PrtgAPI.Parameters.NewDeviceParameters SetCustomParameterArray(ObjectProperty property, string[] value, params char[] delim) -> void
+PrtgAPI.Parameters.NewDeviceParameters SetCustomParameterArray(string name, string[] value, params char[] delim) -> void
 PrtgAPI.Parameters.NewDeviceParameters SetCustomParameterBool(ObjectProperty property, bool? value) -> void
 PrtgAPI.Parameters.NewDeviceParameters SetCustomParameterBool(string name, bool? value) -> void
 PrtgAPI.Parameters.NewDeviceParameters SetCustomParameterEnumXml<T>(ObjectProperty property, T enum) -> void
@@ -2044,8 +2045,8 @@ PrtgAPI.Parameters.NewGroupParameters AddNameOverride(ObjectProperty property, s
 PrtgAPI.Parameters.NewGroupParameters ContainsNameOverride(ObjectProperty property) -> bool
 PrtgAPI.Parameters.NewGroupParameters Equals(object obj) -> bool
 PrtgAPI.Parameters.NewGroupParameters GetCustomParameter(ObjectProperty property) -> object
-PrtgAPI.Parameters.NewGroupParameters GetCustomParameterArray(ObjectProperty property, char delim) -> string[]
-PrtgAPI.Parameters.NewGroupParameters GetCustomParameterArray(string name, char delim) -> string[]
+PrtgAPI.Parameters.NewGroupParameters GetCustomParameterArray(ObjectProperty property, params char[] delim) -> string[]
+PrtgAPI.Parameters.NewGroupParameters GetCustomParameterArray(string name, params char[] delim) -> string[]
 PrtgAPI.Parameters.NewGroupParameters GetCustomParameterBool(ObjectProperty property) -> bool?
 PrtgAPI.Parameters.NewGroupParameters GetCustomParameterBool(string name) -> bool?
 PrtgAPI.Parameters.NewGroupParameters GetCustomParameterEnumXml<T>(ObjectProperty property) -> object
@@ -2061,8 +2062,8 @@ PrtgAPI.Parameters.NewGroupParameters RemoveCustomParameter(ObjectProperty prope
 PrtgAPI.Parameters.NewGroupParameters RemoveCustomParameterInternal(string name) -> bool
 PrtgAPI.Parameters.NewGroupParameters RemoveNameOverride(ObjectProperty property) -> bool
 PrtgAPI.Parameters.NewGroupParameters SetCustomParameter(ObjectProperty property, object value) -> void
-PrtgAPI.Parameters.NewGroupParameters SetCustomParameterArray(ObjectProperty property, string[] value, char delim) -> void
-PrtgAPI.Parameters.NewGroupParameters SetCustomParameterArray(string name, string[] value, char delim) -> void
+PrtgAPI.Parameters.NewGroupParameters SetCustomParameterArray(ObjectProperty property, string[] value, params char[] delim) -> void
+PrtgAPI.Parameters.NewGroupParameters SetCustomParameterArray(string name, string[] value, params char[] delim) -> void
 PrtgAPI.Parameters.NewGroupParameters SetCustomParameterBool(ObjectProperty property, bool? value) -> void
 PrtgAPI.Parameters.NewGroupParameters SetCustomParameterBool(string name, bool? value) -> void
 PrtgAPI.Parameters.NewGroupParameters SetCustomParameterEnumXml<T>(ObjectProperty property, T enum) -> void
@@ -2075,8 +2076,8 @@ PrtgAPI.Parameters.NewObjectParameters AddNameOverride(ObjectProperty property, 
 PrtgAPI.Parameters.NewObjectParameters ContainsNameOverride(ObjectProperty property) -> bool
 PrtgAPI.Parameters.NewObjectParameters Equals(object obj) -> bool
 PrtgAPI.Parameters.NewObjectParameters GetCustomParameter(ObjectProperty property) -> object
-PrtgAPI.Parameters.NewObjectParameters GetCustomParameterArray(ObjectProperty property, char delim) -> string[]
-PrtgAPI.Parameters.NewObjectParameters GetCustomParameterArray(string name, char delim) -> string[]
+PrtgAPI.Parameters.NewObjectParameters GetCustomParameterArray(ObjectProperty property, params char[] delim) -> string[]
+PrtgAPI.Parameters.NewObjectParameters GetCustomParameterArray(string name, params char[] delim) -> string[]
 PrtgAPI.Parameters.NewObjectParameters GetCustomParameterBool(ObjectProperty property) -> bool?
 PrtgAPI.Parameters.NewObjectParameters GetCustomParameterBool(string name) -> bool?
 PrtgAPI.Parameters.NewObjectParameters GetCustomParameterEnumXml<T>(ObjectProperty property) -> object
@@ -2092,8 +2093,8 @@ PrtgAPI.Parameters.NewObjectParameters RemoveCustomParameter(ObjectProperty prop
 PrtgAPI.Parameters.NewObjectParameters RemoveCustomParameterInternal(string name) -> bool
 PrtgAPI.Parameters.NewObjectParameters RemoveNameOverride(ObjectProperty property) -> bool
 PrtgAPI.Parameters.NewObjectParameters SetCustomParameter(ObjectProperty property, object value) -> void
-PrtgAPI.Parameters.NewObjectParameters SetCustomParameterArray(ObjectProperty property, string[] value, char delim) -> void
-PrtgAPI.Parameters.NewObjectParameters SetCustomParameterArray(string name, string[] value, char delim) -> void
+PrtgAPI.Parameters.NewObjectParameters SetCustomParameterArray(ObjectProperty property, string[] value, params char[] delim) -> void
+PrtgAPI.Parameters.NewObjectParameters SetCustomParameterArray(string name, string[] value, params char[] delim) -> void
 PrtgAPI.Parameters.NewObjectParameters SetCustomParameterBool(ObjectProperty property, bool? value) -> void
 PrtgAPI.Parameters.NewObjectParameters SetCustomParameterBool(string name, bool? value) -> void
 PrtgAPI.Parameters.NewObjectParameters SetCustomParameterEnumXml<T>(ObjectProperty property, T enum) -> void
@@ -2107,8 +2108,8 @@ PrtgAPI.Parameters.NewSensorParameters ContainsNameOverride(ObjectProperty prope
 PrtgAPI.Parameters.NewSensorParameters DynamicType { get; set; } -> bool
 PrtgAPI.Parameters.NewSensorParameters Equals(object obj) -> bool
 PrtgAPI.Parameters.NewSensorParameters GetCustomParameter(ObjectProperty property) -> object
-PrtgAPI.Parameters.NewSensorParameters GetCustomParameterArray(ObjectProperty property, char delim) -> string[]
-PrtgAPI.Parameters.NewSensorParameters GetCustomParameterArray(string name, char delim) -> string[]
+PrtgAPI.Parameters.NewSensorParameters GetCustomParameterArray(ObjectProperty property, params char[] delim) -> string[]
+PrtgAPI.Parameters.NewSensorParameters GetCustomParameterArray(string name, params char[] delim) -> string[]
 PrtgAPI.Parameters.NewSensorParameters GetCustomParameterBool(ObjectProperty property) -> bool?
 PrtgAPI.Parameters.NewSensorParameters GetCustomParameterBool(string name) -> bool?
 PrtgAPI.Parameters.NewSensorParameters GetCustomParameterEnumXml<T>(ObjectProperty property) -> object
@@ -2129,8 +2130,8 @@ PrtgAPI.Parameters.NewSensorParameters RemoveCustomParameter(ObjectProperty prop
 PrtgAPI.Parameters.NewSensorParameters RemoveCustomParameterInternal(string name) -> bool
 PrtgAPI.Parameters.NewSensorParameters RemoveNameOverride(ObjectProperty property) -> bool
 PrtgAPI.Parameters.NewSensorParameters SetCustomParameter(ObjectProperty property, object value) -> void
-PrtgAPI.Parameters.NewSensorParameters SetCustomParameterArray(ObjectProperty property, string[] value, char delim) -> void
-PrtgAPI.Parameters.NewSensorParameters SetCustomParameterArray(string name, string[] value, char delim) -> void
+PrtgAPI.Parameters.NewSensorParameters SetCustomParameterArray(ObjectProperty property, string[] value, params char[] delim) -> void
+PrtgAPI.Parameters.NewSensorParameters SetCustomParameterArray(string name, string[] value, params char[] delim) -> void
 PrtgAPI.Parameters.NewSensorParameters SetCustomParameterBool(ObjectProperty property, bool? value) -> void
 PrtgAPI.Parameters.NewSensorParameters SetCustomParameterBool(string name, bool? value) -> void
 PrtgAPI.Parameters.NewSensorParameters SetCustomParameterEnumXml<T>(ObjectProperty property, T enum) -> void
@@ -2243,8 +2244,8 @@ PrtgAPI.Parameters.RawSensorParameters ContainsNameOverride(ObjectProperty prope
 PrtgAPI.Parameters.RawSensorParameters DynamicType { get; set; } -> bool
 PrtgAPI.Parameters.RawSensorParameters Equals(object obj) -> bool
 PrtgAPI.Parameters.RawSensorParameters GetCustomParameter(ObjectProperty property) -> object
-PrtgAPI.Parameters.RawSensorParameters GetCustomParameterArray(ObjectProperty property, char delim) -> string[]
-PrtgAPI.Parameters.RawSensorParameters GetCustomParameterArray(string name, char delim) -> string[]
+PrtgAPI.Parameters.RawSensorParameters GetCustomParameterArray(ObjectProperty property, params char[] delim) -> string[]
+PrtgAPI.Parameters.RawSensorParameters GetCustomParameterArray(string name, params char[] delim) -> string[]
 PrtgAPI.Parameters.RawSensorParameters GetCustomParameterBool(ObjectProperty property) -> bool?
 PrtgAPI.Parameters.RawSensorParameters GetCustomParameterBool(string name) -> bool?
 PrtgAPI.Parameters.RawSensorParameters GetCustomParameterEnumXml<T>(ObjectProperty property) -> object
@@ -2269,8 +2270,8 @@ PrtgAPI.Parameters.RawSensorParameters RemoveCustomParameterInternal(string name
 PrtgAPI.Parameters.RawSensorParameters RemoveNameOverride(ObjectProperty property) -> bool
 PrtgAPI.Parameters.RawSensorParameters SensorType { get; set; } -> string
 PrtgAPI.Parameters.RawSensorParameters SetCustomParameter(ObjectProperty property, object value) -> void
-PrtgAPI.Parameters.RawSensorParameters SetCustomParameterArray(ObjectProperty property, string[] value, char delim) -> void
-PrtgAPI.Parameters.RawSensorParameters SetCustomParameterArray(string name, string[] value, char delim) -> void
+PrtgAPI.Parameters.RawSensorParameters SetCustomParameterArray(ObjectProperty property, string[] value, params char[] delim) -> void
+PrtgAPI.Parameters.RawSensorParameters SetCustomParameterArray(string name, string[] value, params char[] delim) -> void
 PrtgAPI.Parameters.RawSensorParameters SetCustomParameterBool(ObjectProperty property, bool? value) -> void
 PrtgAPI.Parameters.RawSensorParameters SetCustomParameterBool(string name, bool? value) -> void
 PrtgAPI.Parameters.RawSensorParameters SetCustomParameterEnumXml<T>(ObjectProperty property, T enum) -> void
@@ -2338,8 +2339,8 @@ PrtgAPI.Parameters.SensorParametersInternal ContainsNameOverride(ObjectProperty 
 PrtgAPI.Parameters.SensorParametersInternal DynamicType { get; set; } -> bool
 PrtgAPI.Parameters.SensorParametersInternal Equals(object obj) -> bool
 PrtgAPI.Parameters.SensorParametersInternal GetCustomParameter(ObjectProperty property) -> object
-PrtgAPI.Parameters.SensorParametersInternal GetCustomParameterArray(ObjectProperty property, char delim) -> string[]
-PrtgAPI.Parameters.SensorParametersInternal GetCustomParameterArray(string name, char delim) -> string[]
+PrtgAPI.Parameters.SensorParametersInternal GetCustomParameterArray(ObjectProperty property, params char[] delim) -> string[]
+PrtgAPI.Parameters.SensorParametersInternal GetCustomParameterArray(string name, params char[] delim) -> string[]
 PrtgAPI.Parameters.SensorParametersInternal GetCustomParameterBool(ObjectProperty property) -> bool?
 PrtgAPI.Parameters.SensorParametersInternal GetCustomParameterBool(string name) -> bool?
 PrtgAPI.Parameters.SensorParametersInternal GetCustomParameterEnumXml<T>(ObjectProperty property) -> object
@@ -2361,8 +2362,8 @@ PrtgAPI.Parameters.SensorParametersInternal RemoveCustomParameterInternal(string
 PrtgAPI.Parameters.SensorParametersInternal RemoveNameOverride(ObjectProperty property) -> bool
 PrtgAPI.Parameters.SensorParametersInternal SensorType { get; set; } -> SensorType
 PrtgAPI.Parameters.SensorParametersInternal SetCustomParameter(ObjectProperty property, object value) -> void
-PrtgAPI.Parameters.SensorParametersInternal SetCustomParameterArray(ObjectProperty property, string[] value, char delim) -> void
-PrtgAPI.Parameters.SensorParametersInternal SetCustomParameterArray(string name, string[] value, char delim) -> void
+PrtgAPI.Parameters.SensorParametersInternal SetCustomParameterArray(ObjectProperty property, string[] value, params char[] delim) -> void
+PrtgAPI.Parameters.SensorParametersInternal SetCustomParameterArray(string name, string[] value, params char[] delim) -> void
 PrtgAPI.Parameters.SensorParametersInternal SetCustomParameterBool(ObjectProperty property, bool? value) -> void
 PrtgAPI.Parameters.SensorParametersInternal SetCustomParameterBool(string name, bool? value) -> void
 PrtgAPI.Parameters.SensorParametersInternal SetCustomParameterEnumXml<T>(ObjectProperty property, T enum) -> void
@@ -2538,8 +2539,8 @@ PrtgAPI.Parameters.WmiServiceSensorParameters ContainsNameOverride(ObjectPropert
 PrtgAPI.Parameters.WmiServiceSensorParameters DynamicType { get; set; } -> bool
 PrtgAPI.Parameters.WmiServiceSensorParameters Equals(object obj) -> bool
 PrtgAPI.Parameters.WmiServiceSensorParameters GetCustomParameter(ObjectProperty property) -> object
-PrtgAPI.Parameters.WmiServiceSensorParameters GetCustomParameterArray(ObjectProperty property, char delim) -> string[]
-PrtgAPI.Parameters.WmiServiceSensorParameters GetCustomParameterArray(string name, char delim) -> string[]
+PrtgAPI.Parameters.WmiServiceSensorParameters GetCustomParameterArray(ObjectProperty property, params char[] delim) -> string[]
+PrtgAPI.Parameters.WmiServiceSensorParameters GetCustomParameterArray(string name, params char[] delim) -> string[]
 PrtgAPI.Parameters.WmiServiceSensorParameters GetCustomParameterBool(ObjectProperty property) -> bool?
 PrtgAPI.Parameters.WmiServiceSensorParameters GetCustomParameterBool(string name) -> bool?
 PrtgAPI.Parameters.WmiServiceSensorParameters GetCustomParameterEnumXml<T>(ObjectProperty property) -> object
@@ -2564,8 +2565,8 @@ PrtgAPI.Parameters.WmiServiceSensorParameters RemoveNameOverride(ObjectProperty 
 PrtgAPI.Parameters.WmiServiceSensorParameters SensorType { get; set; } -> SensorType
 PrtgAPI.Parameters.WmiServiceSensorParameters Services { get; set; } -> List<WmiServiceTarget>
 PrtgAPI.Parameters.WmiServiceSensorParameters SetCustomParameter(ObjectProperty property, object value) -> void
-PrtgAPI.Parameters.WmiServiceSensorParameters SetCustomParameterArray(ObjectProperty property, string[] value, char delim) -> void
-PrtgAPI.Parameters.WmiServiceSensorParameters SetCustomParameterArray(string name, string[] value, char delim) -> void
+PrtgAPI.Parameters.WmiServiceSensorParameters SetCustomParameterArray(ObjectProperty property, string[] value, params char[] delim) -> void
+PrtgAPI.Parameters.WmiServiceSensorParameters SetCustomParameterArray(string name, string[] value, params char[] delim) -> void
 PrtgAPI.Parameters.WmiServiceSensorParameters SetCustomParameterBool(ObjectProperty property, bool? value) -> void
 PrtgAPI.Parameters.WmiServiceSensorParameters SetCustomParameterBool(string name, bool? value) -> void
 PrtgAPI.Parameters.WmiServiceSensorParameters SetCustomParameterEnumXml<T>(ObjectProperty property, T enum) -> void
@@ -3615,6 +3616,7 @@ PrtgAPI.SensorSettings PingPacketSize { get; set; } -> int?
 PrtgAPI.SensorSettings PingRemotePacketSize { get; set; } -> int?
 PrtgAPI.SensorSettings PostContentType { get; set; } -> string
 PrtgAPI.SensorSettings PostData { get; set; } -> string
+PrtgAPI.SensorSettings PrimaryChannel { get; } -> Channel
 PrtgAPI.SensorSettings Priority { get; set; } -> Priority?
 PrtgAPI.SensorSettings ProxyAddress { get; set; } -> string
 PrtgAPI.SensorSettings ProxyPort { get; set; } -> int?

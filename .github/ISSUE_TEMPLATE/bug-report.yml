@@ -1,0 +1,39 @@
+name: "Bug report \U0001F41B"
+description: "Report errors or unexpected behavior \U0001F914"
+labels: [alleged-bug]
+body:
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: Describe the bug
+      description: Clearly and concisely describe what you were trying to do, what happened and what you were expecting to happen
+      placeholder: Well, you see...
+    validations:
+      required: true
+
+  - type: textarea
+    id: repro
+    attributes:
+      label: Steps to reproduce
+      description: Put the relevant code from your application that caused the issue to happen in the code block below
+      placeholder: Code goes here!
+      render: powershell
+    validations:
+      required: true
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: What is the output of 'Get-PrtgClient -Diagnostic'?
+      description: If you don't use the PowerShell version of PrtgAPI, please advise what PrtgAPI, PRTG Server and Operating System version you're running
+      placeholder: Output goes here!
+      render: powershell
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional context
+      description: Anything else I should know to help solve the issue?
+      placeholder: So, basically...

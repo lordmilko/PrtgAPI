@@ -182,6 +182,7 @@
     <Compile Include="Parameters\ObjectManipulation\ApproveProbeParameters.cs" />
     <Compile Include="Parameters\ObjectManipulation\NewObjectParameters\Sensors\FactorySensorParameters.cs" />
     <Compile Include="Request\NotificationTriggerTranslator.cs" />
+    <Compile Include="Request\Serialization\ValueConverters\ChannelDefinitionConverter.cs" />
     <Compile Include="Request\Serialization\ValueConverters\NotificationActionValueConverter.cs" />
     <Compile Include="Request\Serialization\ValueConverters\ValueLookupConverter.cs" />
     <Compile Include="Request\TriggerPropertyEntry.cs" />

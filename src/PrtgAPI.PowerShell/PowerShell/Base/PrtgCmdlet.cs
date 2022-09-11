@@ -81,10 +81,12 @@ namespace PrtgAPI.PowerShell.Base
                     }
                     catch (NonTerminatingException ex)
                     {
+                        ProgressManager.CompleteUncompleted(true);
                         WriteInvalidOperation(ex.InnerException, ex.TargetObject, ex.ErrorCategory);
                     }
                     catch (PrtgRequestException ex)
                     {
+                        ProgressManager.CompleteUncompleted(true);
                         WriteInvalidOperation(ex);
                     }
                     catch (Exception ex)

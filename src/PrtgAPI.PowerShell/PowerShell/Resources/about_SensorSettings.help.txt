@@ -61,7 +61,7 @@ LONG DESCRIPTION
 
     | Sensor Display             | Get | Set | Description                                                     |
     | -------------------------- | --------- | --------------------------------------------------------------- |
-    | PrimaryChannel             |    No     | The primary channel of this sensor                              |
+    | PrimaryChannel             |    Yes    | The primary channel of this sensor                              |
     | GraphType                  |    Yes    | Whether channels should be independent or stacked in graphs     |
     | StackUnit                  |    No     | The unit of channels to include in stacked graphs               |
 

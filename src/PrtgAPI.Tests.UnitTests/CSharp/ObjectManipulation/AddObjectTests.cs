@@ -345,6 +345,38 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             );
         }
 
+        [UnitTest]
+        [TestMethod]
+        public void AddSensor_Ignores_HttpStatus556OnRedirect()
+        {
+            var client = Initialize_Client(new DiffBasedResolveResponse
+            {
+                StatusCodeMap = new Dictionary<string, HttpStatusCode>
+                {
+                    { nameof(CommandFunction.AddSensor5), (HttpStatusCode) 556 }
+                }
+            });
+
+            var sensors = client.AddSensor(1001, new ExeXmlSensorParameters("test.ps1"));
+            Assert.AreEqual(2, sensors.Count);
+        }
+
+        [UnitTest]
+        [TestMethod]
+        public async Task AddSensor_Ignores_HttpStatus556OnRedirectAsync()
+        {
+            var client = Initialize_Client(new DiffBasedResolveResponse
+            {
+                StatusCodeMap = new Dictionary<string, HttpStatusCode>
+                {
+                    { nameof(CommandFunction.AddSensor5), (HttpStatusCode) 556 }
+                }
+            });
+
+            var sensors = await client.AddSensorAsync(1001, new ExeXmlSensorParameters("test.ps1"));
+            Assert.AreEqual(2, sensors.Count);
+        }
+
         #endregion
         #region AddDevice
 
@@ -534,6 +566,31 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             var str = "Could not uniquely identify created Device: multiple new objects ('Probe Device2' (ID: 1002), 'Probe Device3' (ID: 1003)) were found";
 
             await AssertEx.ThrowsAsync<ObjectResolutionException>(async () => await client.AddDeviceAsync(1001, "newDevice", "localhost"), str);
+        }
+
+        [UnitTest]
+        [TestMethod]
+        public void AddDevice_ResolvesNameWithLeadingSpace()
+        {
+            var urls = new[]
+            {
+                UnitRequest.Devices("filter_parentid=1001&filter_name=newDevice"),
+                UnitRequest.Get("adddevice2.htm?name_=newDevice&host_=127.0.0.1&ipversion_=0&discoverytype_=0&discoveryschedule_=0&id=1001"),
+                UnitRequest.Devices("filter_parentid=1001&filter_name=newDevice"),
+
+                UnitRequest.Devices("filter_parentid=1001&filter_name=newDevice"),
+                UnitRequest.Get("adddevice2.htm?name_=newDevice&host_=127.0.0.1&ipversion_=0&discoverytype_=0&discoveryschedule_=0&id=1001"),
+                UnitRequest.Devices("filter_parentid=1001&filter_name=newDevice")
+            };
+
+            var response = new AddressValidatorResponse(urls, true, new DiffBasedResolveResponse(false));
+
+            var client = Initialize_Client(response);
+            var lightDevice = client.AddDevice(1001, " newDevice", "127.0.0.1");
+            Assert.AreEqual("Probe Device2", lightDevice.Name);
+
+            var paramsDevice = client.AddDevice(1001, new NewDeviceParameters(" newDevice", "127.0.0.1"));
+            Assert.AreEqual("Probe Device2", paramsDevice.Name);
         }
 
         [UnitTest]

@@ -120,6 +120,23 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             SetObjectProperty(ObjectProperty.Location, "23 Fleet Street, Boston", "23 Fleet St, Boston, MA 02113, USA");
         }
 
+        [UnitTest]
+        [TestMethod]
+        public void SetObjectProperty_CanSetChannels()
+        {
+            var channel = new Channel
+            {
+                Id = 1,
+                Name = "Total",
+                Unit = "%"
+            };
+
+            Execute(
+                c => c.SetObjectProperty(1001, ObjectProperty.PrimaryChannel, channel),
+                UnitRequest.EditSettings("id=1001&primarychannel_=1%7CTotal+(%25)%7C&nosession=1")
+            );
+        }
+
         #region Google Location
 
         [UnitTest]
@@ -315,6 +332,42 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
             AssertEx.Throws<PrtgRequestException>(() => client.ResolveAddress("something", CancellationToken.None), "the PRTG map provider is not currently available");
         }
 
+        [UnitTest]
+        [TestMethod]
+        public void Location_Here_AmericanCulture()
+        {
+            TestCustomCulture(() =>
+            {
+                Execute(
+                    c => c.SetObjectProperty(1001, ObjectProperty.Location, "HERE"),
+                    new[]
+                    {
+                        UnitRequest.Get("api/geolocator.htm?cache=false&dom=2&path=HERE"),
+                        UnitRequest.EditSettings("id=1001&location_=100+HERE+Lane&lonlat_=-91.0527997%2C62.3643847&locationgroup=0&nosession=1")
+                    },
+                    version: RequestVersion.v18_1
+                );
+            }, new CultureInfo("en-US"));
+        }
+
+        [UnitTest]
+        [TestMethod]
+        public void Location_Here_EuropeanCulture()
+        {
+            TestCustomCulture(() =>
+            {
+                Execute(
+                    c => c.SetObjectProperty(1001, ObjectProperty.Location, "HERE"),
+                    new[]
+                    {
+                        UnitRequest.Get("api/geolocator.htm?cache=false&dom=2&path=HERE"),
+                        UnitRequest.EditSettings("id=1001&location_=100+HERE+Lane&lonlat_=-91.0527997%2C62.3643847&locationgroup=0&nosession=1")
+                    },
+                    version: RequestVersion.v18_1
+                );
+            }, new CultureInfo("de-DE"));
+        }
+
         #endregion
         #region Coordinates Location
 
@@ -371,6 +424,38 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
                 c => c.SetObjectProperty(1001, ObjectProperty.Location, new[] {40.71455, -74.00714}),
                 $"editsettings?id=1001&location_={lat}%2C+{lon}&lonlat_={lon}%2C{lat}&locationgroup=0&nosession=1&username"
             );
+        }
+
+        [UnitTest]
+        [TestMethod]
+        public void Location_Coordinates_AmericanCulture()
+        {
+            TestCustomCulture(() =>
+            {
+                var lat = "40.71455";
+                var lon = "-74.00714";
+
+                Execute(
+                    c => c.SetObjectProperty(1001, ObjectProperty.Location, new[] { 40.71455, -74.00714 }),
+                    $"editsettings?id=1001&location_={lat}%2C+{lon}&lonlat_={lon}%2C{lat}&locationgroup=0&nosession=1&username"
+                );
+            }, new CultureInfo("en-US"));
+        }
+
+        [UnitTest]
+        [TestMethod]
+        public void Location_Coordinates_EuropeanCulture()
+        {
+            TestCustomCulture(() =>
+            {
+                var lat = "40.71455";
+                var lon = "-74.00714";
+
+                Execute(
+                    c => c.SetObjectProperty(1001, ObjectProperty.Location, new[] { 40.71455, -74.00714 }),
+                    $"editsettings?id=1001&location_={lat}%2C+{lon}&lonlat_={lon}%2C{lat}&locationgroup=0&nosession=1&username"
+                );
+            }, new CultureInfo("de-DE"));
         }
 
         [UnitTest]
@@ -613,7 +698,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         public async Task Location_Label_NewLineCarriageReturn_AddressAsync()
         {
             await ExecuteAsync(
-                async c => await c.SetObjectPropertyAsync(1001, ObjectProperty.Location, "Headquarters\n23 Fleet Street"),
+                async c => await c.SetObjectPropertyAsync(1001, ObjectProperty.Location, "Headquarters\r\n23 Fleet Street"),
                 new[]
                 {
                     UnitRequest.Status(),
@@ -772,6 +857,49 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
         }
 
         #endregion
+        #region ChannelDefinition
+
+        [UnitTest]
+        [TestMethod]
+        public void SetObjectProperty_ChannelDefinition_Array()
+        {
+            Execute(
+                c => c.SetObjectProperty(1001, ObjectProperty.ChannelDefinition, new[] {"#1:Test", "channel(1001,0)"}),
+                UnitRequest.EditSettings("id=1001&aggregationchannel_=%231%3ATest%0D%0Achannel(1001%2C0)&nosession=1")
+            );
+        }
+
+        [UnitTest]
+        [TestMethod]
+        public void SetObjectProperty_ChannelDefinition_String_NewLine()
+        {
+            Execute(
+                c => c.SetObjectProperty(1001, ObjectProperty.ChannelDefinition, "#1:Test\nchannel(1001,0)"),
+                UnitRequest.EditSettings("id=1001&aggregationchannel_=%231%3ATest%0D%0Achannel(1001%2C0)&nosession=1")
+            );
+        }
+
+        [UnitTest]
+        [TestMethod]
+        public void SetObjectProperty_ChannelDefinition_CarriageReturn()
+        {
+            Execute(
+                c => c.SetObjectProperty(1001, ObjectProperty.ChannelDefinition, "#1:Test\rchannel(1001,0)"),
+                UnitRequest.EditSettings("id=1001&aggregationchannel_=%231%3ATest%0D%0Achannel(1001%2C0)&nosession=1")
+            );
+        }
+
+        [UnitTest]
+        [TestMethod]
+        public void SetObjectProperty_ChannelDefinition_NewLineCarriageReturn()
+        {
+            Execute(
+                c => c.SetObjectProperty(1001, ObjectProperty.ChannelDefinition, "#1:Test\r\nchannel(1001,0)"),
+                UnitRequest.EditSettings("id=1001&aggregationchannel_=%231%3ATest%0D%0Achannel(1001%2C0)&nosession=1")
+            );
+        }
+
+        #endregion
 
         private PrtgClient GetLocationClient(RequestVersion version)
         {
@@ -830,7 +958,8 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
                 "channel(2001,1)"
             };
 
-            SetObjectProperty(ObjectProperty.ChannelDefinition, channels, string.Join("\n", channels));
+            //Splittable string is \n, but then ChannelDefinitionConverter changes it to \r\n
+            SetObjectProperty(ObjectProperty.ChannelDefinition, channels, string.Join("\r\n", channels));
         }
 
         private void SetObjectProperty(ObjectProperty property, object value, string expectedSerializedValue = null)

@@ -678,7 +678,7 @@ namespace PrtgAPI.PowerShell.Progress
             }
 
             if (cmdlet.ProgressManagerEx.CurrentRecord != null)
-                CurrentRecord.ProgressWritten = cmdlet.ProgressManagerEx.CurrentRecord.ProgressWritten;
+                CurrentRecord.ProgressPreviouslyWritten = cmdlet.ProgressManagerEx.CurrentRecord.ProgressWritten;
 
             cmdlet.ProgressManagerEx.CurrentRecord = CurrentRecord;
             cmdlet.ProgressManagerEx.PreviousRecord = PreviousRecord;
@@ -955,6 +955,14 @@ namespace PrtgAPI.PowerShell.Progress
                 if (progressManagerEx.CurrentRecord.Completed)
                     return;
 
+                if (progressManagerEx.CurrentRecord.ProgressOnlyPreviouslyWritten)
+                {
+                    //We're probably in an EndProcessing block and we previously wrote progress in our ProcessRecord block. We need to get rid
+                    //of that progress; nobody else will do it but us!
+                    progressManagerEx.CurrentRecord.Activity = progressManagerEx.CachedRecord.Activity;
+                    progressManagerEx.CurrentRecord.StatusDescription = progressManagerEx.CachedRecord.StatusDescription;
+                }
+
                 progressManagerEx.CurrentRecord.RecordType = ProgressRecordType.Completed;
 
                 WriteProgress(progressManagerEx.CurrentRecord, progressManagerEx.PreviousRecord, progressManagerEx.CachedRecord != null);
@@ -1057,7 +1065,7 @@ namespace PrtgAPI.PowerShell.Progress
                         return false;
 
                     //It's all over; complete the MultiOperationProgress.
-                    if (multiOperationAnalyzer.PipelineFinished)
+                    if (multiOperationAnalyzer.PipelineFinished && PipelineIsProgressPure && ProgressWritten)
                         return true;
 
                     //we need to inspect all cmdlets up the chain to see whether they still have records to generate

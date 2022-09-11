@@ -1,0 +1,23 @@
+name: "Support Question ❓"
+description: "Ask questions about using PrtgAPI that are not already covered by the wiki
+  (https://github.com/lordmilko/PrtgAPI/wiki)"
+labels: [question]
+body:
+  - type: textarea
+    id: request
+    attributes:
+      label: "What's going on?"
+      description: "Please note: generally speaking questions should be limited solely to utilizing the functions provided by the PrtgAPI library. Once you've pulled the information you need from PrtgAPI, you'll need to apply additional programming knowledge to transform this data in a way that is appropriate for your application."
+      placeholder: "I'm trying to..."
+
+  - type: checkboxes
+    id: due-dilligance
+    attributes:
+      label: Due Dilligance
+      description: Please ensure you have considered the following prior to submitting your request
+      options:
+        - label: It wasn't covered by the [wiki](https://github.com/lordmilko/PrtgAPI/wiki), I swear!
+          required: true
+
+        - label: I have tried doing some basic research on this issue but haven't been able to come up with anything. Please help!
+          required: true

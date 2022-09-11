@@ -243,6 +243,20 @@ namespace PrtgAPI.Tests.UnitTests.Infrastructure
 
         [UnitTest]
         [TestMethod]
+        public void Convert_ToDouble_US_CloseRounding_ToZero()
+        {
+            TestDouble("1,000", 999.8, 1000);
+        }
+
+        [UnitTest]
+        [TestMethod]
+        public void Convert_ToDouble_EU_CloseRounding_ToZero()
+        {
+            TestDouble("1.000", 999.8, 1000);
+        }
+
+        [UnitTest]
+        [TestMethod]
         public void Convert_ToDouble_US_RawInteger_DecimalDisplay()
         {
             TestDouble("19.00001", 19, 19.00001);

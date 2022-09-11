@@ -1,5 +1,6 @@
 ﻿using System.Xml.Serialization;
 using PrtgAPI.Attributes;
+using PrtgAPI.Request.Serialization;
 using PrtgAPI.Targets;
 
 namespace PrtgAPI
@@ -148,8 +149,16 @@ namespace PrtgAPI
         #endregion
         #region Sensor Display
 
-        //[XmlElement("injected_primarychannel")]
-        //public string PrimaryChannel { get; set; }
+        [XmlElement("injected_primarychannel")]
+        internal string primaryChannelStr { get; set; }
+
+        internal LazyValue<Channel> primaryChannel;
+
+        /// <summary>
+        /// The primary channel of the sensor.<para/>
+        /// Corresponds to Sensor Display -> Primary Channel
+        /// </summary>
+        public Channel PrimaryChannel => primaryChannel?.Value;
 
         /// <summary>
         /// Whether channels should be shown independently in graphs, or stacked on top of each other.<para/>

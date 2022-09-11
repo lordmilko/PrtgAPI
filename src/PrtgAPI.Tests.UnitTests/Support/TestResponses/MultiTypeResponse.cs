@@ -4,6 +4,7 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using PrtgAPI.Utilities;
@@ -11,7 +12,7 @@ using PrtgAPI.Tests.UnitTests.Support.TestItems;
 
 namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
 {
-    public class MultiTypeResponse : IWebStreamResponse
+    public class MultiTypeResponse : IWebStreamResponse, IWebStatusResponse
     {
         private StringEnum<SensorType> newSensorType;
 
@@ -34,6 +35,9 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
         public Dictionary<Content, BaseItem[]> ItemOverride { get; set; }
         private Dictionary<string, int> hitCount = new Dictionary<string, int>();
         public Func<string, string, string> ResponseTextManipulator { get; set; }
+        public HttpStatusCode StatusCode { get; set; }
+
+        public Dictionary<string, HttpStatusCode> StatusCodeMap;
 
         public int[] HasSchedule { get; set; }
 
@@ -51,6 +55,16 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
                 hitCount.Add(function, 1);
 
             var text = GetResponse(ref address, function).GetResponseText(ref address);
+
+            HttpStatusCode code;
+
+            if (StatusCodeMap != null)
+            {
+                if (StatusCodeMap.TryGetValue(function, out code))
+                    StatusCode = code;
+                else
+                    StatusCode = 0;
+            }
 
             if (ResponseTextManipulator != null)
                 return ResponseTextManipulator(text, address);
@@ -89,7 +103,16 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
                     var components = UrlUtilities.CrackUrl(address);
 
                     if (components["channel"] != "99")
-                        return new ChannelResponse(new ChannelItem());
+                    {
+                        ChannelItem item;
+
+                        if (CountOverride != null && CountOverride.ContainsKey(Content.Channels))
+                            item = new ChannelItem(objId: components["channel"], name: $"Percent Available Memory{components["channel"]}");
+                        else
+                            item = new ChannelItem();
+
+                        return new ChannelResponse(item);
+                    }
                     return new BasicResponse(string.Empty);
                 case nameof(CommandFunction.DuplicateObject):
                     address = "https://prtg.example.com/public/login.htm?loginurl=/object.htm?id=9999&errormsg=";
@@ -143,6 +166,8 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
                     return new SensorHistoryReportResponse(true);
                 case nameof(CommandFunction.AcknowledgeAlarm):
                 case nameof(CommandFunction.AddSensor5):
+                    address = "http://prtg.example.com/device.htm?id=9999";
+                    return new BasicResponse(string.Empty);
                 case nameof(CommandFunction.AddDevice2):
                 case nameof(CommandFunction.AddGroup2):
                 case nameof(CommandFunction.ClearCache):
@@ -223,7 +248,18 @@ namespace PrtgAPI.Tests.UnitTests.Support.TestResponses
                 case Content.History: return new ModificationHistoryResponse(new ModificationHistoryItem());
                 case Content.Notifications: return Notifications(CreateNotification, count);
                 case Content.Schedules: return Schedules(CreateSchedule, count);
-                case Content.Channels: return AdvancedItem<ChannelItem, Channel>(i => new ChannelItem(), i => new ChannelResponse(i), Content.Channels, 1, columns, address, async);
+                case Content.Channels:
+
+                    if (!(CountOverride != null && CountOverride.TryGetValue(Content.Channels, out count)))
+                        count = 1;
+
+                    return AdvancedItem<ChannelItem, Channel>(i =>
+                    {
+                        if (count == 1)
+                            return new ChannelItem();
+
+                        return new ChannelItem(objId: i.ToString(), name: $"Percent Available Memory{i}");
+                    }, i => new ChannelResponse(i), Content.Channels, count, columns, address, async);
                 case Content.Objects:
                     return Objects(address, function, components);
                 case Content.Triggers:

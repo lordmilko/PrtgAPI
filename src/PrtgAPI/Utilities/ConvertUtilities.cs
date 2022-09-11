@@ -266,7 +266,7 @@ namespace PrtgAPI.Utilities
             var strDecimalImmediateRounded = Math.Round(strDecimalOnlyRounded, decimalPlaces, MidpointRounding.AwayFromZero);
 
             var strDecimalTruncateStr = strDecimalOnlyRounded.ToString();
-            var strDecimalPlaces = strDecimalTruncateStr.Substring(2);
+            var strDecimalPlaces = strDecimalTruncateStr.Length > 1 ? strDecimalTruncateStr.Substring(2) : strDecimalTruncateStr;
             var strDecimalTruncateStrResult = strDecimalPlaces.Substring(0, Math.Min(decimalPlaces, strDecimalPlaces.Length));
             var strDecimalTruncated = Convert.ToDouble("0." + strDecimalTruncateStrResult, CultureInfo.InvariantCulture);
 
