@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Net.Http;
+using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using PrtgAPI.Tests.UnitTests.Support.TestResponses;
@@ -187,6 +189,26 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
         {
             var nl = Environment.NewLine;
             TestEncodedProperty($"\\{nl}\\", $"\\\n\\");
+        }
+
+        [UnitTest]
+        [TestMethod]
+        public void GetObjectProperty_IsEnglish_NonAdminUser()
+        {
+            var isEnglishProp = typeof(PrtgClient).GetProperty("IsEnglish", BindingFlags.Instance | BindingFlags.NonPublic);
+
+            var response = new MultiTypeResponse();
+
+            var englishClient = Initialize_Client(response);
+            Assert.IsTrue((bool) isEnglishProp.GetValue(englishClient));
+
+            response.ResponseTextManipulator = (r, a) =>
+            {
+                throw new HttpRequestException("Response status code does not indicate success: 403 (Forbidden).");
+            };
+
+            var nonEnglishClient = Initialize_Client(response);
+            Assert.IsFalse((bool) isEnglishProp.GetValue(nonEnglishClient));
         }
 
         private void TestEncodedProperty(string value, string expected)

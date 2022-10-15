@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -425,12 +426,22 @@ namespace PrtgAPI
                 {
                     string language;
 
-                    if (GetObjectPropertiesRaw(WellKnownId.WebServerOptions).TryGetValue("languagefile", out language))
+                    try
                     {
-                        isEnglish = language == "english.lng";
+                        if (GetObjectPropertiesRaw(WellKnownId.WebServerOptions).TryGetValue("languagefile", out language))
+                        {
+                            isEnglish = language == "english.lng";
+                        }
+                        else
+                            isEnglish = false;
                     }
-                    else
+                    catch (HttpRequestException ex) when (ex.Message.Contains("403"))
+                    {
+                        //PRTG 22.3.79 prohibits querying the WebServerOptions as a non-administrative user; in this case, we assume we're not English, which tends to cause
+                        //slower, safer code paths to be executed. The HttpRequestException does not contain any other property (or child exception) that will give us the
+                        //HTTP Status Code, so we have to look at the message.
                         isEnglish = false;
+                    }
                 }
 
                 return isEnglish.Value;
