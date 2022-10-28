@@ -303,6 +303,34 @@ namespace PrtgAPI.Tests.UnitTests.ObjectManipulation
 
         [UnitTest]
         [TestMethod]
+        public void AddSensor_SensorQueryTarget_SynthesizesTarget()
+        {
+            var client = Initialize_Client(new SensorQueryTargetValidatorResponse(new[]
+            {
+                //GetDynamicSensorParameters
+                UnitRequest.SensorTypes(1001),
+                UnitRequest.BeginAddSensorQuery(1001, "snmplibrary_nolist", "APC+UPS.oidlib"),
+                UnitRequest.AddSensorProgress(1001, 2),
+                UnitRequest.EndAddSensorQuery(1001, 2),
+
+                //AddSensor
+                UnitRequest.Status(),
+                UnitRequest.BeginAddSensorQuery(1001, "snmplibrary_nolist", "APC+UPS.oidlib"),
+                UnitRequest.AddSensor("name_=XML+Custom+EXE%2FScript+Sensor&priority_=3&inherittriggers=1&intervalgroup=1&interval_=60%7C60+seconds&errorintervalsdown_=1&tags_=xmlexesensor&exefilelabel=&exeparams_=&environment_=0&usewindowsauthentication_=0&mutexname_=&timeout_=60&writeresult_=0&exefile_=Demo+Batchfile+-+Returns+static+values+in+four+channels.bat%7CDemo+Batchfile+-+Returns+static+values+in+four+channels.bat%7C%7C&sensortype=snmplibrary&id=1001")
+            }));
+
+            //The DynamicSensorParameters we get are for an EXEXML script for the purpose of unit testing, however that doesn't matter
+            var parameters = client.GetDynamicSensorParameters(1001, "snmplibrary", queryParameters: new SensorQueryTarget("APC UPS.oidlib"));
+
+            //Note that AddSensor does not currently call ValidateAddSensorQueryParameters(); as such, if the capitalization of the query target
+            //that was passed to GetDynamicSensorParameters is wrong, even though it will correct the parameters for its purposes, the query parameters
+            //passed in AddSensor will have the wrong capitalization. This does not appear to cause an issue. If we were to modify the value of the
+            //SensorQueryTarget passed in, we're be modifying the caller's state which is bad
+            client.AddSensor(1001, parameters, false);
+        }
+
+        [UnitTest]
+        [TestMethod]
         public void AddSensor_SensorQueryParameters_SynthesizesParameters()
         {
             var client = Initialize_Client(new SensorQueryTargetParametersValidatorResponse(new[]

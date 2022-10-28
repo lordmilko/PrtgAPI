@@ -15,7 +15,7 @@ namespace PrtgAPI.Parameters
     /// <summary>
     /// Represents a dynamic set of raw parameters used to construct a <see cref="PrtgRequestMessage"/> for creating a new sensor.
     /// </summary>
-    public class DynamicSensorParameters : ContainerSensorParameters, IDynamicMetaObjectProvider, ISourceParameters<Device>
+    public class DynamicSensorParameters : ContainerSensorParameters, IDynamicMetaObjectProvider, ISourceParameters<Device>, ISensorQueryTargetParametersProvider
     {
         private const string TempName = "TEMP_NAME";
 
@@ -64,13 +64,15 @@ namespace PrtgAPI.Parameters
         /// <returns>True if one or more items were successfully removed. If no items exist with the specified name, this method returns false.</returns>
         public bool Remove(string name, bool ignoreUnderscore = true) => RemoveInternal(name, ignoreUnderscore);
 
-        internal DynamicSensorParameters(string response, string sensorType) : base(TempName, sensorType, true)
+        internal DynamicSensorParameters(string response, string sensorType, ISensorQueryTargetParameters queryParameters) : base(TempName, sensorType, true)
         {
             using (ConstructorScope)
             {
                 ParseResponse(response);
 
                 Debug.Assert(Name != TempName, "Response did not contain the object's name. Parameters are in an invalid state.");
+
+                QueryParameters = queryParameters;
             } 
         }
 
@@ -184,5 +186,10 @@ namespace PrtgAPI.Parameters
         {
             return new DynamicMetaObject<IDynamicParameters>(parameter, this, new ParameterProxy());
         }
+
+        /// <summary>
+        /// Gets or sets the <see cref="ISensorQueryTargetParameters"/> that should be used for adding the sensor.
+        /// </summary>
+        public ISensorQueryTargetParameters QueryParameters { get; }
     }
 }

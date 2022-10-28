@@ -1794,6 +1794,7 @@ PrtgAPI.Parameters.DynamicSensorParameters Item { get; set; } -> object
 PrtgAPI.Parameters.DynamicSensorParameters Lock() -> void
 PrtgAPI.Parameters.DynamicSensorParameters Name { get; set; } -> string
 PrtgAPI.Parameters.DynamicSensorParameters Priority { get; set; } -> Priority?
+PrtgAPI.Parameters.DynamicSensorParameters QueryParameters { get; } -> ISensorQueryTargetParameters
 PrtgAPI.Parameters.DynamicSensorParameters Remove(string name, bool ignoreUnderscore = true) -> bool
 PrtgAPI.Parameters.DynamicSensorParameters RemoveCustomParameter(ObjectProperty property) -> bool
 PrtgAPI.Parameters.DynamicSensorParameters RemoveCustomParameterInternal(string name) -> bool
@@ -2264,6 +2265,7 @@ PrtgAPI.Parameters.RawSensorParameters Item { get; set; } -> object
 PrtgAPI.Parameters.RawSensorParameters Name { get; set; } -> string
 PrtgAPI.Parameters.RawSensorParameters Parameters { get; set; } -> List<CustomParameter>
 PrtgAPI.Parameters.RawSensorParameters Priority { get; set; } -> Priority?
+PrtgAPI.Parameters.RawSensorParameters QueryParameters { get; set; } -> ISensorQueryTargetParameters
 PrtgAPI.Parameters.RawSensorParameters Remove(string name) -> bool
 PrtgAPI.Parameters.RawSensorParameters RemoveCustomParameter(ObjectProperty property) -> bool
 PrtgAPI.Parameters.RawSensorParameters RemoveCustomParameterInternal(string name) -> bool

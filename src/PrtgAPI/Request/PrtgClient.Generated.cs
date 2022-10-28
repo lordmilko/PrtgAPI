@@ -778,7 +778,7 @@ namespace PrtgAPI
         //######################################
 
         /// <summary>
-        /// Special entry point for constructing parameters from a raw sensor type and retrieving the contents of <see cref="HtmlFunction.AddSensor4"/> without parsing into sensor targets..
+        /// Special entry point for constructing parameters from a raw sensor type and retrieving the contents of <see cref="HtmlFunction.AddSensor4"/> without parsing into sensor targets.
         /// </summary>
         /// <param name="deviceOrId">The device or ID of the device to probe.</param>
         /// <param name="sensorType">Type of sensor to retrieve parameters for.</param>
@@ -871,7 +871,7 @@ namespace PrtgAPI
         }
 
         /// <summary>
-        /// Special entry point for constructing parameters from a raw sensor type and retrieving the contents of <see cref="HtmlFunction.AddSensor4"/> without parsing into sensor targets..
+        /// Special entry point for constructing parameters from a raw sensor type and retrieving the contents of <see cref="HtmlFunction.AddSensor4"/> without parsing into sensor targets.
         /// </summary>
         /// <param name="deviceOrId">The device or ID of the device to probe.</param>
         /// <param name="sensorType">Type of sensor to retrieve parameters for.</param>

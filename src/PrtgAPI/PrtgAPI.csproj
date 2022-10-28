@@ -152,6 +152,7 @@
     <Compile Include="Parameters\Helpers\TypeConversionStateMachine.cs" />
     <Compile Include="Parameters\Interfaces\ISensorQueryTargetParameters.cs" />
     <Compile Include="Parameters\Base\SensorHistoryParametersBase.cs" />
+    <Compile Include="Parameters\Interfaces\ISensorQueryTargetParametersProvider.cs" />
     <Compile Include="Request\IResponseParser.cs" />
     <Compile Include="Parameters\ObjectData\SensorHistoryReportParameters.cs" />
     <Compile Include="Parameters\ObjectManipulation\AddSensor\AddSensorFailedParameters.cs" />

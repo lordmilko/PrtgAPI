@@ -422,6 +422,15 @@ namespace PrtgAPI.Request
 
         private ISensorQueryTargetParameters SynthesizeParameters(ICommandParameters parameters)
         {
+            var provider = parameters as ISensorQueryTargetParametersProvider;
+
+            //QueryParameters can sometimes be both part of the normal set of parameters (e.g. Oracle Tablespace) and special parameters
+            //that are only specified at the time of initial querying (e.g. anything those parameters are actually a SensorQueryTarget).
+            //Given RawSensorParameters may wish to simply define all of their sensor query parameters as normal parameters, we support both
+            //retrieveing the parameters from the ISensorQueryTargetParametersProvider as well as simply throwing all known parameters into the mix
+            if (provider?.QueryParameters != null)
+                return provider.QueryParameters;
+
             var customParameters = parameters[Parameter.Custom];
 
             if (customParameters.IsIEnumerable())
@@ -430,6 +439,8 @@ namespace PrtgAPI.Request
 
                 var any = false;
 
+                //Pull all the parameters we're using to add the sensor object and treat them as values that were originally used as
+                //members of SensorQueryTargetParameters
                 foreach (CustomParameter parameter in customParameters.ToIEnumerable())
                 {
                     any = true;

@@ -923,7 +923,7 @@
                     <Parameter name="queryParameters" type="ISensorQueryTargetParameters" default="null" description="A &lt;see cref=&quot;SensorQueryTarget&quot;/&gt;, &lt;see cref=&quot;SensorQueryTargetParameters&quot;/&gt; or &lt;see cref=&quot;SensorMultiQueryTargetParameters&quot;/&gt; value specifying the parameters that must be known prior to interrogating a sensor's dynamic parameters (such as the SNMP Library file to use or IPMI UserName and Password)."/>
 
                     <Body expression="true">
-                        new DynamicSensorParameters(<Call name="GetAddSensorQueryResponse" args="deviceOrId, sensorType, progressCallback, timeout, queryParameters"/>, sensorType)
+                        new DynamicSensorParameters(<Call name="GetAddSensorQueryResponse" args="deviceOrId, sensorType, progressCallback, timeout, queryParameters"/>, sensorType, queryParameters)
                     </Body>
                 </InlineMethodDef>
                 <InlineMethodDef name="AutoDiscover" returns="void" tokenMode="AutomaticNamed">

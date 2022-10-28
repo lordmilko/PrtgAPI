@@ -372,6 +372,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
                 Tuple.Create(typeof(DynamicSensorParameters), nameof(DynamicSensorParameters.Source)),
                 Tuple.Create(typeof(NewSensorParameters), nameof(NewSensorParameters.DynamicType)),
                 Tuple.Create(typeof(RawSensorParameters), nameof(RawSensorParameters.Parameters)),
+                Tuple.Create(typeof(RawSensorParameters), nameof(RawSensorParameters.QueryParameters)),
                 Tuple.Create(typeof(SensorParametersInternal), nameof(SensorParametersInternal.SensorType)),
                 Tuple.Create(typeof(SensorParametersInternal), nameof(SensorParametersInternal.Source))
             };
@@ -925,7 +926,7 @@ namespace PrtgAPI.Tests.UnitTests.ObjectData
                 switch (type.Name)
                 {
                     case nameof(DynamicSensorParameters):
-                        return new DynamicSensorParameters("<input name=\"name_\" value=\"test\">", "exexml");
+                        return new DynamicSensorParameters("<input name=\"name_\" value=\"test\">", "exexml", null);
 
                     default:
                         throw new NotImplementedException($"Don't know how to create instance of parameters type '{type.Name}'");

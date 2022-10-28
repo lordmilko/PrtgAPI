@@ -6,7 +6,7 @@ namespace PrtgAPI.Parameters
     /// <summary>
     /// Represents raw parameters used to construct a <see cref="PrtgRequestMessage"/> for creating a new sensor.
     /// </summary>
-    public class RawSensorParameters : ContainerSensorParameters
+    public class RawSensorParameters : ContainerSensorParameters, ISensorQueryTargetParametersProvider
     {
         /// <summary>
         /// Determines whether a parameter is in the underlying parameter set.
@@ -45,5 +45,10 @@ namespace PrtgAPI.Parameters
             }
             set { this[Parameter.Custom] = value; }
         }
+
+        /// <summary>
+        /// Gets or sets the <see cref="ISensorQueryTargetParameters"/> that should be used for adding the sensor.
+        /// </summary>
+        public ISensorQueryTargetParameters QueryParameters { get; set; }
     }
 }

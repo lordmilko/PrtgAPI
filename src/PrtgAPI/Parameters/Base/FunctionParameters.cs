@@ -2,7 +2,7 @@
 
 namespace PrtgAPI.Parameters
 {
-    internal sealed class CommandFunctionParameters : BaseParameters, ICommandParameters
+    internal sealed class CommandFunctionParameters : BaseParameters, ICommandParameters, ISensorQueryTargetParametersProvider
     {
         public CommandFunction Function { get; }
 
@@ -10,6 +10,8 @@ namespace PrtgAPI.Parameters
         {
             Function = function;
         }
+
+        public ISensorQueryTargetParameters QueryParameters { get; set; }
     }
 
     internal sealed class XmlFunctionParameters : BaseParameters, IXmlParameters

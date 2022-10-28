@@ -27,5 +27,17 @@
         }
 
         SensorMultiQueryTargetParameters ISensorQueryTargetParameters.ToMultiQueryParameters() => this;
+
+        /// <summary>
+        /// Returns a string that represents the current object.
+        /// </summary>
+        /// <returns>A string that represents the current object.</returns>
+        public override string ToString()
+        {
+            if (QueryTarget != null && Parameters == null)
+                return QueryTarget.ToString();
+
+            return base.ToString();
+        }
     }
 }

@@ -13,7 +13,7 @@ namespace PrtgAPI.Parameters
 
         /// <summary>
         /// Gets or sets the priority of the sensor, controlling how the sensor is displayed in table lists.<para/>
-        /// If this value is null, the default value <see cref="Priority.Three"/> will be used.
+        /// If this value is null, the default value <see cref="PrtgAPI.Priority.Three"/> will be used.
         /// </summary>
         [PropertyParameter(ObjectProperty.Priority)]
         public Priority? Priority
@@ -57,7 +57,7 @@ namespace PrtgAPI.Parameters
 
         /// <summary>
         /// Gets or sets the number of scanning intervals the sensor will wait before entering a <see cref="Status.Down"/> state when the sensor reports an error.<para/>
-        /// If this value is null, the default value <see cref="IntervalErrorMode.OneWarningThenDown"/> will be used.
+        /// If this value is null, the default value <see cref="PrtgAPI.IntervalErrorMode.OneWarningThenDown"/> will be used.
         /// </summary>
         [PropertyParameter(ObjectProperty.IntervalErrorMode)]
         public IntervalErrorMode? IntervalErrorMode

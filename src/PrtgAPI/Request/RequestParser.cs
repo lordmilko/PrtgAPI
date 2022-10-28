@@ -186,6 +186,7 @@ namespace PrtgAPI.Request
             if (thisType.QueryTargets == null || thisType.QueryTargets.Count == 0)
                 throw new InvalidOperationException($"Cannot specify query target '{parameters.QueryTarget}' on sensor type '{parameters.OriginalType}': type does not support query targets.");
 
+            //Our BeginAddSensorQueryParameters object may already have a QueryTarget specified, however in the event its case is not correct, we'll fix that up
             var matchingArgument = thisType.QueryTargets.FirstOrDefault(a => string.Equals(a.Value, parameters.QueryTarget.Value, StringComparison.OrdinalIgnoreCase));
 
             if (matchingArgument == null)
@@ -206,6 +207,11 @@ namespace PrtgAPI.Request
             }
 
             newParams[Parameter.Id] = deviceOrId.GetId();
+
+            //As our true ISensorQueryTargetParametersProvider is not passed further down the line,
+            //our CommandFunctionParameters must function as a ISensorQueryTargetParametersProvider for anyone
+            //who wants to ask
+            newParams.QueryParameters = (parameters as ISensorQueryTargetParametersProvider)?.QueryParameters;
 
             return newParams;
         }

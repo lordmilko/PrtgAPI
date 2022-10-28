@@ -2879,7 +2879,7 @@ namespace PrtgAPI
         /// <exception cref="TimeoutException">Sensor parameters failed to resolve within the specified timespan.</exception>
         /// <returns>A dynamic set of sensor parameters that store the the parameters required to create a sensor of a specified type.</returns>
         public DynamicSensorParameters GetDynamicSensorParameters(Either<Device, int> deviceOrId, string sensorType, Func<int, bool> progressCallback = null, int timeout = 60, ISensorQueryTargetParameters queryParameters = null, CancellationToken token = default(CancellationToken)) =>
-            new DynamicSensorParameters(GetAddSensorQueryResponse(deviceOrId, sensorType, progressCallback, timeout, queryParameters, token), sensorType);
+            new DynamicSensorParameters(GetAddSensorQueryResponse(deviceOrId, sensorType, progressCallback, timeout, queryParameters, token), sensorType, queryParameters);
 
         /// <summary>
         /// Asynchronously creates a set of dynamic sensor parameters for creating a new sensor of a specified type.
@@ -2893,7 +2893,7 @@ namespace PrtgAPI
         /// <exception cref="TimeoutException">Sensor parameters failed to resolve within the specified timespan.</exception>
         /// <returns>A dynamic set of sensor parameters that store the the parameters required to create a sensor of a specified type.</returns>
         public async Task<DynamicSensorParameters> GetDynamicSensorParametersAsync(Either<Device, int> deviceOrId, string sensorType, Func<int, bool> progressCallback = null, int timeout = 60, ISensorQueryTargetParameters queryParameters = null, CancellationToken token = default(CancellationToken)) =>
-            new DynamicSensorParameters(await GetAddSensorQueryResponseAsync(deviceOrId, sensorType, progressCallback, timeout, queryParameters, token).ConfigureAwait(false), sensorType);
+            new DynamicSensorParameters(await GetAddSensorQueryResponseAsync(deviceOrId, sensorType, progressCallback, timeout, queryParameters, token).ConfigureAwait(false), sensorType, queryParameters);
 
         /// <summary>
         /// Automatically creates sensors under an object based on the object's (or it's children's) device type.
