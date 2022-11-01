@@ -52,6 +52,15 @@ function It
 
         Write-LogInfo "Processing test '$name'"
 
+        # Microsoft.PowerShell.Archive wants to import a file
+        # "Microsoft.PowerShell.Archive\en-US\ArchiveResources.psd1"
+        # however if the current UI Culture is not en-US it will try and look
+        # for a different culture folder instead
+
+        $originalCulture = [Threading.Thread]::CurrentThread.CurrentUICulture
+
+        [Threading.Thread]::CurrentThread.CurrentUICulture = 'en-US'
+
         try
         {
             & $script @args
@@ -64,6 +73,7 @@ function It
         }
         finally
         {
+            [Threading.Thread]::CurrentThread.CurrentUICulture = $originalCulture
             #RemoveMocks
         }
     }
