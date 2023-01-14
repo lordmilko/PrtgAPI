@@ -277,7 +277,7 @@ namespace PrtgAPI.Request
             var message = response.RequestMessage.RequestUri.ToString();
 
             //todo: does this work with other languages? Not sure how to replicate it
-            if (message.Contains("the object is currently not valid"))
+            if (message.IndexOf("the object is currently not valid", StringComparison.OrdinalIgnoreCase) != -1)
                 RequestEngine.SetErrorUrlAsRequestUri(response);
 
             return message;
