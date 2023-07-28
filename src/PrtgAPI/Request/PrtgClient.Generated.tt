@@ -683,7 +683,9 @@ for(int i = 0; i < 2; i++)
             {
                 var parts = UrlUtilities.CrackUrl(progress.TargetUrl);
 
-                var enhancedErrorHtml = (<#= CallFunction("RequestEngine.ExecuteRequest", "new AddSensorFailedParameters(deviceOrId, parts[\"sensorkind\"]), token: token", i) #>).StringValue;
+                var sensorKind = parts["sensorkind"];
+
+                var enhancedErrorHtml = sensorKind != null ? (<#= CallFunction("RequestEngine.ExecuteRequest", "new AddSensorFailedParameters(deviceOrId, sensorKind), token: token", i) #>).StringValue : string.Empty;
 
                 ResponseParser.ProcessAddSensorProgressFailed(parts, enhancedErrorHtml, addFull);
             }

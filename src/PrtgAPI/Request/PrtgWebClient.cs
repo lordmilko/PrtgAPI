@@ -13,7 +13,7 @@ namespace PrtgAPI.Request
     internal class PrtgWebClient : IWebClient
     {
         private WebClient syncClient = new WebClient();
-        private HttpClient asyncClient = new HttpClient();
+        private HttpClient asyncClient;
 
         private HttpClientHandler handler = new HttpClientHandler();
 

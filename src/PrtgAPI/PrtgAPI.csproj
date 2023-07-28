@@ -153,6 +153,7 @@
     <Compile Include="Parameters\Interfaces\ISensorQueryTargetParameters.cs" />
     <Compile Include="Parameters\Base\SensorHistoryParametersBase.cs" />
     <Compile Include="Parameters\Interfaces\ISensorQueryTargetParametersProvider.cs" />
+    <Compile Include="Parameters\ObjectManipulation\NewObjectParameters\RootHtmlParameters.cs" />
     <Compile Include="Request\IResponseParser.cs" />
     <Compile Include="Parameters\ObjectData\SensorHistoryReportParameters.cs" />
     <Compile Include="Parameters\ObjectManipulation\AddSensor\AddSensorFailedParameters.cs" />
@@ -196,6 +197,7 @@
       <DependentUpon>VersionClient.Generated.tt</DependentUpon>
     </Compile>
     <Compile Include="Request\Version\VersionClient17_4.cs" />
+    <Compile Include="Request\Version\VersionClient23_2.cs" />
     <Compile Include="Tree\Converters\Text\CompareNodePrettyTreeVisitor.cs" />
     <Compile Include="Tree\Converters\Text\InternalPrettyTreeVisitorBase.cs" />
     <Compile Include="Tree\Converters\Text\Lines\PrettyColorLine.cs" />

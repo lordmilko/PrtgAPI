@@ -33,6 +33,7 @@ namespace PrtgAPI.Request
                 ((BaseParameters)internalParams).Cookie = true;
             }
 
+            FixAuth(internalParams, token);
             client.AddObjectInternalDefault(internalParams, token);
 
             //If it's our first request (not the case when adding excesive values)
@@ -61,6 +62,7 @@ namespace PrtgAPI.Request
                 ((BaseParameters)internalParams).Cookie = true;
             }
 
+            await FixAuthAsync(internalParams, token).ConfigureAwait(false);
             await client.AddObjectInternalDefaultAsync(internalParams, token).ConfigureAwait(false);
 
             //If it's our first request (not the case when adding excesive values)

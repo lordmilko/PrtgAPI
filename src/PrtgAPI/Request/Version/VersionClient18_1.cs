@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using PrtgAPI.Parameters;
 
 namespace PrtgAPI.Request
@@ -133,6 +135,16 @@ namespace PrtgAPI.Request
             }
 
             return false;
+        }
+
+        protected virtual void FixAuth(ICommandParameters internalParams, CancellationToken token)
+        {
+        }
+
+        protected virtual Task FixAuthAsync(ICommandParameters internalParams, CancellationToken token)
+        {
+            //Task.CompletedTask not available in .NET 4.5.2
+            return Task.FromResult(string.Empty);
         }
 
         private bool IsTrue(object val)

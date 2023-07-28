@@ -38,6 +38,10 @@ namespace PrtgAPI
 
         [Undocumented]
         [Description("historicdata_html.htm")]
-        HistoricDataReport
+        HistoricDataReport,
+
+        [Undocumented] //It's not undocumented, but we don't need to append "/api"
+        [Description("group.htm")]
+        Group,
     }
 }

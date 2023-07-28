@@ -21,6 +21,7 @@ namespace PrtgAPI.Request
         internal const string DefaultDropDownListRegex = "<select.+?>.*?<\\/select>";
         internal const string DefaultTextAreaRegex = "(<textarea.+?>)(.*?)(<\\/textarea>)";
         internal const string DefaultDependencyDiv = "(<div.+?data-inputname=\"dependency_\")(.+?>)";
+        private static string DefaultMetaContentRegex = "<meta name=\"(.+?)\" content=\"(.+?)\">";
 
         private static RegexOptions RegexOptions = RegexOptions.Compiled | RegexOptions.Singleline;
 
@@ -324,6 +325,21 @@ namespace PrtgAPI.Request
             var xml = text.Select(n => new XElement($"{PropertyPrefix}{n.Key}", n.Value)).ToArray();
 
             return xml;
+        }
+
+
+        internal string GetMetaContent(string response, string name)
+        {
+            var matches = Regex.Matches(response, DefaultMetaContentRegex);
+
+            if (matches.Count > 0)
+            {
+                var match = matches.Cast<Match>().SingleOrDefault(m => m.Groups[1].Value == "csrf-token")?.Groups[2].Value;
+
+                return match;
+            }
+
+            throw new InvalidOperationException($"Could not find meta content tag '{name}'.");
         }
 
         private Input[] GetProperties(List<string> inputs, string nameRegex, Func<string, string> nameTransformer)

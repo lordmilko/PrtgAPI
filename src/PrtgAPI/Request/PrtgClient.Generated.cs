@@ -1067,7 +1067,9 @@ namespace PrtgAPI
             {
                 var parts = UrlUtilities.CrackUrl(progress.TargetUrl);
 
-                var enhancedErrorHtml = (RequestEngine.ExecuteRequest(new AddSensorFailedParameters(deviceOrId, parts["sensorkind"]), token: token)).StringValue;
+                var sensorKind = parts["sensorkind"];
+
+                var enhancedErrorHtml = sensorKind != null ? (RequestEngine.ExecuteRequest(new AddSensorFailedParameters(deviceOrId, sensorKind), token: token)).StringValue : string.Empty;
 
                 ResponseParser.ProcessAddSensorProgressFailed(parts, enhancedErrorHtml, addFull);
             }
@@ -1082,7 +1084,9 @@ namespace PrtgAPI
             {
                 var parts = UrlUtilities.CrackUrl(progress.TargetUrl);
 
-                var enhancedErrorHtml = (await RequestEngine.ExecuteRequestAsync(new AddSensorFailedParameters(deviceOrId, parts["sensorkind"]), token: token).ConfigureAwait(false)).StringValue;
+                var sensorKind = parts["sensorkind"];
+
+                var enhancedErrorHtml = sensorKind != null ? (await RequestEngine.ExecuteRequestAsync(new AddSensorFailedParameters(deviceOrId, sensorKind), token: token).ConfigureAwait(false)).StringValue : string.Empty;
 
                 ResponseParser.ProcessAddSensorProgressFailed(parts, enhancedErrorHtml, addFull);
             }

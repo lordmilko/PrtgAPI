@@ -209,6 +209,9 @@ namespace PrtgAPI
         {
             switch (version)
             {
+                case RequestVersion.v23_2:
+                    return new VersionClient23_2(this);
+
                 case RequestVersion.v18_1:
                     return new VersionClient18_1(this);
 
@@ -233,6 +236,20 @@ namespace PrtgAPI
                 throw new ArgumentException("At least one parameter must be specified.", nameof(parameters));
 
             return GetVersionClient(parameters.Select(p => p.Property).Cast<object>().ToArray());
+        }
+
+        internal string GetAntiCsrfToken(CancellationToken token)
+        {
+            var response = RequestEngine.ExecuteRequest(new RootHtmlParameters(), token: token).StringValue;
+
+            return HtmlParser.Default.GetMetaContent(response, "csrf-token");
+        }
+
+        internal async Task<string> GetAntiCsrfTokenAsync(CancellationToken token)
+        {
+            var response = (await RequestEngine.ExecuteRequestAsync(new RootHtmlParameters(), token: token).ConfigureAwait(false)).StringValue;
+
+            return HtmlParser.Default.GetMetaContent(response, "csrf-token");
         }
 
     #region Object Data

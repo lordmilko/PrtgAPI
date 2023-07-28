@@ -22,7 +22,12 @@ namespace PrtgAPI
         /// <summary>
         /// PRTG Network Monitor 18.1
         /// </summary>
-        v18_1
+        v18_1,
+
+        /// <summary>
+        /// PRTG Network Monitor 23.2
+        /// </summary>
+        v23_2,
     }
 
     internal static class VersionMap
@@ -35,7 +40,8 @@ namespace PrtgAPI
             {
                 [RequestVersion.v14_4] = new Version(14, 4),
                 [RequestVersion.v17_4] = new Version(17, 4),
-                [RequestVersion.v18_1] = new Version(18, 1)
+                [RequestVersion.v18_1] = new Version(18, 1),
+                [RequestVersion.v23_2] = new Version(23, 2)
             });
         }
     }
