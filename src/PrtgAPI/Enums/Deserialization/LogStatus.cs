@@ -442,10 +442,13 @@ namespace PrtgAPI
         UpgradeOffer,
 
         [XmlEnum("723")]
-        TrialReminder,
+        TrialReminder,*/
 
+        /// <summary>
+        /// A mobile device that was configured for push notifications can no longer be reached and has been removed from your notification contacts.
+        /// </summary>
         [XmlEnum("728")]
-        InvalidPushDevice,*/
+        InvalidPushDevice,
 
         /// <summary>
         /// A reminder from PRTG or Paessler about an upcoming event or change.
