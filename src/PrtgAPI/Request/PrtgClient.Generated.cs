@@ -48,7 +48,7 @@ namespace PrtgAPI
             var items = response.Descendants("item").ToList();
 
             items.Where(e => 
-                !nameFilter(e.Element("name").Value?.ToString()) ||
+                !nameFilter(e.Element("name")?.Value?.ToString()) ||
                 !idFilter(Convert.ToInt32(e.Element("objid").Value.ToString()))
             ).Remove();
 
@@ -85,7 +85,7 @@ namespace PrtgAPI
             var items = response.Descendants("item").ToList();
 
             items.Where(e => 
-                !nameFilter(e.Element("name").Value?.ToString()) ||
+                !nameFilter(e.Element("name")?.Value?.ToString()) ||
                 !idFilter(Convert.ToInt32(e.Element("objid").Value.ToString()))
             ).Remove();
 
