@@ -17,6 +17,18 @@ namespace PrtgAPI
         /// Use Advanced Encryption Standard (more secure).
         /// </summary>
         [XmlEnum("AESPrivProtocol")]
-        AES
+        AES,
+
+        /// <summary>
+        /// Use AES-192 (more secure).
+        /// </summary>
+        [XmlEnum("AES192PrivProtocol")]
+        AES192,
+
+        /// <summary>
+        /// Use AES-256 (more secure).
+        /// </summary>
+        [XmlEnum("AES256PrivProtocol")]
+        AES256
     }
 }

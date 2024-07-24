@@ -1,4 +1,5 @@
 ﻿using System.Xml.Serialization;
+using PrtgAPI.Attributes;
 
 namespace PrtgAPI
 {
@@ -11,12 +12,14 @@ namespace PrtgAPI
         /// Discard all debug information.
         /// </summary>
         [XmlEnum("0")]
+        [XmlEnumAlternateName("DiscardResult")]
         Discard,
 
         /// <summary>
         /// Save debug information to disk. Debug information is stored under C:\ProgramData\Paessler\PRTG Network Monitor\Logs (Sensors) on the sensors probe server.
         /// </summary>
         [XmlEnum("1")]
+        [XmlEnumAlternateName("WriteResultToDisk")]
         WriteToDisk,
 
         /// <summary>
