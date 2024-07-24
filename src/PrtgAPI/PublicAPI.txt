@@ -682,6 +682,8 @@ PrtgAPI.EmailPriority.Lowest -> Value
 PrtgAPI.EmailPriority.Normal -> Value
 PrtgAPI.EncryptionType => Enum
 PrtgAPI.EncryptionType.AES -> Value
+PrtgAPI.EncryptionType.AES192 -> Value
+PrtgAPI.EncryptionType.AES256 -> Value
 PrtgAPI.EncryptionType.DES -> Value
 PrtgAPI.EventLog => Enum
 PrtgAPI.EventLog.Application -> Value
@@ -951,6 +953,10 @@ PrtgAPI.GroupSettings WmiTimeoutMethod { get; set; } -> WmiTimeoutMethod
 PrtgAPI.HashType => Enum
 PrtgAPI.HashType.MD5 -> Value
 PrtgAPI.HashType.SHA -> Value
+PrtgAPI.HashType.SHA224 -> Value
+PrtgAPI.HashType.SHA256 -> Value
+PrtgAPI.HashType.SHA384 -> Value
+PrtgAPI.HashType.SHA512 -> Value
 PrtgAPI.HistoricValueMode => Enum
 PrtgAPI.HistoricValueMode.Average -> Value
 PrtgAPI.HistoricValueMode.Maximum -> Value
@@ -1192,6 +1198,7 @@ PrtgAPI.LogStatus.GraphCache -> Value
 PrtgAPI.LogStatus.GroupDiscoveryFinished -> Value
 PrtgAPI.LogStatus.GroupDiscoveryStarted -> Value
 PrtgAPI.LogStatus.Info -> Value
+PrtgAPI.LogStatus.InvalidPushDevice -> Value
 PrtgAPI.LogStatus.Moved -> Value
 PrtgAPI.LogStatus.MovedObjectInserted -> Value
 PrtgAPI.LogStatus.MultipleClusterMasters -> Value

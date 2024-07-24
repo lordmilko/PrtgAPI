@@ -1194,8 +1194,13 @@ namespace PrtgAPI
         {
             List<T> @object;
 
-            var retriesRemaining = 4;
-            var delay = 3;
+            //By default, Connect-PrtgServer sets the RetryCount for failed API requests to 1. In the event someone has a very slow PRTG server however, they might up this to something greater.
+            //It's quite common for objects to take a long time to resolve, so retrying at least 4 times here is desired. If they explicitly set a retry count greater than 4 however, they're
+            //in trouble, so use whatever they're recommending
+            var retriesRemaining = Math.Max(RetryCount, 4);
+
+            //Respect the user's specified RetryDelay as well; it would be confusing if we only respected RetryCount
+            var delay = Math.Max(RetryDelay, 3);
 
             do
             {
