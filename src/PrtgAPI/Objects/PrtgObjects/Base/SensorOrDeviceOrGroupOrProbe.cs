@@ -93,7 +93,13 @@ namespace PrtgAPI
 
                         var str = value.Substring(start + 1, end - start - 1);
 
-                        inheritedOrSetInterval = TimeSpan.FromSeconds(Convert.ToInt32(str));
+                        //In modern versions of PRTG, it's possible to configure sensors to scan at specific times of the day. These values
+                        //cannot be parsed as an integer (and thus do not represent a TimeSpan), and so are ignored
+
+                        int num;
+
+                        if (int.TryParse(str, out num))
+                            inheritedOrSetInterval = TimeSpan.FromSeconds(num);
                     }
                 }
             }
