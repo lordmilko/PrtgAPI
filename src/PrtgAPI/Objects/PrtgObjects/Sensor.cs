@@ -52,12 +52,27 @@ namespace PrtgAPI
             set { displayLastValue = value == string.Empty || value == "-" ? null : value; }
         }
 
+        [XmlElement("lastvalue_raw")]
+        internal string lastValueStr { get; set; }
+
+        private double? lastValue;
+
         /// <summary>
         /// The raw last value of this sensor's primary channel.
         /// </summary>
-        [XmlElement("lastvalue_raw")]
+
         [PropertyParameter(Property.LastValue)]
-        public double? LastValue { get; set; }
+        public double? LastValue
+        {
+            get
+            {
+                if (lastValue == null && lastValueStr != null)
+                    lastValue = displayLastValue == "-" ? (double?) null : Convert.ToDouble(lastValueStr);
+
+                return lastValue;
+            }
+            set { lastValue = value; }
+        }
 
         // ################################## Sensor Only ##################################
 

@@ -1217,6 +1217,7 @@ PrtgAPI.LogStatus.ProbeApproved -> Value
 PrtgAPI.LogStatus.ProbeDenied -> Value
 PrtgAPI.LogStatus.ProbeGidDenied -> Value
 PrtgAPI.LogStatus.ProbeInfo -> Value
+PrtgAPI.LogStatus.ProbeIPDenied -> Value
 PrtgAPI.LogStatus.ProbeKeyDenied -> Value
 PrtgAPI.LogStatus.Reminder -> Value
 PrtgAPI.LogStatus.ReportDone -> Value
